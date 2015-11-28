@@ -1,0 +1,467 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{73A00D04-2F56-4EE9-8F39-41AA90C75B6E}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>ProjectCelestial</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v120</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+    <CLRSupport>false</CLRSupport>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v120</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v120</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v120</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+    <LibraryPath>C:\Program Files (x86)\Windows Kits\8.1\Lib\win8\um\x86;$(DXSDK_DIR)Lib\x86;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(IncludePath);C:\Program Files (x86)\Windows Kits\8.1\Include\um;$(DXSDK_DIR)Include</IncludePath>
+    <RunCodeAnalysis>false</RunCodeAnalysis>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LinkIncremental>true</LinkIncremental>
+    <LibraryPath>$(LibraryPath);$(DXSDK_DIR)Lib\x64</LibraryPath>
+    <IncludePath>$(IncludePath);$(DXSDK_DIR)Include</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+    <IncludePath>$(IncludePath);$(DXSDK_DIR)Include</IncludePath>
+    <LibraryPath>$(LibraryPath);$(DXSDK_DIR)Lib\x86</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>Create</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <EnablePREfast>false</EnablePREfast>
+      <GenerateXMLDocumentationFiles>true</GenerateXMLDocumentationFiles>
+      <BrowseInformation>true</BrowseInformation>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+      <MultiProcessorCompilation>false</MultiProcessorCompilation>
+      <ShowIncludes>false</ShowIncludes>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>d3d10_1.lib;d2d1.lib;dwrite.lib;WindowsCodecs.lib;D3dcompiler.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+    <Bscmake>
+      <PreserveSbr>true</PreserveSbr>
+    </Bscmake>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <PrecompiledHeader>Create</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>d3d10.lib;d3dx10.lib</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>Create</PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>d3d10.lib;d3dx10.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="BoundingBox.h" />
+    <ClInclude Include="BoundingPlane.h" />
+    <ClInclude Include="BoundingSphere.h" />
+    <ClInclude Include="BoxedBool.h" />
+    <ClInclude Include="BufferObject.h" />
+    <ClInclude Include="CameraFrame.h" />
+    <ClInclude Include="CelestialDoubleList.h" />
+    <ClInclude Include="CelestialDoubleListNode.h" />
+    <ClInclude Include="CelestialMath.h" />
+    <ClInclude Include="CelestialMatrix.h" />
+    <ClInclude Include="CelestialSlicedList.h" />
+    <ClInclude Include="CelestialStack.h" />
+    <ClInclude Include="CelestialTree.h" />
+    <ClInclude Include="CelestialTreeNode.h" />
+    <ClInclude Include="CelScriptAnalyzer.h" />
+    <ClInclude Include="CelScriptBinLoader.h" />
+    <ClInclude Include="CelScriptCodeGenerator.h" />
+    <ClInclude Include="CelScriptCompiled.h" />
+    <ClInclude Include="CelScriptCompiler.h" />
+    <ClInclude Include="CelScriptLexer.h" />
+    <ClInclude Include="CelScriptParser.h" />
+    <ClInclude Include="CelScriptRuntime.h" />
+    <ClInclude Include="CelScriptRunTimeHandler.h" />
+    <ClInclude Include="CelScriptSource.h" />
+    <ClInclude Include="ColourLoader.h" />
+    <ClInclude Include="CommonParticle.h" />
+    <ClInclude Include="CrossHandlerHeader.h" />
+    <ClInclude Include="CelscriptHandler.h" />
+    <ClInclude Include="DXBufferObject.h" />
+    <ClInclude Include="CelestialBufferHandler.h" />
+    <ClInclude Include="Camera.h" />
+    <ClInclude Include="CardHandler.h" />
+    <ClInclude Include="CelestialShader.h" />
+    <ClInclude Include="Celestial2DDrawer.h" />
+    <ClInclude Include="DXTextureResource.h" />
+    <ClInclude Include="DXTextureResourceViews.h" />
+    <ClInclude Include="CelScriptSourceLoader.h" />
+    <ClInclude Include="GUIEntityHandler.h" />
+    <ClInclude Include="IFileCLLoader.h" />
+    <ClInclude Include="IHandleMessages.h" />
+    <ClInclude Include="Keyword.h" />
+    <ClInclude Include="Frustum.h" />
+    <ClInclude Include="GraphicCodes.h" />
+    <ClInclude Include="GraphicHandler.h" />
+    <ClInclude Include="GraphicHeader.h" />
+    <ClInclude Include="GUILayout.h" />
+    <ClInclude Include="GUILayoutLoader.h" />
+    <ClInclude Include="GUITextBox.h" />
+    <ClInclude Include="GUITextBoxLoader.h" />
+    <ClInclude Include="IBounding.h" />
+    <ClInclude Include="IBufferHandler.h" />
+    <ClInclude Include="ICachableObject.h" />
+    <ClInclude Include="ICardDebug.h" />
+    <ClInclude Include="IContainable.h" />
+    <ClInclude Include="IDXTexRead.h" />
+    <ClInclude Include="IDXTexWrite.h" />
+    <ClInclude Include="IFileGUILoader.h" />
+    <ClInclude Include="IFileLoader.h" />
+    <ClInclude Include="IFileMaterialLoader.h" />
+    <ClInclude Include="IFileMeshLoader.h" />
+    <ClInclude Include="IFileTerrainLoader.h" />
+    <ClInclude Include="IFileTextureLoader.h" />
+    <ClInclude Include="IGraphicCamera.h" />
+    <ClInclude Include="IGraphicDebug.h" />
+    <ClInclude Include="IGUILoader.h" />
+    <ClInclude Include="GUIObject.h" />
+    <ClInclude Include="IKeyBoardHandler.h" />
+    <ClInclude Include="ILight.h" />
+    <ClInclude Include="ILogicCamera.h" />
+    <ClInclude Include="IMaterialLoader.h" />
+    <ClInclude Include="InputHandler.h" />
+    <ClInclude Include="InputHeader.h" />
+    <ClInclude Include="Intermediator.h" />
+    <ClInclude Include="IParticleEmitter.h" />
+    <ClInclude Include="IParticleEmitterBufferable.h" />
+    <ClInclude Include="IPlayerDebug.h" />
+    <ClInclude Include="IShaderHandler.h" />
+    <ClInclude Include="IShapeLoader.h" />
+    <ClInclude Include="I2DDrawer.h" />
+    <ClInclude Include="IThreadSafeObject.h" />
+    <ClInclude Include="LogicHeader.h" />
+    <ClInclude Include="CelestialMathHeader.h" />
+    <ClInclude Include="MemoryPool.h" />
+    <ClInclude Include="MessageQueue.h" />
+    <ClInclude Include="ResourceHandler.h" />
+    <ClInclude Include="ResourceHeader.h" />
+    <ClInclude Include="RunTimeOperations.h" />
+    <ClInclude Include="ShadowMapConstants.h" />
+    <ClInclude Include="LightParticleEmitter.h" />
+    <ClInclude Include="DrawScene.h" />
+    <ClInclude Include="LogicScene.h" />
+    <ClInclude Include="ResourceContainer.h" />
+    <ClInclude Include="CelestialList.h" />
+    <ClInclude Include="CelestialListNode.h" />
+    <ClInclude Include="MeshObject.h" />
+    <ClInclude Include="Message.h" />
+    <ClInclude Include="MTLFileLoader.h" />
+    <ClInclude Include="OBJFileLoader.h" />
+    <ClInclude Include="Overlord.h" />
+    <ClInclude Include="Particle.h" />
+    <ClInclude Include="ParticleEmitterInstance.h" />
+    <ClInclude Include="PlaneLoader.h" />
+    <ClInclude Include="PlayerHandler.h" />
+    <ClInclude Include="ImageFileLoader.h" />
+    <ClInclude Include="PointLight.h" />
+    <ClInclude Include="Project Celestial.h" />
+    <ClInclude Include="Resource.h" />
+    <ClInclude Include="ResourceLoader.h" />
+    <ClInclude Include="ResourceObject.h" />
+    <ClInclude Include="ShaderContainer.h" />
+    <ClInclude Include="SkyboxParticle.h" />
+    <ClInclude Include="TextContainer.h" />
+    <ClInclude Include="TextureHandler.h" />
+    <ClInclude Include="TextureResourceObject.h" />
+    <ClInclude Include="stdafx.h" />
+    <ClInclude Include="targetver.h" />
+    <ClInclude Include="TerrainMesh.h" />
+    <ClInclude Include="TerrainObject.h" />
+    <ClInclude Include="Triggers.h" />
+    <ClInclude Include="TRNFileLoader.h" />
+    <ClInclude Include="UnderCamera.h" />
+    <ClInclude Include="GraphicAPI.h" />
+    <ClInclude Include="CelestialVector.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="BoundingBox.cpp" />
+    <ClCompile Include="BoundingPlane.cpp" />
+    <ClCompile Include="BoundingSphere.cpp" />
+    <ClCompile Include="BoxedBool.cpp" />
+    <ClCompile Include="BufferObject.cpp" />
+    <ClCompile Include="CameraFrame.cpp" />
+    <ClCompile Include="CelestialBufferHandler.cpp" />
+    <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="CardHandler.cpp" />
+    <ClCompile Include="CelestialMath.cpp" />
+    <ClCompile Include="CelestialShader.cpp" />
+    <ClCompile Include="Celestial2DDrawer.cpp" />
+    <ClCompile Include="CelScriptAnalyzer.cpp" />
+    <ClCompile Include="CelScriptBinLoader.cpp" />
+    <ClCompile Include="CelScriptCodeGenerator.cpp" />
+    <ClCompile Include="CelScriptCompiled.cpp" />
+    <ClCompile Include="CelScriptCompiler.cpp" />
+    <ClCompile Include="CelScriptLexer.cpp" />
+    <ClCompile Include="CelScriptParser.cpp" />
+    <ClCompile Include="CelScriptRuntimeHandler.cpp" />
+    <ClCompile Include="CelScriptSource.cpp" />
+    <ClCompile Include="CelScriptSourceLoader.cpp" />
+    <ClCompile Include="ColourLoader.cpp" />
+    <ClCompile Include="CommonParticle.cpp" />
+    <ClCompile Include="CelscriptHandler.cpp" />
+    <ClCompile Include="DrawScene.cpp" />
+    <ClCompile Include="DXBufferObject.cpp" />
+    <ClCompile Include="DXTextureResource.cpp" />
+    <ClCompile Include="DXTextureResourceViews.cpp" />
+    <ClCompile Include="GUIEntityHandler.cpp" />
+    <ClCompile Include="Frustum.cpp" />
+    <ClCompile Include="GraphicHandler.cpp" />
+    <ClCompile Include="GUILayout.cpp" />
+    <ClCompile Include="GUILayoutLoader.cpp" />
+    <ClCompile Include="GUIObject.cpp" />
+    <ClCompile Include="GUITextBox.cpp" />
+    <ClCompile Include="GUITextBoxLoader.cpp" />
+    <ClCompile Include="IHandleMessages.cpp" />
+    <ClCompile Include="InputHandler.cpp" />
+    <ClCompile Include="Intermediator.cpp" />
+    <ClCompile Include="MemoryPool.cpp" />
+    <ClCompile Include="MessageQueue.cpp" />
+    <ClCompile Include="ResourceHandler.cpp" />
+    <ClCompile Include="ShadowMapConstants.cpp" />
+    <ClCompile Include="LightParticleEmitter.cpp" />
+    <ClCompile Include="LogicScene.cpp" />
+    <ClCompile Include="ResourceContainer.cpp" />
+    <ClCompile Include="MeshObject.cpp" />
+    <ClCompile Include="MTLFileLoader.cpp" />
+    <ClCompile Include="OBJFileLoader.cpp" />
+    <ClCompile Include="Overlord.cpp" />
+    <ClCompile Include="Particle.cpp" />
+    <ClCompile Include="ParticleEmitterInstance.cpp" />
+    <ClCompile Include="PlaneLoader.cpp" />
+    <ClCompile Include="PlayerHandler.cpp" />
+    <ClCompile Include="ImageFileLoader.cpp" />
+    <ClCompile Include="PointLight.cpp" />
+    <ClCompile Include="Project Celestial.cpp" />
+    <ClCompile Include="ResourceLoader.cpp" />
+    <ClCompile Include="ResourceObject.cpp" />
+    <ClCompile Include="ShaderContainer.cpp" />
+    <ClCompile Include="SkyboxParticle.cpp" />
+    <ClCompile Include="TextContainer.cpp" />
+    <ClCompile Include="TextureHandler.cpp" />
+    <ClCompile Include="TextureResourceObject.cpp" />
+    <ClCompile Include="stdafx.cpp" />
+    <ClCompile Include="TerrainMesh.cpp" />
+    <ClCompile Include="TerrainObject.cpp" />
+    <ClCompile Include="TRNFileLoader.cpp" />
+    <ClCompile Include="UnderCamera.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Project Celestial.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Celestial.ico" />
+    <Image Include="heightmap.bmp" />
+    <Image Include="heightmap.jpg" />
+    <Image Include="NewTennisBallColor.jpg" />
+    <Image Include="NewTennisBallHeight.png" />
+    <Image Include="NewTennisBallNormals.bmp" />
+    <Image Include="ProjectCelestial.ico" />
+    <Image Include="SkyMapTest1.png" />
+    <Image Include="small.ico" />
+    <Image Include="Texture1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\d3dcompiler_46.dll">
+      <FileType>Document</FileType>
+    </None>
+    <None Include="dbgHide.celsrc" />
+    <None Include="dbgScript.celsrc" />
+    <None Include="ErrorTest.celsrc" />
+    <None Include="rootscript.celsrc" />
+    <None Include="Shaders_Registers.hlsli" />
+    <None Include="StdTextBox.celsrc" />
+    <None Include="StdVars.celsrc" />
+    <None Include="Tennisboll.mtl">
+      <FileType>Document</FileType>
+    </None>
+    <None Include="Terrain.mtl" />
+    <None Include="Terrain.trn" />
+    <None Include="Testball.fbx" />
+    <None Include="testBin.celbin" />
+    <None Include="TestRoot.celsrc" />
+    <None Include="TestRoot2.celsrc" />
+    <None Include="TestScript.celsrc" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="plane.obj" />
+    <None Include="Tennisboll.obj" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="shaders.hlsl">
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(DXSDK_DIR)Utilities\bin\x86\"fxc.exe  /T fx_4_0 /Fo "%shaders.hlsl" "%(FullPath)"</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">shaders.hlsl</Outputs>
+      <FileType>Document</FileType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Frust.obj">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Shaders_Debug.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <FileType>Document</FileType>
+    </None>
+    <None Include="Shaders_Geometry.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <FileType>Document</FileType>
+    </None>
+    <None Include="Shaders_Light.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <FileType>Document</FileType>
+    </None>
+    <None Include="Shaders_Particle.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <FileType>Document</FileType>
+    </None>
+    <None Include="Shaders_Screen.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <FileType>Document</FileType>
+    </None>
+    <None Include="Shaders_Shadows.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <FileType>Document</FileType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Shaders_PreDraw.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Domain</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Domain</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Domain</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Domain</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+      <FileType>Document</FileType>
+    </None>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

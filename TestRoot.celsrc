@@ -1,0 +1,8 @@
+$
+{
+	testPar1 = 0
+	testPar2 = 0
+}
+
+testPar = load script 'TestRoot2.celsrc'
+run testPar 9 'a'

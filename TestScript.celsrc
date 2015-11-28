@@ -1,0 +1,36 @@
+\s = 'tennisboll.obj'
+\m = load mesh s
+\o = add object m -1
+\post 'Script loaded'
+\num = (2 * (5 + 20) * 3 + (8-5)+7)*100
+\This is a comment
+num = 0
+mum = 1
+
+loop it = 100 ; it;it=it-1
+{
+	post it
+}
+
+if num+1
+{
+	post 'Cond one'
+	if mum
+	{
+		post 'Cond four'
+	}
+	else
+	{
+		post 'Cond five'
+	}
+}
+\else mum
+\{
+\	post 'Cond two'
+\}
+\else
+\{
+\	post 'Cond three'
+\}
+\post num*mum;
+post 'Hello world!'

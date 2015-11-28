@@ -1,0 +1,34 @@
+$
+{
+	keyCodeOmni = 0;
+	keyCodeMod = 1;
+	keyCodeAllChar = 2;
+	keyCodeShift = 3;
+	keyCodeControl = 4;
+	keyCodeAlt = 5;
+	
+	keyCodeF1 = 6;
+	keyCodeF2 = 7;
+	keyCodeF3 = 8;
+	keyCodeF4 = 9;
+	keyCodeF5 = 10;
+	keyCodeF6 = 11;
+	keyCodeF7 = 12;
+	keyCodeF8 = 13;
+	keyCodeF9 = 14;
+	keyCodeF10 = 15;
+	keyCodeF11 = 16;
+	keyCodeF12 = 17;
+
+	keyCodeAnyMouse = 18;
+	keyCodeMouseL = 19;
+	keyCodeMouseR = 20;
+
+	snapHorLeft = 0
+	snapHorCenter = 1
+	snapHorRight = 2
+
+	snapVerTop = 0
+	snapVerCenter = 1
+	snapVerBottom = 2
+}

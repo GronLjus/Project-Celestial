@@ -1,0 +1,29 @@
+#StdVars.celsrc
+
+stdTextTriggerScript = load script 'StdTextBox.celsrc'
+
+dbgToggleScript = load script 'dbgHide.celsrc'
+
+dbgOutText = load textbox
+dbgInText = load textbox
+dbgPanel = load panel
+
+stdTextTrigger = load keytrgr stdTextTriggerScript, keyCodeAllChar
+dbgPnlTrigger = load keytrgr dbgToggleScript, keyCodeF12
+
+screenX = get screenHor
+screenY = get screenVer
+
+add keytrgr dbgInText, stdTextTrigger
+add keytrgr dbgPanel, dbgPnlTrigger
+
+snap dbgInText snapHorLeft, snapVerBottom
+pos 2d dbgInText 0, 2
+size 2d dbgInText screenX, 15
+
+pos 2d dbgOutText screenX/2, 0
+size 2d dbgOutText screenX/2, screenY-20
+
+size 2d dbgPanel screenX, screenY
+add 2dto dbgInText dbgPanel
+add 2dto dbgOutText dbgPanel

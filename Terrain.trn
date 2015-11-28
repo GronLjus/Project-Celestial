@@ -1,0 +1,5 @@
+mtl Terrain.mtl
+hMap heightmap.bmp
+w 1024
+h 100
+d 1024

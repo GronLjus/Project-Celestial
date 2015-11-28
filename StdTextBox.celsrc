@@ -1,0 +1,21 @@
+#StdVars.celsrc
+
+$
+{
+	lastTime = 0
+	wait = 250
+}
+
+if ?eTime-lastTime > wait-1
+{
+	lastTime = ?eTime
+
+	if ?s0 : '\b'
+	{
+		erase ?0 1
+	}
+	else
+	{
+		append ?s0 ?0
+	}
+}
