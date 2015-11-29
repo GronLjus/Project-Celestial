@@ -3,13 +3,13 @@
 #include "BufferObject.h"
 #include "IBounding.h"
 #include "TextureResourceObject.h"
-#include "IContainable.h"
+#include "BaseObject.h"
 
 namespace Resources
 {
 
 	///<summary>This class handles all data that forms a mesh</summary>
-	class MeshObject : public IContainable
+	class MeshObject : public BaseObject
 	{
 		public:
 		

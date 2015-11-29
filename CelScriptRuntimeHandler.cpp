@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "CelScriptRunTimeHandler.h"
 #include "GUIObject.h"
+#include "CelScriptCompiled.h"
 #include <thread>
 
 using namespace Logic;
@@ -1188,7 +1189,7 @@ RunTimeError WaitForVar(unsigned int returnVar, unsigned char* params, unsigned 
 }
 #pragma endregion
 
-CelScriptRuntimeHandler::CelScriptRuntimeHandler(MessageQueue* mQueue)
+CelScriptRuntimeHandler::CelScriptRuntimeHandler(MessageQueue* mQueue, CelestialSlicedList<BaseObject*>* gameObjects)
 {
 
 	maxOutMessages = 128;
@@ -1269,45 +1270,59 @@ CelScriptRuntimeHandler::CelScriptRuntimeHandler(MessageQueue* mQueue)
 	operators[opCode_WTFRVR] = WaitForVar;
 
 	rtc = new CelestialSlicedList<RunTimeCommons*>(20,nullptr);
-	scripts = new CelestialSlicedList<CelScriptCompiled*>(20);
+	this->gameObjects = gameObjects;
 	scriptStarts = new CelestialSlicedList<unsigned int>(20, 0);
 	scriptNumParams = new CelestialSlicedList<unsigned int>(20, 0);
 	scriptStrParams = new CelestialSlicedList<unsigned int>(20, 0);
 	scriptParents = new CelestialSlicedList<unsigned int>(20, 0);
 	scriptInited = new CelestialSlicedList<bool>(20);
+	scriptIds = 0;
 
 }
 
-RunTimeError CelScriptRuntimeHandler::AddScript(CelScriptCompiled* script,int &id)
+RunTimeError CelScriptRuntimeHandler::initScript(Resources::CelScriptCompiled* script, unsigned int id)
 {
+	RunTimeError er = RunTimeError_OK;
 
-	id = scripts->Add(script);
-
-	RunTimeCommons* newRtc = new RunTimeCommons();
-	newRtc->memory = new MemoryPool(128);
-	newRtc->mQueue = mQueue;
-	newRtc->varWaiting = new CelestialSlicedList<bool>(100, false);
-	newRtc->outMessageBuffer = new Message[maxOutMessages];
-	newRtc->outMessages = maxOutMessages;
-
-	for (int i = 0; i < maxOutMessages; i++)
+	if (script->GetScriptId() == 0)
 	{
 
-		newRtc->outMessageBuffer[i].read = true;
-		newRtc->outMessageBuffer[i].source = MessageSource_CELSCRIPT;
-		newRtc->outMessageBuffer[i].senderId = id;
+		scriptIds++;
+		script->SetScriptId(scriptIds);
+
+		RunTimeCommons* newRtc = new RunTimeCommons();
+		newRtc->boundObject = id;
+		newRtc->memory = new MemoryPool(128);
+		newRtc->mQueue = mQueue;
+		newRtc->varWaiting = new CelestialSlicedList<bool>(100, false);
+		newRtc->outMessageBuffer = new Message[maxOutMessages];
+		newRtc->outMessages = maxOutMessages;
+
+		for (int i = 0; i < maxOutMessages; i++)
+		{
+
+			newRtc->outMessageBuffer[i].read = true;
+			newRtc->outMessageBuffer[i].source = MessageSource_CELSCRIPT;
+			newRtc->outMessageBuffer[i].senderId = scriptIds - 1;
+		}
+
+		int size;
+		unsigned char* command = script->GetCode(size, 0);
+		unsigned int scriptStart = command[0] | ((int)command[1] << 8) | ((int)command[2] << 16) | ((int)command[3] << 24);
+		scriptStarts->Add(scriptStart);
+		scriptInited->Add(scriptStart == 1, scriptIds - 1);
+		newRtc->counter = 1;
+
+		rtc->Add(newRtc, scriptIds - 1);
+
+		if (!(scriptInited->GetValue(scriptIds - 1)))
+		{
+
+			er = commonScripts(scriptStart, newRtc, script);
+
+		}
 	}
-	
-	int size;
-	unsigned char* command = script->GetCode(size, 0);
-	unsigned int scriptStart = command[0] | ((int)command[1] << 8) | ((int)command[2] << 16) | ((int)command[3] << 24);
-	scriptStarts->Add(scriptStart);
-	scriptInited->Add(scriptStart == 1, id);
-	newRtc->counter = 1;
 
-	RunTimeError er = commonScripts(scriptStart,newRtc,id);
-
-	rtc->Add(newRtc,id);
 	return er;
 
 }
@@ -1315,21 +1330,27 @@ RunTimeError CelScriptRuntimeHandler::AddScript(CelScriptCompiled* script,int &i
 RunTimeError CelScriptRuntimeHandler::AddScriptParam(int scriptId, int value)
 {
 
-	unsigned int par = scriptNumParams->GetValue(scriptId);
-	unsigned int parPlace = scripts->GetValue(scriptId)->GetAdr(par, false);
-	scriptNumParams->Add(par + 1, scriptId);
+	CelScriptCompiled* script = (CelScriptCompiled*)gameObjects->GetValue(scriptId); 
+	RunTimeError er = initScript(script, scriptId);
+
+	unsigned int par = scriptNumParams->GetValue(script->GetScriptId() - 1);
+	unsigned int parPlace = script->GetAdr(par, false);
+	scriptNumParams->Add(par + 1, script->GetScriptId() - 1);
 	unsigned char charArr[4]{value >> 0, value >> 8, value >> 16, value >> 24 };
-	rtc->GetValue(scriptId)->memory->AddVariable(parPlace-1, charArr,4);
-	return RunTimeError_OK;
+	rtc->GetValue(script->GetScriptId() - 1)->memory->AddVariable(parPlace - 1, charArr, 4);
+	return er;
 
 }
 
 RunTimeError CelScriptRuntimeHandler::AddScriptParam(int scriptId, std::string value)
 {
 
-	unsigned int par = scriptStrParams->GetValue(scriptId);
-	unsigned int parPlace = scripts->GetValue(scriptId)->GetAdr(par, true);
-	scriptStrParams->Add(par + 1, scriptId);
+	CelScriptCompiled* script = (CelScriptCompiled*)gameObjects->GetValue(scriptId);
+	RunTimeError er = initScript(script, scriptId);
+
+	unsigned int par = scriptStrParams->GetValue(script->GetScriptId()-1);
+	unsigned int parPlace = script->GetAdr(par, true);
+	scriptStrParams->Add(par + 1, script->GetScriptId() - 1);
 	unsigned char* charArr = new unsigned char[value.length() + 4];
 	charArr[0] = value.length() >> 0; 
 	charArr[1] = value.length() >> 8; 
@@ -1343,13 +1364,13 @@ RunTimeError CelScriptRuntimeHandler::AddScriptParam(int scriptId, std::string v
 
 	}
 
-	rtc->GetValue(scriptId)->memory->AddVariable(parPlace-1, charArr, value.length()+4);
+	rtc->GetValue(script->GetScriptId() - 1)->memory->AddVariable(parPlace - 1, charArr, value.length() + 4);
 	delete[] charArr;
-	return RunTimeError_OK;
+	return er;
 
 }
 
-RunTimeError CelScriptRuntimeHandler::commonScripts(unsigned int end, RunTimeCommons* thisRtc, unsigned int id)
+RunTimeError CelScriptRuntimeHandler::commonScripts(unsigned int end, RunTimeCommons* thisRtc, CelScriptCompiled* script)
 {
 
 	RunTimeError er = RunTimeError_OK;
@@ -1361,9 +1382,9 @@ RunTimeError CelScriptRuntimeHandler::commonScripts(unsigned int end, RunTimeCom
 	{
 
 		int size;
-		unsigned char* command = scripts->GetValue(id)->GetCode(size, thisRtc->counter);
+		unsigned char* command = script->GetCode(size, thisRtc->counter);
 		unsigned int retVal = command[0] | ((int)command[1] << 8) | ((int)command[2] << 16) | ((int)command[3] << 24);
-		er = operators[command[4]](retVal, &command[5], size - 5, id, thisRtc);
+		er = operators[command[4]](retVal, &command[5], size - 5, script->GetScriptId()-1, thisRtc);
 
 		if (thisRtc->status == scriptStatus_RUNOTHERSCRIPT)
 		{
@@ -1402,8 +1423,8 @@ RunTimeError CelScriptRuntimeHandler::commonScripts(unsigned int end, RunTimeCom
 	else if (er == RunTimeError_OK)
 	{
 
-		scriptInited->Add(true, id);
-		thisRtc->counter = scriptStarts->GetValue(id);
+		scriptInited->Add(true, script->GetScriptId()-1);
+		thisRtc->counter = scriptStarts->GetValue(script->GetScriptId()-1);
 		thisRtc->status = scriptStatus_PRIMED;
 
 	}
@@ -1415,8 +1436,16 @@ RunTimeError CelScriptRuntimeHandler::commonScripts(unsigned int end, RunTimeCom
 RunTimeError CelScriptRuntimeHandler::RunScript(int id,unsigned int stackId, unsigned int eTime)
 {
 
-	CelScriptCompiled* script = scripts->GetValue(id);
-	RunTimeCommons* thisRtc = rtc->GetValue(id);
+	CelScriptCompiled* script = (CelScriptCompiled*)gameObjects->GetValue(id);
+	RunTimeError er = initScript(script, id);
+
+	if (er != RunTimeError_OK)
+	{
+
+		return er;
+	}
+
+	RunTimeCommons* thisRtc = rtc->GetValue(script->GetScriptId()-1);
 	thisRtc->stack = stackId;
 
 	if (script != nullptr && thisRtc != nullptr)
@@ -1425,18 +1454,18 @@ RunTimeError CelScriptRuntimeHandler::RunScript(int id,unsigned int stackId, uns
 		if (thisRtc->status == scriptStatus_PRIMED)
 		{
 
-			unsigned int parPlace = scripts->GetValue(id)->GetAdr(RunTimeParams_ETIME);
+			unsigned int parPlace = script->GetAdr(RunTimeParams_ETIME);
 
 			if (parPlace != 0)
 			{
 
 				unsigned char charArr[4]{eTime >> 0, eTime >> 8, eTime >> 16, eTime >> 24 };
-				rtc->GetValue(id)->memory->AddVariable(parPlace-1, charArr, 4);
+				rtc->GetValue(script->GetScriptId() - 1)->memory->AddVariable(parPlace - 1, charArr, 4);
 
 			}
 		}
 
-		RunTimeError er = commonScripts(scripts->GetValue(id)->GetCodeSize(), thisRtc, id);
+		RunTimeError er = commonScripts(script->GetCodeSize(), thisRtc, script);
 		return abort ? RunTimeError_ABORT : er;
 
 	}
@@ -1449,8 +1478,8 @@ void CelScriptRuntimeHandler::SetWaitingScriptVar(unsigned int scriptId, unsigne
 {
 
 	RunTimeCommons* thisRtc = rtc->GetValue(scriptId);
+	CelScriptCompiled* script = (CelScriptCompiled*)gameObjects->GetValue(thisRtc->boundObject);
 	thisRtc->pause = true;
-	CelScriptCompiled* script = scripts->GetValue(scriptId);
 	unsigned char commandVal[8];
 
 	commandVal[0] = scriptVar >> 0;
@@ -1476,13 +1505,6 @@ void CelScriptRuntimeHandler::SetWaitingScriptVar(unsigned int scriptId, unsigne
 	
 }
 
-void CelScriptRuntimeHandler::DeleteScript(int id)
-{
-
-	scripts->Remove(id);
-
-}
-
 void CelScriptRuntimeHandler::KillExecutions()
 {
 
@@ -1496,7 +1518,6 @@ CelScriptRuntimeHandler::~CelScriptRuntimeHandler()
 	rtc->KillList();
 	delete rtc;
 	delete[] operators;
-	delete scripts;
 	delete scriptStarts;
 	delete scriptInited;
 	delete scriptNumParams;

@@ -99,18 +99,18 @@ HRESULT Overlord::Init(HWND hwnd)
 	rH->HandleMessage(&mess4);
 	rH->Update(0);
 
-	dbgIn = (GUITextBox*)(rH->GetGuiObjects()->GetValue(rH->GetMessages()->PopMessage()->param1));
+	dbgIn = (GUITextBox*)(rH->GetObjectContainer()->GetValue(rH->GetMessages()->PopMessage()->param1));
 	dbgIn->SetPosition(Vector2(0, 0));
 	dbgIn->SetSize(Vector2(1, 1));
 	dbgIn->Toggle(true);
 
 	int dbgOutId = rH->GetMessages()->PopMessage()->param1;
-	dbgOut = (GUITextBox*)(rH->GetGuiObjects()->GetValue(dbgOutId));
+	dbgOut = (GUITextBox*)(rH->GetObjectContainer()->GetValue(dbgOutId));
 	dbgOut->SetPosition(Vector2(0.0f, 0.0f));
 	dbgOut->SetSize(Vector2(0.5f, 1.0f));
 	dbgOut->Toggle(true);
 
-	dbgPnl = (GUITextBox*)(rH->GetGuiObjects()->GetValue(rH->GetMessages()->PopMessage()->param1));
+	dbgPnl = (GUITextBox*)(rH->GetObjectContainer()->GetValue(rH->GetMessages()->PopMessage()->param1));
 	dbgPnl->SetPosition(Vector2(0.75, 0.0f));
 	dbgPnl->SetSize(Vector2(0.25f, 0.25f));
 	dbgPnl->Toggle(true);
@@ -123,12 +123,12 @@ HRESULT Overlord::Init(HWND hwnd)
 
 	CardHandler* tempCard = gH->GetCardHandler();
 	rH->Init(tempCard, dbgOut,Vector2(gQ.resolutionX,gQ.resolutionY));
-	guiH->Init(rH->GetGuiObjects());
-	cH->Init(rH->GetScriptContainer());
+	guiH->Init(rH->GetObjectContainer());
+	cH->Init(rH->GetObjectContainer());
 	iH->Init(hwnd);
 	pH->Init(nullptr, cam, iH);
 
-	GUILayout* tempLayout = (GUILayout*)(rH->GetGuiObjects()->GetValue(rH->GetMessages()->PopMessage()->param1));
+	GUILayout* tempLayout = (GUILayout*)(rH->GetObjectContainer()->GetValue(rH->GetMessages()->PopMessage()->param1));
 	tempLayout->SetPosition(Vector2(0, 0));
 	tempLayout->SetSize(Vector2(1, 1));
 
@@ -164,23 +164,20 @@ HRESULT Overlord::Init(HWND hwnd)
 	gH->SetScene(scene);
 
 	dbgOut->AddText("Engine Loaded!");
-
 	dbgOut->AddText("Loading root script");
 	Message mess5 = Message(mess);
+	mess5.source = MessageSource_CELSCRIPT;
 	mess5.stringParam = "TestRoot.celsrc";
 	mess5.mess = ResourceMess_LOADSCRIPT;
 	rH->HandleMessage(&mess5);
 	rH->Update(0);
-	unsigned int scriptId = rH->GetMessages()->PopMessage()->param1;
+	unsigned int scriptId = rH->GetMessages()->PopMessage()->param3;
 	firstMessage = Message(mess);
 	firstMessage.destination = MessageSource_CELSCRIPT;
 	firstMessage.type = MessageType_SCRIPT;
-	firstMessage.mess = ScriptMess_ADD;
+	firstMessage.mess = ScriptMess_RUN;
 	firstMessage.param1 = scriptId;
 	cH->HandleMessage(&firstMessage);
-	lastMessage = Message(firstMessage);
-	lastMessage.mess = ScriptMess_RUN;
-	cH->HandleMessage(&lastMessage);
 	//cH->Update(0);
 
 	if(res == S_OK)
@@ -547,13 +544,13 @@ Overlord::~Overlord()
 
 	delete inQueue;
 	delete[] messageHandlers;
-	delete rH;
 	delete iH;
 	delete cam;
 	delete gH;
 	delete pH;
 	delete cH;
 	delete guiH;
+	delete rH;
 	isDrawing.unlock();
 	
 }

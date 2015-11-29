@@ -1,6 +1,6 @@
 #pragma once
 #include "CelestialVector.h"
-#include "IContainable.h"
+#include "BaseObject.h"
 #include "Triggers.h"
 #include "CelestialSlicedList.h"
 
@@ -10,7 +10,7 @@ namespace Resources
 	enum GUISnap { GUISnap_TOP, GUISnap_MIDDLE, GUISnap_BOTTOM, GUISnap_RIGHT, GUISnap_LEFT };
 	enum GUIObjects { GUIObjects_TEXTBOX, GUIObjects_LAYOUT, GUIObjects_NA };
 
-	class GUIObject : public IContainable
+	class GUIObject : public BaseObject
 	{
 
 		public:

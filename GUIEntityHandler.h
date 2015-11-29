@@ -1,6 +1,6 @@
 #pragma once
 #include "IHandleMessages.h"
-#include "GUIObject.h"
+#include "BaseObject.h"
 #include "ResourceObject.h"
 #include "CelestialSlicedList.h"
 
@@ -12,12 +12,12 @@ namespace Entities
 
 	public:
 		GUIEntityHandler();
-		void Init(CrossHandlers::CelestialSlicedList<Resources::GUIObject*>* guiObjects);
+		void Init(CrossHandlers::CelestialSlicedList<Resources::BaseObject*>* gameObjects);
 		void Update(unsigned int time);
 		~GUIEntityHandler();
 
 	private:
-		CrossHandlers::CelestialSlicedList<Resources::GUIObject*>* guiObjects;
+		CrossHandlers::CelestialSlicedList<Resources::BaseObject*>* gameObjects;
 		
 	};
 }

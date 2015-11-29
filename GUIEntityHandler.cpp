@@ -13,10 +13,10 @@ GUIEntityHandler::GUIEntityHandler() : IHandleMessages(20,MessageSource_GUIENTIT
 	
 }
 
-void GUIEntityHandler::Init(CelestialSlicedList<GUIObject*>* guiObjects)
+void GUIEntityHandler::Init(CelestialSlicedList<BaseObject*>* gameObjects)
 {
 
-	this->guiObjects = guiObjects;
+	this->gameObjects = gameObjects;
 
 }
 
@@ -34,10 +34,10 @@ void GUIEntityHandler::Update(unsigned int time)
 			currentMessage->mess == GUIMess_ERASE)
 		{
 
-			if (GUIObjects_TEXTBOX == guiObjects->GetValue(currentMessage->param1)->GetType())
+			if (GUIObjects_TEXTBOX == ((GUIObject*)gameObjects->GetValue(currentMessage->param1))->GetType())
 			{
 
-				GUITextBox* obj = ((GUITextBox*)guiObjects->GetValue(currentMessage->param1));
+				GUITextBox* obj = ((GUITextBox*)gameObjects->GetValue(currentMessage->param1));
 
 				if (currentMessage->mess == GUIMess_POST)
 				{

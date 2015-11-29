@@ -591,9 +591,6 @@
     <ClInclude Include="Triggers.h">
       <Filter>Header Files\Resources\Objects\Triggers</Filter>
     </ClInclude>
-    <ClInclude Include="GUIObject.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="CelScriptRunTimeHandler.h">
       <Filter>Header Files\Logic\CelScript\RunTime</Filter>
     </ClInclude>
@@ -611,6 +608,12 @@
     </ClInclude>
     <ClInclude Include="CelestialDoubleListNode.h">
       <Filter>Header Files\CrossHandler-Tools\Container</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseObject.h">
+      <Filter>Header Files\Resources\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="GUIObject.h">
+      <Filter>Header Files\Resources\Objects\GUIObjects</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -823,6 +826,9 @@
     </ClCompile>
     <ClCompile Include="GUIObject.cpp">
       <Filter>Source Files\Resources\Objects\GUIObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="BaseObject.cpp">
+      <Filter>Source Files\Resources\Objects</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

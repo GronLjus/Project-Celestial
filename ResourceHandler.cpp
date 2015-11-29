@@ -9,15 +9,7 @@ ResourceHandler::ResourceHandler() : IHandleMessages(200,MessageSource_RESOURCES
 {
 
 	loader = new ResourceLoader();
-
-	meshes = new CelestialSlicedList<MeshObject*>(32,nullptr);
-	particleSystems = new CelestialSlicedList<IParticleEmitter*>(32, nullptr);
-	guiObjects = new CelestialSlicedList<GUIObject*>(32, nullptr);
-	scripts = new CelestialSlicedList<CelScriptCompiled*>(32, nullptr);
-	lights = new CelestialSlicedList<ILight*>(32, nullptr);
-	objects = new CelestialSlicedList<ResourceObject*>(32, nullptr);
-	keyTriggers = new CelestialSlicedList<KeyTrigger*>(32, nullptr);
-
+	gameObjects = new CelestialSlicedList<BaseObject*>(32, nullptr);
 	filter = MessageType_RESOURCES;
 
 }
@@ -32,24 +24,10 @@ void ResourceHandler::Init(Graphics::CardHandler* &card, TextContainer* outText,
 
 }
 
-CelestialSlicedList<CelScriptCompiled*>* ResourceHandler::GetScriptContainer()
+CelestialSlicedList<BaseObject*>* ResourceHandler::GetObjectContainer() const
 {
 
-	return scripts;
-
-}
-
-CelestialSlicedList<ResourceObject*>* ResourceHandler::GetResourceObjects()
-{
-
-	return objects;
-
-}
-
-CelestialSlicedList<GUIObject*>* ResourceHandler::GetGuiObjects()
-{
-
-	return guiObjects;
+	return gameObjects;
 
 }
 
@@ -66,53 +44,14 @@ void ResourceHandler::Update(unsigned int time)
 		if (currentMessage->mess == ResourceMess_ADDOBJ)
 		{
 
-			ResourceObject* ro = new ResourceObject();
-
-			if (currentMessage->param1 > 0)
-			{
-
-				ro->SetMesh(meshes->GetValue(currentMessage->param1 - 1));
-
-			}
-
-			if (currentMessage->param2 > 0)
-			{
-
-				ro->SetLightEmitter(lights->GetValue(currentMessage->param2 - 1));
-
-			}
-
-			if (currentMessage->param3 > 0)
-			{
-
-				ro->SetParticleEmitter(particleSystems->GetValue(currentMessage->param3 - 1));
-
-			}
-
-			outId = objects->Add(ro);
-			messageBuffer[this->currentMessage].timeSent = time;
-			messageBuffer[this->currentMessage].destination = MessageSource_NA;
-			messageBuffer[this->currentMessage].type = MessageType_NA;
-			messageBuffer[this->currentMessage].mess = EventMess_OBJECTADDED;
-			messageBuffer[this->currentMessage].param1 = outId;
-			messageBuffer[this->currentMessage].read = false;
-			outQueue->PushMessage(&messageBuffer[this->currentMessage]);
-			this->currentMessage = (this->currentMessage + 1) % outMessages;
 
 		}
 		else if (currentMessage->mess == ResourceMess_LOADSCRIPT)
 		{
 
-			outId = scripts->Add(loader->LoadCLScript(currentMessage->stringParam));
-
-			messageBuffer[this->currentMessage].timeSent = time;
-			messageBuffer[this->currentMessage].destination = MessageSource_CELSCRIPT;
-			messageBuffer[this->currentMessage].type = MessageType_SCRIPT;
-			messageBuffer[this->currentMessage].mess = ScriptMess_ADD;
-			messageBuffer[this->currentMessage].param1 = outId;
-			messageBuffer[this->currentMessage].read = false;
-			outQueue->PushMessage(&messageBuffer[this->currentMessage]);
-			this->currentMessage = (this->currentMessage + 1) % outMessages;
+			CelScriptCompiled* bo = loader->LoadCLScript(currentMessage->stringParam);
+			bo->SetId(gameObjects->GetFirstEmpty());
+			outId = gameObjects->Add(bo);
 
 		}
 		else if (currentMessage->mess == ResourceMess_LOADLIGHT)
@@ -123,14 +62,16 @@ void ResourceHandler::Update(unsigned int time)
 			bld.intensity = (float)currentMessage->param2;
 			bld.size = (float)currentMessage->param3;
 			ILight* light = loader->LoadLight(LightType_POINT, bld);
-
-			outId = lights->Add(light);
+			light->SetId(gameObjects->GetFirstEmpty());
+			outId = gameObjects->Add(light);
 
 		}
 		else if (currentMessage->mess == ResourceMess_LOADMESH)
 		{
-			
-			outId = meshes->Add(loader->LoadMeshFromFile(currentMessage->stringParam));
+
+			BaseObject* bo = loader->LoadMeshFromFile(currentMessage->stringParam);
+			bo->SetId(gameObjects->GetFirstEmpty());
+			outId = gameObjects->Add(bo);
 
 		}
 		else if (currentMessage->mess == ResourceMess_LOADGUI)
@@ -138,7 +79,8 @@ void ResourceHandler::Update(unsigned int time)
 
 			GUIObject* obj = loader->LoadGUIObject(GUIObjects(currentMessage->param1), GUISnap_LEFT, GUISnap_TOP);
 			obj->Toggle(true);
-			outId = guiObjects->Add(obj);
+			obj->SetId(gameObjects->GetFirstEmpty());
+			outId = gameObjects->Add(obj);
 
 			messageBuffer[this->currentMessage].timeSent = time;
 			messageBuffer[this->currentMessage].destination = MessageSource_CELSCRIPT;
@@ -157,7 +99,8 @@ void ResourceHandler::Update(unsigned int time)
 			kT->keyCode = currentMessage->param2;
 			kT->scriptToRun = currentMessage->param1;
 			kT->charTrigg = false;
-			outId = keyTriggers->Add(kT);
+			kT->SetId(gameObjects->GetFirstEmpty());
+			outId = gameObjects->Add(kT);
 
 		}
 		else if (currentMessage->mess == ResourceMess_LOADCHARKEYTRIGGER)
@@ -167,20 +110,21 @@ void ResourceHandler::Update(unsigned int time)
 			kT->keyCode = currentMessage->param2;
 			kT->scriptToRun = currentMessage->param1;
 			kT->charTrigg = true;
-			outId = keyTriggers->Add(kT);
+			kT->SetId(gameObjects->GetFirstEmpty());
+			outId = gameObjects->Add(kT);
 
 		}
 		else if (currentMessage->mess == ResourceMess_ADDGUITRIGGER)
 		{
 
-			GUIObject* obj = guiObjects->GetValue(currentMessage->param3);
+			GUIObject* obj = (GUIObject*)gameObjects->GetValue(currentMessage->param3);
 			obj->SetTrigger(TriggerType(currentMessage->param1), currentMessage->param2+1);
 
 		}
 		else if (currentMessage->mess == ResourceMess_SIZEGUI)
 		{
 
-			GUIObject* obj = guiObjects->GetValue(currentMessage->param1);
+			GUIObject* obj = (GUIObject*)gameObjects->GetValue(currentMessage->param1);
 			unsigned int pId = obj->GetParentID();
 			Vector2 size = Vector2((float)currentMessage->param2, (float)currentMessage->param3);
 			Vector2 parentAbSize = screen;
@@ -190,8 +134,8 @@ void ResourceHandler::Update(unsigned int time)
 			{
 
 				pId--;
-				parentSize *= guiObjects->GetValue(pId)->GetSize();
-				pId = guiObjects->GetValue(pId)->GetParentID();
+				parentSize *= ((GUIObject*)gameObjects->GetValue(pId))->GetSize();
+				pId = ((GUIObject*)gameObjects->GetValue(pId))->GetParentID();
 
 			}
 
@@ -202,7 +146,7 @@ void ResourceHandler::Update(unsigned int time)
 		else if (currentMessage->mess == ResourceMess_RESNAPGUI)
 		{
 
-			GUIObject* obj = guiObjects->GetValue(currentMessage->param1);
+			GUIObject* obj = (GUIObject*)gameObjects->GetValue(currentMessage->param1);
 			obj->SetHorizontalSnap(GUISnap(currentMessage->param2));
 			obj->SetHorizontalSnap(GUISnap(currentMessage->param3));
 
@@ -210,7 +154,7 @@ void ResourceHandler::Update(unsigned int time)
 		else if (currentMessage->mess == ResourceMess_POSGUI)
 		{
 
-			GUIObject* obj = guiObjects->GetValue(currentMessage->param1);
+			GUIObject* obj = (GUIObject*)gameObjects->GetValue(currentMessage->param1);
 			unsigned int pId = obj->GetParentID();
 			Vector2 pos = Vector2((float)currentMessage->param2, (float)currentMessage->param3);
 			Vector2 parentAbSize = screen;
@@ -220,8 +164,8 @@ void ResourceHandler::Update(unsigned int time)
 			{
 
 				pId--;
-				parentSize *= guiObjects->GetValue(pId)->GetSize();
-				pId = guiObjects->GetValue(pId)->GetParentID();
+				parentSize *= ((GUIObject*)gameObjects->GetValue(pId))->GetSize();
+				pId = ((GUIObject*)gameObjects->GetValue(pId))->GetParentID();
 
 			}
 
@@ -232,8 +176,8 @@ void ResourceHandler::Update(unsigned int time)
 		else if (currentMessage->mess == ResourceMess_ADDGUITOGUI)
 		{
 
-			GUIObject* obj1 = guiObjects->GetValue(currentMessage->param1);
-			GUIObject* obj2 = guiObjects->GetValue(currentMessage->param2);
+			GUIObject* obj1 = (GUIObject*)gameObjects->GetValue(currentMessage->param1);
+			GUIObject* obj2 = (GUIObject*)gameObjects->GetValue(currentMessage->param2);
 			obj2->AddChild(obj1);
 
 			if (obj1->IsEnabled() && obj2->IsOnScreen())
@@ -244,7 +188,7 @@ void ResourceHandler::Update(unsigned int time)
 				if (obj1->GetTrigger(TriggerType_KEYTRIGGER) > 0)
 				{
 
-					KeyTrigger* kt = keyTriggers->GetValue(obj1->GetTrigger(TriggerType_KEYTRIGGER));
+					KeyTrigger* kt = (KeyTrigger*)gameObjects->GetValue(obj1->GetTrigger(TriggerType_KEYTRIGGER));
 
 					messageBuffer[this->currentMessage].timeSent = time;
 					messageBuffer[this->currentMessage].destination = MessageSource_INPUT;
@@ -286,19 +230,7 @@ ResourceHandler::~ResourceHandler()
 {
 
 	delete loader;
-	meshes->KillList();
-	delete meshes;
-	particleSystems->KillList();
-	delete particleSystems;
-	guiObjects->KillList();
-	delete guiObjects;
-	scripts->KillList();
-	delete scripts;
-	lights->KillList();
-	delete lights;
-	objects->KillList();
-	delete objects;
-	keyTriggers->KillList();
-	delete keyTriggers;
+	gameObjects->KillList();
+	delete gameObjects;
 
 }

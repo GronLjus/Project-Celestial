@@ -19,6 +19,7 @@ CelScriptCompiled::CelScriptCompiled(unsigned int maxParams, unsigned int maxStr
 	cSize = new int[maxCodeSize];
 	codeSize = 0;
 	offset = 0;
+	scriptId = 0;
 
 }
 
@@ -147,24 +148,24 @@ unsigned char* CelScriptCompiled::GetCode(int &size, int place)
 
 }
 
-int CelScriptCompiled::GetId() const
-{
-
-	return id;
-
-}
-
-void CelScriptCompiled::SetId(int id)
-{
-
-	this->id = id;
-
-}
-
 int CelScriptCompiled::GetOffset()
 {
 
 	return offset;
+
+}
+
+unsigned int CelScriptCompiled::GetScriptId() const
+{
+
+	return scriptId;
+
+}
+
+void CelScriptCompiled::SetScriptId(unsigned int scriptId)
+{
+
+	this->scriptId = scriptId;
 
 }
 

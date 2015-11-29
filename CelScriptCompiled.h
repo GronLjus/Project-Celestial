@@ -1,12 +1,12 @@
 #pragma once
-#include "IContainable.h"
+#include "BaseObject.h"
 #include "RunTimeOperations.h"
 
 namespace Resources
 {
 
 	///<summary>The class contains the bytecode of the script</summary>
-	class CelScriptCompiled : public IContainable
+	class CelScriptCompiled : public BaseObject
 	{
 
 		private:
@@ -20,14 +20,13 @@ namespace Resources
 			int maxCodeSize;
 			///<summary>The scripts offset</summary>
 			int offset;
-			///<summary>The scripts id</summary>
-			int id;
 
 			unsigned int* systemParams;
 			unsigned int* paramAdrDic;
 			unsigned int* stringParamAdrDic;
 			unsigned int maxParams;
 			unsigned int maxStringParams;
+			unsigned int scriptId;
 
 		public:
 			CelScriptCompiled(unsigned int maxParams, unsigned int maxStringParams);
@@ -58,10 +57,9 @@ namespace Resources
 			///<returns>The scripts offset</returns>
 			int GetOffset();
 
-			virtual int GetId() const;
-			virtual void SetId(int id);
-
-			~CelScriptCompiled();
+			unsigned int GetScriptId() const;
+			void SetScriptId(unsigned int scriptId);
+			virtual ~CelScriptCompiled();
 
 	};
 }

@@ -1,15 +1,17 @@
 #pragma once
+#include "BaseObject.h"
 
 namespace Resources
 {
 
 	enum TriggerType{ TriggerType_KEYTRIGGER, TriggerType_NA };
 
-	struct KeyTrigger
+	class KeyTrigger : public BaseObject
 	{
-		unsigned int scriptToRun;
-		unsigned int keyCode;
-		bool charTrigg;
+		public:
+			unsigned int scriptToRun;
+			unsigned int keyCode;
+			bool charTrigg;
 
 	};
 }

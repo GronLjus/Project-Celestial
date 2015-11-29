@@ -1,6 +1,6 @@
 #pragma once
 #include "Frustum.h"
-#include "IContainable.h"
+#include "BaseObject.h"
 
 namespace Resources
 {
@@ -23,7 +23,7 @@ namespace Resources
 	};
 
 	///<summary>This interface contains all neceseary functions to abstract the usage of lights. Every light has a number of subs denonting how many shadowmaps/views this light has</summary>
-	class ILight : public IContainable
+	class ILight : public BaseObject
 	{
 
 		public:

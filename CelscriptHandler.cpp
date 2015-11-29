@@ -14,15 +14,16 @@ CelscriptHandler::CelscriptHandler() : IHandleMessages(20,MessageSource_CELSCRIP
 	scriptStacks = new CelestialSlicedList<ScriptStack*>(127, nullptr);
 	takenStacks = new CelestialSlicedList<bool>(127, nullptr);
 	reverseStacks = new CelestialSlicedList<unsigned int>(127, 0);
+	this->objectContainer = nullptr;
 	runTime = nullptr;
 
 }
 
-void CelscriptHandler::Init(CelestialSlicedList<CelScriptCompiled*>* scriptContainer)
+void CelscriptHandler::Init(CelestialSlicedList<BaseObject*>* objectContainer)
 {
 
-	this->scriptContainer = scriptContainer;
-	runTime = new CelScriptRuntimeHandler(outQueue);
+	this->objectContainer = objectContainer;
+	runTime = new CelScriptRuntimeHandler(outQueue, objectContainer);
 
 }
 
@@ -36,7 +37,7 @@ void CelscriptHandler::Update(unsigned int time)
 
 		if (currentMessage->mess == ScriptMess_RUN)
 		{
-			CelScriptCompiled* script = scriptContainer->GetValue(currentMessage->param1);
+			CelScriptCompiled* script = (CelScriptCompiled*)objectContainer->GetValue(currentMessage->param1);
 
 			if (script != nullptr)
 			{
@@ -75,19 +76,6 @@ void CelscriptHandler::Update(unsigned int time)
 			unsigned int val1 = reverseStacks->GetValue(currentMessage->param1);
 			scriptStacks->GetValue(val1)->status = stackStatus_PREPPED;
 
-		}
-		else if (currentMessage->mess == ScriptMess_ADD)
-		{
-
-			int localId;
-			CelScriptCompiled* script = scriptContainer->GetValue(currentMessage->param1);
-
-			if (script != nullptr)
-			{
-
-				runTime->AddScript(script, localId);
-
-			}
 		}
 		else if (currentMessage->mess == ScriptMess_ADDPARASTR)
 		{

@@ -15,7 +15,7 @@ namespace Logic
 		public:
 			CelscriptHandler();
 			///<summary>Initializes the handler</summary>
-			void Init(CrossHandlers::CelestialSlicedList<Resources::CelScriptCompiled*>* scriptContianer);
+			void Init(CrossHandlers::CelestialSlicedList<Resources::BaseObject*>* objectContainer);
 			///<summary>Updates the handler</summary>
 			void Update(unsigned int time);
 			void Kill();
@@ -36,7 +36,7 @@ namespace Logic
 				}
 			};
 
-			CelestialSlicedList<Resources::CelScriptCompiled*>* scriptContainer;
+			CelestialSlicedList<Resources::BaseObject*>* objectContainer;
 			CelestialSlicedList<ScriptStack*>* scriptStacks;
 			CelestialSlicedList<unsigned int>* reverseStacks;
 			CelestialSlicedList<bool>* takenStacks;
