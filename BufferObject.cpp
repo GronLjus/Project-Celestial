@@ -10,6 +10,60 @@ BufferObject::BufferObject()
 	this->lDxBuffer = nullptr;
 	this->aDxBuffer = nullptr;
 
+	tempBuffer = nullptr;
+	step = 0;
+	totTemp = 0;
+
+}
+
+void BufferObject::SetStep(unsigned int step)
+{
+
+	this->step = step;
+
+}
+
+void BufferObject::IncreaseTemp(unsigned int to)
+{
+
+	this->totTemp = to;
+
+}
+
+void BufferObject::SetTemp(void* temp)
+{
+
+	tempBuffer = temp;
+
+}
+
+unsigned int BufferObject::GetStep() const
+{
+
+	return step;
+
+}
+
+unsigned int BufferObject::GetTempAmount() const
+{
+
+	return totTemp;
+
+}
+
+void* BufferObject::GetTempBuffer() const
+{
+
+	return tempBuffer;
+
+}
+
+void BufferObject::ResetTemp()
+{
+
+	tempBuffer = nullptr;
+	totTemp = 0;
+
 }
 
 void BufferObject::SetDXBuffer(DXBufferObject* object)
@@ -71,6 +125,13 @@ DXBufferObject* BufferObject::GetLastDXBuffer()
 
 BufferObject::~BufferObject()
 {
+
+	if (tempBuffer != nullptr)
+	{
+	
+		delete[] tempBuffer;
+
+	}
 
 	if(fDxBuffer != nullptr)
 	{

@@ -4,8 +4,8 @@
 namespace CrossHandlers
 {
 
-	enum MessageSource{ MessageSource_RESOURCES, MessageSource_GUIENTITIES, MessageSource_CELSCRIPT, MessageSource_GRAPHICS, MessageSource_INPUT, MessageSource_MASTER, MessageSource_NA };
-	enum MessageType{ MessageType_INPUT, MessageType_SCRIPT, MessageType_RESOURCES, MessageType_GUIENTITIES, MessageType_GRAPHICS, MessageType_EVENT, MessageType_SYSTEM, MessageType_NA };
+	enum MessageSource{ MessageSource_RESOURCES, MessageSource_ENTITIES, MessageSource_GUIENTITIES, MessageSource_CELSCRIPT, MessageSource_GRAPHICS, MessageSource_INPUT, MessageSource_MASTER, MessageSource_NA };
+	enum MessageType{ MessageType_INPUT, MessageType_SCRIPT, MessageType_RESOURCES, MessageType_ENTITIES, MessageType_GUIENTITIES, MessageType_GRAPHICS, MessageType_EVENT, MessageType_SYSTEM, MessageType_NA };
 
 	enum InputMess{ InputMess_CHARDOWN, InputMess_NONCHARDOWN, InputMess_MOUSEMOVE, InputMess_TOGGLESCRIPTTRIGGER_KEYPRESS, InputMess_TOGGLESCRIPTTRIGGER_MOUSEMOVE, InputMess_NA };
 	enum ScriptMess{ ScriptMess_RUN, ScriptMess_RUNFROM, ScriptMess_ADDPARNUM, ScriptMess_ADDPARASTR, ScriptMess_RESUME, ScriptMess_CATCHUP, ScriptMess_NA };
@@ -15,8 +15,9 @@ namespace CrossHandlers
 	};
 	enum EventMess{ EventMess_OBJECTADDED, EventMess_SCRIPTADDED, EventMess_GUIOBJECTADDED, EventMess_WAITFORFRAME, EventMess_NA };
 	enum GUIMess{ GUIMess_POST, GUIMess_APPEND, GUIMess_CLEAR, GUIMess_ERASE, GUIMess_NA };
-	enum GraphicMess{ GraphicMess_GETSCREEN, GraphicMess_NA};
+	enum GraphicMess{ GraphicMess_GETSCREEN, GraphicMess_SETGAMEBOARD, GraphicMess_UPDATEGAMEBOARDBUFFERS, GraphicMess_NA };
 
+	enum GameBoardMess{ GameBoardMess_ADDMESH, GameBoardMess_ADDOBJECT, GameBoardMess_SETGAMEBOARD, GameBoardMess_NA };
 	enum SystemMess{SystemMess_GETSCREENRES,SystemMesss_NA};
 
 	struct Message

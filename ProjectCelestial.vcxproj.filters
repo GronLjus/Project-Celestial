@@ -241,6 +241,21 @@
     <Filter Include="Header Files\Resources\Objects\Triggers">
       <UniqueIdentifier>{02d05bac-168a-4eac-b74b-bd19a4c8e2b3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Entities\Handlers">
+      <UniqueIdentifier>{c6d68e5f-2f4d-4a03-b92a-83e5722705c2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Entities\Objects">
+      <UniqueIdentifier>{55365cbb-48a6-4750-8a5e-b663ad9e2eb0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Entities\Objects">
+      <UniqueIdentifier>{09077c9c-c7f2-41ab-bd4d-b403dcd152d1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\CrossHandler-Tools\Container">
+      <UniqueIdentifier>{612bcde4-7dbd-4e11-9667-8f3778a662b6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Entities\Handlers">
+      <UniqueIdentifier>{2fd99628-013b-4609-b285-fccb4611fce0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Project Celestial.h">
@@ -585,9 +600,6 @@
     <ClInclude Include="ResourceObject.h">
       <Filter>Header Files\Resources\Objects</Filter>
     </ClInclude>
-    <ClInclude Include="GUIEntityHandler.h">
-      <Filter>Header Files\Entities</Filter>
-    </ClInclude>
     <ClInclude Include="Triggers.h">
       <Filter>Header Files\Resources\Objects\Triggers</Filter>
     </ClInclude>
@@ -614,6 +626,24 @@
     </ClInclude>
     <ClInclude Include="GUIObject.h">
       <Filter>Header Files\Resources\Objects\GUIObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="GUIEntityHandler.h">
+      <Filter>Header Files\Entities\Handlers</Filter>
+    </ClInclude>
+    <ClInclude Include="GameBoardHandler.h">
+      <Filter>Header Files\Entities\Handlers</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject.h">
+      <Filter>Header Files\Resources\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="DrawingBoard.h">
+      <Filter>Header Files\Entities\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="GameBoard.h">
+      <Filter>Header Files\Resources\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjectTree.h">
+      <Filter>Header Files\CrossHandler-Tools\Container</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -818,9 +848,6 @@
     <ClCompile Include="ResourceObject.cpp">
       <Filter>Source Files\Resources\Objects</Filter>
     </ClCompile>
-    <ClCompile Include="GUIEntityHandler.cpp">
-      <Filter>Source Files\Entities</Filter>
-    </ClCompile>
     <ClCompile Include="CelScriptRuntimeHandler.cpp">
       <Filter>Source Files\Logic\CelScript\CelScriptRuntime</Filter>
     </ClCompile>
@@ -829,6 +856,24 @@
     </ClCompile>
     <ClCompile Include="BaseObject.cpp">
       <Filter>Source Files\Resources\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="GameObject.cpp">
+      <Filter>Source Files\Resources\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="ObjectTree.cpp">
+      <Filter>Source Files\CrossHandler-Tools\Container</Filter>
+    </ClCompile>
+    <ClCompile Include="DrawingBoard.cpp">
+      <Filter>Source Files\Entities\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="GameBoard.cpp">
+      <Filter>Source Files\Resources\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="GUIEntityHandler.cpp">
+      <Filter>Source Files\Entities\Handlers</Filter>
+    </ClCompile>
+    <ClCompile Include="GameBoardHandler.cpp">
+      <Filter>Source Files\Entities\Handlers</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

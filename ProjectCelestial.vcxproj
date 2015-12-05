@@ -184,6 +184,7 @@
     <ClInclude Include="CommonParticle.h" />
     <ClInclude Include="CrossHandlerHeader.h" />
     <ClInclude Include="CelscriptHandler.h" />
+    <ClInclude Include="DrawingBoard.h" />
     <ClInclude Include="DXBufferObject.h" />
     <ClInclude Include="CelestialBufferHandler.h" />
     <ClInclude Include="Camera.h" />
@@ -193,6 +194,9 @@
     <ClInclude Include="DXTextureResource.h" />
     <ClInclude Include="DXTextureResourceViews.h" />
     <ClInclude Include="CelScriptSourceLoader.h" />
+    <ClInclude Include="GameBoard.h" />
+    <ClInclude Include="GameBoardHandler.h" />
+    <ClInclude Include="GameObject.h" />
     <ClInclude Include="GUIEntityHandler.h" />
     <ClInclude Include="IFileCLLoader.h" />
     <ClInclude Include="IHandleMessages.h" />
@@ -240,6 +244,7 @@
     <ClInclude Include="CelestialMathHeader.h" />
     <ClInclude Include="MemoryPool.h" />
     <ClInclude Include="MessageQueue.h" />
+    <ClInclude Include="ObjectTree.h" />
     <ClInclude Include="ResourceHandler.h" />
     <ClInclude Include="ResourceHeader.h" />
     <ClInclude Include="RunTimeOperations.h" />
@@ -307,10 +312,14 @@
     <ClCompile Include="ColourLoader.cpp" />
     <ClCompile Include="CommonParticle.cpp" />
     <ClCompile Include="CelscriptHandler.cpp" />
+    <ClCompile Include="DrawingBoard.cpp" />
     <ClCompile Include="DrawScene.cpp" />
     <ClCompile Include="DXBufferObject.cpp" />
     <ClCompile Include="DXTextureResource.cpp" />
     <ClCompile Include="DXTextureResourceViews.cpp" />
+    <ClCompile Include="GameBoard.cpp" />
+    <ClCompile Include="GameBoardHandler.cpp" />
+    <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="GUIEntityHandler.cpp" />
     <ClCompile Include="Frustum.cpp" />
     <ClCompile Include="GraphicHandler.cpp" />
@@ -324,6 +333,7 @@
     <ClCompile Include="Intermediator.cpp" />
     <ClCompile Include="MemoryPool.cpp" />
     <ClCompile Include="MessageQueue.cpp" />
+    <ClCompile Include="ObjectTree.cpp" />
     <ClCompile Include="ResourceHandler.cpp" />
     <ClCompile Include="ShadowMapConstants.cpp" />
     <ClCompile Include="LightParticleEmitter.cpp" />

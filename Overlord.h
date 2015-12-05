@@ -1,5 +1,6 @@
 #pragma once
 #include "CelscriptHandler.h"
+#include "GameBoardHandler.h"
 #include "GraphicHandler.h"
 #include "ResourceHandler.h"
 #include "InputHandler.h"
@@ -54,7 +55,7 @@ namespace Logic
 			Input::InputHandler* iH;
 			///<summary>The pointer to handler handling any player-user interactions</summary>
 			PlayerHandler* pH;
-
+			Entities::GameBoardHandler* gBH;
 			CelscriptHandler* cH;
 			Entities::GUIEntityHandler* guiH;
 			Message firstMessage;

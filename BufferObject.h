@@ -17,6 +17,9 @@ namespace CrossHandlers
 			///<summary>A pointer to the active dxBuffer</summary>
 			DXBufferObject* aDxBuffer;
 
+			unsigned int step;
+			unsigned int totTemp;
+			void* tempBuffer;
 		public:
 			BufferObject();
 			///<summary>Sets the first underlying dxbuffer the object uses</summary>
@@ -37,6 +40,14 @@ namespace CrossHandlers
 			///<summary>Gets the active dxBuffer</summary>
 			///<returns>A pointer to the active dxBuffer</returns>
 			DXBufferObject* GetActiveDXBuffer();
+
+			void SetStep(unsigned int step);
+			void IncreaseTemp(unsigned int to);
+			void SetTemp(void* temp);
+			unsigned int GetStep() const;
+			unsigned int GetTempAmount() const;
+			void* GetTempBuffer() const;
+			void ResetTemp();
 			~BufferObject();
 	};
 }

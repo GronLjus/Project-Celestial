@@ -24,6 +24,7 @@ Overlord::Overlord(void)
 	die = false;
 	isDrawingBool = false;
 	okToDraw = false;
+	gBH = new GameBoardHandler();
 	gH = new GraphicHandler();
 	rH = new ResourceHandler();
 	iH = new InputHandler();
@@ -33,10 +34,12 @@ Overlord::Overlord(void)
 
 	messageHandlers = new IHandleMessages*[MessageSource_NA];
 	messageHandlers[MessageSource_RESOURCES] = rH;
+	messageHandlers[MessageSource_ENTITIES] = gBH;
 	messageHandlers[MessageSource_GUIENTITIES] = guiH;
 	messageHandlers[MessageSource_CELSCRIPT] = cH;
 	messageHandlers[MessageSource_GRAPHICS] = gH;
 	messageHandlers[MessageSource_INPUT] = iH;
+	messageHandlers[MessageSource_ENTITIES] = iH;
 	messageHandlers[MessageSource_MASTER] = nullptr;
 
 	scene = nullptr;
@@ -125,6 +128,7 @@ HRESULT Overlord::Init(HWND hwnd)
 	rH->Init(tempCard, dbgOut,Vector2(gQ.resolutionX,gQ.resolutionY));
 	guiH->Init(rH->GetObjectContainer());
 	cH->Init(rH->GetObjectContainer());
+	gBH->Init(rH->GetObjectContainer());
 	iH->Init(hwnd);
 	pH->Init(nullptr, cam, iH);
 
@@ -544,6 +548,7 @@ Overlord::~Overlord()
 
 	delete inQueue;
 	delete[] messageHandlers;
+	delete gBH;
 	delete iH;
 	delete cam;
 	delete gH;
