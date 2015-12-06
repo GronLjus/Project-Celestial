@@ -19,6 +19,7 @@ namespace CrossHandlers
 	private:
 		///<summary>The first node in the list</summary>
 		CelestialDoubleListNode<T>* first;
+		CelestialDoubleListNode<T>* root;
 		int count;
 		bool del;
 	};
@@ -31,6 +32,7 @@ CelestialStack<T>::CelestialStack(bool delOnPop)
 {
 
 	first = nullptr;
+	root = nullptr;
 	count = 0;
 	del = delOnPop;
 
@@ -81,6 +83,12 @@ T CelestialStack<T>::PopElement()
 				newFirst->SetPrev(nullptr);
 
 			}
+			else
+			{
+
+				root = nullptr;
+
+			}
 		}
 
 		first = newFirst;
@@ -104,7 +112,20 @@ void CelestialStack<T>::PushElement(T element)
 	if (first == nullptr)
 	{
 
-		first = new CelestialDoubleListNode<T>(element);
+		if (root == nullptr)
+		{
+
+			root = new CelestialDoubleListNode<T>(element);
+
+		}
+		else
+		{
+
+			root->SetNodeObject(element);
+
+		}
+
+		first = root;
 
 	}
 	else
@@ -136,12 +157,12 @@ template <class T>
 CelestialStack<T>::~CelestialStack()
 {
 
-	if (first != nullptr)
+	if (root != nullptr)
 	{
 
-		CelestialDoubleListNode<T>* next = first->GetNext();
-		CelestialDoubleListNode<T>* prev = first->GetPrev();
-		delete first;
+		CelestialDoubleListNode<T>* next = root->GetNext();
+		CelestialDoubleListNode<T>* prev = root->GetPrev();
+		delete root;
 
 		while (next != nullptr)
 		{

@@ -39,7 +39,6 @@ Overlord::Overlord(void)
 	messageHandlers[MessageSource_CELSCRIPT] = cH;
 	messageHandlers[MessageSource_GRAPHICS] = gH;
 	messageHandlers[MessageSource_INPUT] = iH;
-	messageHandlers[MessageSource_ENTITIES] = iH;
 	messageHandlers[MessageSource_MASTER] = nullptr;
 
 	scene = nullptr;
@@ -176,14 +175,19 @@ HRESULT Overlord::Init(HWND hwnd)
 	rH->HandleMessage(&mess5);
 	rH->Update(0);
 	unsigned int scriptId = rH->GetMessages()->PopMessage()->param3;
-	firstMessage = Message(mess);
-	firstMessage.destination = MessageSource_CELSCRIPT;
-	firstMessage.type = MessageType_SCRIPT;
-	firstMessage.mess = ScriptMess_RUN;
-	firstMessage.param1 = scriptId;
-	cH->HandleMessage(&firstMessage);
-	//cH->Update(0);
 
+	if (scriptId != 0)
+	{
+
+		firstMessage = Message(mess);
+		firstMessage.destination = MessageSource_CELSCRIPT;
+		firstMessage.type = MessageType_SCRIPT;
+		firstMessage.mess = ScriptMess_RUN;
+		firstMessage.param1 = scriptId;
+		cH->HandleMessage(&firstMessage);
+		//cH->Update(0);
+
+	}
 	if(res == S_OK)
 	{
 
@@ -344,7 +348,7 @@ bool dbgFlag = false;
 
 void Overlord::HandleDrawing(unsigned int time)
 {
-	
+
 	isDrawingBool = true;
 
 	if (okToDraw)
@@ -413,6 +417,7 @@ void Overlord::Update(unsigned int time)
 		iH->Update(time);
 		inStop = clock();
 		
+		gBH->Update(time);
 		guiH->Update(time);
 
 		if (iH->IsKeyDown(Key_TILDE) || iH->IsKeyDown(Key_TAB) && cH != nullptr)

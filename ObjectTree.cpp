@@ -16,9 +16,9 @@ ObjectTree::ObjectTree(unsigned int cells, unsigned int minCells, unsigned int c
 	{
 
 		subTrees = new ObjectTree*[4];
-		Vector2 topLeft = position + Vector2(-((cells*cellSize) / 4), -((cells*cellSize) / 4));
-		Vector2 topRight = position + Vector2((cells*cellSize) / 4, -((cells*cellSize) / 4));
-		Vector2 bottomLeft = position + Vector2(-((cells*cellSize) / 4), (cells*cellSize) / 4);
+		Vector2 topLeft = position + Vector2(-(float)((cells*cellSize) / 4), -(float)((cells*cellSize) / 4));
+		Vector2 topRight = position + Vector2((cells*cellSize) / 4, -(float)((cells*cellSize) / 4));
+		Vector2 bottomLeft = position + Vector2(-(float)((cells*cellSize) / 4), (cells*cellSize) / 4);
 		Vector2 bottomRight = position + Vector2((cells*cellSize) / 4, (cells*cellSize) / 4);
 
 		subTrees[0] = new ObjectTree(cells / 2, minCells, cellSize, topLeft);

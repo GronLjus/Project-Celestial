@@ -86,6 +86,31 @@ RunTimeError SetConstValOperator(unsigned int returnVar, unsigned char* params, 
 
 }
 
+RunTimeError LoadGameBoardOperator(unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int mId, RunTimeCommons* rtc)
+{
+
+	if (paramSize < 4)
+	{
+
+		return RunTimeError_BADPARAMS;
+
+	}
+
+	unsigned int s = 4;
+	unsigned int var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
+	rtc->memory->ReadVariable(var - 1, rtc->intLoader, s);
+
+	Message mess;
+	mess.returnParam = returnVar;
+	mess.destination = MessageSource_RESOURCES;
+	mess.type = MessageType_RESOURCES;
+	mess.mess = ResourceMess_LOADGAMEBOARD;
+	mess.param1 = (rtc->intLoader[0] | ((int)rtc->intLoader[1] << 8) | ((int)rtc->intLoader[2] << 16) | ((int)rtc->intLoader[3] << 24));
+	rtc->varWaiting->Add(true, returnVar);
+	return sendMessageOut(mess, rtc);
+
+}
+
 RunTimeError LoadMeshOperator(unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int mId, RunTimeCommons* rtc)
 {
 
@@ -238,7 +263,7 @@ RunTimeError LoadPanelOperator(unsigned int returnVar, unsigned char* params, un
 RunTimeError AddObjectOperator(unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int mId, RunTimeCommons* rtc)
 {
 
-	if (paramSize < 8)
+	if (paramSize < 4)
 	{
 
 		return RunTimeError_BADPARAMS;
@@ -247,20 +272,13 @@ RunTimeError AddObjectOperator(unsigned int returnVar, unsigned char* params, un
 
 	unsigned int s = 4;
 	unsigned int var1 = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
-	unsigned int var2 = (params[4] | ((int)params[5] << 8) | ((int)params[6] << 16) | ((int)params[7] << 24));
 	rtc->memory->ReadVariable(var1 - 1, rtc->intLoader, s);
-	int meshId = rtc->intLoader[0] | ((int)rtc->intLoader[1] << 8) | ((int)rtc->intLoader[2] << 16) | ((int)rtc->intLoader[3] << 24);
-	rtc->memory->ReadVariable(var2 - 1, rtc->intLoader, s);
-	int lightId = rtc->intLoader[0] | ((int)rtc->intLoader[1] << 8) | ((int)rtc->intLoader[2] << 16) | ((int)rtc->intLoader[3] << 24);
 
 	Message mess;
-	mess.destination = MessageSource_RESOURCES;
-	mess.type = MessageType_RESOURCES;
-	mess.mess = ResourceMess_ADDOBJ;
-	mess.returnParam = returnVar;
-	mess.param1 = meshId;
-	mess.param2 = lightId;
-	rtc->varWaiting->Add(true, returnVar);
+	mess.destination = MessageSource_ENTITIES;
+	mess.type = MessageType_ENTITIES;
+	mess.mess = GameBoardMess_ADDOBJECT;
+	mess.param1 = rtc->intLoader[0] | ((int)rtc->intLoader[1] << 8) | ((int)rtc->intLoader[2] << 16) | ((int)rtc->intLoader[3] << 24);
 	return sendMessageOut(mess, rtc);
 
 }
@@ -1079,6 +1097,29 @@ RunTimeError RunScriptOperator(unsigned int returnVar, unsigned char* params, un
 
 }
 
+RunTimeError SetGameBoardOperator(unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int mId, RunTimeCommons* rtc)
+{
+
+	if (paramSize < 4)
+	{
+
+		return RunTimeError_BADPARAMS;
+
+	}
+
+	unsigned int s = 4;
+	unsigned int var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
+	rtc->memory->ReadVariable(var - 1, rtc->intLoader, s);
+
+	Message mess;
+	mess.destination = MessageSource_ENTITIES;
+	mess.type = MessageType_ENTITIES;
+	mess.mess = GameBoardMess_SETGAMEBOARD;
+	mess.param1 = (rtc->intLoader[0] | ((int)rtc->intLoader[1] << 8) | ((int)rtc->intLoader[2] << 16) | ((int)rtc->intLoader[3] << 24));
+	return sendMessageOut(mess, rtc);
+
+}
+
 RunTimeError SetScriptParNumOperator(unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int mId, RunTimeCommons* rtc)
 {
 
@@ -1197,7 +1238,6 @@ CelScriptRuntimeHandler::CelScriptRuntimeHandler(MessageQueue* mQueue, Celestial
 	this->mQueue = mQueue;
 
 	this->operators = new ExecuteFunction[opcode_NA];
-	operators[opcode_ADDOBJECT] = AddObjectOperator;
 
 	operators[opcode_SETCONST] = SetConstValOperator;
 	operators[opcode_SETVAR] = SetVarValOperator;
@@ -1209,8 +1249,10 @@ CelScriptRuntimeHandler::CelScriptRuntimeHandler(MessageQueue* mQueue, Celestial
 	operators[opcode_LOADCHRKYTRGR] = LoadKeyTriggerOperatorChar;
 	operators[opcode_LOADTXTBX] = LoadTextBoxOperator;
 	operators[opcode_LOADPANEL] = LoadPanelOperator;
+	operators[opcode_LOADGMBRD] = LoadGameBoardOperator;
 
 	operators[opcode_ADDOBJECT] = AddObjectOperator;
+	operators[opcode_SETGMEBRD] = SetGameBoardOperator;
 
 	operators[opcode_GETSCRNX] = GetScreenWidthOperator;
 	operators[opcode_GETSCRNY] = GetScreenHeightOperator;

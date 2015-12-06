@@ -5,4 +5,6 @@ $
 }
 
 testPar = load script 'TestRoot2.celsrc'
+testPar2 = load gameboard 1024
 run testPar 9 'a'
+set gameboard testPar2

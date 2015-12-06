@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "ResourceHandler.h"
+#include "GameBoard.h"
 
 using namespace Resources;
 using namespace CrossHandlers;
@@ -41,18 +42,26 @@ void ResourceHandler::Update(unsigned int time)
 
 		unsigned int outId = 0;
 
-		if (currentMessage->mess == ResourceMess_ADDOBJ)
+		if (currentMessage->mess == ResourceMess_LOADGAMEBOARD)
 		{
 
+			GameBoard* bo = new GameBoard(currentMessage->param1);
+			bo->SetId(gameObjects->GetFirstEmpty());
+			outId = gameObjects->Add(bo);
 
 		}
 		else if (currentMessage->mess == ResourceMess_LOADSCRIPT)
 		{
 
 			CelScriptCompiled* bo = loader->LoadCLScript(currentMessage->stringParam);
-			bo->SetId(gameObjects->GetFirstEmpty());
-			outId = gameObjects->Add(bo);
 
+			if (bo != nullptr)
+			{
+
+				bo->SetId(gameObjects->GetFirstEmpty());
+				outId = gameObjects->Add(bo);
+
+			}
 		}
 		else if (currentMessage->mess == ResourceMess_LOADLIGHT)
 		{
@@ -72,6 +81,15 @@ void ResourceHandler::Update(unsigned int time)
 			BaseObject* bo = loader->LoadMeshFromFile(currentMessage->stringParam);
 			bo->SetId(gameObjects->GetFirstEmpty());
 			outId = gameObjects->Add(bo);
+
+			messageBuffer[this->currentMessage].timeSent = time;
+			messageBuffer[this->currentMessage].destination = MessageSource_ENTITIES;
+			messageBuffer[this->currentMessage].type = MessageType_ENTITIES;
+			messageBuffer[this->currentMessage].mess = GameBoardMess_ADDMESH;
+			messageBuffer[this->currentMessage].param1 = outId;
+			messageBuffer[this->currentMessage].read = false;
+			outQueue->PushMessage(&messageBuffer[this->currentMessage]);
+			this->currentMessage = (this->currentMessage + 1) % outMessages;
 
 		}
 		else if (currentMessage->mess == ResourceMess_LOADGUI)

@@ -121,6 +121,12 @@ void CelscriptHandler::Update(unsigned int time)
 					takenStacks->Remove(i);
 
 				}
+				else
+				{
+
+					stack->status = stackStatus_PREPPED;
+
+				}
 			}
 		}
 		else
