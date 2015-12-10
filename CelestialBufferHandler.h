@@ -1,5 +1,6 @@
 #pragma once
 #include "IBufferHandler.h"
+#include "DrawingBoard.h"
 
 using namespace CelestialMath;
 
@@ -14,6 +15,11 @@ namespace Graphics
 			///<param name='card'>[in]The device to create buffers from</param>
 			///<param name='meshDictionary'>[in]The meshDictionary to use as id-reference</param>
 			CelestialBufferHandler(ID3D10Device1* card);
+
+			void UpdateMeshBuffers(Entities::DrawingBoard* db);
+
+			ID3D10Buffer* GetVertexBuffer() const;
+			ID3D10Buffer* GetIndexBuffer() const;
 
 			virtual HRESULT InitVertexLayout(void* signature,SIZE_T size);
 			virtual HRESULT InitTerrainVertexLayout(void* signature,SIZE_T size);
@@ -41,23 +47,6 @@ namespace Graphics
 			~CelestialBufferHandler();
 
 		private:
-			///<summary>This struct contains all data needed to represents a vertex</summary>
-			struct Vertex
-			{
-
-				///<summary>The position of the vertex</summary>
-				Vector3 pos;
-				///<summary>The UV-coordinates of the vertex</summary>
-				Vector2 texture;
-				///<summary>The normal of the vertex</summary>
-				Vector3 normal;
-			
-				///<param name='p'>[in]The position of the vector</param>
-				///<param name='t'>[in]The texture of the vector</param>
-				///<param name='n'>[in]The normal of the vector</param>
-				Vertex( Vector3 p,Vector2 t,Vector3 n ) : pos(p), texture(t),normal(n) {}
-				Vertex(){}
-			};
 
 			///<summary>This struct contains the data needed to represent a matrix</summary>
 			struct BufferMatrix
@@ -273,5 +262,9 @@ namespace Graphics
 			int maxVertices;
 			///<summary>The maximum number of lights in a buffer</summary>
 			int maxLights;
+
+			ID3D10Buffer* vertices;
+			ID3D10Buffer* indices;
+
 	};
 }

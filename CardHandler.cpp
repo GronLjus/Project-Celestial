@@ -171,7 +171,7 @@ HRESULT CardHandler::InitShader(TextContainer* errorOut)
 	errorOut->AddText("Creating shaders");
 	HRESULT hr = shader->Init(card, quality, dStyle, backBuffer, errorOut);
 	if (FAILED(hr)){ return hr; }
-	bH = shader->GetBufferHandler();
+	bH = (CelestialBufferHandler*)(shader->GetBufferHandler());
 	shader->ToggleWireFrameMode(wireFrame, dStyle.enlighten);
 	inter = new Intermediator(bH,true,true);
 	underInitiated = true;
@@ -191,6 +191,13 @@ void CardHandler::SetCamera(CrossHandlers::CameraFrame* cam)
 	
 	camera = cam;
 	shader->SetCamera(cam);
+
+}
+
+void CardHandler::UpdateMeshBuffers(Entities::DrawingBoard* db)
+{
+
+	bH->UpdateMeshBuffers(db);
 
 }
 

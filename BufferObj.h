@@ -9,7 +9,7 @@ namespace CrossHandlers
 	{
 
 		private:
-			void** buffer;
+			T* buffer;
 			unsigned int totalSize;
 			unsigned int size;
 			unsigned int increment;
@@ -17,7 +17,7 @@ namespace CrossHandlers
 		public:
 			BufferObject2(unsigned int startSize);
 			unsigned int Add(T object);
-			void** GetBuffer() const;
+			T* GetBuffer() const;
 			unsigned int GetBufferSize() const;
 			~BufferObject2();
 
@@ -33,7 +33,7 @@ BufferObject2<T>::BufferObject2(unsigned int startSize)
 	totalSize = startSize;
 	increment = startSize;
 	size = 0;
-	buffer = (void**)(new T*[totalSize]);
+	buffer = new T[totalSize];
 
 }
 
@@ -45,7 +45,7 @@ unsigned int BufferObject2<T>::Add(T object)
 	{
 
 		totalSize += increment;
-		void** newBuffer = new void*[totalSize];
+		T* newBuffer = new T[totalSize];
 
 		for (unsigned int i = 0; i < size; i++)
 		{
@@ -59,14 +59,14 @@ unsigned int BufferObject2<T>::Add(T object)
 
 	}
 
-	((T*)buffer)[size] = object;
+	buffer[size] = object;
 	size++;
 	return size - 1;
 
 }
 
 template <class T>
-void** BufferObject2<T>::GetBuffer() const
+T* BufferObject2<T>::GetBuffer() const
 {
 
 	return buffer;

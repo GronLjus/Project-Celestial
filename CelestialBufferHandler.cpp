@@ -5,6 +5,7 @@ using namespace Graphics;
 using namespace CrossHandlers;
 using namespace Resources;
 using namespace CelestialMath;
+using namespace Entities;
 
 CelestialBufferHandler::CelestialBufferHandler(ID3D10Device1* card)
 {
@@ -14,8 +15,10 @@ CelestialBufferHandler::CelestialBufferHandler(ID3D10Device1* card)
 	maxLights = 100;
 	maxInstances = 200;//Gives us a buffersize of 200*2^7=25600 bytes
 	strides = new UINT[BufferTypes_COUNT];
-	strides[BufferTypes_VERTEX] = sizeof(Vertex);
+	strides[BufferTypes_VERTEX] = sizeof(BufferVertex);
 	strides[BufferTypes_INSTANCE] = sizeof(Transformation);
+	vertices = nullptr;
+	indices = nullptr;
 	maxVertices = 1000;
 
 }
@@ -58,7 +61,7 @@ HRESULT CelestialBufferHandler::InitTerrainVertexLayout(void* signature,SIZE_T s
 	};
 
 	UINT numElements = 3;
-	terrainStride = sizeof(Vertex);
+	terrainStride = sizeof(BufferVertex);
 	return card->CreateInputLayout(layout,numElements,signature,size,&terrainLayout);
 
 }
@@ -119,7 +122,7 @@ HRESULT CelestialBufferHandler::InitMesh(Resources::MeshObject* mesh)
 	if(mesh->GetBuffer(BufferTypes_VERTEX,0) == nullptr)//Fill the vertex buffer
 	{
 
-		Vertex* tempVerts = new Vertex[mesh->GetVertices()];//Use this array as the value for the buffer
+		BufferVertex* tempVerts = new BufferVertex[mesh->GetVertices()];//Use this array as the value for the buffer
 
 		for(int i=0;i<mesh->GetVertices();i++)//Go through each vertexlevel in the mesh
 		{
@@ -150,7 +153,7 @@ HRESULT CelestialBufferHandler::InitMesh(Resources::MeshObject* mesh)
 
 			}
 						
-			tempVerts[i] = Vertex(pos,tex,norm);
+			tempVerts[i] = BufferVertex(pos,tex,norm);
 			
 		}
 		
@@ -368,7 +371,7 @@ void CelestialBufferHandler::InitTerrain(Resources::TerrainMesh* object)
 			if(vAmounts[k] > 0)
 			{
 			
-				Vertex* verts = new Vertex[vAmounts[k]];
+				BufferVertex* verts = new BufferVertex[vAmounts[k]];
 				ID3D10Buffer* buffer = nullptr;
 
 				for(int i=0;i<vAmounts[k];i++)
@@ -399,7 +402,7 @@ void CelestialBufferHandler::InitTerrain(Resources::TerrainMesh* object)
 
 					}
 
-					verts[i] = Vertex(pos,tex,nor);
+					verts[i] = BufferVertex(pos,tex,nor);
 
 				}
 
@@ -420,6 +423,74 @@ void CelestialBufferHandler::InitTerrain(Resources::TerrainMesh* object)
 			}
 		}
 	}
+}
+
+
+void CelestialBufferHandler::UpdateMeshBuffers(Entities::DrawingBoard* db)
+{
+	
+	if (db->GetIndexBuffers() == nullptr || db->GetVertexBuffers() == nullptr)
+	{
+
+		return;
+
+	}
+
+	if (vertices == nullptr)
+	{
+
+		D3D10_BUFFER_DESC bd;
+		bd.Usage = D3D10_USAGE_DYNAMIC;
+		bd.ByteWidth = strides[BufferTypes_VERTEX] * db->GetVertexBuffers()->GetBufferSize(); //total size of buffer in bytes
+		bd.BindFlags = D3D10_BIND_VERTEX_BUFFER;
+		bd.CPUAccessFlags = 0;
+		bd.MiscFlags = 0;
+		D3D10_SUBRESOURCE_DATA initData;
+		initData.pSysMem = db->GetVertexBuffers()->GetBuffer();
+		initData.SysMemPitch = 0;
+		initData.SysMemSlicePitch = 0;
+		HRESULT hr = card->CreateBuffer(&bd, &initData, &vertices);
+
+		D3D10_BUFFER_DESC bd;
+		bd.Usage = D3D10_USAGE_DYNAMIC;
+		bd.ByteWidth = sizeof(unsigned int) * db->GetIndexBuffers()->GetBufferSize(); //total size of buffer in bytes
+		bd.BindFlags = D3D10_BIND_VERTEX_BUFFER;
+		bd.CPUAccessFlags = 0;
+		bd.MiscFlags = 0;
+		D3D10_SUBRESOURCE_DATA initData;
+		initData.pSysMem = db->GetIndexBuffers()->GetBuffer();
+		initData.SysMemPitch = 0;
+		initData.SysMemSlicePitch = 0;
+		HRESULT hr = card->CreateBuffer(&bd, &initData, &indices);
+	}
+	else
+	{
+
+		BufferVertex* mapped = nullptr;
+		vertices->Map(D3D10_MAP_WRITE_DISCARD, 0, (void**)&mapped);
+		mapped = db->GetVertexBuffers()->GetBuffer();
+		vertices->Unmap();
+
+		unsigned int* mapped2 = nullptr;
+		indices->Map(D3D10_MAP_WRITE_DISCARD, 0, (void**)&mapped2);
+		mapped2 = db->GetIndexBuffers()->GetBuffer();
+		indices->Unmap();
+
+	}
+}
+
+ID3D10Buffer* CelestialBufferHandler::GetVertexBuffer() const
+{
+
+	return vertices;
+
+}
+
+ID3D10Buffer* CelestialBufferHandler::GetIndexBuffer() const
+{
+
+	return indices;
+
 }
 
 HRESULT CelestialBufferHandler::moveThroughBuffer(DXBufferObject* buffer,BufferObject* buff,int sizeO,int max)
@@ -632,6 +703,21 @@ void CelestialBufferHandler::Release()
 	vertexLayout->Release();
 	particleLayout->Release();
 	terrainLayout->Release();
+
+	if (vertices != nullptr)
+	{
+
+		vertices->Release();
+
+	}
+
+	if (indices != nullptr)
+	{
+
+		indices->Release();
+
+	}
+
 	//lightLayout->Release();
 
 }

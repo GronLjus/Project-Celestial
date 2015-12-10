@@ -253,7 +253,7 @@ void GraphicHandler::Update(unsigned int time)
 
 			canDraw = false;//Pause rendering
 			while (isDrawing){ this_thread::yield(); }//Wait until we aren't rendering
-			//Dostuff
+			cardHandler->UpdateMeshBuffers(gameBoard->GetDrawingBoard());
 			canDraw = true;
 
 		}
@@ -263,6 +263,7 @@ void GraphicHandler::Update(unsigned int time)
 			canDraw = false;//Pause rendering
 			while (isDrawing){ this_thread::yield(); }//Wait until we aren't rendering
 			this->gameBoard = (GameBoard*)gameObjects->GetValue(currentMessage->param1);
+			cardHandler->UpdateMeshBuffers(gameBoard->GetDrawingBoard());
 			canDraw = true;
 
 		}

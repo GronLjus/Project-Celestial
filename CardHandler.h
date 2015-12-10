@@ -4,6 +4,7 @@
 #include "I2DDrawer.h"
 #include "ICardDebug.h"
 #include "Intermediator.h"
+#include "CelestialBufferHandler.h"
 
 namespace Graphics
 {
@@ -31,6 +32,7 @@ namespace Graphics
 			///<returns>A pointer to the intermediato this cardhandler uses</returns>
 			Intermediator* GetIntermediator();
 
+			void UpdateMeshBuffers(Entities::DrawingBoard* db);
 			///<summary>Draws the meshes</summary>
 			///<param name='scene'>[in]A pointer to the scene to draw</param>
 			void Draw(DrawScene* scene,int flip);
@@ -114,7 +116,7 @@ namespace Graphics
 			CrossHandlers::TextureResourceObject* backBuffer;
 
 			///<summary>A pointer to the bufferhandler for this object</summary>
-			IBufferHandler* bH;
+			CelestialBufferHandler* bH;
 			///<summary>The internal shader used by this object to draw out</summary>
 			IShaderHandler* shader;
 
