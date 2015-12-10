@@ -6,6 +6,7 @@
 #include "LogicScene.h"
 #include "GUILayout.h"
 #include "IHandleMessages.h"
+#include "GameBoard.h"
 
 namespace Graphics
 {
@@ -23,7 +24,7 @@ namespace Graphics
 			///<summary>Initilizes the rest of the graphichandler so we can output complicated drawings</summary>
 			///<param name='camera'>[in]A pointer to the camera used by this and its underobject</param>
 			///<param val='errorOut'>[in]A pointer to a textcontainer to use for debugging</param>
-			HRESULT FullInit(IGraphicCamera* camera, CrossHandlers::TextContainer* errorOut);
+			HRESULT FullInit(IGraphicCamera* camera, CrossHandlers::TextContainer* errorOut, CrossHandlers::CelestialSlicedList<Resources::BaseObject*>* gameObjects);
 
 			///<summary>Updates the handler and prepares to draw</summary>
 			void Update(unsigned int time);
@@ -77,6 +78,9 @@ namespace Graphics
 			virtual ~GraphicHandler(void);
 
 		private:
+			Resources::GameBoard* gameBoard;
+			CrossHandlers::CelestialSlicedList<Resources::BaseObject*>* gameObjects;
+
 			///<summary>What to draw</summary>
 			DrawingStyle dStyle;
 			///<summary>The quality to use when drawing</summary>

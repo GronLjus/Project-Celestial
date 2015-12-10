@@ -9,52 +9,22 @@ using namespace CelestialMath;
 DrawingBoard::DrawingBoard()
 {
 
-	vertexBuffer = new BufferObject();
-	vertexBuffer->SetStep(sizeof(Vertex));
-	indexBuffer = new BufferObject();
-	indexBuffer->SetStep(sizeof(unsigned int));
+	vertexBuffer = new BufferObject2<BufferVertex>(100);
+	indexBuffer = new BufferObject2<unsigned int>(2048);
 
 }
 
-void DrawingBoard::addObjectToVertexBuffer(Resources::MeshObject* mesh)
+unsigned int DrawingBoard::addObjectToVertexBuffer(Resources::MeshObject* mesh)
 {
 
-	Vertex* vertices = (Vertex*)vertexBuffer->GetTempBuffer();
-	unsigned int start = vertexBuffer->GetTempAmount();
-	unsigned int end = start + mesh->GetVertices();
+	unsigned int offset = vertexBuffer->GetBufferSize();
 
-	if (vertices == nullptr)
-	{
-
-		vertices = new Vertex[mesh->GetVertices()];
-
-	}
-	else
-	{
-
-		Vertex* newVertices = new Vertex[vertexBuffer->GetTempAmount() + mesh->GetVertices()];
-
-		for (unsigned int i = 0; i < vertexBuffer->GetTempAmount(); i++)
-		{
-
-			newVertices[i] = vertices[i];
-
-		}
-
-		delete[] vertices;
-		vertices = newVertices;
-		vertexBuffer->SetTemp(vertices);
-
-	}
-
-	vertexBuffer->IncreaseTemp(end);
-
-	for (unsigned int i = start; i < end; i++)
+	for (unsigned int i = 0; i < mesh->GetVertices(); i++)
 	{
 		Vector3 pos;
 		Vector2 tex;
 		Vector3 norm;
-		Resources::MeshObject::Vertex* temp = mesh->GetVertex(start - i);
+		Resources::MeshObject::Vertex* temp = mesh->GetVertex(i);
 
 		if (temp->getVM() >= 3)
 		{
@@ -77,43 +47,17 @@ void DrawingBoard::addObjectToVertexBuffer(Resources::MeshObject* mesh)
 
 		}
 
-		vertices[i] = Vertex(pos, tex, norm);
+
+		vertexBuffer->Add(BufferVertex(pos, tex, norm));
 
 	}
+
+	return offset;
+
 }
 
-void DrawingBoard::addObjectToIndexBuffer(Resources::MeshObject* mesh)
+void DrawingBoard::addObjectToIndexBuffer(Resources::MeshObject* mesh, unsigned int offset)
 {
-
-	unsigned int* indices = (unsigned int*)indexBuffer->GetTempBuffer();
-	unsigned int start = indexBuffer->GetTempAmount();
-
-	if (indices == nullptr)
-	{
-
-		indices = new unsigned int[mesh->GetTotalIndices() * 2];
-
-	}
-	else
-	{
-
-		unsigned int* newIndices = new unsigned int[indexBuffer->GetTempAmount() + mesh->GetTotalIndices() * 2];
-
-		for (unsigned int i = 0; i < indexBuffer->GetTempAmount(); i++)
-		{
-
-			newIndices[i] = indices[i];
-
-		}
-
-		delete[] indices;
-		indices = newIndices;
-		vertexBuffer->SetTemp(indices);
-
-	}
-
-
-	unsigned int totalIndices = start;
 
 	Resources::MeshObject::Face* face = mesh->GetFirstFace();
 
@@ -123,50 +67,42 @@ void DrawingBoard::addObjectToIndexBuffer(Resources::MeshObject* mesh)
 		for (int k = 0; k<face->getSize(); k++)//Go through each index in the face
 		{
 
-			indices[totalIndices] = face->GetIndexAt(k);
-			totalIndices++;
+			indexBuffer->Add(offset + face->GetIndexAt(k));
 
 			if (face->GetAdjIndexAt(k) == -1)
 			{
 
-				indices[totalIndices] = face->GetIndexAt(k);
+				indexBuffer->Add(offset + face->GetIndexAt(k));
 
 			}
 			else
 			{
 
-				indices[totalIndices] = face->GetAdjIndexAt(k);
+				indexBuffer->Add(offset + face->GetAdjIndexAt(k));
 
 			}
-
-			totalIndices++;
-
 		}
 
 		face = face->getNext();
 
 	}
-
-	indexBuffer->IncreaseTemp(totalIndices);
-
 }
 
 void DrawingBoard::AddMesh(MeshObject* mesh)
 {
 
-	addObjectToVertexBuffer(mesh);
-	addObjectToIndexBuffer(mesh);
+	addObjectToIndexBuffer(mesh, addObjectToVertexBuffer(mesh));
 	
 }
 
-BufferObject* DrawingBoard::GetVertexBuffers() const
+BufferObject2<BufferVertex>* DrawingBoard::GetVertexBuffers() const
 {
 
 	return vertexBuffer;
 
 }
 
-BufferObject* DrawingBoard::GetIndexBuffers() const
+BufferObject2<unsigned int>* DrawingBoard::GetIndexBuffers() const
 {
 
 	return indexBuffer;

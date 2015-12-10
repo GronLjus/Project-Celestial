@@ -645,6 +645,12 @@
     <ClInclude Include="ObjectTree.h">
       <Filter>Header Files\CrossHandler-Tools\Container</Filter>
     </ClInclude>
+    <ClInclude Include="BufferObj.h">
+      <Filter>Header Files\CrossHandler-Tools\Buffer</Filter>
+    </ClInclude>
+    <ClInclude Include="BufferPoints.h">
+      <Filter>Header Files\CrossHandler-Tools\Buffer</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Camera.cpp">

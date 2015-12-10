@@ -160,7 +160,9 @@
     <ClInclude Include="BoundingPlane.h" />
     <ClInclude Include="BoundingSphere.h" />
     <ClInclude Include="BoxedBool.h" />
+    <ClInclude Include="BufferObj.h" />
     <ClInclude Include="BufferObject.h" />
+    <ClInclude Include="BufferPoints.h" />
     <ClInclude Include="CameraFrame.h" />
     <ClInclude Include="CelestialDoubleList.h" />
     <ClInclude Include="CelestialDoubleListNode.h" />

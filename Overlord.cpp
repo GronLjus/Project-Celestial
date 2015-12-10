@@ -159,7 +159,7 @@ HRESULT Overlord::Init(HWND hwnd)
 	dbgPnl->AddText("Z");
 
 	dbgOut->AddText("Initiating CelestialGraphics");
-	res = gH->FullInit(cam, dbgOut);
+	res = gH->FullInit(cam, dbgOut, rH->GetObjectContainer());
 	okToDraw = true;
 
 	delete[] temp;

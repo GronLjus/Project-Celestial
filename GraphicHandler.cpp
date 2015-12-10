@@ -5,6 +5,8 @@
 
 #include <stdlib.h>
 
+#include <thread>
+
 using namespace Graphics;
 using namespace CrossHandlers;
 using namespace Resources;
@@ -74,7 +76,7 @@ HRESULT GraphicHandler::PreInit(HWND hwnd, GraphicQuality gQ, DrawingStyle dStyl
 
 }
 
-HRESULT GraphicHandler::FullInit(IGraphicCamera* camera, TextContainer* errorOut)
+HRESULT GraphicHandler::FullInit(IGraphicCamera* camera, TextContainer* errorOut, CelestialSlicedList<BaseObject*>* gameObjects)
 {
 
 	this->camera = camera;
@@ -83,6 +85,7 @@ HRESULT GraphicHandler::FullInit(IGraphicCamera* camera, TextContainer* errorOut
 	isInited = true;
 	debugCard->ToggleWireFrame(wf);
 	debugCard->ToggleNormalSpikes(false);
+	this->gameObjects = gameObjects;
 	return hr;
 
 }
@@ -243,6 +246,24 @@ void GraphicHandler::Update(unsigned int time)
 			messageBuffer[this->currentMessage].read = false;
 			outQueue->PushMessage(&messageBuffer[this->currentMessage]);
 			this->currentMessage = (this->currentMessage + 1) % outMessages;
+
+		}
+		else if (currentMessage->mess == GraphicMess_UPDATEGAMEBOARDBUFFERS)
+		{
+
+			canDraw = false;//Pause rendering
+			while (isDrawing){ this_thread::yield(); }//Wait until we aren't rendering
+			//Dostuff
+			canDraw = true;
+
+		}
+		else if (currentMessage->mess == GraphicMess_SETGAMEBOARD)
+		{
+
+			canDraw = false;//Pause rendering
+			while (isDrawing){ this_thread::yield(); }//Wait until we aren't rendering
+			this->gameBoard = (GameBoard*)gameObjects->GetValue(currentMessage->param1);
+			canDraw = true;
 
 		}
 
