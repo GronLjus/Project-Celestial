@@ -40,7 +40,7 @@ GraphicHandler::GraphicHandler(void) : IHandleMessages(200,MessageSource_GRAPHIC
 	readingFlip = 1;
 	renderFlip = -1;
 	graphicScene = new DrawScene();
-
+	gameBoard = nullptr;
 	filter = MessageType_GRAPHICS;
 
 }
@@ -248,7 +248,7 @@ void GraphicHandler::Update(unsigned int time)
 			this->currentMessage = (this->currentMessage + 1) % outMessages;
 
 		}
-		else if (currentMessage->mess == GraphicMess_UPDATEGAMEBOARDBUFFERS)
+		else if (currentMessage->mess == GraphicMess_UPDATEGAMEBOARDBUFFERS && gameBoard != nullptr)
 		{
 
 			canDraw = false;//Pause rendering

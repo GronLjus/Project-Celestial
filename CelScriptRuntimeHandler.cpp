@@ -130,7 +130,7 @@ RunTimeError LoadMeshOperator(unsigned int returnVar, unsigned char* params, uns
 	mess.type = MessageType_RESOURCES;
 	mess.mess = ResourceMess_LOADMESH;
 	mess.stringParam = dir;
-	rtc->varWaiting->Add(true, returnVar);
+	rtc->varWaiting->Add(true, returnVar-1);
 
 	return sendMessageOut(mess, rtc);
 
@@ -191,7 +191,7 @@ RunTimeError LoadScriptOperator(unsigned int returnVar, unsigned char* params, u
 	mess.returnParam = returnVar;
 	mess.stringParam = path;
 
-	rtc->varWaiting->Add(true, returnVar);
+	rtc->varWaiting->Add(true, returnVar-1);
 	return sendMessageOut(mess, rtc);
 
 }
@@ -1225,7 +1225,7 @@ RunTimeError WaitForVar(unsigned int returnVar, unsigned char* params, unsigned 
 	}
 
 	unsigned int var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
-	return rtc->varWaiting->GetValue(var) ? RunTimeError_WAITINGFORWAR : RunTimeError_OK;
+	return rtc->varWaiting->GetValue(var-1) ? RunTimeError_WAITINGFORWAR : RunTimeError_OK;
 
 }
 #pragma endregion

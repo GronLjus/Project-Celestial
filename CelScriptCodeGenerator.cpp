@@ -432,7 +432,7 @@ CelestialList<CelestialList<unsigned char>*>* CelScriptCodeGenerator::generateCo
 				else
 				{
 
-					handleVariable(symbolTable, varAdr, varClear, commands, codeCount);
+					//handleVariable(symbolTable, varAdr, varClear, commands, codeCount);
 					symbol tempSym = symbolTable->GetValue(varAdr);
 					tempSym.waitFlag = true;
 					symbolTable->Add(tempSym, varAdr);

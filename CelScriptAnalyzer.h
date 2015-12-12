@@ -61,6 +61,7 @@ namespace Logic
 
 			};
 
+			CelestialTreeNode<syntax>* analyzeSyntaxNode(CompileError &err, CelestialTreeNode<syntax>* synTree);
 			operatorParams analyzeOperatorParams(CompileError &err, OperatorTypes op, CelestialList<CelestialTreeNode<Token>*>* leafs, CelestialTreeNode<syntax>* newtree);
 			operatorParams getOperatorVariation(CompileError &err, unsigned int line, OperatorTypes op, operatorParams ops);
 			operatorParams expandTree(CompileError &err, unsigned int line, OperatorTypes op, operatorParams ops, CelestialTreeNode<syntax>* newtreeNode);

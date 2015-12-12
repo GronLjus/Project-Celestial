@@ -651,6 +651,15 @@
     <ClInclude Include="BufferPoints.h">
       <Filter>Header Files\CrossHandler-Tools\Buffer</Filter>
     </ClInclude>
+    <ClInclude Include="CameraObject.h">
+      <Filter>Header Files\Resources\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="PositionableObject.h">
+      <Filter>Header Files\Resources\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="ViewObject.h">
+      <Filter>Header Files\Entities\Objects</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Camera.cpp">
@@ -881,6 +890,15 @@
     <ClCompile Include="GameBoardHandler.cpp">
       <Filter>Source Files\Entities\Handlers</Filter>
     </ClCompile>
+    <ClCompile Include="PositionableObject.cpp">
+      <Filter>Source Files\Resources\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="ViewObject.cpp">
+      <Filter>Source Files\Entities\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="CameraObject.cpp">
+      <Filter>Source Files\Resources\Objects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico">
@@ -999,5 +1017,10 @@
     <ResourceCompile Include="Project Celestial.rc">
       <Filter>Resource Files</Filter>
     </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Object Include="Tile.obj">
+      <Filter>Source Files</Filter>
+    </Object>
   </ItemGroup>
 </Project>

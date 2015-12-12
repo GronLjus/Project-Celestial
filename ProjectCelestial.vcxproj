@@ -164,6 +164,7 @@
     <ClInclude Include="BufferObject.h" />
     <ClInclude Include="BufferPoints.h" />
     <ClInclude Include="CameraFrame.h" />
+    <ClInclude Include="CameraObject.h" />
     <ClInclude Include="CelestialDoubleList.h" />
     <ClInclude Include="CelestialDoubleListNode.h" />
     <ClInclude Include="CelestialMath.h" />
@@ -247,6 +248,7 @@
     <ClInclude Include="MemoryPool.h" />
     <ClInclude Include="MessageQueue.h" />
     <ClInclude Include="ObjectTree.h" />
+    <ClInclude Include="PositionableObject.h" />
     <ClInclude Include="ResourceHandler.h" />
     <ClInclude Include="ResourceHeader.h" />
     <ClInclude Include="RunTimeOperations.h" />
@@ -286,6 +288,7 @@
     <ClInclude Include="UnderCamera.h" />
     <ClInclude Include="GraphicAPI.h" />
     <ClInclude Include="CelestialVector.h" />
+    <ClInclude Include="ViewObject.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BaseObject.cpp" />
@@ -295,6 +298,7 @@
     <ClCompile Include="BoxedBool.cpp" />
     <ClCompile Include="BufferObject.cpp" />
     <ClCompile Include="CameraFrame.cpp" />
+    <ClCompile Include="CameraObject.cpp" />
     <ClCompile Include="CelestialBufferHandler.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="CardHandler.cpp" />
@@ -336,6 +340,7 @@
     <ClCompile Include="MemoryPool.cpp" />
     <ClCompile Include="MessageQueue.cpp" />
     <ClCompile Include="ObjectTree.cpp" />
+    <ClCompile Include="PositionableObject.cpp" />
     <ClCompile Include="ResourceHandler.cpp" />
     <ClCompile Include="ShadowMapConstants.cpp" />
     <ClCompile Include="LightParticleEmitter.cpp" />
@@ -364,6 +369,7 @@
     <ClCompile Include="TerrainObject.cpp" />
     <ClCompile Include="TRNFileLoader.cpp" />
     <ClCompile Include="UnderCamera.cpp" />
+    <ClCompile Include="ViewObject.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Project Celestial.rc" />
@@ -474,6 +480,11 @@
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
       <FileType>Document</FileType>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Object Include="Tile.obj">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </Object>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

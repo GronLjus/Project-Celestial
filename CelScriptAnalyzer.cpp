@@ -609,6 +609,43 @@ CelScriptAnalyzer::operatorParams CelScriptAnalyzer::getOperatorVariation(Compil
 
 }
 
+CelestialTreeNode<syntax>* CelScriptAnalyzer::analyzeSyntaxNode(CompileError &err, CelestialTreeNode<syntax>* synTree)
+{
+
+	syntax syn = synTree->GetNodeObject();
+
+	if (syn.type == SyntaxType_VAR)
+	{
+
+		int foundSymbol = stoi(syn.val);
+		symbol nSym = symbolTable->GetValue(foundSymbol);
+		nSym.symCount++;
+		symbolTable->Add(nSym, foundSymbol);
+
+	}
+
+	CelestialTreeNode<syntax>* newNode = new CelestialTreeNode<syntax>(syn, nullptr);
+
+	if (synTree->GetLeafs() != nullptr)
+	{
+
+		CelestialListNode<CelestialTreeNode<syntax>*>* leaf = synTree->GetLeafs()->GetFirstNode();
+
+		while (leaf != nullptr)
+		{
+
+			CelestialTreeNode<syntax>* newNode2 = analyzeSyntaxNode(err, leaf->GetNodeObject());
+			newNode2->SetParent(newNode);
+			newNode->AddLeaf(newNode2);
+			leaf = leaf->GetNext();
+
+		}
+	}
+
+	return newNode;
+
+}
+
 CelScriptAnalyzer::operatorParams CelScriptAnalyzer::expandTree(CompileError &err, unsigned int line, OperatorTypes op, operatorParams ops, CelestialTreeNode<syntax>* newtree)
 {
 
@@ -666,7 +703,9 @@ CelScriptAnalyzer::operatorParams CelScriptAnalyzer::expandTree(CompileError &er
 					if (operators[op].parOperatorAppend[ops.opVar][kMod])
 					{
 
-						newChildren[nrOfNewChildren]->AddLeaf(kParameter->GetNodeObject()->GetNodeObject());
+						CelestialTreeNode<syntax>* syn = analyzeSyntaxNode(err, kParameter->GetNodeObject());
+						syn->SetParent(newChildren[nrOfNewChildren]);
+						newChildren[nrOfNewChildren]->AddLeaf(syn);
 						newOpTable[nrOfNewChildren].param++;
 
 					}

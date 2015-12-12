@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "ResourceHandler.h"
 #include "GameBoard.h"
+#include "CameraObject.h"
 
 using namespace Resources;
 using namespace CrossHandlers;
@@ -60,6 +61,19 @@ void ResourceHandler::Update(unsigned int time)
 
 				bo->SetId(gameObjects->GetFirstEmpty());
 				outId = gameObjects->Add(bo);
+
+			}
+		}
+		else if (currentMessage->mess == ResourceMess_LOADCAMERA)
+		{
+
+			CameraObject* cam = new CameraObject(screen.x,screen.y,500.0f);
+
+			if (cam != nullptr)
+			{
+
+				cam->SetId(gameObjects->GetFirstEmpty());
+				outId = gameObjects->Add(cam);
 
 			}
 		}

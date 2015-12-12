@@ -16,7 +16,7 @@ CelestialBufferHandler::CelestialBufferHandler(ID3D10Device1* card)
 	maxInstances = 200;//Gives us a buffersize of 200*2^7=25600 bytes
 	strides = new UINT[BufferTypes_COUNT];
 	strides[BufferTypes_VERTEX] = sizeof(BufferVertex);
-	strides[BufferTypes_INSTANCE] = sizeof(Transformation);
+	strides[BufferTypes_INSTANCE] = sizeof(Instance);
 	vertices = nullptr;
 	indices = nullptr;
 	maxVertices = 1000;
@@ -606,15 +606,15 @@ void CelestialBufferHandler::AddInstance(BufferObject* buffer, ResourceObject* c
 
 	}
 
-	hr = moveThroughBuffer(dxBuffer,buffer,sizeof(Transformation),maxInstances);
+	hr = moveThroughBuffer(dxBuffer,buffer,sizeof(Instance),maxInstances);
 	
-	Transformation* trans = (Transformation*)dxBuffer->GetMappedPointer();
+	Instance* trans = (Instance*)dxBuffer->GetMappedPointer();
 	int size = dxBuffer->GetSize();
 
 	Matrix invTranW = MatrixTranspose(container->GetInverseTransformation());
 	Matrix oW = container->GetLastTransformation();
 	Matrix w = container->PopTransformation();
-	trans[size] = Transformation(w,invTranW,oW);
+	trans[size] = Instance(w,invTranW,oW);
 	dxBuffer->SetSize(size+1);
 
 }

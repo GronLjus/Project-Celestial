@@ -11,6 +11,17 @@ DrawingBoard::DrawingBoard()
 
 	vertexBuffer = new BufferObject2<BufferVertex>(100);
 	indexBuffer = new BufferObject2<unsigned int>(2048);
+	instanceBuffer = new BufferObject2<Instance>(256);
+
+}
+unsigned int DrawingBoard::AddInstance(GameObject* object)
+{
+
+	Matrix invTranW = MatrixTranspose(object->GetInverseTransformation());
+	Matrix oW = object->GetLastTransformation();
+	Matrix w = object->GetMatrix();
+	
+	return instanceBuffer->Add(Instance(w, invTranW, oW));
 
 }
 
@@ -114,5 +125,6 @@ DrawingBoard::~DrawingBoard()
 
 	delete vertexBuffer;
 	delete indexBuffer;
+	delete instanceBuffer;
 
 }
