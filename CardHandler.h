@@ -1,6 +1,6 @@
 #pragma once
 #include "ResourceObject.h"
-#include "IShaderHandler.h"
+#include "CelestialShader.h"
 #include "I2DDrawer.h"
 #include "ICardDebug.h"
 #include "Intermediator.h"
@@ -118,7 +118,7 @@ namespace Graphics
 			///<summary>A pointer to the bufferhandler for this object</summary>
 			CelestialBufferHandler* bH;
 			///<summary>The internal shader used by this object to draw out</summary>
-			IShaderHandler* shader;
+			CelestialShader* shader;
 
 			///<summary>The underlying card</summary>
 			ID3D10Device1* card;

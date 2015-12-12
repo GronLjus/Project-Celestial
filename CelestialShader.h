@@ -17,6 +17,7 @@ namespace Graphics
 
 			virtual HRESULT Init(ID3D10Device1* card, GraphicQuality gQ, DrawingStyle dS, CrossHandlers::TextureResourceObject* backBuffer,CrossHandlers::TextContainer* errorOut);
 
+			void SetVertexBuffers(ID3D10Buffer* vertices, ID3D10Buffer* indices);
 			virtual void ToggleWireFrameMode(bool val,bool light);
 			virtual void ToggleNormalSpikes(bool val);
 			virtual void ToggleGlobalBorders(bool val);

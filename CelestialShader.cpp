@@ -1073,6 +1073,16 @@ HRESULT CelestialShader::Init(ID3D10Device1* card, GraphicQuality gQ, DrawingSty
 
 }
 
+void CelestialShader::SetVertexBuffers(ID3D10Buffer* vertices, ID3D10Buffer* indices)
+{
+
+	unsigned int offset = 0;
+	unsigned int vStride = sizeof(BufferVertex);
+	card->IASetVertexBuffers(0, 1, &vertices, &vStride, &offset);//Set buffers
+	card->IASetIndexBuffer(indices, DXGI_FORMAT_R32_UINT, 0);//Set the index buffer
+
+}
+
 void CelestialShader::ToggleWireFrameMode(bool val,bool light)
 {
 

@@ -425,7 +425,6 @@ void CelestialBufferHandler::InitTerrain(Resources::TerrainMesh* object)
 	}
 }
 
-
 void CelestialBufferHandler::UpdateMeshBuffers(Entities::DrawingBoard* db)
 {
 	
@@ -451,17 +450,17 @@ void CelestialBufferHandler::UpdateMeshBuffers(Entities::DrawingBoard* db)
 		initData.SysMemSlicePitch = 0;
 		HRESULT hr = card->CreateBuffer(&bd, &initData, &vertices);
 
-		D3D10_BUFFER_DESC bd;
 		bd.Usage = D3D10_USAGE_DYNAMIC;
 		bd.ByteWidth = sizeof(unsigned int) * db->GetIndexBuffers()->GetBufferSize(); //total size of buffer in bytes
 		bd.BindFlags = D3D10_BIND_VERTEX_BUFFER;
 		bd.CPUAccessFlags = 0;
 		bd.MiscFlags = 0;
-		D3D10_SUBRESOURCE_DATA initData;
+
 		initData.pSysMem = db->GetIndexBuffers()->GetBuffer();
 		initData.SysMemPitch = 0;
 		initData.SysMemSlicePitch = 0;
-		HRESULT hr = card->CreateBuffer(&bd, &initData, &indices);
+		hr = card->CreateBuffer(&bd, &initData, &indices);
+
 	}
 	else
 	{

@@ -1,7 +1,6 @@
 #include "StdAfx.h"
 #include <dxgidebug.h>
 #include "CardHandler.h"
-#include "CelestialShader.h"
 #include "Celestial2DDrawer.h"
 
 using namespace Graphics;
@@ -198,6 +197,7 @@ void CardHandler::UpdateMeshBuffers(Entities::DrawingBoard* db)
 {
 
 	bH->UpdateMeshBuffers(db);
+	shader->SetVertexBuffers(bH->GetVertexBuffer(), bH->GetIndexBuffer());
 
 }
 
