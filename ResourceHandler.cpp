@@ -7,12 +7,13 @@ using namespace Resources;
 using namespace CrossHandlers;
 using namespace CelestialMath;
 
-ResourceHandler::ResourceHandler() : IHandleMessages(200,MessageSource_RESOURCES)
+ResourceHandler::ResourceHandler(unsigned int bufferFlips) : IHandleMessages(200, MessageSource_RESOURCES)
 {
 
 	loader = new ResourceLoader();
 	gameObjects = new CelestialSlicedList<BaseObject*>(32, nullptr);
 	filter = MessageType_RESOURCES;
+	this->bufferFlips = bufferFlips;
 
 }
 
@@ -67,7 +68,7 @@ void ResourceHandler::Update(unsigned int time)
 		else if (currentMessage->mess == ResourceMess_LOADCAMERA)
 		{
 
-			CameraObject* cam = new CameraObject(screen.x,screen.y,500.0f);
+			CameraObject* cam = new CameraObject(screen.x,screen.y,500.0f,bufferFlips);
 
 			if (cam != nullptr)
 			{

@@ -9,6 +9,7 @@ GameBoard::GameBoard(unsigned int cells)
 
 	drawingBoard = new DrawingBoard();
 	objectRoot = new ObjectTree(cells, 16, 1, CelestialMath::Vector2(0.0f, 0.0f));
+	camera = nullptr;
 
 }
 

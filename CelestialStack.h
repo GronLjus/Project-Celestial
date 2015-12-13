@@ -14,6 +14,7 @@ namespace CrossHandlers
 		T PopElement();
 		T PeekElement();
 		unsigned int GetCount();
+		void Reset();
 		~CelestialStack();
 
 	private:
@@ -151,6 +152,48 @@ void CelestialStack<T>::PushElement(T element)
 
 	count++;
 
+}
+
+template <class T>
+void CelestialStack<T>::Reset()
+{
+
+	if (del)
+	{
+
+		if (root != nullptr)
+		{
+
+			CelestialDoubleListNode<T>* next = root->GetNext();
+			CelestialDoubleListNode<T>* prev = root->GetPrev();
+			delete root;
+
+			while (next != nullptr)
+			{
+
+				CelestialDoubleListNode<T>* nextNext = next->GetNext();
+				delete next;
+				next = nextNext;
+
+			}
+
+			while (prev != nullptr)
+			{
+
+				CelestialDoubleListNode<T>* prevPrev = prev->GetPrev();
+				delete prev;
+				prev = prevPrev;
+
+			}
+		}
+	}
+	else
+	{
+
+		first = nullptr;
+		count = 0;
+
+	}
 }
 
 template <class T>

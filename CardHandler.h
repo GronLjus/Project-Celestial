@@ -33,6 +33,8 @@ namespace Graphics
 			Intermediator* GetIntermediator();
 
 			void UpdateMeshBuffers(Entities::DrawingBoard* db);
+			void UpdateInstanceBuffers(Entities::DrawingBoard* db,unsigned int flip);
+
 			///<summary>Draws the meshes</summary>
 			///<param name='scene'>[in]A pointer to the scene to draw</param>
 			void Draw(DrawScene* scene,int flip);

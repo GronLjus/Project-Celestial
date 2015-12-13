@@ -6,6 +6,7 @@
 using namespace Graphics;
 using namespace CrossHandlers;
 using namespace Resources;
+using namespace Entities;
 
 std::wstring s2ws(const std::string& s)
 {
@@ -172,7 +173,7 @@ HRESULT CardHandler::InitShader(TextContainer* errorOut)
 	if (FAILED(hr)){ return hr; }
 	bH = (CelestialBufferHandler*)(shader->GetBufferHandler());
 	shader->ToggleWireFrameMode(wireFrame, dStyle.enlighten);
-	inter = new Intermediator(bH,true,true);
+	inter = new Intermediator(nullptr,true,true);
 	underInitiated = true;
 	return hr;
 
@@ -193,11 +194,23 @@ void CardHandler::SetCamera(CrossHandlers::CameraFrame* cam)
 
 }
 
-void CardHandler::UpdateMeshBuffers(Entities::DrawingBoard* db)
+void CardHandler::UpdateMeshBuffers(DrawingBoard* db)
 {
 
 	bH->UpdateMeshBuffers(db);
-	shader->SetVertexBuffers(bH->GetVertexBuffer(), bH->GetIndexBuffer());
+	ID3D10Buffer* vertices = bH->GetVertexBuffer();
+	ID3D10Buffer* indices = bH->GetIndexBuffer();
+	unsigned int offset = 0;
+	unsigned int vStride = sizeof(BufferVertex);
+	card->IASetVertexBuffers(0, 1, &vertices, &vStride, &offset);//Set buffers
+	card->IASetIndexBuffer(indices, DXGI_FORMAT_R32_UINT, 0);//Set the index buffer
+
+}
+
+void CardHandler::UpdateInstanceBuffers(DrawingBoard* db, unsigned int flip)
+{
+
+	bH->UpdateInstanceBuffer(db, flip);
 
 }
 

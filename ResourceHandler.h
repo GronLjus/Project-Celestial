@@ -10,7 +10,7 @@ namespace Resources
 	{
 
 	public: 
-		ResourceHandler();
+		ResourceHandler(unsigned int bufferFlips);
 		///<summary>Initializes The handler and its underobjects</summary>
 		///<param name='card'>[in]The device to load from</param>
 		void Init(Graphics::CardHandler* &card, TextContainer* outText, CelestialMath::Vector2 screen);
@@ -22,6 +22,7 @@ namespace Resources
 		ResourceLoader* loader;
 		CrossHandlers::CelestialSlicedList<BaseObject*>* gameObjects;
 		CelestialMath::Vector2 screen;
+		unsigned int bufferFlips;
 
 	};
 }

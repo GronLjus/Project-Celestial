@@ -1,6 +1,8 @@
 #pragma once
-#include "IBufferHandler.h"
 #include "DrawingBoard.h"
+#include "TerrainMesh.h"
+#include "ILight.h"
+#include "ResourceObject.h"
 
 using namespace CelestialMath;
 
@@ -8,40 +10,42 @@ namespace Graphics
 {
 
 	///<summary>This class encapsulates the buffers needed to draw to CelestialShader</summary>
-	class CelestialBufferHandler : public IBufferHandler
+	class CelestialBufferHandler
 	{
 
 		public:
 			///<param name='card'>[in]The device to create buffers from</param>
 			///<param name='meshDictionary'>[in]The meshDictionary to use as id-reference</param>
-			CelestialBufferHandler(ID3D10Device1* card);
+			CelestialBufferHandler(ID3D10Device1* card,unsigned int flips);
 
 			void UpdateMeshBuffers(Entities::DrawingBoard* db);
+			void UpdateInstanceBuffer(Entities::DrawingBoard* db,unsigned int flip);
 
 			ID3D10Buffer* GetVertexBuffer() const;
 			ID3D10Buffer* GetIndexBuffer() const;
+			ID3D10Buffer* GetInstanceBuffer(unsigned int flip) const;
 
-			virtual HRESULT InitVertexLayout(void* signature,SIZE_T size);
-			virtual HRESULT InitTerrainVertexLayout(void* signature,SIZE_T size);
-			virtual HRESULT InitParticleVertexLayout(void* signature,SIZE_T size);
-			virtual HRESULT InitLightVertexLayout(void* signature,SIZE_T size);
+			HRESULT InitVertexLayout(void* signature,SIZE_T size);
+			HRESULT InitTerrainVertexLayout(void* signature,SIZE_T size);
+			HRESULT InitParticleVertexLayout(void* signature,SIZE_T size);
+			HRESULT InitLightVertexLayout(void* signature,SIZE_T size);
 
-			virtual HRESULT InitMesh(Resources::MeshObject* mesh);
-			virtual HRESULT InitParticleEmitter(Resources::IParticleEmitterBufferable* emitter);
-			virtual void InitTerrain(Resources::TerrainMesh* object);
+			HRESULT InitMesh(Resources::MeshObject* mesh);
+			HRESULT InitParticleEmitter(Resources::IParticleEmitterBufferable* emitter);
+			void InitTerrain(Resources::TerrainMesh* object);
 
-			virtual HRESULT AddInstance(Resources::IParticleEmitterBufferable* emitter, Resources::ParticleEmitterInstance* instance, int flip);
-			virtual void AddInstance(CrossHandlers::BufferObject* buffer, Resources::ResourceObject* container);
-			virtual void AddInstance(CrossHandlers::BufferObject* buffer, Resources::ILight* light);
+			HRESULT AddInstance(Resources::IParticleEmitterBufferable* emitter, Resources::ParticleEmitterInstance* instance, int flip);
+			void AddInstance(CrossHandlers::BufferObject* buffer, Resources::ResourceObject* container);
+			void AddInstance(CrossHandlers::BufferObject* buffer, Resources::ILight* light);
 
-			virtual UINT GetStride(CrossHandlers::BufferTypes buffer) const;
-			virtual UINT GetTerrainStride() const;
-			virtual UINT GetLightStride() const;
+			UINT GetStride(CrossHandlers::BufferTypes buffer) const;
+			UINT GetTerrainStride() const;
+			UINT GetLightStride() const;
 
-			virtual ID3D10InputLayout* GetVertexLayout() const;
-			virtual ID3D10InputLayout* GetParticleLayout() const;
-			virtual ID3D10InputLayout* GetTerrainLayout() const;
-			virtual ID3D10InputLayout* GetLightLayout() const;
+			ID3D10InputLayout* GetVertexLayout() const;
+			ID3D10InputLayout* GetParticleLayout() const;
+			ID3D10InputLayout* GetTerrainLayout() const;
+			ID3D10InputLayout* GetLightLayout() const;
 
 			virtual void Release();
 			~CelestialBufferHandler();
@@ -208,6 +212,9 @@ namespace Graphics
 
 			ID3D10Buffer* vertices;
 			ID3D10Buffer* indices;
+			ID3D10Buffer** instances;
+			unsigned int instantFlip;
+			unsigned int instantFlips;
 
 	};
 }

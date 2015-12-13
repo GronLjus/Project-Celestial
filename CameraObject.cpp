@@ -6,7 +6,7 @@ using namespace CrossHandlers;
 using namespace Entities;
 using namespace CelestialMath;
 
-CameraObject::CameraObject(unsigned int width, unsigned int height, float depth) : PositionableObject()
+CameraObject::CameraObject(unsigned int width, unsigned int height, float depth, unsigned int flips) : PositionableObject()
 {
 
 	sidePoint = Vector3(1, 0, 0);
@@ -22,7 +22,7 @@ CameraObject::CameraObject(unsigned int width, unsigned int height, float depth)
 	viewProjection = MatrixMultiply(view, projection);
 	invViewProjection = MatrixInverse(viewProjection);
 
-	theView = new ViewObject(viewProjection);
+	theView = new ViewObject(viewProjection,flips);
 
 }
 

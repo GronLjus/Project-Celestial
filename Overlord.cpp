@@ -21,12 +21,13 @@ int lFPS;
 Overlord::Overlord(void)
 {
 
+	unsigned int flip = 2;
 	die = false;
 	isDrawingBool = false;
 	okToDraw = false;
 	gBH = new GameBoardHandler();
 	gH = new GraphicHandler();
-	rH = new ResourceHandler();
+	rH = new ResourceHandler(flip);
 	iH = new InputHandler();
 	pH = new PlayerHandler();
 	cH = new CelscriptHandler();

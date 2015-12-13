@@ -167,6 +167,13 @@ BufferObject2<BufferVertex>* DrawingBoard::GetVertexBuffers() const
 
 }
 
+BufferObject2<Instance>* DrawingBoard::GetInstanceBuffer() const
+{
+	
+	return instanceBuffer;
+
+}
+
 BufferObject2<unsigned int>* DrawingBoard::GetIndexBuffers() const
 {
 

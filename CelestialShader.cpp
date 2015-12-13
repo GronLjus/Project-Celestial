@@ -1013,7 +1013,7 @@ HRESULT CelestialShader::Init(ID3D10Device1* card, GraphicQuality gQ, DrawingSty
 	dStyle = dS;
 
 	this->card = card;
-	bH = new CelestialBufferHandler(card);
+	bH = new CelestialBufferHandler(card,2);
 	sMC = new ShadowMapConstants(gQ.shadows);
 
 	HRESULT hr = initBuffers(errorOut);
@@ -1797,7 +1797,7 @@ void CelestialShader::SetCamera(CrossHandlers::CameraFrame* cam)
 
 }
 
-IBufferHandler* CelestialShader:: GetBufferHandler()
+CelestialBufferHandler* CelestialShader:: GetBufferHandler()
 {
 
 	return bH;

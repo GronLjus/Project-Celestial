@@ -7,7 +7,7 @@ using namespace Resources;
 using namespace CelestialMath;
 using namespace Entities;
 
-CelestialBufferHandler::CelestialBufferHandler(ID3D10Device1* card)
+CelestialBufferHandler::CelestialBufferHandler(ID3D10Device1* card, unsigned int flips)
 {
 
 	this->card = card;
@@ -19,6 +19,19 @@ CelestialBufferHandler::CelestialBufferHandler(ID3D10Device1* card)
 	strides[BufferTypes_INSTANCE] = sizeof(Instance);
 	vertices = nullptr;
 	indices = nullptr;
+
+	instantFlip = 0;
+	instantFlips = flips;
+
+	instances = new ID3D10Buffer*[instantFlips];
+
+	for (unsigned int i = 0; i < flips; i++)
+	{
+		
+		instances[i] = nullptr;
+
+	}
+
 	maxVertices = 1000;
 
 }
@@ -425,7 +438,7 @@ void CelestialBufferHandler::InitTerrain(Resources::TerrainMesh* object)
 	}
 }
 
-void CelestialBufferHandler::UpdateMeshBuffers(Entities::DrawingBoard* db)
+void CelestialBufferHandler::UpdateMeshBuffers(DrawingBoard* db)
 {
 	
 	if (db->GetIndexBuffers() == nullptr || db->GetVertexBuffers() == nullptr)
@@ -478,6 +491,36 @@ void CelestialBufferHandler::UpdateMeshBuffers(Entities::DrawingBoard* db)
 	}
 }
 
+void CelestialBufferHandler::UpdateInstanceBuffer(DrawingBoard* db, unsigned int flip)
+{
+
+	if (instances[flip] == nullptr)
+	{
+
+		D3D10_BUFFER_DESC bd;
+		bd.Usage = D3D10_USAGE_DYNAMIC;
+		bd.ByteWidth = strides[BufferTypes_INSTANCE] * db->GetInstanceBuffer()->GetBufferSize(); //total size of buffer in bytes
+		bd.BindFlags = D3D10_BIND_VERTEX_BUFFER;
+		bd.CPUAccessFlags = 0;
+		bd.MiscFlags = 0;
+		D3D10_SUBRESOURCE_DATA initData;
+		initData.pSysMem = db->GetInstanceBuffer()->GetBuffer();
+		initData.SysMemPitch = 0;
+		initData.SysMemSlicePitch = 0;
+		HRESULT hr = card->CreateBuffer(&bd, &initData, &instances[flip]);
+
+	}
+	else
+	{
+
+		Instance* mapped = nullptr;
+		instances[flip]->Map(D3D10_MAP_WRITE_DISCARD, 0, (void**)&mapped);
+		mapped = db->GetInstanceBuffer()->GetBuffer();
+		instances[flip]->Unmap();
+
+	}
+}
+
 ID3D10Buffer* CelestialBufferHandler::GetVertexBuffer() const
 {
 
@@ -489,6 +532,13 @@ ID3D10Buffer* CelestialBufferHandler::GetIndexBuffer() const
 {
 
 	return indices;
+
+}
+
+ID3D10Buffer* CelestialBufferHandler::GetInstanceBuffer(unsigned int flip) const
+{
+
+	return instances[flip];
 
 }
 
@@ -717,6 +767,17 @@ void CelestialBufferHandler::Release()
 
 	}
 
+	for (unsigned int i = 0; i < instantFlips; i++)
+	{
+
+		if (instances[i] != nullptr)
+		{
+
+			delete instances[i];
+
+		}
+	}
+
 	//lightLayout->Release();
 
 }
@@ -725,5 +786,6 @@ CelestialBufferHandler::~CelestialBufferHandler()
 {
 
 	delete[] strides;
+	delete[] instances;
 
 }

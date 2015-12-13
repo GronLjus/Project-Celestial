@@ -8,7 +8,7 @@ namespace Resources
 	class CameraObject : public PositionableObject
 	{
 		public:
-			CameraObject(unsigned int width, unsigned int height, float depth);
+			CameraObject(unsigned int width, unsigned int height, float depth,unsigned int flips);
 			virtual void Update(CrossHandlers::Message* mess);
 			Entities::ViewObject* GetView() const;
 			CelestialMath::Matrix GetViewProjection() const;

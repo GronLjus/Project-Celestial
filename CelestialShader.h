@@ -1,7 +1,12 @@
 #pragma once
-#include "IShaderHandler.h"
 #include "ShaderContainer.h"
 #include "CelestialMath.h"
+#include "CameraFrame.h"
+#include "ShadowMapConstants.h"
+#include "DrawScene.h"
+#include "CelestialBufferHandler.h"
+#include "TextContainer.h"
+#include <string>
 
 using namespace CelestialMath;
 
@@ -9,31 +14,31 @@ namespace Graphics
 {
 
 	///<summary>This class encapsulates the "shaders.hlsl" file</summary>
-	class CelestialShader : public IShaderHandler
+	class CelestialShader
 	{
 	
 		public:
 			CelestialShader();
 
-			virtual HRESULT Init(ID3D10Device1* card, GraphicQuality gQ, DrawingStyle dS, CrossHandlers::TextureResourceObject* backBuffer,CrossHandlers::TextContainer* errorOut);
+			HRESULT Init(ID3D10Device1* card, GraphicQuality gQ, DrawingStyle dS, CrossHandlers::TextureResourceObject* backBuffer,CrossHandlers::TextContainer* errorOut);
 
 			void SetVertexBuffers(ID3D10Buffer* vertices, ID3D10Buffer* indices);
-			virtual void ToggleWireFrameMode(bool val,bool light);
-			virtual void ToggleNormalSpikes(bool val);
-			virtual void ToggleGlobalBorders(bool val);
+			void ToggleWireFrameMode(bool val,bool light);
+			void ToggleNormalSpikes(bool val);
+			void ToggleGlobalBorders(bool val);
 
-			virtual bool SetQuality(GraphicQuality gQ, CrossHandlers::TextureResourceObject* backBuffer);
-			virtual bool SetDrawing(DrawingStyle dS);
+			bool SetQuality(GraphicQuality gQ, CrossHandlers::TextureResourceObject* backBuffer);
+			bool SetDrawing(DrawingStyle dS);
 
-			virtual void StartDrawing();
-			virtual void DrawScene(Graphics::DrawScene* scene, int flip);
-			virtual void FinishDrawing();
+			void StartDrawing();
+			void DrawScene(Graphics::DrawScene* scene, int flip);
+			void FinishDrawing();
 
-			virtual void SetCamera(CrossHandlers::CameraFrame* cam);
-			virtual IBufferHandler* GetBufferHandler();
+			void SetCamera(CrossHandlers::CameraFrame* cam);
+			CelestialBufferHandler* GetBufferHandler();
 
 			///<summary>Releases all references used by the shader, must be called when the shaders usage is over</summary>
-			virtual void Release();
+			void Release();
 
 			~CelestialShader();
 
@@ -146,7 +151,7 @@ namespace Graphics
 			///<summary>The device used to create the effects</summary>
 			ID3D10Device1* card;
 			///<summary>The Bufferhandler this shader uses</summary>
-			IBufferHandler* bH;
+			CelestialBufferHandler* bH;
 			///<summary>The ShadowMapConstants this shader uses</summary>
 			ShadowMapConstants* sMC;
 
