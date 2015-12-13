@@ -4,6 +4,7 @@
 using namespace CrossHandlers;
 using namespace Resources;
 using namespace CelestialMath;
+using namespace Entities;
 
 ObjectTree::ObjectTree(unsigned int cells, unsigned int minCells, unsigned int cellSize, Vector2 position)
 {
@@ -35,6 +36,7 @@ ObjectTree::ObjectTree(unsigned int cells, unsigned int minCells, unsigned int c
 	}
 
 	this->size = cells*cellSize;
+	objectAmountMax = 0;
 
 }
 
@@ -62,6 +64,44 @@ void ObjectTree::AddObject(GameObject* object)
 					subTrees[i]->AddObject(object);
 
 				}
+			}
+		}
+	}
+
+	objectAmountMax++;
+
+}
+
+void ObjectTree::AddInstance(ViewObject* view, DrawingBoard* board)
+{
+
+	if (objects != nullptr)
+	{
+
+		for (unsigned int i = 0; i < objectAmountMax; i++)
+		{
+
+			GameObject* obj = objects->GetValue(i);
+
+			if (obj != nullptr)
+			{
+
+				board->AddInstance(obj);
+
+			}
+		}
+	}
+	else
+	{
+
+		for (unsigned int i = 0; i < 4; i++)
+		{
+
+			if (view->GetFrustum()->Check(subTrees[i]->GetBox(),Dimension_N) != Intersection_BACK)
+			{
+
+				subTrees[i]->AddInstance(view, board);
+
 			}
 		}
 	}

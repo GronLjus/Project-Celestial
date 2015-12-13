@@ -12,8 +12,21 @@ DrawingBoard::DrawingBoard()
 	vertexBuffer = new BufferObject2<BufferVertex>(100);
 	indexBuffer = new BufferObject2<unsigned int>(2048);
 	instanceBuffer = new BufferObject2<Instance>(256);
+	meshInstances = new CelestialSlicedList<BufferObject2<Instance>*>(32, nullptr);
+
+	meshDictionary = new CelestialSlicedList<unsigned int>(32);
+	hasInstance = new CelestialSlicedList<bool>(32,false);
+	meshInstance = new CelestialStack<unsigned int>(false);
 
 }
+
+void DrawingBoard::StartAddingInstances()
+{
+
+	instanceBuffer->Reset();
+
+}
+
 unsigned int DrawingBoard::AddInstance(GameObject* object)
 {
 
@@ -21,8 +34,36 @@ unsigned int DrawingBoard::AddInstance(GameObject* object)
 	Matrix oW = object->GetLastTransformation();
 	Matrix w = object->GetMatrix();
 	
-	return instanceBuffer->Add(Instance(w, invTranW, oW));
+	if (!(hasInstance->GetValue(object->GetMeshId())))
+	{
 
+		meshInstance->PushElement(object->GetMeshId());
+		hasInstance->Add(true, object->GetMeshId());
+
+	}
+
+	BufferObject2<Instance>* instBuff = meshInstances->GetValue(meshDictionary->GetValue(object->GetMeshId()));
+	return instBuff->Add(Instance(w, invTranW, oW));
+
+}
+
+void DrawingBoard::FinalizeInstances(ViewObject* onView)
+{
+
+	unsigned int totalInst = 0;
+
+	while (meshInstance->GetCount() >= 0)
+	{
+
+		unsigned int meshVal = meshInstance->PopElement();
+		unsigned int localMesh = meshDictionary->GetValue(meshVal);
+		BufferObject2<Instance>* instBuff = meshInstances->GetValue(localMesh);
+		onView->AddInstanceFragment(meshVal, instanceBuffer->GetBufferSize(), instBuff->GetBufferSize());
+		instanceBuffer->Add(instBuff);
+		instBuff->Reset();
+		hasInstance->Add(false, meshVal);
+
+	}
 }
 
 unsigned int DrawingBoard::addObjectToVertexBuffer(Resources::MeshObject* mesh)
@@ -103,7 +144,20 @@ void DrawingBoard::AddMesh(MeshObject* mesh)
 {
 
 	addObjectToIndexBuffer(mesh, addObjectToVertexBuffer(mesh));
+	meshDictionary->Add(meshInstances->GetFirstEmpty(), ((BaseObject*) mesh)->GetId());
 	
+	if (meshInstances->GetValue(meshDictionary->GetValue(((BaseObject*)mesh)->GetId())) == nullptr)
+	{
+
+		meshInstances->Add(new BufferObject2<Instance>(32));
+
+	}
+	else
+	{
+
+		meshInstances->GetValue(meshDictionary->GetValue(((BaseObject*)mesh)->GetId()))->Reset();
+
+	}
 }
 
 BufferObject2<BufferVertex>* DrawingBoard::GetVertexBuffers() const
@@ -126,5 +180,11 @@ DrawingBoard::~DrawingBoard()
 	delete vertexBuffer;
 	delete indexBuffer;
 	delete instanceBuffer;
+
+	delete meshInstances;
+
+	delete meshDictionary;
+	delete hasInstance;
+	delete meshInstance;
 
 }

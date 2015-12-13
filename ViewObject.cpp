@@ -27,6 +27,13 @@ void ViewObject::AddInstanceFragment(unsigned int mesh, unsigned int start, unsi
 
 }
 
+Frustum* ViewObject::GetFrustum() const
+{
+
+	return localFrustum;
+
+}
+
 CelestialStack<ViewObject::Fragment>* ViewObject::GetInstanceStack() const
 {
 

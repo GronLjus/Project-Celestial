@@ -12,12 +12,40 @@ GameBoard::GameBoard(unsigned int cells)
 
 }
 
+void GameBoard::FillInstanceBuffer()
+{
+
+	if (camera != nullptr)
+	{
+
+		drawingBoard->StartAddingInstances();
+		objectRoot->AddInstance(camera->GetView(), drawingBoard);
+		drawingBoard->FinalizeInstances(camera->GetView());
+
+	}
+}
+
 void GameBoard::AddObject(GameObject* object)
 {
 
 	objectRoot->AddObject(object);
 
 }
+
+void GameBoard::SetCamera(CameraObject* cam)
+{
+	
+	this->camera = cam;
+
+}
+
+CameraObject* GameBoard::GetCam() const
+{
+
+	return camera;
+
+}
+
 
 DrawingBoard* GameBoard::GetDrawingBoard() const
 {

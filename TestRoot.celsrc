@@ -10,3 +10,4 @@ tile = load mesh 'Tile.obj'
 
 run testPar 5+4, 'a'
 set gameboard testPar2
+post 'Gameboard set'

@@ -47,6 +47,12 @@ void GameBoardHandler::Update(unsigned int time)
 			localGameBoard->AddObject((GameObject*)(gameObjects->GetValue(currentMessage->param1)));
 
 		}
+		else if (currentMessage->mess == GameBoardMess_SETCAM && localGameBoard != nullptr)
+		{
+
+			localGameBoard->SetCamera((CameraObject*)(gameObjects->GetValue(currentMessage->param1)));
+
+		}
 		else if (currentMessage->mess == GameBoardMess_SETGAMEBOARD)
 		{
 
@@ -56,6 +62,13 @@ void GameBoardHandler::Update(unsigned int time)
 
 		currentMessage->read = true;
 		currentMessage = inQueue->PopMessage();
+
+	}
+
+	if (localGameBoard != nullptr)
+	{
+
+		localGameBoard->FillInstanceBuffer();
 
 	}
 }
