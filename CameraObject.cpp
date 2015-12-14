@@ -18,11 +18,28 @@ CameraObject::CameraObject(unsigned int width, unsigned int height, float depth,
 	Matrix view = MatrixLookAtLH(this->GetPosition(), lookAtPoint, up);
 
 	Matrix projection = MatrixPerspectiveFovLH(fov, width / height, 0.1f, depth);
+	flip = 0;
+	this->flips = flips;
+	viewProjections = new Matrix[flips];
+	invViewProjections = new Matrix[flips];
 
-	viewProjection = MatrixMultiply(view, projection);
-	invViewProjection = MatrixInverse(viewProjection);
+	for (unsigned int i = 0; i < flips; i++)
+	{
 
-	theView = new ViewObject(viewProjection,flips);
+		viewProjections[i] = MatrixMultiply(view, projection);
+		invViewProjections[i] = MatrixInverse(viewProjections[i]);
+
+	}
+
+	theView = new ViewObject(viewProjections[0],flips);
+
+}
+
+void CameraObject::IncrementFlipBuff()
+{
+
+	flip++;
+	flip %= flips;
 
 }
 
@@ -37,16 +54,18 @@ ViewObject* CameraObject::GetView() const
 
 }
 
-Matrix CameraObject::GetViewProjection() const
+Matrix CameraObject::GetViewProjection(unsigned int flipBuffer) const
 {
 
-	return viewProjection;
+	return viewProjections[flipBuffer];
 
 }
 
 CameraObject::~CameraObject()
 {
 
+	delete[] viewProjections;
+	delete[] invViewProjections;
 	delete theView;
 
 }
