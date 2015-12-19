@@ -15,28 +15,20 @@ namespace Graphics
 	class GraphicHandler : public IGraphicDebug, public CrossHandlers::IHandleMessages
 	{
 		public:
-			GraphicHandler(void);
+			GraphicHandler(unsigned int flips);
 			///<summary>Initilizes part of the graphichandler so we can output basic text</summary>
 			///<param name='hwnd'>[in]The handle to the output window</param>
 			///<param val='initQuality'>[in]The initial quality to use/</param>
 			///<param val='dStyle'>[in]The initial style to use</param>
 			HRESULT PreInit(HWND hwnd, GraphicQuality initQuality, DrawingStyle dStyle);
 			///<summary>Initilizes the rest of the graphichandler so we can output complicated drawings</summary>
-			///<param name='camera'>[in]A pointer to the camera used by this and its underobject</param>
 			///<param val='errorOut'>[in]A pointer to a textcontainer to use for debugging</param>
-			HRESULT FullInit(IGraphicCamera* camera, CrossHandlers::TextContainer* errorOut, CrossHandlers::CelestialSlicedList<Resources::BaseObject*>* gameObjects);
+			HRESULT FullInit(CrossHandlers::TextContainer* errorOut, CrossHandlers::CelestialSlicedList<Resources::BaseObject*>* gameObjects);
 
 			///<summary>Updates the handler and prepares to draw</summary>
 			void Update(unsigned int time);
 			///<summary>Draws out the scene</summary>
 			void Draw();
-			///<summary>Sets the camera the handler as well as underobjects ues</summary>
-			///<param name='camera'>[in]A pointer to the new camera to be used</param>
-			void SetCamera(IGraphicCamera* camera);
-
-			///<summary>Sets the scene</summary>
-			///<param val='scene'>[in]scene</param>
-			void SetScene(Logic::LogicScene* scene);
 			///<summary>Adds a layout to draw</summary>
 			///<param val='layout'>[in]A pointer to the layout to draw</param>
 			void AddLayout(Resources::GUILayout* layout);
@@ -67,6 +59,7 @@ namespace Graphics
 			virtual void ToggleGlobalBorders(bool val);
 			virtual void SetCommandText(std::string text);
 
+			unsigned int GetRenderFlip() const;
 			///<summary>Releases the resources used by this handler and underobjects, must be called at the end of its lifetime</summary>
 			void Release();
 			///<summary>Gets the underlying cardhandler</summary>
@@ -80,6 +73,7 @@ namespace Graphics
 		private:
 			Resources::GameBoard* gameBoard;
 			CrossHandlers::CelestialSlicedList<Resources::BaseObject*>* gameObjects;
+			Resources::CameraObject* cameraObject;
 
 			///<summary>What to draw</summary>
 			DrawingStyle dStyle;
@@ -94,10 +88,6 @@ namespace Graphics
 			CardHandler* cardHandler;
 			///<summary>The interface to use when debugging the card</summary>
 			ICardDebug* debugCard;
-			///<summary>The intermediator to use when adding instances</summary>
-			Intermediator* inter;
-			///<summary>A pointer to the camera being used</summary>
-			IGraphicCamera* camera;
 			///<summary>If the handler is preinited</summary>
 			bool isPreInited;
 			///<summary>If the handler is inited</summary>
@@ -105,15 +95,8 @@ namespace Graphics
 			///<summary>How the handler is reading objects</summary>
 			int isReadingObjects;
 
-			///<summary>The logic information of the scene</summary>
-			Logic::LogicScene* logicScene;
-			///<summary>The graphic information of the scene</summary>
-			DrawScene* graphicScene;
 			///<summary>A list with the guis to draw</summary>
 			CrossHandlers::CelestialList<Resources::GUILayout*>* guiLayouts;
-
-			///<summary>An array of cameraframes</summary>
-			CrossHandlers::CameraFrame** cameras;
 
 			///<summary>The number of renders</summary>
 			int renderCount;
@@ -123,14 +106,8 @@ namespace Graphics
 			///<summary>If the handler is drawing</summary>
 			bool isDrawing;
 
-			///<summary>The current renderdata to read from</summary>
-			int renderFlip;
-			///<summary>The total amount of objects in renderdata</summary>
-			int renderFlips;
-			///<summary>The flip that is being read right now</summary>
-			int readingFlip;
-			///<summary>The flip that is being written to</summary>
-			int writeFlip;
+			unsigned int renderFlip;
+			unsigned int nextFlip;
 			///<summary>If the handler has chosen which flip to write to</summary>
 			bool hasChosenWriting;
 			///<summary>The debugcommand to draw</summary>

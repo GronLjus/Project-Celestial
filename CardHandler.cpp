@@ -33,7 +33,6 @@ CardHandler::CardHandler(int flips, bool useText)
 	driverType = D3D10_DRIVER_TYPE_NULL;
 	swapChain = nullptr;
 	card = nullptr;
-	camera = nullptr;
 
 	bH = nullptr;
 	inter = nullptr;
@@ -93,8 +92,6 @@ HRESULT CardHandler::Init(HWND hwnd, GraphicQuality gQ, DrawingStyle dS)
 	HRESULT hr = S_OK;
 	quality = gQ;
 	dStyle = dS;
-
-	camera = nullptr;
 
 	//Sets up the device and swapchains
 	D3D10_DRIVER_TYPE driverTypes[] = 
@@ -186,14 +183,6 @@ Intermediator* CardHandler::GetIntermediator()
 
 }
 
-void CardHandler::SetCamera(CrossHandlers::CameraFrame* cam)
-{
-	
-	camera = cam;
-	shader->SetCamera(cam);
-
-}
-
 void CardHandler::UpdateMeshBuffers(DrawingBoard* db)
 {
 
@@ -212,6 +201,36 @@ void CardHandler::UpdateInstanceBuffers(DrawingBoard* db, unsigned int flip)
 
 	bH->UpdateInstanceBuffer(db, flip);
 
+}
+
+void CardHandler::SetInstanceBuffers(unsigned int flip)
+{
+
+	ID3D10Buffer* instances = bH->GetInstanceBuffer(flip);
+	unsigned int iStride = sizeof(Instance);
+	unsigned int offset = 0;
+	card->IASetVertexBuffers(1, 1, &instances, &iStride, &offset);
+
+}
+
+void CardHandler::JustClear()
+{
+
+	shader->NothingToDraw();
+
+}
+
+void CardHandler::Draw(Entities::ViewObject* vObj, GraphicalMesh* meshes, unsigned int flip)
+{
+
+	if (underInitiated)
+	{
+
+		shader->StartDrawing(vObj,flip);
+		shader->DrawScene(vObj, meshes, flip);
+		shader->FinishDrawing();
+
+	}
 }
 
 void CardHandler::Draw(DrawScene* scene,int flip)

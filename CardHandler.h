@@ -34,6 +34,9 @@ namespace Graphics
 
 			void UpdateMeshBuffers(Entities::DrawingBoard* db);
 			void UpdateInstanceBuffers(Entities::DrawingBoard* db,unsigned int flip);
+			void SetInstanceBuffers(unsigned int flip);
+			void Draw(Entities::ViewObject* vObj, GraphicalMesh* meshes, unsigned int flip);
+			void JustClear();
 
 			///<summary>Draws the meshes</summary>
 			///<param name='scene'>[in]A pointer to the scene to draw</param>
@@ -67,10 +70,6 @@ namespace Graphics
 			///<returns>A pointer to the loaded resource</returns>
 			CrossHandlers::TextureResourceObject* CreateTexture(UCHAR r, UCHAR g, UCHAR b);
 	
-			///<summary>Sets the camera used y this card and underlying objects</summary>
-			///<param name='cam'>[in]A pointer to the camera that should be used</param>
-			void SetCamera(CrossHandlers::CameraFrame* cam);
-
 			///<summary>Updates the quality</summary>
 			///<param val='gQ'>The quality to use/</param>
 			void UpdateQuality(GraphicQuality gQ);
@@ -133,9 +132,6 @@ namespace Graphics
 			///<summary>The swapchain used by this card</summary>
 			IDXGISwapChain* swapChain;
 
-			///<summary>A pointer to the camera used by this objects underobjects</summary>
-			CrossHandlers::CameraFrame* camera;
-	
 			///<summary>The current frame</summary>
 			ID3D10Resource* currentFrame;
 			ID3D10ShaderResourceView* currentFramwView;

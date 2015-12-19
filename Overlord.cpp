@@ -18,6 +18,14 @@ using namespace std;
 int gFPS;
 int lFPS;
 
+int gFPS2;
+int lFPS2;
+
+unsigned int gTime = 0;
+unsigned int gTimeLast = 0;
+unsigned int lTime = 0;
+unsigned int lTimeLast = 0;
+
 Overlord::Overlord(void)
 {
 
@@ -26,7 +34,7 @@ Overlord::Overlord(void)
 	isDrawingBool = false;
 	okToDraw = false;
 	gBH = new GameBoardHandler();
-	gH = new GraphicHandler();
+	gH = new GraphicHandler(flip);
 	rH = new ResourceHandler(flip);
 	iH = new InputHandler();
 	pH = new PlayerHandler();
@@ -42,7 +50,6 @@ Overlord::Overlord(void)
 	messageHandlers[MessageSource_INPUT] = iH;
 	messageHandlers[MessageSource_MASTER] = nullptr;
 
-	scene = nullptr;
 	dbgIn = nullptr;
 	dbgOut = nullptr;
 	dbgPnl = nullptr;
@@ -152,20 +159,12 @@ HRESULT Overlord::Init(HWND hwnd)
 
 	dbgPnl->AddText("DFPS");
 	dbgPnl->AddText("LFPS");
-	dbgPnl->AddText("MBLUR");
-	dbgPnl->AddText("LIGHT");
-	dbgPnl->AddText("PARTICLES");
-	dbgPnl->AddText("X");
-	dbgPnl->AddText("Y");
-	dbgPnl->AddText("Z");
 
 	dbgOut->AddText("Initiating CelestialGraphics");
-	res = gH->FullInit(cam, dbgOut, rH->GetObjectContainer());
+	res = gH->FullInit(dbgOut, rH->GetObjectContainer());
 	okToDraw = true;
 
 	delete[] temp;
-	scene = new LogicScene();
-	gH->SetScene(scene);
 
 	dbgOut->AddText("Engine Loaded!");
 	dbgOut->AddText("Loading root script");
@@ -287,6 +286,7 @@ void Overlord::Kill()
 	okToDraw = false;
 
 }
+
 void Overlord::processCommand(std::string* command, int nrParam)
 {
 
@@ -335,18 +335,6 @@ void Overlord::processCommand(std::string* command, int nrParam)
 	}
 }
 
-int inStart = 0;
-int inStop = 0;
-int dbgStart = 0;
-int dbgStop = 0;
-int plStart = 0;
-int plStop = 0;
-int ghStart = 0;
-int ghStop = 0;
-
-float rotation = 0.01745329253f;//Approx 1 degree per update
-bool dbgFlag = false;
-
 void Overlord::HandleDrawing(unsigned int time)
 {
 
@@ -356,8 +344,23 @@ void Overlord::HandleDrawing(unsigned int time)
 	{
 
 		isDrawing.lock();
-		gH->Draw();
+		gH->Draw(); 
 		isDrawing.unlock();
+
+		unsigned int time2 = clock();
+		gTime += time2 - gTimeLast;
+		gTimeLast = time2;
+
+		if (gTime >= 1000)
+		{
+
+			gFPS = gFPS2;
+			gTime = 0;
+			gFPS2 = 0;
+
+		}
+
+		gFPS2++;
 
 	}
 	
@@ -367,129 +370,41 @@ void Overlord::HandleDrawing(unsigned int time)
 
 void Overlord::Update(unsigned int time)
 {
-	
+
+
+	unsigned int time2 = clock();
+	lTime += (time2 - lTimeLast);
+	lTimeLast = time2;
+
+	if (lTime >= 1000)
+	{
+
+		lFPS = lFPS2;
+		lTime = 0;
+		lFPS2 = 0;
+
+	}
+
+	lFPS2++;
+
+
 	std::stringstream out;
 	out << gFPS;
 	dbgPnl->SetText(0, "DFPS: " + out.str());
 	out.str("");
 	out << lFPS;
 	dbgPnl->SetText(1, "LFPS: " + out.str());
-	out.str("");
-	out << gH->GetStyle().motionBlur;
-	dbgPnl->SetText(2, "MBLUR: " + out.str());
-	out.str("");
-	out << gH->GetStyle().enlighten;
-	dbgPnl->SetText(3, "LIGHT: " + out.str());
-	out.str("");
-	out << gH->GetStyle().useParticle;
-	dbgPnl->SetText(4, "PARTICLES: " + out.str());
-	out.str("");
-	out << cam->GetPos().x;
-	dbgPnl->SetText(5,"X: " + out.str());
-	out.str("");
-	out << cam->GetPos().y;
-	dbgPnl->SetText(6,"Y: " + out.str());
-	out.str("");
-	out << cam->GetPos().z;
-	dbgPnl->SetText(7,"Z: " + out.str());
 
 	if(gH->GetIsInited())
 	{
 
-		bool waitFrame = false;
-		Message* currentMessage = inQueue->PopMessage();
-		
-		while (currentMessage->type != MessageType_NA)
-		{
-
-			if (currentMessage->type == MessageType_EVENT && currentMessage->mess == EventMess_WAITFORFRAME)
-			{
-
-				waitFrame = true;
-
-			}
-
-			currentMessage->read = true;
-			currentMessage = inQueue->PopMessage();
-
-		}
-
-		inStart = clock();
 		iH->Update(time);
-		inStop = clock();
-		
+		cH->Update(time);
+		pH->Update();
+		rH->Update(time);
 		gBH->Update(time);
 		guiH->Update(time);
-
-		if (iH->IsKeyDown(Key_TILDE) || iH->IsKeyDown(Key_TAB) && cH != nullptr)
-		{
-
-			dbgFlag = !dbgFlag;
-			dbgIn->Toggle(dbgFlag);
-
-		}
-
-		if (cH != nullptr && dbgFlag)
-		{
-
-			
-		}
-		else
-		{
-		
-			plStart = clock();
-			pH->Update();
-			plStop = clock();
-			cH->Update(time);
-			rH->Update(time);
-
-			CelestialListNode<ResourceObject*>* obj = scene->GetObjects()->GetFirstNode();
-
-			while (obj != nullptr)
-			{
-
-				if (obj->GetNodeObject()->GetMesh() != nullptr && obj->GetNodeObject()->GetMesh()->GetId() == baseMeshes[1])
-				{
-
-					Vector3 objRotation = obj->GetNodeObject()->GetRotation();
-					//objRotation.y += rotation;
-					obj->GetNodeObject()->SetRotation(objRotation);
-
-				}
-
-				obj = obj->GetNext();
-
-			}
-
-			if(iH->IsKeyDown(Key_F9))
-			{
-
-				iH->ToggleContainMouse();
-
-			}
-
-			ghStart = clock();
-			gH->Update(time);
-			ghStop = clock();
-		
-			float totalTime = (float)(ghStop-ghStart+plStop-plStart+dbgStop-dbgStart+inStop-inStart);
-			float inFactor = (inStop-inStart)/totalTime;
-			float dbgFactor = (dbgStop-dbgStart)/totalTime;
-			float plFactor = (plStop-plStart)/totalTime;
-			float ghFactor = (ghStop-ghStart)/totalTime;
-
-			int dbgHere = 0;
-
-		}
-
-		if (waitFrame)
-		{
-
-			currentMessage->type = MessageType_SCRIPT;
-			currentMessage->mess = ScriptMess_CATCHUP;
-			cH->HandleMessage(currentMessage);
-
-		}
+		gH->Update(time);
 
 		waitForMessages = false;
 		handleMessages.notify_all();
@@ -543,14 +458,6 @@ Overlord::~Overlord()
 	
 	isDrawing.lock();
 	gH->Release();
-	
-	if(scene != nullptr)
-	{
-
-		scene->ClearScene();
-		delete scene;
-
-	}
 
 	delete inQueue;
 	delete[] messageHandlers;

@@ -6,6 +6,7 @@
 #include "CelestialSlicedList.h"
 #include "CelestialStack.h"
 #include "ViewObject.h"
+#include "GraphicalMesh.h"
 
 namespace Entities
 {
@@ -16,6 +17,7 @@ namespace Entities
 		public:
 			DrawingBoard();
 			void AddMesh(Resources::MeshObject* mesh);
+			Graphics::GraphicalMesh* GetMeshes() const;
 			void StartAddingInstances();
 			unsigned int AddInstance(Resources::GameObject* object);
 			void FinalizeInstances(Entities::ViewObject* onView);
@@ -26,7 +28,8 @@ namespace Entities
 
 		private:
 			
-
+			unsigned int meshes;
+			Graphics::GraphicalMesh* meshesArr;
 			unsigned int addObjectToVertexBuffer(Resources::MeshObject* mesh);
 			void addObjectToIndexBuffer(Resources::MeshObject* mesh, unsigned int offset);
 			CrossHandlers::BufferObject2<CrossHandlers::BufferVertex>* vertexBuffer;

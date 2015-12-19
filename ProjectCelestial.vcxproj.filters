@@ -660,6 +660,9 @@
     <ClInclude Include="ViewObject.h">
       <Filter>Header Files\Entities\Objects</Filter>
     </ClInclude>
+    <ClInclude Include="GraphicalMesh.h">
+      <Filter>Header Files\Graphics</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Camera.cpp">
@@ -898,6 +901,9 @@
     </ClCompile>
     <ClCompile Include="CameraObject.cpp">
       <Filter>Source Files\Resources\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="GraphicalMesh.cpp">
+      <Filter>Source Files\Graphics</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

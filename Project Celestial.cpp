@@ -92,7 +92,7 @@ int runMessaging(Overlord* lordie)
 
 }
 
-unsigned int lFrameRate = 16;
+unsigned int lFrameRate = 0;
 unsigned int lLastTime = 0;
 
 HWND hWnd;

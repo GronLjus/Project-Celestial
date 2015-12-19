@@ -66,9 +66,6 @@ namespace Logic
 			///<summary>An array of ids to use as meshes when creating objects</summary>
 			int* baseMeshes;
 
-			///<summary>The scene to use</summary>
-			LogicScene* scene;
-		
 			///<summary>The handle of the output window</summary>
 			HWND hWnd;
 			///<summary>The handle of the graphicthread</summary>

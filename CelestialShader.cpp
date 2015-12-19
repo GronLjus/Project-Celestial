@@ -11,6 +11,7 @@ using namespace Graphics;
 using namespace std;
 using namespace Resources;
 using namespace CrossHandlers;
+using namespace Entities;
 
 CelestialShader::CelestialShader()
 {
@@ -1150,16 +1151,21 @@ bool CelestialShader::SetDrawing(DrawingStyle dS)
 
 }
 
-void CelestialShader::StartDrawing()
+void CelestialShader::NothingToDraw()
 {
 
-	float temp[4] = { 0, 0, 0, 1 };
-	float temp2[4] = { 1, 0, 0, 1 };
-	//Clear rendertargets
+	float temp[4] = { 0, 0, 0, 1 };//Clear rendertargets
 	card->ClearDepthStencilView(dpthStnc->GetDXT()->GetDepthView(), D3D10_CLEAR_DEPTH | D3D10_CLEAR_STENCIL, 1.0f, 0);
 	card->ClearRenderTargetView(mtrs[MRTVal_AMB]->GetDXT()->GetTargetView(), temp);
 	card->ClearRenderTargetView(mtrs[MRTVal_DIFF]->GetDXT()->GetTargetView(), temp);
 	//card->ClearRenderTargetView(mtrs[MRTVal_VEL]->GetDXT()->GetTargetView(), temp);
+
+}
+
+void CelestialShader::StartDrawing()
+{
+
+	NothingToDraw();
 
 	fc.FrameTime = clock();
 	
@@ -1184,6 +1190,110 @@ void CelestialShader::StartDrawing()
 	}
 
 	transferFrameConstants();
+
+}
+
+void CelestialShader::StartDrawing(ViewObject* scene, unsigned int flip)
+{
+
+	float temp[4] = { 0, 0, 0, 1 };
+	float temp2[4] = { 1, 0, 0, 1 };
+	//Clear rendertargets
+	card->ClearDepthStencilView(dpthStnc->GetDXT()->GetDepthView(), D3D10_CLEAR_DEPTH | D3D10_CLEAR_STENCIL, 1.0f, 0);
+	card->ClearRenderTargetView(mtrs[MRTVal_AMB]->GetDXT()->GetTargetView(), temp);
+	card->ClearRenderTargetView(mtrs[MRTVal_DIFF]->GetDXT()->GetTargetView(), temp);
+	//card->ClearRenderTargetView(mtrs[MRTVal_VEL]->GetDXT()->GetTargetView(), temp);
+
+	fc.FrameTime = clock();
+
+	fc.CameraPos = Vector4(scene->GetPosition(flip), 0);
+
+	fc.LastViewProjection = fc.ViewProjection;
+	fc.InvertViewProjection = MatrixTranspose(scene->GetInverseViewProjection(flip));
+	fc.View = MatrixTranspose(scene->GetView(flip));
+	fc.Projection = MatrixTranspose(scene->GetProjection(flip));
+	fc.ViewProjection = MatrixTranspose(scene->GetViewProjection(flip));
+
+	fc.GlobalDirection = Vector4(0.0f, 1.0f, 0.0f, 0);
+	fc.ZNear = scene->GetPort().minDepth;
+
+	fc.FOV = scene->GetFov();
+
+	if (!light)
+	{
+
+		fc.GlobalDirection = Vector4(0.0f, 0.0f, 0.0f, 0);
+
+	}
+
+	transferFrameConstants();
+
+}
+
+void CelestialShader::DrawScene(ViewObject* scene, GraphicalMesh* meshes,unsigned int flip)
+{
+
+	ID3D10RenderTargetView* target[4] = { mtrs[MRTVal_AMB]->GetDXT()->GetTargetView(), 
+		mtrs[MRTVal_DIFF]->GetDXT()->GetTargetView(),
+		mtrs[MRTVal_NORM]->GetDXT()->GetTargetView(),
+		mtrs[MRTVal_VEL]->GetDXT()->GetTargetView() };
+
+	//Prepare to draw geometry
+	D3D10_VIEWPORT vp;
+	ViewObject::ViewPort port = scene->GetPort();
+	vp.Height = port.height;
+	vp.MaxDepth = port.maxDepth;
+	vp.MinDepth = port.minDepth;
+	vp.TopLeftX = port.topX;
+	vp.TopLeftY = port.topY;
+	vp.Width = port.width;
+
+	card->RSSetViewports(1, &vp);
+	card->RSSetState(rastStates[RastState_BACKCULL]);
+
+	card->OMSetDepthStencilState(depthStates[DepthCode_RW], 0);
+	card->OMSetBlendState(nullptr, nullptr, 0xFFFFFFFF);
+	card->OMSetRenderTargets(4, target, dpthStnc->GetDXT()->GetDepthView());
+
+	card->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST_ADJ);
+
+	GeometryCode rendCode = globalBorders ? GeometryCode_GEOBORDERS : GeometryCode_GEO;
+	card->VSSetShader(techs[Technique_GEOMETRY][rendCode]->GetVertexShader());
+	card->GSSetShader(techs[Technique_GEOMETRY][rendCode]->GetGeometryShader());
+	card->PSSetShader(techs[Technique_GEOMETRY][rendCode]->GetPixelShader());
+
+	CelestialStack<ViewObject::Fragment>* instanceStack = scene->GetInstanceStack(flip);
+
+	while (instanceStack->GetCount() > 0)
+	{
+
+		ViewObject::Fragment fragment = instanceStack->PopElement();
+		GraphicalMesh mesh = meshes[fragment.mesh];
+
+		srvs[0] = mesh.GetAmbientTexture()->GetShaderView();
+		srvs[1] = mesh.GetDiffuseTexture()->GetShaderView();
+
+		int size = 2;
+
+		rc.UseNormal[0] = false;
+
+		if (dStyle.useNormalMaps && mesh.GetNormalTexture() != nullptr)
+		{
+
+			srvs[2] = mesh.GetNormalTexture()->GetShaderView();
+			rc.UseNormal[0] = true;
+			size++;
+
+		}
+
+		transferRenderConstants();
+		card->PSSetShaderResources(SRVRegisters_AMB, size, srvs);
+
+		card->DrawIndexedInstanced(mesh.GetIndexLength(), fragment.length, mesh.GetIndexStart(), 0, fragment.start);
+
+	}
+
+	instanceStack->Rewind();
 
 }
 

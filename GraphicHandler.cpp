@@ -13,7 +13,7 @@ using namespace Resources;
 using namespace CelestialMath;
 using namespace std;
 
-GraphicHandler::GraphicHandler(void) : IHandleMessages(200,MessageSource_GRAPHICS)
+GraphicHandler::GraphicHandler(unsigned int flips) : IHandleMessages(200,MessageSource_GRAPHICS)
 {
 
 	command = "";
@@ -23,24 +23,13 @@ GraphicHandler::GraphicHandler(void) : IHandleMessages(200,MessageSource_GRAPHIC
 	canDraw = false;
 	isDrawing = false;
 	debug = true;
-	renderFlips = 2;
-	cameras = new CameraFrame*[renderFlips];
 	guiLayouts = new CelestialList<Resources::GUILayout*>();
-
-	for (int i = 0; i < renderFlips; i++)
-	{
-
-		cameras[i] = nullptr;
-
-	}
-
-	cardHandler = new CardHandler(renderFlips, true);
+	cardHandler = new CardHandler(flips, true);
 	debugCard = cardHandler;
-	inter = nullptr;
-	readingFlip = 1;
-	renderFlip = -1;
-	graphicScene = new DrawScene();
+	renderFlip = 0;
+	nextFlip = 0;
 	gameBoard = nullptr;
+	cameraObject = nullptr;
 	filter = MessageType_GRAPHICS;
 
 }
@@ -49,19 +38,6 @@ CardHandler* GraphicHandler::GetCardHandler()
 {
 
 	return cardHandler;
-
-}
-
-void GraphicHandler::SetCamera(IGraphicCamera* camera)
-{
-
-	isInited = false;
-
-	while(isReadingObjects > 0){Sleep(0);}//Pause until rendering is complete
-
-	delete this->camera;
-	this->camera = camera;
-	isInited = true;
 
 }
 
@@ -76,89 +52,15 @@ HRESULT GraphicHandler::PreInit(HWND hwnd, GraphicQuality gQ, DrawingStyle dStyl
 
 }
 
-HRESULT GraphicHandler::FullInit(IGraphicCamera* camera, TextContainer* errorOut, CelestialSlicedList<BaseObject*>* gameObjects)
+HRESULT GraphicHandler::FullInit(TextContainer* errorOut, CelestialSlicedList<BaseObject*>* gameObjects)
 {
 
-	this->camera = camera;
 	HRESULT hr = cardHandler->InitShader(errorOut);
-	inter = cardHandler->GetIntermediator();
 	isInited = true;
 	debugCard->ToggleWireFrame(wf);
 	debugCard->ToggleNormalSpikes(false);
 	this->gameObjects = gameObjects;
 	return hr;
-
-}
-
-void GraphicHandler::SetScene(Logic::LogicScene* scene)
-{
-
-	isInited = false;//Pause rendering while scene gets changed
-	canDraw = false;
-
-	while (isReadingObjects > 0 || isDrawing){ Sleep(0); }//Wait until object aren't being read
-
-	logicScene = scene;
-	graphicScene->ClearScene();
-
-	CelestialListNode<ResourceObject*>* node = scene->GetObjects()->GetFirstNode();
-
-	while (node != nullptr && node->GetNodeObject() != nullptr)
-	{
-
-		ResourceObject* object = node->GetNodeObject();
-
-		if (object->GetLightEmitter() != nullptr)
-		{
-
-			graphicScene->AddLight(object->GetLightEmitter());
-
-		}
-
-		CelestialListNode<MeshObject*>* meshNode = graphicScene->GetMeshes()->GetFirstNode();
-		bool meshExists = object->GetMesh() == nullptr;
-
-		while (!meshExists && meshNode != nullptr)
-		{
-
-			meshExists = meshNode->GetNodeObject() == object->GetMesh();
-			meshNode = meshNode->GetNext();
-
-		}
-
-		if (!meshExists)
-		{
-
-			graphicScene->AddMesh(object->GetMesh());
-			inter->InitMesh(object->GetMesh(),renderFlips);
-
-		}
-
-		CelestialListNode<IParticleEmitter*>* particleNode = graphicScene->GetParticleSystem()->GetFirstNode();
-		bool particleExists = object->GetParticleEmitter() == nullptr;
-
-		while (!particleExists && particleNode != nullptr)
-		{
-
-			particleExists = particleNode->GetNodeObject() == object->GetParticleEmitter()->GetEmitter();
-			particleNode = particleNode->GetNext();
-
-		}
-
-		if (!particleExists)
-		{
-
-			graphicScene->AddParticleSystem(object->GetParticleEmitter()->GetEmitter());
-			inter->InitParticleSystem(object->GetParticleEmitter()->GetEmitter(), renderFlips);
-
-		}
-		
-		node = node->GetNext();
-
-	}
-
-	isInited = true;//Start rendering again
-	canDraw = true;
 
 }
 
@@ -267,106 +169,42 @@ void GraphicHandler::Update(unsigned int time)
 			canDraw = true;
 
 		}
+		else if (currentMessage->mess == GraphicMess_SETCAMERA)
+		{
 
+			canDraw = false;//Pause rendering
+			while (isDrawing){ this_thread::yield(); }//Wait until we aren't rendering
+			this->cameraObject = (CameraObject*)gameObjects->GetValue(currentMessage->param1);
+			canDraw = true;
+
+		}
+		
 		currentMessage->read = true;
 		currentMessage = inQueue->PopMessage();
 
 	}
 
-	isReadingObjects = 1;
-
-	if(isInited)
+	if (cameraObject != nullptr && gameBoard != nullptr)
 	{
-		
-		renderCount = 0;
 
-		if(!hasChosenWriting)
+		cardHandler->UpdateInstanceBuffers(gameBoard->GetDrawingBoard(), cameraObject->GetFlip());
+		unsigned int newFlip = cameraObject->GetFlip();
+		cameraObject->IncrementFlipBuff();
+		nextFlip = newFlip;
+
+		while (cameraObject->GetFlip() == renderFlip)
 		{
 
-			writeFlip = (renderFlip+1)%renderFlips;
-			hasChosenWriting = true;
+			this_thread::yield();
 
 		}
-
-		if(writeFlip == readingFlip)
-		{
-
-			isReadingObjects = 0;
-			return;
-
-		}
-
-		if (cameras[writeFlip] != nullptr)
-		{
-
-			delete cameras[writeFlip];
-
-		}
-
-		camera->Lock();
-		cameras[writeFlip] = camera->GetFrame();
-		camera->Unlock();
-
-		
-		//Check all objects against camera
-		CelestialListNode<ResourceObject*>* obj = logicScene->GetObjects()->GetFirstNode();
-
-		while (obj != nullptr && obj->GetNodeObject() != nullptr)
-		{
-
-			CelestialListNode<IBounding*>* meshVol = obj->GetNodeObject()->GetBoundingChain(ResourceCode_MESH)->GetFirstNode();
-			CelestialListNode<IBounding*>* partVol = obj->GetNodeObject()->GetBoundingChain(ResourceCode_PARTICLES)->GetFirstNode();
-			bool meshIn = obj->GetNodeObject()->GetMesh() != nullptr;
-			bool partIn = obj->GetNodeObject()->GetParticleEmitter() != nullptr;
-
-			while (meshVol != nullptr && meshIn)
-			{
-
-				meshIn = cameras[writeFlip]->CheckFrustum(meshVol->GetNodeObject());
-				meshVol = meshVol->GetNext();
-
-			}
-
-			while (partVol != nullptr && partIn)
-			{
-
-				partIn = cameras[writeFlip]->CheckFrustum(partVol->GetNodeObject());
-				partVol = partVol->GetNext();
-
-			}
-
-			if (meshIn)
-			{
-
-				inter->AddInstance(obj->GetNodeObject(), ResourceCode_MESH, writeFlip);
-
-			}
-
-			if (partIn && dStyle.useParticle)
-			{
-
-				inter->AddInstance(obj->GetNodeObject(), ResourceCode_PARTICLES, writeFlip);
-
-			}
-
-			obj = obj->GetNext();
-
-		}
-
-		renderFlip = writeFlip;
-		hasChosenWriting = false;
-		canDraw = true;
-
 	}
-	else
-	{
-		
-		isReadingObjects = 0;
-		Sleep(0);
+}
 
-	}
-	
-	isReadingObjects = 0;
+unsigned int GraphicHandler::GetRenderFlip() const
+{
+
+	return renderFlip;
 
 }
 
@@ -376,7 +214,7 @@ void GraphicHandler::Draw()
 	if (!canDraw)
 	{
 
-		Sleep(0);
+		this_thread::yield();
 		return;
 
 	}
@@ -385,15 +223,25 @@ void GraphicHandler::Draw()
 	
 	int sTime = clock();
 
-	if(canDraw && isInited && renderFlip >= 0)
+	if (canDraw && isInited && !(cameraObject == nullptr || gameBoard == nullptr))
 	{
 
-		int start = clock();
-		readingFlip = renderFlip;
-		float col = 0.0f;
-		cardHandler->SetCamera(cameras[readingFlip]);
-		cardHandler->Draw(graphicScene,readingFlip);//Draw all meshes
+		if (renderFlip != nextFlip)
+		{
 
+			renderFlip = nextFlip;
+			cardHandler->SetInstanceBuffers(renderFlip);
+
+		}
+
+		cardHandler->Draw(cameraObject->GetView(),gameBoard->GetDrawingBoard()->GetMeshes(), renderFlip);//Draw all meshes
+
+
+	}
+	else if (canDraw && isInited)
+	{
+
+		cardHandler->JustClear();
 
 	}
 
@@ -406,6 +254,7 @@ void GraphicHandler::Draw()
 		cardHandler->Draw(((CelestialList<Resources::GUIObject*>*)guiLayouts));
 
 	}
+
 	int eTime = clock();
 
 	int tTime = eTime - sTime;
@@ -495,23 +344,7 @@ GraphicHandler::~GraphicHandler(void)
 	isInited = false;
 	while(isReadingObjects > 0 || isDrawing){Sleep(0);}//Wait until objects aren't being read and we aren't rendering
 	
-	for (int i = 0; i < renderFlips; i++)
-	{
-
-		if (cameras[i] != nullptr)
-		{
-
-			delete cameras[i];
-
-		}
-
-		cameras[i] = nullptr;
-
-	}
-
-	delete[] cameras;
 	delete guiLayouts;
-	delete graphicScene;
 	delete cardHandler;
 
 }

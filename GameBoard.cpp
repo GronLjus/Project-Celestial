@@ -19,6 +19,7 @@ void GameBoard::FillInstanceBuffer()
 	if (camera != nullptr)
 	{
 
+		camera->GetView()->ResetInstances();
 		drawingBoard->StartAddingInstances();
 		objectRoot->AddInstance(camera->GetView(), drawingBoard);
 		drawingBoard->FinalizeInstances(camera->GetView());

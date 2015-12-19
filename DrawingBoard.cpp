@@ -5,6 +5,7 @@ using namespace Entities;
 using namespace CrossHandlers;
 using namespace Resources;
 using namespace CelestialMath;
+using namespace Graphics;
 
 DrawingBoard::DrawingBoard()
 {
@@ -18,12 +19,22 @@ DrawingBoard::DrawingBoard()
 	hasInstance = new CelestialSlicedList<bool>(32,false);
 	meshInstance = new CelestialStack<unsigned int>(false);
 
+	meshes = 32;
+	meshesArr = new GraphicalMesh[meshes];
+
 }
 
 void DrawingBoard::StartAddingInstances()
 {
 
 	instanceBuffer->Reset();
+
+}
+
+GraphicalMesh* DrawingBoard::GetMeshes() const
+{
+
+	return meshesArr;
 
 }
 
@@ -143,10 +154,40 @@ void DrawingBoard::addObjectToIndexBuffer(Resources::MeshObject* mesh, unsigned 
 void DrawingBoard::AddMesh(MeshObject* mesh)
 {
 
+	unsigned int indexStart = indexBuffer->GetBufferSize();
 	addObjectToIndexBuffer(mesh, addObjectToVertexBuffer(mesh));
-	meshDictionary->Add(meshInstances->GetFirstEmpty(), ((BaseObject*) mesh)->GetId());
-	
-	if (meshInstances->GetValue(meshDictionary->GetValue(((BaseObject*)mesh)->GetId())) == nullptr)
+	meshDictionary->Add(meshInstances->GetFirstEmpty(), ((BaseObject*)mesh)->GetId());
+
+	unsigned int localMesh = meshDictionary->GetValue(((BaseObject*)mesh)->GetId());
+
+	if (localMesh >= meshes)
+	{
+
+		meshes += 32;
+		GraphicalMesh* newMeshes = new GraphicalMesh[meshes];
+
+		for (unsigned int i = 0; i < meshes - 32; i++)
+		{
+
+			newMeshes[i] = meshesArr[i];
+
+		}
+
+		GraphicalMesh* oldMesh = meshesArr;
+		meshesArr = newMeshes;
+		delete[] oldMesh;
+
+	}
+
+	GraphicalMesh meshRep(mesh->getMaterials()[0]->GetAmbient()->GetDXT(),
+		mesh->getMaterials()[0]->GetDiffuse()->GetDXT(),
+		mesh->getMaterials()[0]->GetNormal()->GetDXT(),
+		indexStart,
+		indexBuffer->GetBufferSize()-indexStart);
+
+	meshesArr[localMesh] = meshRep;
+
+	if (meshInstances->GetValue(localMesh) == nullptr)
 	{
 
 		meshInstances->Add(new BufferObject2<Instance>(32));
@@ -155,7 +196,7 @@ void DrawingBoard::AddMesh(MeshObject* mesh)
 	else
 	{
 
-		meshInstances->GetValue(meshDictionary->GetValue(((BaseObject*)mesh)->GetId()))->Reset();
+		meshInstances->GetValue(localMesh)->Reset();
 
 	}
 }
@@ -193,5 +234,7 @@ DrawingBoard::~DrawingBoard()
 	delete meshDictionary;
 	delete hasInstance;
 	delete meshInstance;
+
+	delete[] meshesArr;
 
 }

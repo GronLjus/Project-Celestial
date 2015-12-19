@@ -15,6 +15,7 @@ namespace CrossHandlers
 		T PeekElement();
 		unsigned int GetCount();
 		void Reset();
+		void Rewind();
 		~CelestialStack();
 
 	private:
@@ -22,6 +23,7 @@ namespace CrossHandlers
 		CelestialDoubleListNode<T>* first;
 		CelestialDoubleListNode<T>* root;
 		int count;
+		unsigned int maxCount;
 		bool del;
 	};
 }
@@ -35,6 +37,7 @@ CelestialStack<T>::CelestialStack(bool delOnPop)
 	first = nullptr;
 	root = nullptr;
 	count = 0;
+	maxCount = 0;
 	del = delOnPop;
 
 }
@@ -90,6 +93,9 @@ T CelestialStack<T>::PopElement()
 				root = nullptr;
 
 			}
+
+			maxCount--;
+
 		}
 
 		first = newFirst;
@@ -104,6 +110,7 @@ unsigned int CelestialStack<T>::GetCount()
 {
 
 	return count;
+
 }
 
 template <class T>
@@ -152,6 +159,13 @@ void CelestialStack<T>::PushElement(T element)
 
 	count++;
 
+	if (count > maxCount)
+	{
+
+		maxCount = count;
+
+	}
+
 }
 
 template <class T>
@@ -191,7 +205,23 @@ void CelestialStack<T>::Reset()
 	{
 
 		first = nullptr;
-		count = 0;
+
+	}
+
+	count = 0;
+	maxCount = 0;
+
+}
+
+template <class T>
+void CelestialStack<T>::Rewind()
+{
+
+	if (!del)
+	{
+
+		count = maxCount;
+		first = root;
 
 	}
 }

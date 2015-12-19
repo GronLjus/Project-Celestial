@@ -16,7 +16,7 @@ namespace CrossHandlers
 	};
 	enum EventMess{ EventMess_OBJECTADDED, EventMess_SCRIPTADDED, EventMess_GUIOBJECTADDED, EventMess_WAITFORFRAME, EventMess_NA };
 	enum GUIMess{ GUIMess_POST, GUIMess_APPEND, GUIMess_CLEAR, GUIMess_ERASE, GUIMess_NA };
-	enum GraphicMess{ GraphicMess_GETSCREEN, GraphicMess_SETGAMEBOARD, GraphicMess_UPDATEGAMEBOARDBUFFERS, GraphicMess_NA };
+	enum GraphicMess{ GraphicMess_GETSCREEN, GraphicMess_SETGAMEBOARD, GraphicMess_SETCAMERA, GraphicMess_UPDATEGAMEBOARDBUFFERS, GraphicMess_NA };
 
 	enum GameBoardMess{ GameBoardMess_ADDMESH, GameBoardMess_SETCAM, GameBoardMess_ADDOBJECT, GameBoardMess_SETGAMEBOARD, GameBoardMess_NA };
 	enum SystemMess{SystemMess_GETSCREENRES,SystemMesss_NA};

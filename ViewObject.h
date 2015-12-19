@@ -22,13 +22,35 @@ namespace Entities
 
 			};
 
-			ViewObject(CelestialMath::Matrix matrix, unsigned int bufferFlips);
-			void Update(CelestialMath::Matrix matrix);
+			struct ViewPort
+			{
+				unsigned int height;
+				unsigned int width;
+				float maxDepth;
+				float minDepth;
+				unsigned int topX;
+				unsigned int topY;
+
+			};
+
+			ViewObject(CelestialMath::Vector3 pos,CelestialMath::Vector3 sidePoint, CelestialMath::Vector3 lookAtPoint, CelestialMath::Vector3 up, float fov, unsigned int bufferFlips, ViewPort port);
+			void Update(CelestialMath::Matrix transform);
 			void IncrementInstances();
 			void AddInstanceFragment(unsigned int mesh, unsigned int start, unsigned int length);
 			void ResetInstances();
 			CrossHandlers::Frustum* GetFrustum() const;
 			CrossHandlers::CelestialStack<Fragment>* GetInstanceStack(unsigned int bufferFlip) const;
+
+			unsigned int GetFlip() const;
+			CelestialMath::Matrix GetView(unsigned int flip) const;
+			CelestialMath::Matrix GetProjection(unsigned int flip) const;
+			CelestialMath::Matrix GetViewProjection(unsigned int flip) const;
+			CelestialMath::Matrix GetInverseViewProjection(unsigned int flip) const;
+
+			CelestialMath::Vector3 GetPosition(unsigned int flip) const;
+			float GetFov() const;
+
+			ViewPort GetPort() const;
 			~ViewObject();
 
 		private:
@@ -36,5 +58,20 @@ namespace Entities
 			CrossHandlers::Frustum* localFrustum;
 			unsigned int flips;
 			unsigned int flip;
+			ViewPort vp;
+
+			Entities::ViewObject* theView;
+
+			CelestialMath::Matrix* views;
+			CelestialMath::Matrix* projections;
+			CelestialMath::Matrix* viewProjections;
+			CelestialMath::Matrix* invViewProjections;
+
+			CelestialMath::Vector3 sidePoint;
+			CelestialMath::Vector3 lookAtPoint;
+			CelestialMath::Vector3 up;
+			CelestialMath::Vector3* pos;
+
+			float fov;
 	};
 }

@@ -5,34 +5,81 @@ using namespace Entities;
 using namespace CelestialMath;
 using namespace CrossHandlers;
 
-ViewObject::ViewObject(Matrix matrix, unsigned int bufferFlips)
+ViewObject::ViewObject(CelestialMath::Vector3 pos,Vector3 sidePoint, Vector3 lookAtPoint, Vector3 up, float fov, unsigned int bufferFlips, ViewPort port)
 {
 
+	this->vp = vp;
 	flips = bufferFlips;
 	flip = 0;
-	localFrustum = new Frustum(matrix, MatrixInverse(matrix));
+
+	this->sidePoint = sidePoint;
+	this->lookAtPoint = lookAtPoint;
+	this->up = up;
+	this->fov = fov;
+
+	views = new Matrix[flips];
+	projections = new Matrix[flips];
+	viewProjections = new Matrix[flips];
+	invViewProjections = new Matrix[flips];
+
 	instances = new CelestialStack<Fragment>*[flips];
+	this->pos = new Vector3[flips];
 		
 	for (unsigned int i = 0; i < flips; i++)
 	{
 
 		instances[i] = new CelestialStack<Fragment>(false);
+		views[i] = MatrixLookAtLH(pos, lookAtPoint, up);
+		projections[i] = MatrixPerspectiveFovLH(fov, port.width / port.height, port.minDepth, port.maxDepth);
+
+		viewProjections[i] = MatrixMultiply(views[i], projections[i]);
+		invViewProjections[i] = MatrixInverse(viewProjections[i]);
+
+		this->pos[i] = pos;
 
 	}
+
+	localFrustum = new Frustum(viewProjections[0], invViewProjections[0]);
+
 }
 
 void ViewObject::IncrementInstances()
 {
 
+	unsigned int oldFlip = flip;
 	flip++;
 	flip %= flips;
+	pos[flip] = pos[oldFlip];
 
 }
 
-void ViewObject::Update(Matrix matrix)
+void ViewObject::Update(Matrix transform)
 {
 
-	localFrustum->Construct(matrix, MatrixInverse(matrix),false);
+	Vector4 newPoint(lookAtPoint, 0);
+	Vector4 newUp(up, 0);
+	Vector4 newSide(sidePoint, 0);
+
+	newPoint = VectorTransform(newPoint, transform);
+	newUp = VectorTransform(newUp, transform);
+	newSide = VectorTransform(newSide, transform);
+
+	lookAtPoint = Vector3(newPoint.x, newPoint.y, newPoint.z);
+	pos[flip] += Vector3(transform._41, transform._42, transform._43);
+
+	views[flip] = MatrixLookAtLH(pos[flip], lookAtPoint, up);
+	projections[flip] = MatrixPerspectiveFovLH(fov, vp.width / vp.height, vp.minDepth, vp.maxDepth);
+	viewProjections[flip] = MatrixMultiply(views[flip], projections[flip]);
+	invViewProjections[flip] = MatrixInverse(viewProjections[flip]);
+
+	localFrustum->Construct(viewProjections[flip], invViewProjections[flip], false);
+
+}
+
+unsigned int ViewObject::GetFlip() const
+{
+
+	return flip;
 
 }
 
@@ -64,8 +111,63 @@ CelestialStack<ViewObject::Fragment>* ViewObject::GetInstanceStack(unsigned int 
 
 }
 
+Matrix ViewObject::GetView(unsigned int flip) const
+{
+
+	return views[flip];
+
+}
+
+Matrix ViewObject::GetProjection(unsigned int flip) const
+{
+
+	return projections[flip];
+
+}
+
+Matrix ViewObject::GetViewProjection(unsigned int flip) const
+{
+
+	return viewProjections[flip];
+
+}
+
+Matrix ViewObject::GetInverseViewProjection(unsigned int flip) const
+{
+
+	return invViewProjections[flip];
+
+}
+
+Vector3 ViewObject::GetPosition(unsigned int flip) const
+{
+
+	return pos[flip];
+
+}
+
+float ViewObject::GetFov() const
+{
+
+	return fov;
+
+}
+
+ViewObject::ViewPort ViewObject::GetPort() const
+{
+
+	return vp;
+
+}
+
 ViewObject::~ViewObject()
 {
+
+	delete[] pos;
+	delete[] views;
+	delete[] projections;
+	delete[] viewProjections;
+	delete[] invViewProjections;
 
 	delete localFrustum;
 

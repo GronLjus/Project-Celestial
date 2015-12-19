@@ -6,6 +6,8 @@
 #include "DrawScene.h"
 #include "CelestialBufferHandler.h"
 #include "TextContainer.h"
+#include "ViewObject.h"
+#include "GraphicalMesh.h"
 #include <string>
 
 using namespace CelestialMath;
@@ -30,7 +32,10 @@ namespace Graphics
 			bool SetQuality(GraphicQuality gQ, CrossHandlers::TextureResourceObject* backBuffer);
 			bool SetDrawing(DrawingStyle dS);
 
+			void NothingToDraw();
 			void StartDrawing();
+			void StartDrawing(Entities::ViewObject* scene, unsigned int flip);
+			void DrawScene(Entities::ViewObject* scene, GraphicalMesh* meshes, unsigned int flip);
 			void DrawScene(Graphics::DrawScene* scene, int flip);
 			void FinishDrawing();
 

@@ -11,24 +11,12 @@ namespace Resources
 			CameraObject(unsigned int width, unsigned int height, float depth,unsigned int flips);
 			virtual void Update(CrossHandlers::Message* mess);
 			void IncrementFlipBuff();
+			unsigned int GetFlip() const;
 			Entities::ViewObject* GetView() const;
-			CelestialMath::Matrix GetViewProjection(unsigned int flipBuffer) const;
 			~CameraObject();
 
 		private:
 			Entities::ViewObject* theView;
-
-			CelestialMath::Matrix* viewProjections;
-			CelestialMath::Matrix* invViewProjections;
-
-			CelestialMath::Vector3 sidePoint;
-			CelestialMath::Vector3 lookAtPoint;
-			CelestialMath::Vector3 up;
-
-			unsigned int width;
-			unsigned int height;
-			unsigned int flip; 
-			unsigned int flips;
 			float fov;
 
 	};
