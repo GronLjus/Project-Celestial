@@ -1,5 +1,6 @@
 #pragma once
 #include "CelestialSlicedList.h"
+#include "CelestialStack.h"
 #include <string>
 
 namespace Logic
@@ -26,8 +27,6 @@ namespace Logic
 
 			///<summary>A pointer to the primary pool to use for memory managment</summary>
 			CrossHandlers::CelestialSlicedList<unsigned char>* memoryA;
-			///<summary>A pointer to the secondary pool to use for memory managment</summary>
-			CrossHandlers::CelestialSlicedList<unsigned char>* memoryB;
 			///<summary>The last allocated address</summary>
 			unsigned int adrLast;
 			///<summary>A pointer to the list of all variables</summary>
@@ -37,26 +36,15 @@ namespace Logic
 			unsigned char holeVal;
 			///<summary>An array of unused holes in the memory, 255 is the maximum amount stored in a single byte excluding the 0-value</summary>
 			memBlock holes[255];
-			///<summary>How the bytes from a variable should be divided across the memory pools, [x][0] = pool a [x][1] = pool a [0][x]until the first page [1][x]on the pages between first and last [2][x]on the last page</summary>
-			unsigned int bytesOnPages[3][2];
-			///<summary>How many pages the variable shourd occupy between first and last</summary>
-			unsigned int totalMidPages;
 
 			///<summary>Resourt the hole array from biggest to smallest</summary>
 			///<param val='pivot'>[in]The hole to resort</param>
 			void resortHoles(unsigned char pivot);
 			///<summary>Write data to a variable by page</summary>
 			///<param val='var'>[in]The variable to write to</param>
-			///<param val='page'>[in]The page to write to</param>
 			///<param val='bytes'>[in]The amount of bytes to write</param>
 			///<param val='val'>[in]An array of bytes to write</param>
-			void writeData(unsigned int var, unsigned int page, unsigned int bytes, unsigned char* val);
-			///<summary>Write data to a variable by offset</summary>
-			///<param val='var'>[in]The variable to write to</param>
-			///<param val='offset'>[in]Where to start writing</param>
-			///<param val='bytes'>[in]The amount of bytes to write</param>
-			///<param val='val'>[in]An array of bytes to write</param>
-			void writeDataOffset(unsigned int var, unsigned int offset, unsigned int bytes, unsigned char* val);
+			void writeData(unsigned int var, unsigned int bytes, unsigned char* val);
 
 			///<summary>Reads the memory of a variable</summary>
 			///<param val='var'>[in]The variable to read from</param>
@@ -64,15 +52,12 @@ namespace Logic
 			///<param val='bytes'>[in]The amount of bytes to read</param>
 			///<param val='val'>[out]An array of bytes to write the results to</param>
 			///<returns>Any errors</returns>
-			MemErrorCode readVariable(unsigned int var, unsigned int offset, unsigned int bytes, unsigned char* &out);
+			MemErrorCode readData(unsigned int var, unsigned int offset, unsigned int bytes, unsigned char* &out);
 			///<summary>Find where the variable should be saved in the memory</summary>
 			///<param val='var'>[in]The variable to figure out</param>
 			///<param val='valSize'>[in]The size of the variable in bytes</param>
 			///<returns>The starting address to start writing</returns>
 			unsigned int findAddress(unsigned int var, unsigned int valSize);
-			///<summary>Figure out how the bytes from a variable should be divided across pool A and pool b</summary>
-			///<param val='var'>[in]The variable to figure out</param>
-			void figureOutPageSizes(unsigned int var);
 
 		public:
 			///<param val='pageSize'>[in]How big a page of memory should be</param>

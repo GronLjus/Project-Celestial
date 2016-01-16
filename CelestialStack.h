@@ -146,7 +146,6 @@ void CelestialStack<T>::PushElement(T element)
 			newFirst = new CelestialDoubleListNode<T>(element);
 			newFirst->SetNext(first);
 			first->SetPrev(newFirst);
-			first = newFirst;
 
 		}
 		else
@@ -155,6 +154,9 @@ void CelestialStack<T>::PushElement(T element)
 			newFirst->SetNodeObject(element);
 
 		}
+
+		first = newFirst;
+
 	}
 
 	count++;

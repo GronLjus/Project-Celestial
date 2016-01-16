@@ -63,7 +63,7 @@ void DrawingBoard::FinalizeInstances(ViewObject* onView)
 
 	unsigned int totalInst = 0;
 
-	while (meshInstance->GetCount() >= 0)
+	while (meshInstance->GetCount() > 0)
 	{
 
 		unsigned int meshVal = meshInstance->PopElement();
@@ -179,9 +179,13 @@ void DrawingBoard::AddMesh(MeshObject* mesh)
 
 	}
 
-	GraphicalMesh meshRep(mesh->getMaterials()[0]->GetAmbient()->GetDXT(),
-		mesh->getMaterials()[0]->GetDiffuse()->GetDXT(),
-		mesh->getMaterials()[0]->GetNormal()->GetDXT(),
+	DXTextureResource* amb = mesh->getMaterials()[0]->GetAmbient() == nullptr ? nullptr : mesh->getMaterials()[0]->GetAmbient()->GetDXT();
+	DXTextureResource* diff = mesh->getMaterials()[0]->GetDiffuse() == nullptr ? nullptr : mesh->getMaterials()[0]->GetDiffuse()->GetDXT();
+	DXTextureResource* norm = mesh->getMaterials()[0]->GetNormal() == nullptr ? nullptr : mesh->getMaterials()[0]->GetNormal()->GetDXT();
+
+	GraphicalMesh meshRep(amb,
+		diff,
+		norm,
 		indexStart,
 		indexBuffer->GetBufferSize()-indexStart);
 
@@ -229,6 +233,7 @@ DrawingBoard::~DrawingBoard()
 	delete indexBuffer;
 	delete instanceBuffer;
 
+	meshInstances->KillList();
 	delete meshInstances;
 
 	delete meshDictionary;

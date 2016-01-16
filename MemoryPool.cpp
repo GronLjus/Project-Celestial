@@ -9,7 +9,6 @@ MemoryPool::MemoryPool(unsigned int pageSize)
 {
 
 	memoryA = new CelestialSlicedList<unsigned char>(pageSize);
-	memoryB = new CelestialSlicedList<unsigned char>(pageSize);
 	variables = new CelestialSlicedList<memBlock>(100);
 	holeVal = 0;
 	adrLast = 0;
@@ -20,35 +19,38 @@ void MemoryPool::resortHoles(unsigned char pivot)
 {
 
 	unsigned char startPlace = 0;
-	memBlock memB = holes[pivot];
+	memBlock pivBlock = holes[pivot];
 
-	for (unsigned char i = 0; memB.length > 0 && i < holeVal && holes[i].length > memB.length; i++)
+	while (pivot > 0 && holes[pivot].length > holes[pivot - 1].length)
 	{
 
-		startPlace = i;
+		memBlock temp = holes[pivot];
+		holes[pivot] = holes[pivot - 1];
+		holes[pivot - 1] = temp;
+		memoryA->Add(pivot + 1, temp.place);
+		memoryA->Add(pivot + 1, temp.place + temp.length);
+		pivot--;
 
 	}
 
-	for (unsigned char i = pivot; i > startPlace; i--)
+	while (pivot < holeVal-1 && holes[pivot].length < holes[pivot + 1].length)
 	{
 
-		holes[i] = holes[i - 1];
-		memoryB->Add(i, holes[i].place);
-		memoryB->Add(i, holes[i].place + holes[i].length);
+		memBlock temp = holes[pivot];
+		holes[pivot] = holes[pivot + 1];
+		holes[pivot + 1] = temp;
+		memoryA->Add(pivot + 1, temp.place);
+		memoryA->Add(pivot + 1, temp.place + temp.length);
+		pivot++;
 
 	}
 
-	if (memB.length > 0)
+	memoryA->Add(pivot + 1, pivBlock.place);
+	memoryA->Add(pivot + 1, pivBlock.place + pivBlock.length);
+
+	if (holes[pivot].length == 0)
 	{
 
-		holes[startPlace] = memB;
-		memoryB->Add(startPlace, memB.place);
-		memoryB->Add(startPlace, memB.place + memB.length);
-
-	}
-	else
-	{
-		
 		holeVal--;
 
 	}
@@ -60,9 +62,6 @@ unsigned int MemoryPool::findAddress(unsigned int var, unsigned int valSize)
 	memBlock varMem = variables->GetValue(var);
 	unsigned int adress = varMem.place;
 	bool varExists = varMem.length > 0;
-	unsigned int endMem = varMem.length + 2;
-	endMem = endMem % 2 != 0 ? endMem + 1 : endMem;
-	endMem = varMem.place + (endMem / 2);
 
 	if (varMem.length == valSize)
 	{
@@ -74,108 +73,111 @@ unsigned int MemoryPool::findAddress(unsigned int var, unsigned int valSize)
 	{
 
 		adress = varMem.place;
-		unsigned char neighbourVal = memoryB->GetValue(endMem + 1);
+		unsigned char rightVal = memoryA->GetValue(varMem.place + varMem.length + 3);
 
-		if (neighbourVal != 0)//Expand Hole
+		if (rightVal != 0)//Expand Hole
 		{
 
-			holes[neighbourVal - 1].length += varMem.length - valSize;
-			resortHoles(neighbourVal - 1);
+			holes[rightVal - 1].length += varMem.length - valSize;
+			resortHoles(rightVal - 1);
 
 		}
 		else//Create new Hole
 		{
 
-			memBlock newMemB;
-			newMemB.length = varMem.length - valSize;
-			newMemB.place = varMem.place + valSize;
+			memBlock newHole;
+			newHole.length = varMem.length - valSize;
+			newHole.place = varMem.place + valSize + 3;
 
 			holeVal += holeVal == 255 ? 0 : 1;
-			holes[holeVal] = newMemB;
-			resortHoles(neighbourVal - 1);
+			holes[holeVal] = newHole;
+
+			memoryA->Add(holeVal, newHole.place);
+			memoryA->Add(holeVal, newHole.place+newHole.length-1);
+
+			resortHoles(holeVal);
 
 		}
 	}
-	else if (endMem + 1 != adrLast)
+	else if (varMem.place + valSize + 2 != adrLast)
 	{
 
+		unsigned int size = valSize + 2;
 		adress = adrLast;
-		unsigned char rightNeighbour = varExists ? memoryB->GetValue(endMem + 1) : 0;
-		unsigned char leftNeighbour = varExists && varMem.place > 0 ? memoryB->GetValue(varMem.place - 1) : 0;
-
-		if (rightNeighbour > 0 && holes[rightNeighbour - 1].length + varMem.length > valSize)
+		
+		if (holes[0].length >= size)
 		{
 
-			holes[rightNeighbour - 1].length -= valSize - varMem.length;
-			holes[rightNeighbour - 1].place += valSize - varMem.length;
-			resortHoles(rightNeighbour - 1);
+			unsigned char hole = 0;
 
-		}
-		else if (leftNeighbour > 0 && holes[leftNeighbour - 1].length + varMem.length > valSize)
-		{
+			while (hole < holeVal && holes[hole].length > size) { hole++; }
 
-			holes[leftNeighbour - 1].length -= valSize - varMem.length;
-			adress = holes[leftNeighbour - 1].place + holes[leftNeighbour - 1].length;
-			resortHoles(leftNeighbour - 1);
+			adress = holes[hole].place;
+			holes[hole].length -= valSize;
+			holes[hole].place += valSize;
 
-		}
-		else if (rightNeighbour*leftNeighbour > 0 && holes[leftNeighbour - 1].length + holes[rightNeighbour - 1].length + varMem.length > valSize)
-		{
-
-			holes[rightNeighbour - 1].length -= valSize - (varMem.length + holes[leftNeighbour - 1].length);
-			holes[rightNeighbour - 1].place += valSize - (varMem.length + holes[leftNeighbour - 1].length);
-			resortHoles(rightNeighbour - 1);
-
-			holes[leftNeighbour - 1].length = 0;
-			adress = holes[leftNeighbour - 1].place;
-			resortHoles(leftNeighbour - 1);
-
-		}
-		else
-		{
-
-			unsigned char holePlace = 0;
-
-			for (int i = 1; i <= holeVal && holes[i - 1].length > valSize; i++)
+			if (holes[hole].length > 0)
 			{
 
-				holePlace = i;
+				memoryA->Add(hole - 1, holes[hole].place);
 
 			}
 
-			if (holePlace > 0)
+			resortHoles(hole);
+
+		}
+
+		if(varExists)
+		{
+
+			unsigned char rightNeighbour = memoryA->GetValue(varMem.place + valSize + 3);
+			unsigned char leftNeighbour = memoryA->GetValue(varMem.place - 1);
+
+			if (rightNeighbour == 0 && leftNeighbour == 0)
 			{
 
-				holePlace--;
-				adress = holes[holePlace].place;
-				holes[holePlace].length -= valSize - varMem.length;
-				holes[holePlace].place += valSize - varMem.length;
-				resortHoles(holePlace);
+				memBlock newHole;
+				newHole.length = varMem.length;
+				newHole.place = varMem.place;
 
-				if (rightNeighbour*leftNeighbour > 0)//Merge the two holes
-				{
+				holeVal += holeVal == 255 ? 0 : 1;
+				holes[holeVal] = newHole;
 
-					holes[leftNeighbour - 1].length += holes[rightNeighbour - 1].length + varMem.length;
-					resortHoles(leftNeighbour - 1);
-					holes[rightNeighbour - 1].length = 0;
-					resortHoles(rightNeighbour - 1);
+				memoryA->Add(holeVal, newHole.place);
+				memoryA->Add(holeVal, newHole.place + newHole.length - 1);
+				resortHoles(holeVal);
 
-				}
-				else if (rightNeighbour > 0)
-				{
+			}
+			else if (rightNeighbour != 0 && leftNeighbour == 0)
+			{
 
-					holes[rightNeighbour - 1].length += varMem.length;
-					holes[rightNeighbour - 1].place = varMem.place;
-					resortHoles(rightNeighbour - 1);
+				memoryA->Add(rightNeighbour, varMem.place);
+				holes[rightNeighbour - 1].length += varMem.length + 2;
+				holes[rightNeighbour - 1].place = varMem.place;
+				resortHoles(rightNeighbour - 1);
 
-				}
-				else
-				{
+			}
+			else if (rightNeighbour == 0 && leftNeighbour != 0)
+			{
 
-					holes[leftNeighbour - 1].length += varMem.length;
-					resortHoles(leftNeighbour - 1);
+				memoryA->Add(leftNeighbour, varMem.place+varMem.length+2);
+				holes[leftNeighbour - 1].length += varMem.length+2;
+				resortHoles(leftNeighbour - 1);
 
-				}
+			}
+			else
+			{
+
+				holes[leftNeighbour - 1].length += varMem.length + 
+					holes[rightNeighbour - 1].length +
+					2;
+
+				memoryA->Add(leftNeighbour - 1, holes[leftNeighbour - 1].place);
+				memoryA->Add(leftNeighbour - 1, holes[leftNeighbour - 1].place + holes[leftNeighbour - 1].length - 1);
+				resortHoles(leftNeighbour - 1);
+				holes[rightNeighbour - 1].length = 0;
+				resortHoles(rightNeighbour - 1);
+
 			}
 		}
 	}
@@ -188,176 +190,71 @@ MemErrorCode MemoryPool::AddVariable(unsigned int var, unsigned char* val, unsig
 {
 
 	MemErrorCode err = ErrorCode_OK;
-	unsigned int endMem = valSize + 2;
-	endMem = endMem % 2 != 0 ? endMem + 1 : endMem;
-	endMem /=  2;
 
-	unsigned int adress = findAddress(var, valSize);
+	unsigned int adress = findAddress(var, valSize+2);
 
 	if (adress == adrLast)
 	{
 
-		adrLast += endMem;
+		adrLast += valSize + 2;
 
 	}
 
-	memoryB->Add(0, adress);
-	memoryB->Add(0, adress+endMem);
+	memoryA->Add(0, adress);
+	memoryA->Add(0, adress+valSize+2);
 
 	memBlock varMem = variables->GetValue(var);
 	varMem.place = adress;
 	varMem.length = valSize;
 	variables->Add(varMem, var);
-	figureOutPageSizes(var);
-	writeData(var, 0, valSize, val);
+	writeData(var, valSize, val);
 
 	return err;
 
 }
 
-void MemoryPool::figureOutPageSizes(unsigned int var)
+void MemoryPool::writeData(unsigned int var, unsigned int bytes, unsigned char* val)
 {
 
 	memBlock mem = variables->GetValue(var);
-	unsigned int memLength = mem.length + 2;
-	memLength -= memLength % 2 == 0 ? 0 : 1;
-	memLength /= 2;
+	unsigned int totalBytes = bytes;
+	unsigned int globalPlace = mem.place + 1;
 
-	bytesOnPages[0][0] = memLength < memoryA->GetSliceSize() - mem.place ? memLength : memoryA->GetSliceSize() - mem.place;
-	bytesOnPages[0][1] = mem.length - bytesOnPages[0][0] > bytesOnPages[0][0] - 1 ? bytesOnPages[0][0] - 1 : mem.length - bytesOnPages[0][0];
-	totalMidPages = (memLength - bytesOnPages[0][0]) / memoryA->GetSliceSize();
-	bytesOnPages[1][0] = memoryA->GetSliceSize();
-	bytesOnPages[1][1] = bytesOnPages[1][0];
-	bytesOnPages[2][0] = mem.length - (bytesOnPages[0][0] + bytesOnPages[0][1] + totalMidPages*(bytesOnPages[1][0] + bytesOnPages[1][1]));
-	bytesOnPages[2][1] = bytesOnPages[2][0] / 2;
-	bytesOnPages[2][0] = bytesOnPages[2][0] - bytesOnPages[2][1];
-
-}
-
-void MemoryPool::writeData(unsigned int var, unsigned int page, unsigned int bytes, unsigned char* val)
-{
-
-	memBlock mem = variables->GetValue(var);
-	unsigned char pages = page == 0 ? 0 :
-		page <= totalMidPages ? 1 :
-		2;
-
-	unsigned int pageStart = page > 0 ? mem.place + bytesOnPages[0][0] + page*bytesOnPages[1][0] : mem.place;
-	unsigned int bStart = page == 0 ? 1 : 0;
-
-	if (bytesOnPages[pages][0] > 0)
+	while (totalBytes > 0)
 	{
 
-		memcpy(&(memoryA->GetSlice(pageStart)[memoryA->TransformId(pageStart)]), val, bytesOnPages[pages][0]);
+		unsigned int localPlace = globalPlace % memoryA->GetSliceSize();
+		unsigned int toend = memoryA->GetSliceSize() - localPlace;
+		unsigned int readBytes = toend > totalBytes ? totalBytes : toend;
 
-	}
+		memcpy(&(memoryA->GetSlice(globalPlace)[localPlace]), val, readBytes);
 
-	if (bytesOnPages[pages][1] > 0)
-	{
-
-		memcpy(&(memoryB->GetSlice(pageStart + bStart)[memoryB->TransformId(pageStart + bStart)]), &(val[bytesOnPages[pages][0]]), bytesOnPages[pages][1]);
-
-	}
-
-
-	if (bytesOnPages[pages][0] + bytesOnPages[pages][1] < bytes)
-	{
-
-		unsigned int newBytes = bytes - bytesOnPages[pages][0] - bytesOnPages[pages][1];
-		page++;
-		writeData(var, page, newBytes, &(val[bytesOnPages[pages][0] + bytesOnPages[pages][1]]));
+		totalBytes -= readBytes;
+		globalPlace += readBytes;
 
 	}
 }
 
-void MemoryPool::writeDataOffset(unsigned int var, unsigned int offset, unsigned int bytes, unsigned char* val)
-{
-
-	memBlock mem = variables->GetValue(var);
-
-	unsigned char pages = offset < bytesOnPages[0][0] + bytesOnPages[0][1] ? 0 :
-		offset <  bytesOnPages[0][0] + bytesOnPages[0][1] + totalMidPages*(bytesOnPages[1][0] + bytesOnPages[1][1]) ? 1 :
-		2;
-
-	unsigned int midPage = pages != 0 ? (offset - bytesOnPages[0][0] - bytesOnPages[0][1]) / (memoryA->GetSliceSize() * 2) : 0;
-	unsigned int blockOffset = pages == 2 ? offset - (bytesOnPages[0][0] + bytesOnPages[0][1] + totalMidPages*(bytesOnPages[1][1] + bytesOnPages[1][0])) :
-		pages == 1 ? offset - (bytesOnPages[0][0] + bytesOnPages[0][1] + midPage*(bytesOnPages[1][1] + bytesOnPages[1][0])) :
-		offset;
-
-	unsigned int pageStart = pages > 0 ? mem.place + bytesOnPages[0][0] + midPage*bytesOnPages[1][0] : mem.place;
-	unsigned int bStart = blockOffset < bytesOnPages[pages][0] ? 1 : blockOffset - bytesOnPages[pages][0] + 1;
-	unsigned int aRead = blockOffset >= bytesOnPages[pages][0] ? 0 : bytesOnPages[pages][0] - blockOffset;
-	aRead = aRead > bytes ? bytes : aRead;
-	unsigned bRead = bytes - aRead <= bytesOnPages[pages][1] ? bytes - aRead : bytesOnPages[pages][1];
-	bStart -= pages != 0 ? 1 : 0;
-
-
-	if (bytesOnPages[pages][0] > 0)
-	{
-
-		memcpy(&(memoryA->GetSlice(pageStart)[memoryA->TransformId(pageStart)]), val, aRead);
-
-	}
-
-	if (bytesOnPages[pages][1] > 0)
-	{
-
-		memcpy(&(memoryB->GetSlice(pageStart + bStart)[memoryB->TransformId(pageStart + bStart)]), &(val[bytesOnPages[pages][0]]), bRead);
-
-	}
-
-
-	if (aRead + bRead < bytes)
-	{
-
-		unsigned int newBytes = bytes - aRead - bRead;
-		writeData(var, offset + aRead + bRead, newBytes, &(val[bytesOnPages[pages][0] + bytesOnPages[pages][1]]));
-
-	}
-}
-
-MemErrorCode MemoryPool::readVariable(unsigned int var, unsigned int offset, unsigned int bytes, unsigned char* &val)
+MemErrorCode MemoryPool::readData(unsigned int var, unsigned int offset, unsigned int bytes, unsigned char* &val)
 {
 
 	MemErrorCode err = ErrorCode_OK;
 	memBlock mem = variables->GetValue(var);
-	unsigned char pages = offset < bytesOnPages[0][0] + bytesOnPages[0][1] ? 0 :
-		offset <  bytesOnPages[0][0] + bytesOnPages[0][1] + totalMidPages*(bytesOnPages[1][0] + bytesOnPages[1][1]) ? 1 :
-		2;
 
-	unsigned int midPage = pages != 0 ? (offset - bytesOnPages[0][0] - bytesOnPages[0][1]) / (memoryA->GetSliceSize() * 2) : 0;
-	unsigned int blockOffset = pages == 2 ? offset - (bytesOnPages[0][0] + bytesOnPages[0][1] + totalMidPages*(bytesOnPages[1][1] + bytesOnPages[1][0])) :
-		pages == 1 ? offset - (bytesOnPages[0][0] + bytesOnPages[0][1] + midPage*(bytesOnPages[1][1] + bytesOnPages[1][0])) :
-		offset;
+	unsigned int totalBytes = bytes;
+	unsigned int globalPlace = mem.place+1+offset;
 
-	unsigned int pageStart = pages > 0 ? mem.place + bytesOnPages[0][0] + midPage*bytesOnPages[1][0] : mem.place;
-	unsigned int bStart = blockOffset < bytesOnPages[pages][0] ? 1 : blockOffset - bytesOnPages[pages][0]+1;
-	unsigned int aRead = blockOffset >= bytesOnPages[pages][0] ? 0 : bytesOnPages[pages][0]-blockOffset;
-	aRead = aRead > bytes ? bytes : aRead;
-	unsigned bRead = bytes - aRead  <= bytesOnPages[pages][1] ? bytes - aRead : bytesOnPages[pages][1];
-	bStart -= pages != 0 ? 1 : 0;
-
-
-	if (aRead > 0)
+	while (totalBytes > 0)
 	{
 
-		memcpy(val, &(memoryA->GetSlice(pageStart + blockOffset)[memoryA->TransformId(pageStart + blockOffset)]), aRead);
+		unsigned int localPlace = globalPlace % memoryA->GetSliceSize();
+		unsigned int toend = memoryA->GetSliceSize() - localPlace;
+		unsigned int readBytes = toend > totalBytes ? totalBytes : toend;
 
-	}
+		memcpy(val, &(memoryA->GetSlice(globalPlace)[localPlace]), readBytes);
 
-	if (bRead > 0)
-	{
-
-		memcpy(&(val[aRead]), &(memoryB->GetSlice(pageStart + bStart)[memoryB->TransformId(pageStart + bStart)]), bRead);
-
-	}
-
-
-	if (aRead + bRead < bytes)
-	{
-
-		unsigned int newBytes = bytes - aRead - bRead;
-		err = ReadVariable(var, offset + aRead + bRead, newBytes, val);
+		totalBytes -= readBytes;
+		globalPlace += readBytes;
 
 	}
 
@@ -369,8 +266,7 @@ MemErrorCode MemoryPool::ReadVariable(unsigned int var, unsigned int offset, uns
 {
 
 	bytes = offset + bytes > variables->GetValue(var).length ? variables->GetValue(var).length-(offset-bytes) : bytes;
-	figureOutPageSizes(var);
-	return readVariable(var, offset, bytes, val);
+	return readData(var, offset, bytes, val);
 
 }
 
@@ -379,7 +275,6 @@ MemErrorCode MemoryPool::ReadVariable(unsigned int var, unsigned char* &val, uns
 
 	memBlock varH = variables->GetValue(var);
 	valSize = varH.length < valSize ? varH.length: valSize;
-	figureOutPageSizes(var);
 	return ReadVariable(var, 0, valSize, val);
 
 }
@@ -387,43 +282,27 @@ MemErrorCode MemoryPool::ReadVariable(unsigned int var, unsigned char* &val, uns
 MemErrorCode MemoryPool::CopyVariable(unsigned int dst, unsigned int src)
 {
 
-	memBlock srcMem = variables->GetValue(src);
-	unsigned int adr = findAddress(dst, srcMem.length);
-	memBlock varMem = variables->GetValue(dst);
-	varMem.place = adr;
-	varMem.length = srcMem.length;
-	variables->Add(varMem, dst);
+	MemErrorCode err = ErrorCode_OK;
+	memBlock mem = variables->GetValue(src);
 
-	figureOutPageSizes(dst);
-	unsigned int dstBytesOnPages[3][2]; 
-	dstBytesOnPages[0][0] = bytesOnPages[0][0];
-	dstBytesOnPages[0][1] = bytesOnPages[0][1];
-	unsigned int dstTotalMidPages = totalMidPages;
-	dstBytesOnPages[1][0] = bytesOnPages[1][0];
-	dstBytesOnPages[1][1] = bytesOnPages[1][1];
-	dstBytesOnPages[2][0] = bytesOnPages[2][0];
-	dstBytesOnPages[2][1] = bytesOnPages[2][1];
+	unsigned int totalBytes = mem.length;
+	unsigned int globalPlace = mem.place + mem.length + 2;
 
-	unsigned int offset = 0;
-	unsigned int currentPage = 0;
-	figureOutPageSizes(src);
-
-	while (currentPage <= dstTotalMidPages)
+	while (totalBytes > 0)
 	{
 
-		unsigned int pageStart = currentPage > 0 ? srcMem.place + dstBytesOnPages[0][0] + currentPage*dstBytesOnPages[1][0] : srcMem.place;
-		unsigned int page = currentPage == 0 ? 0 : currentPage < dstTotalMidPages ? 1 : 2;
-		unsigned int bStart = currentPage == 0 ? 1 : 0;
+		unsigned int localPlace = globalPlace % memoryA->GetSliceSize();
+		unsigned int toend = memoryA->GetSliceSize() - localPlace;
+		unsigned int readBytes = toend > totalBytes ? totalBytes : toend;
 
-		writeDataOffset(dst, offset, bytesOnPages[page][0], &(memoryA->GetSlice(pageStart)[memoryA->TransformId(pageStart)]));
-		offset += bytesOnPages[page][0];
-		writeDataOffset(dst, offset, bytesOnPages[page][1], &(memoryB->GetSlice(pageStart + bStart)[memoryA->TransformId(pageStart + bStart)]));
-		offset += bytesOnPages[page][1];
-		currentPage++;
+		writeData(dst, readBytes, &(memoryA->GetSlice(globalPlace)[localPlace]));
+
+		totalBytes -= readBytes;
+		globalPlace += readBytes;
 
 	}
 
-	return ErrorCode_OK;
+	return err;
 
 }
 
@@ -431,7 +310,6 @@ MemoryPool::~MemoryPool()
 {
 
 	delete memoryA;
-	delete memoryB;
 	delete variables;
 
 }

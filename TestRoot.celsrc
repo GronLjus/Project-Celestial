@@ -7,7 +7,9 @@ $
 testPar = load script 'TestRoot2.celsrc'
 testPar2 = load gameboard 1024
 tile = load mesh 'Tile.obj'
+cam = load camera
 
-run testPar 5+4, 'a'
+run testPar 9 'aoe'
 set gameboard testPar2
-post 'Gameboard set'
+add mesh tile
+set camera cam

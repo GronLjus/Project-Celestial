@@ -59,7 +59,7 @@ CelestialTreeNode<T>::CelestialTreeNode(T object, CelestialTreeNode<T>* parent)
 
 	this->object = object;
 	this->parent = parent;
-	leafs = nullptr;
+	leafs = new CelestialList<CelestialTreeNode<T>*>();
 
 }
 

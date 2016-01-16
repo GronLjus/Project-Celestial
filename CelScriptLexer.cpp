@@ -65,6 +65,7 @@ CelestialDoubleList<Token>* CelScriptLexer::TokenizeLine(string line, int lNumbe
 			bool isSep = line[i] == ';' || line[i] == ',';
 			bool isBracket = line[i] == '(' || line[i] == ')';
 			bool isBod = line[i] == '{' || line[i] == '}';
+			bool isQuotes = false;
 
 			if (!breakSearch)
 			{
@@ -72,6 +73,7 @@ CelestialDoubleList<Token>* CelScriptLexer::TokenizeLine(string line, int lNumbe
 				if (line[i] == '\'')
 				{
 
+					isQuotes = isOpen;
 					isOpen = !isOpen;
 
 				}
@@ -142,7 +144,8 @@ CelestialDoubleList<Token>* CelScriptLexer::TokenizeLine(string line, int lNumbe
 				}
 			}
 
-			if ((line[i] == ' ' || i == line.size() - 1 || breakSearch || isBod || isOp || isSep || isBracket) && !isOpen && tempWord.length() > 0)
+			if ((line[i] == ' ' || i == line.size() - 1 || breakSearch || isBod || isOp || isSep || isBracket || isQuotes) 
+				&& !isOpen && tempWord.length() > 0)
 			{
 
 				bool found = false;
@@ -207,7 +210,7 @@ CelestialDoubleList<Token>* CelScriptLexer::TokenizeLine(string line, int lNumbe
 						}
 					}
 
-					if (line[i] == '\'' || isNumber)
+					if (isQuotes || isNumber)
 					{
 
 						type = TokenType_WORD;

@@ -198,6 +198,9 @@ namespace Logic
 		OperatorTypes** parOperators;
 		unsigned char** parOperator;
 		bool** parOperatorAppend;
+		bool** optionalPar;
+
+		unsigned char* minParams;
 
 		unsigned char** parRepeatsMin;
 		unsigned char** parRepeatsMax;

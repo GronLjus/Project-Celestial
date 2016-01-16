@@ -106,7 +106,20 @@ RunTimeError LoadGameBoardOperator(unsigned int returnVar, unsigned char* params
 	mess.type = MessageType_RESOURCES;
 	mess.mess = ResourceMess_LOADGAMEBOARD;
 	mess.param1 = (rtc->intLoader[0] | ((int)rtc->intLoader[1] << 8) | ((int)rtc->intLoader[2] << 16) | ((int)rtc->intLoader[3] << 24));
-	rtc->varWaiting->Add(true, returnVar);
+	rtc->varWaiting->Add(true, returnVar-1);
+	return sendMessageOut(mess, rtc);
+
+}
+
+RunTimeError LoadCameraOperator(unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int mId, RunTimeCommons* rtc)
+{
+
+	Message mess;
+	mess.returnParam = returnVar;
+	mess.destination = MessageSource_RESOURCES;
+	mess.type = MessageType_RESOURCES;
+	mess.mess = ResourceMess_LOADCAMERA;
+	rtc->varWaiting->Add(true, returnVar - 1);
 	return sendMessageOut(mess, rtc);
 
 }
@@ -166,7 +179,7 @@ RunTimeError LoadLightOperator(unsigned int returnVar, unsigned char* params, un
 	mess.param1 = r | (g << 8) | (b << 16) | (255 << 24);
 	mess.param2 = 10;
 	mess.param3 = 10;
-	rtc->varWaiting->Add(true, returnVar);
+	rtc->varWaiting->Add(true, returnVar-1);
 	return sendMessageOut(mess, rtc);
 
 }
@@ -283,6 +296,29 @@ RunTimeError AddObjectOperator(unsigned int returnVar, unsigned char* params, un
 
 }
 
+RunTimeError AddMeshOperator(unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int mId, RunTimeCommons* rtc)
+{
+
+	if (paramSize < 4)
+	{
+
+		return RunTimeError_BADPARAMS;
+
+	}
+
+	unsigned int s = 4;
+	unsigned int var1 = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
+	rtc->memory->ReadVariable(var1 - 1, rtc->intLoader, s);
+
+	Message mess;
+	mess.destination = MessageSource_ENTITIES;
+	mess.type = MessageType_ENTITIES;
+	mess.mess = GameBoardMess_ADDMESH;
+	mess.param1 = rtc->intLoader[0] | ((int)rtc->intLoader[1] << 8) | ((int)rtc->intLoader[2] << 16) | ((int)rtc->intLoader[3] << 24);
+	return sendMessageOut(mess, rtc);
+
+}
+
 RunTimeError GetScreenWidthOperator(unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int mId, RunTimeCommons* rtc)
 {
 
@@ -292,7 +328,7 @@ RunTimeError GetScreenWidthOperator(unsigned int returnVar, unsigned char* param
 	mess.type = MessageType_GRAPHICS;
 	mess.mess = GraphicMess_GETSCREEN;
 	mess.param1 = 0;
-	rtc->varWaiting->Add(true, returnVar);
+	rtc->varWaiting->Add(true, returnVar-1);
 	return sendMessageOut(mess, rtc);
 
 }
@@ -306,7 +342,7 @@ RunTimeError GetScreenHeightOperator(unsigned int returnVar, unsigned char* para
 	mess.type = MessageType_GRAPHICS;
 	mess.mess = GraphicMess_GETSCREEN;
 	mess.param1 = 1;
-	rtc->varWaiting->Add(true, returnVar);
+	rtc->varWaiting->Add(true, returnVar-1);
 	return sendMessageOut(mess, rtc);
 
 }
@@ -1120,6 +1156,29 @@ RunTimeError SetGameBoardOperator(unsigned int returnVar, unsigned char* params,
 
 }
 
+RunTimeError SetCameraOperator(unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int mId, RunTimeCommons* rtc)
+{
+
+	if (paramSize < 4)
+	{
+
+		return RunTimeError_BADPARAMS;
+
+	}
+
+	unsigned int s = 4;
+	unsigned int var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
+	rtc->memory->ReadVariable(var - 1, rtc->intLoader, s);
+
+	Message mess;
+	mess.destination = MessageSource_ENTITIES;
+	mess.type = MessageType_ENTITIES;
+	mess.mess = GameBoardMess_SETCAM;
+	mess.param1 = (rtc->intLoader[0] | ((int)rtc->intLoader[1] << 8) | ((int)rtc->intLoader[2] << 16) | ((int)rtc->intLoader[3] << 24));
+	return sendMessageOut(mess, rtc);
+
+}
+
 RunTimeError SetScriptParNumOperator(unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int mId, RunTimeCommons* rtc)
 {
 
@@ -1250,9 +1309,12 @@ CelScriptRuntimeHandler::CelScriptRuntimeHandler(MessageQueue* mQueue, Celestial
 	operators[opcode_LOADTXTBX] = LoadTextBoxOperator;
 	operators[opcode_LOADPANEL] = LoadPanelOperator;
 	operators[opcode_LOADGMBRD] = LoadGameBoardOperator;
+	operators[opcode_LOADCAM] = LoadCameraOperator;
 
 	operators[opcode_ADDOBJECT] = AddObjectOperator;
+	operators[opcode_ADDMESH] = AddMeshOperator;
 	operators[opcode_SETGMEBRD] = SetGameBoardOperator;
+	operators[opcode_SETCMRA] = SetCameraOperator;
 
 	operators[opcode_GETSCRNX] = GetScreenWidthOperator;
 	operators[opcode_GETSCRNY] = GetScreenHeightOperator;
@@ -1542,7 +1604,6 @@ void CelScriptRuntimeHandler::SetWaitingScriptVar(unsigned int scriptId, unsigne
 	}
 
 	SetConstValOperator(0, commandVal, 8, scriptId, thisRtc);
-	thisRtc->varWaiting->Add(false, scriptVar);
 	thisRtc->pause = false;
 	
 }

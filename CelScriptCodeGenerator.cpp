@@ -292,7 +292,7 @@ CelestialList<CelestialList<unsigned char>*>* CelScriptCodeGenerator::generateCo
 				CelestialList<unsigned char>* addLine = line;
 				std::string constToAdd = syn.val;
 				SyntaxType toDo = syn.type;
-				toDo = toDo == SyntaxType_OPERATORCONST ? toDo = SyntaxType_CONST : toDo == SyntaxType_OPERATORCONSTPASS ? SyntaxType_CONSTPASS : toDo;
+				toDo = toDo == SyntaxType_OPERATORCONST ? SyntaxType_CONST : toDo == SyntaxType_OPERATORCONSTPASS ? SyntaxType_CONSTPASS : toDo;
 
 				if (syn.type == SyntaxType_OPERATORCONST || syn.type == SyntaxType_OPERATORCONSTPASS)
 				{

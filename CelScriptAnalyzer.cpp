@@ -558,32 +558,50 @@ CelScriptAnalyzer::operatorParams CelScriptAnalyzer::getOperatorVariation(Compil
 		do
 		{
 
-			foundSig = ops.param >= operators[op].params[ops.opVar];
 			unsigned char tempCount = 0;
+			foundSig = true;
 
 			for (unsigned int i = 0; i < operators[op].params[ops.opVar] && foundSig; i++)
 			{
 
-				if (operators[op].amountParOperators[ops.opVar] > 0 && operators[op].parOperator[ops.opVar][i] > 0 && operators[op].parRepeatsMax[ops.opVar][i] > 0)
+				if (operators[op].amountParOperators[ops.opVar] > 0 && 
+					operators[op].parOperator[ops.opVar][i] > 0 && 
+					operators[op].parRepeatsMax[ops.opVar][i] > 0)
 				{
 
-					for (tempCount = tempCount + operators[op].parRepeatsMin[ops.opVar][i]; 
-						tempCount < operators[op].parRepeatsMax[ops.opVar][i] && foundSig && tempCount < ops.param; 
-						tempCount++)
+					bool foundRepeating = true;
+					unsigned char repeated = 0;
+					
+					while (foundRepeating && tempCount < ops.param)
 					{
 
-						foundSig = !(((ops.sigType[tempCount] != operators[op].paramsyntax[ops.opVar][i] && operators[op].paramsyntax[ops.opVar][i] != VarType_NA) ||
+						foundRepeating = !(((ops.sigType[tempCount] != operators[op].paramsyntax[ops.opVar][i] && operators[op].paramsyntax[ops.opVar][i] != VarType_NA) ||
 							(ops.sigSource[tempCount] != operators[op].paramTypes[ops.opVar][i] && operators[op].paramTypes[ops.opVar][i] != ParamType_NA)));
 
+						if (foundRepeating)
+						{
+
+							tempCount++;
+							repeated++;
+
+						}
 					}
+
+					foundSig = repeated >= operators[op].parRepeatsMin[ops.opVar][i] && repeated <= operators[op].parRepeatsMax[ops.opVar][i];
+
 				}
 				else
 				{
 
 					foundSig = !(((ops.sigType[tempCount] != operators[op].paramsyntax[ops.opVar][i] && operators[op].paramsyntax[ops.opVar][i] != VarType_NA) ||
 						(ops.sigSource[tempCount] != operators[op].paramTypes[ops.opVar][i] && operators[op].paramTypes[ops.opVar][i] != ParamType_NA)));
-					tempCount++;
+					
+					if (foundSig || !operators[op].optionalPar[ops.opVar][i])
+					{
 
+						tempCount++;
+
+					}
 				}
 			}
 
@@ -693,11 +711,11 @@ CelScriptAnalyzer::operatorParams CelScriptAnalyzer::expandTree(CompileError &er
 				parameter->SetNodeObject(newChildren[nrOfNewChildren]);
 				newOpTable[nrOfNewChildren].param = 1;
 				ops.sigAddrr[i] = -1;
+				CelestialListNode<CelestialTreeNode<syntax>*>* kParameter = newtree->GetLeafs()->GetFirstNode();
 
 				for (unsigned int k = 0; k < ops.param; k++)
 				{
 
-					CelestialListNode<CelestialTreeNode<syntax>*>* kParameter = newtree->GetLeafs()->GetFirstNode();
 					unsigned int kMod = k < operators[op].params[ops.opVar] ? k : operators[op].params[ops.opVar] - 1;
 
 					if (operators[op].parOperatorAppend[ops.opVar][kMod])
@@ -803,10 +821,16 @@ CelScriptAnalyzer::operatorParams CelScriptAnalyzer::getTypeCheck(CompileError &
 				while (par < ops.param && repeat < operators[op].parRepeatsMax[ops.opVar][i] && typeCheck)
 				{
 
-					typeCheck = ops.sigType[par] == operators[op].paramsyntax[ops.opVar][i] || operators[op].paramsyntax[ops.opVar][i] == VarType_NA;
-					par++;
-					repeat++;
+					typeCheck = ops.sigType[par] == operators[op].paramsyntax[ops.opVar][i] || 
+						operators[op].paramsyntax[ops.opVar][i] == VarType_NA;
 
+					if ((!typeCheck && !operators[op].optionalPar[ops.opVar][i]) || typeCheck)
+					{
+
+						par++;
+						repeat++;
+
+					}
 				}
 
 				typeCheck = repeat >= operators[op].parRepeatsMin[ops.opVar][i] && repeat <= operators[op].parRepeatsMax[ops.opVar][i];
@@ -815,9 +839,22 @@ CelScriptAnalyzer::operatorParams CelScriptAnalyzer::getTypeCheck(CompileError &
 			else
 			{
 			
-				typeCheck = ops.sigType[par] == operators[op].paramsyntax[ops.opVar][i] || operators[op].paramsyntax[ops.opVar][i] == VarType_NA;
-				par++;
+				typeCheck = ops.sigType[par] == operators[op].paramsyntax[ops.opVar][i] ||
+					operators[op].paramsyntax[ops.opVar][i] == VarType_NA;
+					
 
+				if (typeCheck)
+				{
+
+					par++;
+
+				}
+				else if (operators[op].optionalPar[ops.opVar][i])
+				{
+
+					typeCheck = true;
+
+				}
 			}
 		}
 
@@ -930,7 +967,7 @@ CelScriptAnalyzer::operatorParams CelScriptAnalyzer::checkVarInit(CompileError &
 		if (err.errorType == ScriptError_OK)
 		{
 
-			if (ops.param < operators[op].params[ops.opVar])
+			if (ops.param < operators[op].minParams[ops.opVar])
 			{
 
 				err.errorType = ScriptError_TOFEWPARAM;
