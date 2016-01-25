@@ -8,7 +8,7 @@ using namespace CrossHandlers;
 ViewObject::ViewObject(CelestialMath::Vector3 pos,Vector3 sidePoint, Vector3 lookAtPoint, Vector3 up, float fov, unsigned int bufferFlips, ViewPort port)
 {
 
-	this->vp = vp;
+	this->vp = port;
 	flips = bufferFlips;
 	flip = 0;
 

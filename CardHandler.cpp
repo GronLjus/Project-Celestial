@@ -2,6 +2,7 @@
 #include <dxgidebug.h>
 #include "CardHandler.h"
 #include "Celestial2DDrawer.h"
+#include <thread>
 
 using namespace Graphics;
 using namespace CrossHandlers;
@@ -25,14 +26,18 @@ std::wstring s2ws(const std::string& s)
 CardHandler::CardHandler(int flips, bool useText)
 {	
 	
+	bufferFlag = true;
+	killFlag = false;
 	underInitiated = false;
 	totalFlips = flips;
 	currentFrame = nullptr;
 	currentFramwView = nullptr;
 
-	driverType = D3D10_DRIVER_TYPE_NULL;
+	commandList = nullptr;
 	swapChain = nullptr;
 	card = nullptr;
+	context1 = nullptr;
+	bufferContext = nullptr;
 
 	bH = nullptr;
 	inter = nullptr;
@@ -60,8 +65,8 @@ HRESULT CardHandler::initBackBuffer()
 {
 
 	//Sets up the main render target view
-	ID3D10Texture2D* backBuffer;
-	HRESULT hr = swapChain->GetBuffer(0, __uuidof(ID3D10Texture2D), (LPVOID*)&backBuffer);
+	ID3D11Texture2D* backBuffer;
+	HRESULT hr = swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&backBuffer);
 
 	if (FAILED(hr))
 	{
@@ -93,14 +98,7 @@ HRESULT CardHandler::Init(HWND hwnd, GraphicQuality gQ, DrawingStyle dS)
 	quality = gQ;
 	dStyle = dS;
 
-	//Sets up the device and swapchains
-	D3D10_DRIVER_TYPE driverTypes[] = 
-	{
-		D3D10_DRIVER_TYPE_HARDWARE,
-		//D3D10_DRIVER_TYPE_REFERENCE,
-	};
 
-	UINT numDriverTypes = sizeof(driverTypes) / sizeof(driverTypes[0]);
 	DXGI_SWAP_CHAIN_DESC sd;
 	ZeroMemory( &sd, sizeof(sd) );
 	sd.BufferCount = 1;
@@ -116,17 +114,21 @@ HRESULT CardHandler::Init(HWND hwnd, GraphicQuality gQ, DrawingStyle dS)
 	sd.Windowed = true;
 	bool stop = false;
 
-	for( UINT i = 0; i < numDriverTypes && !stop; i++ )
-	{
-		driverType = driverTypes[i];
-		hr = D3D10CreateDeviceAndSwapChain1(nullptr, driverType, nullptr, D3D10_CREATE_DEVICE_DEBUG | D3D10_CREATE_DEVICE_BGRA_SUPPORT, D3D10_FEATURE_LEVEL_10_1,
-			D3D10_1_SDK_VERSION, &sd, &swapChain, &card );
-		stop = SUCCEEDED(hr);
-	}
+	hr = D3D11CreateDeviceAndSwapChain(nullptr, D3D_DRIVER_TYPE_HARDWARE, nullptr, D3D11_CREATE_DEVICE_DEBUG | D3D11_CREATE_DEVICE_BGRA_SUPPORT, nullptr, 0, 
+		D3D11_SDK_VERSION, &sd, &swapChain, &card, nullptr, &context1);
 
 	if( FAILED(hr) )
 	{
 	
+		return hr;
+
+	}
+
+	hr = card->CreateDeferredContext(0, &bufferContext);
+
+	if (FAILED(hr))
+	{
+
 		return hr;
 
 	}
@@ -183,40 +185,75 @@ Intermediator* CardHandler::GetIntermediator()
 
 }
 
+void CardHandler::Kill()
+{
+	
+	killFlag = true;
+
+}
+
 void CardHandler::UpdateMeshBuffers(DrawingBoard* db)
 {
 
-	bH->UpdateMeshBuffers(db);
-	ID3D10Buffer* vertices = bH->GetVertexBuffer();
-	ID3D10Buffer* indices = bH->GetIndexBuffer();
-	unsigned int offset = 0;
-	unsigned int vStride = sizeof(BufferVertex);
-	card->IASetVertexBuffers(0, 1, &vertices, &vStride, &offset);//Set buffers
-	card->IASetIndexBuffer(indices, DXGI_FORMAT_R32_UINT, 0);//Set the index buffer
+	while (bufferFlag && !killFlag)
+	{
 
+		std::this_thread::yield();
+
+	}
+
+	if (!killFlag)
+	{
+
+		bH->UpdateMeshBuffers(db, bufferContext);
+		ID3D11Buffer* vertices = bH->GetVertexBuffer();
+		ID3D11Buffer* indices = bH->GetIndexBuffer();
+		unsigned int offset = 0;
+		unsigned int vStride = sizeof(BufferVertex);
+		bufferContext->IASetVertexBuffers(0, 1, &vertices, &vStride, &offset);//Set buffers
+		bufferContext->IASetIndexBuffer(indices, DXGI_FORMAT_R32_UINT, 0);//Set the index buffer
+		bufferFlag = true;
+
+	}
 }
 
 void CardHandler::UpdateInstanceBuffers(DrawingBoard* db, unsigned int flip)
 {
 
-	bH->UpdateInstanceBuffer(db, flip);
+	bH->UpdateInstanceBuffer(db, context1, flip);
 
 }
 
 void CardHandler::SetInstanceBuffers(unsigned int flip)
 {
 
-	ID3D10Buffer* instances = bH->GetInstanceBuffer(flip);
+	ID3D11Buffer* instances = bH->GetInstanceBuffer(flip);
 	unsigned int iStride = sizeof(Instance);
 	unsigned int offset = 0;
-	card->IASetVertexBuffers(1, 1, &instances, &iStride, &offset);
+	context1->IASetVertexBuffers(1, 1, &instances, &iStride, &offset);
 
+}
+
+void CardHandler::playCommands()
+{
+
+	if (bufferFlag)
+	{
+
+		bufferContext->FinishCommandList(false, &commandList);
+		context1->ExecuteCommandList(commandList, true);
+		commandList->Release();
+		commandList = nullptr;
+		bufferFlag = false;
+
+	}
 }
 
 void CardHandler::JustClear()
 {
 
-	shader->NothingToDraw();
+	playCommands();
+	shader->NothingToDraw(context1);
 
 }
 
@@ -226,25 +263,12 @@ void CardHandler::Draw(Entities::ViewObject* vObj, GraphicalMesh* meshes, unsign
 	if (underInitiated)
 	{
 
-		shader->StartDrawing(vObj,flip);
-		shader->DrawScene(vObj, meshes, flip);
-		shader->FinishDrawing();
+		playCommands();
+		shader->StartDrawing(vObj, context1,flip);
+		shader->DrawScene(vObj, meshes, context1, flip);
+		shader->FinishDrawing(context1);
 
 	}
-}
-
-void CardHandler::Draw(DrawScene* scene,int flip)
-{
-
-	if (underInitiated)
-	{
-
-		shader->StartDrawing();
-		shader->DrawScene(scene, flip);
-		shader->FinishDrawing();
-	
-	}
-	
 }
 
 void CardHandler::Draw(CelestialList<GUIObject*>* objects)
@@ -296,7 +320,12 @@ void CardHandler::Present()
 TextureResourceObject* CardHandler::LoadTexture(byte* values, UINT bPC, UINT channels, char* channelOrder, UINT width, UINT height)
 {
 
-	D3D10_TEXTURE2D_DESC desc;
+	D3D11_SUBRESOURCE_DATA data = D3D11_SUBRESOURCE_DATA();
+	data.pSysMem = values;
+	data.SysMemPitch = width * ((bPC/8) * channels);
+	data.SysMemSlicePitch = 0;
+
+	D3D11_TEXTURE2D_DESC desc;
 	desc.Width = width;
 	desc.Height = height;
 	desc.MipLevels = 1;
@@ -304,83 +333,16 @@ TextureResourceObject* CardHandler::LoadTexture(byte* values, UINT bPC, UINT cha
 	desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 	desc.SampleDesc.Count = 1;
 	desc.SampleDesc.Quality = -1;
-	desc.Usage = D3D10_USAGE_DYNAMIC;
-	desc.BindFlags = D3D10_BIND_SHADER_RESOURCE;
-	desc.CPUAccessFlags = D3D10_CPU_ACCESS_WRITE;
+	desc.Usage = D3D11_USAGE_DYNAMIC;
+	desc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+	desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 	desc.MiscFlags = 0;
-	ID3D10Texture2D *pTexture = nullptr;
-	HRESULT HR = card->CreateTexture2D(&desc, nullptr, &pTexture);
+	ID3D11Texture2D *pTexture = nullptr;
+	HRESULT HR = card->CreateTexture2D(&desc, &data, &pTexture);
 
-
-	D3D10_MAPPED_TEXTURE2D mappedTex;
-	pTexture->Map(D3D10CalcSubresource(0, 0, 1), D3D10_MAP_WRITE_DISCARD, 0, &mappedTex);//Map the underlying data
-
-	UCHAR* pTexels = (UCHAR*)mappedTex.pData;
-
-	for (UINT row = 0; row < desc.Height; row++)
-	{
-		UINT rowStart = row * mappedTex.RowPitch;
-		UINT rowValue = row * width* channels;
-
-		for (UINT col = 0; col < desc.Width; col++)
-		{
-
-			UINT colStart = col * 4;
-			UINT colValues = col * channels;
-			byte red = 0;
-			byte green = 0;
-			byte blue = 0;
-			byte alpha = 255;
-
-			if (bPC == 8)
-			{
-
-				for (UINT i = 0; i < channels; i++)
-				{
-
-					if (channelOrder[i] == 'r')
-					{
-
-						red = values[rowValue + colValues + i];
-
-					}
-
-					if (channelOrder[i] == 'g')
-					{
-
-						green = values[rowValue + colValues + i];
-
-					}
-
-					if (channelOrder[i] == 'b')
-					{
-
-						blue = values[rowValue + colValues + i];
-
-					}
-
-					if (channelOrder[i] == 'a')
-					{
-
-						alpha = values[rowValue + colValues + i];
-
-					}
-				}
-			}
-
-			pTexels[rowStart + colStart + 0] = red;
-			pTexels[rowStart + colStart + 1] = green;
-			pTexels[rowStart + colStart + 2] = blue;
-			pTexels[rowStart + colStart + 3] = alpha;
-
-		}
-	}
-
-	pTexture->Unmap(D3D10CalcSubresource(0, 0, 1));
-
-	D3D10_SHADER_RESOURCE_VIEW_DESC srDesc;
+	D3D11_SHADER_RESOURCE_VIEW_DESC srDesc;
 	srDesc.Format = desc.Format;
-	srDesc.ViewDimension = D3D10_SRV_DIMENSION_TEXTURE2D;
+	srDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
 	srDesc.Texture2D.MostDetailedMip = 0;
 	srDesc.Texture2D.MipLevels = 1;
 
@@ -396,7 +358,7 @@ TextureResourceObject* CardHandler::LoadTexture(byte* values, UINT bPC, UINT cha
 TextureResourceObject* CardHandler::CreateTexture(UCHAR r, UCHAR g, UCHAR b)
 {
 
-	D3D10_TEXTURE2D_DESC desc;
+	D3D11_TEXTURE2D_DESC desc;
 	desc.Width = 2;
 	desc.Height = 2;
 	desc.MipLevels = 1;
@@ -404,36 +366,41 @@ TextureResourceObject* CardHandler::CreateTexture(UCHAR r, UCHAR g, UCHAR b)
 	desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 	desc.SampleDesc.Count = 1;
 	desc.SampleDesc.Quality = -1;
-	desc.Usage = D3D10_USAGE_DYNAMIC;
-	desc.BindFlags = D3D10_BIND_SHADER_RESOURCE;
-	desc.CPUAccessFlags = D3D10_CPU_ACCESS_WRITE;
+	desc.Usage = D3D11_USAGE_DYNAMIC;
+	desc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+	desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 	desc.MiscFlags = 0;
-	ID3D10Texture2D *pTexture = nullptr;
-	HRESULT HR = card->CreateTexture2D(&desc, nullptr, &pTexture);
 
+	UCHAR* pTexels = new UCHAR[desc.Height * desc.Width * 4];
 
-	D3D10_MAPPED_TEXTURE2D mappedTex;
-	pTexture->Map(D3D10CalcSubresource(0, 0, 1), D3D10_MAP_WRITE_DISCARD, 0, &mappedTex);//Map the underlying data
-
-	UCHAR* pTexels = (UCHAR*)mappedTex.pData;
 	for (UINT row = 0; row < desc.Height; row++)
 	{
-		UINT rowStart = row * mappedTex.RowPitch;
+
+		UINT rowStart = row * desc.Width;
+
 		for (UINT col = 0; col < desc.Width; col++)
 		{
+
 			UINT colStart = col * 4;
 			pTexels[rowStart + colStart + 0] = r; // Red
 			pTexels[rowStart + colStart + 1] = g; // Green
 			pTexels[rowStart + colStart + 2] = b;  // Blue
 			pTexels[rowStart + colStart + 3] = 255;  // Alpha
+
 		}
 	}
 
-	pTexture->Unmap(D3D10CalcSubresource(0, 0, 1));
+	D3D11_SUBRESOURCE_DATA data = D3D11_SUBRESOURCE_DATA();
+	data.pSysMem = pTexels;
+	data.SysMemPitch = desc.Width * 4;
+	data.SysMemSlicePitch = 0;
 
-	D3D10_SHADER_RESOURCE_VIEW_DESC srDesc;
+	ID3D11Texture2D *pTexture = nullptr;
+	HRESULT HR = card->CreateTexture2D(&desc, &data, &pTexture);
+
+	D3D11_SHADER_RESOURCE_VIEW_DESC srDesc;
 	srDesc.Format = desc.Format;
-	srDesc.ViewDimension = D3D10_SRV_DIMENSION_TEXTURE2D;
+	srDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
 	srDesc.Texture2D.MostDetailedMip = 0;
 	srDesc.Texture2D.MipLevels = 1;
 
@@ -441,7 +408,7 @@ TextureResourceObject* CardHandler::CreateTexture(UCHAR r, UCHAR g, UCHAR b)
 	dXT->CreateShaderView(&srDesc);
 	TextureResourceObject* retVal = new TextureResourceObject();
 	retVal->SetDXT(dXT);
-
+	delete[] pTexels;
 	return retVal;
 
 }
@@ -525,6 +492,7 @@ void CardHandler::SetOut(RT target)
 void CardHandler::Release()
 {
 
+
 	if(currentFrame != nullptr)
 		currentFrame->Release();
 	currentFrame = nullptr;
@@ -532,8 +500,14 @@ void CardHandler::Release()
 	if( card ) 
 	{
 		
-		card->ClearState();
-		card->OMSetRenderTargets(0,nullptr,nullptr);
+		context1->ClearState();
+		context1->OMSetRenderTargets(0, nullptr, nullptr);
+		context1->PSSetSamplers(0, 0, nullptr);
+		context1->OMSetBlendState(nullptr, nullptr, 0);
+		context1->OMSetDepthStencilState(nullptr, 0);
+		context1->RSSetState(nullptr);
+		context1->Release();
+		bufferContext->Release();
 
 	}
 
@@ -551,10 +525,16 @@ void CardHandler::Release()
 
 	}
 
+	if (commandList != nullptr)
+	{
+
+		commandList->Release();
+
+	}
+
 	shader->Release();
 	releaseBackBuffer();
 	swapChain->Release();
-
 	card->Release();
 
 }

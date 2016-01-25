@@ -133,8 +133,6 @@ int runLogic(Overlord* lordie)
 		}
 	}
 
-	overlord->Kill();
-
 	while (!gHasStopped || !mHasStopped)
 	{
 
@@ -184,7 +182,7 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
                     _In_ int       nCmdShow)
 {
 	_CrtSetDbgFlag ( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
-	//_CrtSetBreakAlloc(61289);
+	//_CrtSetBreakAlloc(52538);
 	UNREFERENCED_PARAMETER(hPrevInstance);
 	UNREFERENCED_PARAMETER(lpCmdLine);
 
@@ -228,6 +226,7 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 	//Deletes the overlord when the window is closed
 	gStop = true;
 	mStop = true;
+	overlord->Kill();
 
 	delete[] messageBuffer;
 

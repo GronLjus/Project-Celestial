@@ -124,6 +124,7 @@ void GraphicHandler::Kill()
 
 	isInited = false;//Stop all operations
 	canDraw = false;//Stop rendering
+	cardHandler->Kill();
 
 }
 
@@ -187,12 +188,11 @@ void GraphicHandler::Update(unsigned int time)
 	if (cameraObject != nullptr && gameBoard != nullptr)
 	{
 
-		cardHandler->UpdateInstanceBuffers(gameBoard->GetDrawingBoard(), cameraObject->GetFlip());
 		unsigned int newFlip = cameraObject->GetFlip();
 		cameraObject->IncrementFlipBuff();
 		nextFlip = newFlip;
 
-		while (cameraObject->GetFlip() == renderFlip)
+		while (cameraObject->GetFlip() == renderFlip && (isInited || canDraw))
 		{
 
 			this_thread::yield();
@@ -230,6 +230,7 @@ void GraphicHandler::Draw()
 		{
 
 			renderFlip = nextFlip;
+			cardHandler->UpdateInstanceBuffers(gameBoard->GetDrawingBoard(), renderFlip);
 			cardHandler->SetInstanceBuffers(renderFlip);
 
 		}

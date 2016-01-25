@@ -5,11 +5,12 @@ using namespace Resources;
 using namespace CrossHandlers;
 using namespace CelestialMath;
 
-GameObject::GameObject(BoundingBox* box, BoundingSphere* baseSphere) : PositionableObject()
+GameObject::GameObject(BoundingBox* box, BoundingSphere* baseSphere, unsigned int meshId) : PositionableObject()
 {
 
 	this->box = box;
 	this->sphere = baseSphere;
+	this->mesh = meshId;
 
 }
 

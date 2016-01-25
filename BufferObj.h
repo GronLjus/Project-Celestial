@@ -124,4 +124,5 @@ BufferObject2<T>::~BufferObject2()
 {
 
 	delete[] buffer;
+
 }

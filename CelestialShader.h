@@ -22,9 +22,9 @@ namespace Graphics
 		public:
 			CelestialShader();
 
-			HRESULT Init(ID3D10Device1* card, GraphicQuality gQ, DrawingStyle dS, CrossHandlers::TextureResourceObject* backBuffer,CrossHandlers::TextContainer* errorOut);
+			HRESULT Init(ID3D11Device* card, GraphicQuality gQ, DrawingStyle dS, CrossHandlers::TextureResourceObject* backBuffer,CrossHandlers::TextContainer* errorOut);
 
-			void SetVertexBuffers(ID3D10Buffer* vertices, ID3D10Buffer* indices);
+			void SetVertexBuffers(ID3D11Buffer* vertices, ID3D11Buffer* indices, ID3D11DeviceContext* context);
 			void ToggleWireFrameMode(bool val,bool light);
 			void ToggleNormalSpikes(bool val);
 			void ToggleGlobalBorders(bool val);
@@ -32,14 +32,11 @@ namespace Graphics
 			bool SetQuality(GraphicQuality gQ, CrossHandlers::TextureResourceObject* backBuffer);
 			bool SetDrawing(DrawingStyle dS);
 
-			void NothingToDraw();
-			void StartDrawing();
-			void StartDrawing(Entities::ViewObject* scene, unsigned int flip);
-			void DrawScene(Entities::ViewObject* scene, GraphicalMesh* meshes, unsigned int flip);
-			void DrawScene(Graphics::DrawScene* scene, int flip);
-			void FinishDrawing();
+			void NothingToDraw(ID3D11DeviceContext* context);
+			void StartDrawing(Entities::ViewObject* scene, ID3D11DeviceContext* context, unsigned int flip);
+			void DrawScene(Entities::ViewObject* scene, GraphicalMesh* meshes, ID3D11DeviceContext* context, unsigned int flip);
+			void FinishDrawing(ID3D11DeviceContext* context);
 
-			void SetCamera(CrossHandlers::CameraFrame* cam);
 			CelestialBufferHandler* GetBufferHandler();
 
 			///<summary>Releases all references used by the shader, must be called when the shaders usage is over</summary>
@@ -127,9 +124,9 @@ namespace Graphics
 			HRESULT releaseDepth();
 			HRESULT releaseShadowMap();
 
-			void transferRenderConstants();
-			void transferFrameConstants();
-			void transferLightConstants();
+			void transferRenderConstants(ID3D11DeviceContext* context);
+			void transferFrameConstants(ID3D11DeviceContext* context);
+			void transferLightConstants(ID3D11DeviceContext* context);
 		
 			///<summary>Wireframe-toogle</summary>
 			bool wf;
@@ -144,17 +141,17 @@ namespace Graphics
 			///<summary>The sum of the temp-array</summary>
 			int bufferSize;
 			///<summary>An array of Bufferpointers to use when setting vertex/instance-buffers</summary>
-			ID3D10Buffer** buffers;
+			ID3D11Buffer** buffers;
 			///<summary>An array of ints to use as strides when setting buffers</summary>
 			UINT* strides;
 			///<summary>An array of ints to use as offsets when setting buffers</summary>
 			UINT* offSets;
 
 			///<summary>An array of shaderresourceviews to use when setting textures</summary> 
-			ID3D10ShaderResourceView** srvs;
+			ID3D11ShaderResourceView** srvs;
 
 			///<summary>The device used to create the effects</summary>
-			ID3D10Device1* card;
+			ID3D11Device* card;
 			///<summary>The Bufferhandler this shader uses</summary>
 			CelestialBufferHandler* bH;
 			///<summary>The ShadowMapConstants this shader uses</summary>
@@ -163,10 +160,10 @@ namespace Graphics
 			///<summary>The stride for the buffer used when drawing the screen</summary>
 			UINT screenStride;
 			///<summary>The layout for the buffer used when drawing the screen</summary>
-			ID3D10InputLayout* screenLayout;
+			ID3D11InputLayout* screenLayout;
 
 			///<summary>The underlying effect this file uses</summary>
-			ID3D10Blob* compiledShader;
+			ID3DBlob* compiledShader;
 		
 			///<summary>A pointer to the camera to be used</summary>
 			CrossHandlers::CameraFrame* camera;
@@ -188,16 +185,16 @@ namespace Graphics
 			GraphicQuality quality;
 			DrawingStyle dStyle;
 
-			ID3D10BlendState** blendStates;
-			ID3D10DepthStencilState** depthStates;
-			ID3D10RasterizerState** rastStates;
-			ID3D10SamplerState** sampleStates;
+			ID3D11BlendState** blendStates;
+			ID3D11DepthStencilState** depthStates;
+			ID3D11RasterizerState** rastStates;
+			ID3D11SamplerState** sampleStates;
 
 			ShaderContainer*** techs;
 
-			ID3D10VertexShader** vertexShaders;
-			ID3D10GeometryShader** geometryShaders;
-			ID3D10PixelShader** pixelShaders;
+			ID3D11VertexShader** vertexShaders;
+			ID3D11GeometryShader** geometryShaders;
+			ID3D11PixelShader** pixelShaders;
 
 			struct renderConstants
 			{
@@ -259,9 +256,9 @@ namespace Graphics
 			frameConstants fc;
 			perLightConstants plc;
 
-			ID3D10Buffer* rcb;
-			ID3D10Buffer* fcb;
-			ID3D10Buffer* plcb;
+			ID3D11Buffer* rcb;
+			ID3D11Buffer* fcb;
+			ID3D11Buffer* plcb;
 
 	};
 }

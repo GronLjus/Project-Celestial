@@ -52,11 +52,29 @@ void GameBoardHandler::Update(unsigned int time)
 
 			localGameBoard->SetCamera((CameraObject*)(gameObjects->GetValue(currentMessage->param1)));
 
+			messageBuffer[this->currentMessage].timeSent = time;
+			messageBuffer[this->currentMessage].destination = MessageSource_GRAPHICS;
+			messageBuffer[this->currentMessage].type = MessageType_GRAPHICS;
+			messageBuffer[this->currentMessage].mess = GraphicMess_SETCAMERA;
+			messageBuffer[this->currentMessage].read = false;
+			messageBuffer[this->currentMessage].param1 = currentMessage->param1;
+			outQueue->PushMessage(&messageBuffer[this->currentMessage]);
+			this->currentMessage = (this->currentMessage + 1) % outMessages;
+
 		}
 		else if (currentMessage->mess == GameBoardMess_SETGAMEBOARD)
 		{
 
 			localGameBoard = (GameBoard*)(gameObjects->GetValue(currentMessage->param1));
+
+			messageBuffer[this->currentMessage].timeSent = time;
+			messageBuffer[this->currentMessage].destination = MessageSource_GRAPHICS;
+			messageBuffer[this->currentMessage].type = MessageType_GRAPHICS;
+			messageBuffer[this->currentMessage].mess = GraphicMess_SETGAMEBOARD;
+			messageBuffer[this->currentMessage].read = false;
+			messageBuffer[this->currentMessage].param1 = currentMessage->param1;
+			outQueue->PushMessage(&messageBuffer[this->currentMessage]);
+			this->currentMessage = (this->currentMessage + 1) % outMessages;
 			
 		}
 

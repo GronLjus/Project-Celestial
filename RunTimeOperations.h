@@ -6,7 +6,7 @@ namespace Logic
 	enum opcode : unsigned char {
 		opcode_SETCONST, opcode_SETVAR,
 
-		opcode_LOADLIGHT, opcode_LOADMESH, opcode_LOADSCRIPT, opcode_LOADKYTRGR, opcode_LOADCHRKYTRGR, opcode_LOADTXTBX, opcode_LOADPANEL, opcode_LOADGMBRD, opcode_LOADCAM,
+		opcode_LOADLIGHT, opcode_LOADMESH, opcode_LOADSCRIPT, opcode_LOADKYTRGR, opcode_LOADCHRKYTRGR, opcode_LOADTXTBX, opcode_LOADPANEL, opcode_LOADGMBRD, opcode_LOADCAM, opcode_LOADOBJCT,
 
 		opcode_ADDOBJECT, opcode_ADDMESH, 
 		opcode_SETGMEBRD, opcode_SETCMRA,

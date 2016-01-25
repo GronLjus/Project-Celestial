@@ -162,8 +162,10 @@ bool Celestial2DDrawer::DrawTextToTarget(std::wstring text, float x, float y, in
 	return false;
 
 }
+
 void Celestial2DDrawer::DrawGUIObject(Resources::GUIObject* object)
 {
+
 	DrawGUIObject(object, Vector2(0, 0), Vector2(width, height));
 
 }

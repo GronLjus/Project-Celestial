@@ -3,7 +3,7 @@
 
 using namespace CrossHandlers;
 
-DXTextureResource::DXTextureResource(ID3D10Texture2D* texture,ID3D10Device1* card)
+DXTextureResource::DXTextureResource(ID3D11Texture2D* texture,ID3D11Device* card)
 {
 
 	shaderView = nullptr;
@@ -15,42 +15,42 @@ DXTextureResource::DXTextureResource(ID3D10Texture2D* texture,ID3D10Device1* car
 
 }
 
-ID3D10ShaderResourceView* DXTextureResource::GetShaderView() const
+ID3D11ShaderResourceView* DXTextureResource::GetShaderView() const
 {
 
 	return shaderView;
 
 }
 
-ID3D10ShaderResourceView* DXTextureResource::GetSecondShaderView() const
+ID3D11ShaderResourceView* DXTextureResource::GetSecondShaderView() const
 {
 
 	return secondShaderView;
 
 }
 
-ID3D10DepthStencilView* DXTextureResource::GetDepthView() const
+ID3D11DepthStencilView* DXTextureResource::GetDepthView() const
 {
 
 	return depthView;
 
 }
 
-ID3D10RenderTargetView* DXTextureResource::GetTargetView() const
+ID3D11RenderTargetView* DXTextureResource::GetTargetView() const
 {
 
 	return targetView;
 
 }
 
-ID3D10Texture2D* DXTextureResource::GetTexture() const
+ID3D11Texture2D* DXTextureResource::GetTexture() const
 {
 
 	return texture;
 
 }
 
-bool DXTextureResource::CreateShaderView(D3D10_SHADER_RESOURCE_VIEW_DESC* desc)
+bool DXTextureResource::CreateShaderView(D3D11_SHADER_RESOURCE_VIEW_DESC* desc)
 {
 	
 	if(shaderView != nullptr)
@@ -65,7 +65,7 @@ bool DXTextureResource::CreateShaderView(D3D10_SHADER_RESOURCE_VIEW_DESC* desc)
 
 }
 
-bool DXTextureResource::CreateSecondShaderView(D3D10_SHADER_RESOURCE_VIEW_DESC* desc)
+bool DXTextureResource::CreateSecondShaderView(D3D11_SHADER_RESOURCE_VIEW_DESC* desc)
 {
 
 	if (secondShaderView != nullptr)
@@ -80,7 +80,7 @@ bool DXTextureResource::CreateSecondShaderView(D3D10_SHADER_RESOURCE_VIEW_DESC* 
 
 }
 
-bool DXTextureResource::CreateTargetView(D3D10_RENDER_TARGET_VIEW_DESC* desc)
+bool DXTextureResource::CreateTargetView(D3D11_RENDER_TARGET_VIEW_DESC* desc)
 {
 	
 	if(targetView != nullptr)
@@ -95,7 +95,7 @@ bool DXTextureResource::CreateTargetView(D3D10_RENDER_TARGET_VIEW_DESC* desc)
 
 }
 
-bool DXTextureResource::CreateDepthView(D3D10_DEPTH_STENCIL_VIEW_DESC* desc)
+bool DXTextureResource::CreateDepthView(D3D11_DEPTH_STENCIL_VIEW_DESC* desc)
 {
 	
 	if(depthView != nullptr)

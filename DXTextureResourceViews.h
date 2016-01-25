@@ -7,7 +7,7 @@ namespace CrossHandlers
 	{
 
 		public:
-			DXTextureResourceViews(ID3D10Texture2D* texture,ID3D10Device1* card);
+			DXTextureResourceViews(ID3D11Texture2D* texture,ID3D11Device1* card);
 			virtual void Release();
 			virtual ~DXTextureResourceViews();
 

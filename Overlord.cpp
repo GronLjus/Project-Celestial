@@ -371,7 +371,6 @@ void Overlord::HandleDrawing(unsigned int time)
 void Overlord::Update(unsigned int time)
 {
 
-
 	unsigned int time2 = clock();
 	lTime += (time2 - lTimeLast);
 	lTimeLast = time2;

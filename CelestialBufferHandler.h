@@ -16,36 +16,28 @@ namespace Graphics
 		public:
 			///<param name='card'>[in]The device to create buffers from</param>
 			///<param name='meshDictionary'>[in]The meshDictionary to use as id-reference</param>
-			CelestialBufferHandler(ID3D10Device1* card,unsigned int flips);
+			CelestialBufferHandler(ID3D11Device* card,unsigned int flips);
 
-			void UpdateMeshBuffers(Entities::DrawingBoard* db);
-			void UpdateInstanceBuffer(Entities::DrawingBoard* db,unsigned int flip);
+			void UpdateMeshBuffers(Entities::DrawingBoard* db, ID3D11DeviceContext* context);
+			void UpdateInstanceBuffer(Entities::DrawingBoard* db, ID3D11DeviceContext* context, unsigned int flip);
 
-			ID3D10Buffer* GetVertexBuffer() const;
-			ID3D10Buffer* GetIndexBuffer() const;
-			ID3D10Buffer* GetInstanceBuffer(unsigned int flip) const;
+			ID3D11Buffer* GetVertexBuffer() const;
+			ID3D11Buffer* GetIndexBuffer() const;
+			ID3D11Buffer* GetInstanceBuffer(unsigned int flip) const;
 
 			HRESULT InitVertexLayout(void* signature,SIZE_T size);
 			HRESULT InitTerrainVertexLayout(void* signature,SIZE_T size);
 			HRESULT InitParticleVertexLayout(void* signature,SIZE_T size);
 			HRESULT InitLightVertexLayout(void* signature,SIZE_T size);
 
-			HRESULT InitMesh(Resources::MeshObject* mesh);
-			HRESULT InitParticleEmitter(Resources::IParticleEmitterBufferable* emitter);
-			void InitTerrain(Resources::TerrainMesh* object);
-
-			HRESULT AddInstance(Resources::IParticleEmitterBufferable* emitter, Resources::ParticleEmitterInstance* instance, int flip);
-			void AddInstance(CrossHandlers::BufferObject* buffer, Resources::ResourceObject* container);
-			void AddInstance(CrossHandlers::BufferObject* buffer, Resources::ILight* light);
-
 			UINT GetStride(CrossHandlers::BufferTypes buffer) const;
 			UINT GetTerrainStride() const;
 			UINT GetLightStride() const;
 
-			ID3D10InputLayout* GetVertexLayout() const;
-			ID3D10InputLayout* GetParticleLayout() const;
-			ID3D10InputLayout* GetTerrainLayout() const;
-			ID3D10InputLayout* GetLightLayout() const;
+			ID3D11InputLayout* GetVertexLayout() const;
+			ID3D11InputLayout* GetParticleLayout() const;
+			ID3D11InputLayout* GetTerrainLayout() const;
+			ID3D11InputLayout* GetLightLayout() const;
 
 			virtual void Release();
 			~CelestialBufferHandler();
@@ -177,13 +169,6 @@ namespace Graphics
 
 			};
 
-			///<summary>Moves through the list of buffers and gets the size and mapped array</summary>
-			///<param name='buffer'>[in]A pointer to the buffer to peruse</param>
-			///<param name='buff'>[in]A pointer to the bufferobject</param>
-			///<param name='sizeO'>[in]The size of the struct to use</param>
-			///<param name='max'>[in]The maximum amount of elements</param>
-			///<returns>Any error-codes</returns>
-			HRESULT moveThroughBuffer(CrossHandlers::DXBufferObject* buffer,CrossHandlers::BufferObject* buff,int sizeO,int max);
 			///<summary>The maximum number of instances in a instancebuffer</summary>
 			int maxInstances;
 
@@ -191,15 +176,15 @@ namespace Graphics
 			UINT* strides;
 		
 			///<summary>A pointer to the device used by this handler</summary>
-			ID3D10Device1* card;
+			ID3D11Device* card;
 			///<summary>A pointer to the vertexlayout this buffer uses</summary>
-			ID3D10InputLayout* vertexLayout;
+			ID3D11InputLayout* vertexLayout;
 			///<summary>A pointer to the particlelayout this buffer uses</summary>
-			ID3D10InputLayout* particleLayout;
+			ID3D11InputLayout* particleLayout;
 			///<summary>A pointer to the vertexlayout this buffer uses for terrains</summary>
-			ID3D10InputLayout* terrainLayout;
+			ID3D11InputLayout* terrainLayout;
 			///<summary>A pointer to the vertexlayout this buffer uses for lights</summary>
-			ID3D10InputLayout* lightLayout;
+			ID3D11InputLayout* lightLayout;
 			///<summary>The size of the vertex used for terrains</summary>
 			UINT terrainStride;
 			///<summary>The size of the vertex used for lights</summary>
@@ -210,9 +195,9 @@ namespace Graphics
 			///<summary>The maximum number of lights in a buffer</summary>
 			int maxLights;
 
-			ID3D10Buffer* vertices;
-			ID3D10Buffer* indices;
-			ID3D10Buffer** instances;
+			ID3D11Buffer* vertices;
+			ID3D11Buffer* indices;
+			ID3D11Buffer** instances;
 			unsigned int instantFlip;
 			unsigned int instantFlips;
 

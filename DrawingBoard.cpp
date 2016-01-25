@@ -69,7 +69,7 @@ void DrawingBoard::FinalizeInstances(ViewObject* onView)
 		unsigned int meshVal = meshInstance->PopElement();
 		unsigned int localMesh = meshDictionary->GetValue(meshVal);
 		BufferObject2<Instance>* instBuff = meshInstances->GetValue(localMesh);
-		onView->AddInstanceFragment(meshVal, instanceBuffer->GetBufferSize(), instBuff->GetBufferSize());
+		onView->AddInstanceFragment(localMesh, instanceBuffer->GetBufferSize(), instBuff->GetBufferSize());
 		instanceBuffer->Add(instBuff);
 		instBuff->Reset();
 		hasInstance->Add(false, meshVal);

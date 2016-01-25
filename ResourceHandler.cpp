@@ -52,6 +52,29 @@ void ResourceHandler::Update(unsigned int time)
 			outId = gameObjects->Add(bo);
 
 		}
+		else if (currentMessage->mess == ResourceMess_LOADOBJECT)
+		{
+
+			BaseObject* mesh = gameObjects->GetValue(currentMessage->param1);
+			BoundingBox* baseBox = nullptr;
+			BoundingSphere* baseSphere = nullptr;
+			unsigned int meshId = 0;
+
+			if (mesh != nullptr)
+			{
+
+				meshId = mesh->GetId();
+				MeshObject* meshObj = (MeshObject*)mesh;
+				baseBox = (BoundingBox*)meshObj->GetBoundingObjectCopy(Shape_BOX);
+				baseSphere = (BoundingSphere*)meshObj->GetBoundingObjectCopy(Shape_SPHERE);
+
+			}
+
+			GameObject* obj = new GameObject(baseBox,baseSphere,meshId);
+			obj->SetId(gameObjects->GetFirstEmpty());
+			outId = gameObjects->Add(obj);
+
+		}
 		else if (currentMessage->mess == ResourceMess_LOADSCRIPT)
 		{
 

@@ -8,7 +8,7 @@ namespace Resources
 	class GameObject : public PositionableObject
 	{
 		public:
-			GameObject(CrossHandlers::BoundingBox* baseBox, CrossHandlers::BoundingSphere* baseSphere);
+			GameObject(CrossHandlers::BoundingBox* baseBox, CrossHandlers::BoundingSphere* baseSphere, unsigned int meshId);
 			virtual void Update(CrossHandlers::Message* mess);
 			unsigned int GetMeshId() const;
 			unsigned int GetScriptId() const;

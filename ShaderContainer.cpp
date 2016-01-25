@@ -3,7 +3,7 @@
 
 using namespace Graphics;
 
-ShaderContainer::ShaderContainer(ID3D10VertexShader* vertex,ID3D10GeometryShader* geometry,ID3D10PixelShader* pixel)
+ShaderContainer::ShaderContainer(ID3D11VertexShader* vertex,ID3D11GeometryShader* geometry,ID3D11PixelShader* pixel)
 {
 
 	vertexShader = vertex;
@@ -12,21 +12,21 @@ ShaderContainer::ShaderContainer(ID3D10VertexShader* vertex,ID3D10GeometryShader
 
 }
 
-ID3D10VertexShader* ShaderContainer::GetVertexShader()
+ID3D11VertexShader* ShaderContainer::GetVertexShader()
 {
 
 	return vertexShader;
 
 }
 
-ID3D10GeometryShader* ShaderContainer::GetGeometryShader()
+ID3D11GeometryShader* ShaderContainer::GetGeometryShader()
 {
 
 	return geometryShader;
 
 }
 
-ID3D10PixelShader* ShaderContainer::GetPixelShader()
+ID3D11PixelShader* ShaderContainer::GetPixelShader()
 {
 
 	return pixelShader;

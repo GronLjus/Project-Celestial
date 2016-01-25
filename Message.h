@@ -10,7 +10,7 @@ namespace CrossHandlers
 	enum InputMess{ InputMess_CHARDOWN, InputMess_NONCHARDOWN, InputMess_MOUSEMOVE, InputMess_TOGGLESCRIPTTRIGGER_KEYPRESS, InputMess_TOGGLESCRIPTTRIGGER_MOUSEMOVE, InputMess_NA };
 	enum ScriptMess{ ScriptMess_RUN, ScriptMess_RUNFROM, ScriptMess_ADDPARNUM, ScriptMess_ADDPARASTR, ScriptMess_RESUME, ScriptMess_CATCHUP, ScriptMess_NA };
 	enum ResourceMess{
-		ResourceMess_LOADCAMERA,
+		ResourceMess_LOADCAMERA, ResourceMess_LOADOBJECT,
 		ResourceMess_LOADGAMEBOARD, ResourceMess_LOADMESH, ResourceMess_LOADLIGHT, ResourceMess_LOADCHARKEYTRIGGER, ResourceMess_LOADKEYTRIGGER, ResourceMess_LOADSCRIPT,
 		ResourceMess_LOADGUI, ResourceMess_ADDGUITRIGGER, ResourceMess_SIZEGUI, ResourceMess_RESNAPGUI, ResourceMess_POSGUI, ResourceMess_ADDGUITOGUI, ResourceMess_NA
 	};

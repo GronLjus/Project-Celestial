@@ -35,12 +35,11 @@ namespace Graphics
 			void UpdateMeshBuffers(Entities::DrawingBoard* db);
 			void UpdateInstanceBuffers(Entities::DrawingBoard* db,unsigned int flip);
 			void SetInstanceBuffers(unsigned int flip);
+			void playCommands();
 			void Draw(Entities::ViewObject* vObj, GraphicalMesh* meshes, unsigned int flip);
 			void JustClear();
+			void Kill();
 
-			///<summary>Draws the meshes</summary>
-			///<param name='scene'>[in]A pointer to the scene to draw</param>
-			void Draw(DrawScene* scene,int flip);
 			///<summary>Draws a ui</summary>
 			///<param val='ui'>[in]A pointer to the objects to draw</param>
 			void Draw(CrossHandlers::CelestialList< Resources::GUIObject*>* objects);
@@ -122,9 +121,14 @@ namespace Graphics
 			CelestialShader* shader;
 
 			///<summary>The underlying card</summary>
-			ID3D10Device1* card;
+			ID3D11Device* card;
+			ID3D11DeviceContext* context1;
+			ID3D11DeviceContext* bufferContext;
+			bool bufferFlag;
+			bool killFlag; 
+			ID3D11CommandList* commandList;
 			///<summary>The drivertype the device uses</summary>
-			D3D10_DRIVER_TYPE driverType;
+			//D3D11_DRIVER_TYPE driverType;
 
 			///<summary>The intermediator to the card</summary>
 			Intermediator* inter;
@@ -133,8 +137,8 @@ namespace Graphics
 			IDXGISwapChain* swapChain;
 
 			///<summary>The current frame</summary>
-			ID3D10Resource* currentFrame;
-			ID3D10ShaderResourceView* currentFramwView;
+			ID3D11Resource* currentFrame;
+			ID3D11ShaderResourceView* currentFramwView;
 
 			///<summary>The internal texthandler</summary>
 			I2DDrawer* basic2DHandler;

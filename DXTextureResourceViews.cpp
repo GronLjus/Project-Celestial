@@ -3,7 +3,7 @@
 
 using namespace CrossHandlers;
 
-DXTextureResourceViews::DXTextureResourceViews(ID3D10Texture2D* texture,ID3D10Device1* card) : DXTextureResource(texture,card)
+DXTextureResourceViews::DXTextureResourceViews(ID3D11Texture2D* texture,ID3D11Device1* card) : DXTextureResource(texture,card)
 {
 
 }
