@@ -16,6 +16,7 @@ using namespace Entities;
 CelestialShader::CelestialShader()
 {
 
+	globalBorders = false;
 	bufferSize = 3;
 	buffers = new ID3D11Buffer*[bufferSize];
 	offSets = new UINT[bufferSize];
@@ -1863,11 +1864,7 @@ void CelestialShader::FinishDrawing(ID3D11DeviceContext* context)
 	}
 
 	context->PSSetShaderResources(0, SRVRegisters_SIZE, srvs);
-
 	context->OMSetRenderTargets(0, nullptr, nullptr);
-	UINT nought = 0;
-	ID3D11Buffer* nB = nullptr;
-	context->IASetVertexBuffers(1, 1, &nB, &nought, &nought);
 
 }
 
@@ -1883,7 +1880,7 @@ void CelestialShader::transferRenderConstants(ID3D11DeviceContext* context)
 
 	D3D11_MAPPED_SUBRESOURCE mapped = D3D11_MAPPED_SUBRESOURCE();
 	context->Map(rcb, 0, D3D11_MAP_WRITE_DISCARD, 0, &mapped);
-	mapped.pData = &rc;
+	memcpy(mapped.pData, &rc, sizeof(renderConstants));
 	context->Unmap(rcb, 0);
 	context->PSSetConstantBuffers(BufferRegisters_RENDER, 1, &rcb);
 
@@ -1894,7 +1891,7 @@ void CelestialShader::transferFrameConstants(ID3D11DeviceContext* context)
 	
 	D3D11_MAPPED_SUBRESOURCE mapped = D3D11_MAPPED_SUBRESOURCE();
 	context->Map(fcb, 0, D3D11_MAP_WRITE_DISCARD, 0, &mapped);
-	mapped.pData = &fc;
+	memcpy(mapped.pData, &fc, sizeof(frameConstants));
 	context->Unmap(fcb, 0);
 
 	context->VSSetConstantBuffers(BufferRegisters_FRAME, 1, &fcb);
@@ -1908,7 +1905,7 @@ void CelestialShader::transferLightConstants(ID3D11DeviceContext* context)
 
 	D3D11_MAPPED_SUBRESOURCE mapped = D3D11_MAPPED_SUBRESOURCE();
 	context->Map(plcb, 0, D3D11_MAP_WRITE_DISCARD, 0, &mapped);
-	mapped.pData = &plc;
+	memcpy(mapped.pData, &plc, sizeof(perLightConstants));
 	context->Unmap(plcb, 0);
 
 	context->GSSetConstantBuffers(BufferRegisters_LIGHT, 1, &plcb);

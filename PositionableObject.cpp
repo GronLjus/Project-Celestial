@@ -17,8 +17,17 @@ PositionableObject::PositionableObject()
 void PositionableObject::Update(Message* mess)
 {
 
-	//DOSTUFF
+	if (mess->type == MessageType_OBJECT)
+	{
+		switch (mess->mess)
+		{
 
+		case ObjectMess_MOVE:
+			position += Vector3(mess->param1, mess->param2, mess->param3);
+			break;
+
+		}
+	}
 }
 
 Vector3 PositionableObject::GetPosition() const

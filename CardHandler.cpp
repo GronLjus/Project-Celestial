@@ -26,7 +26,8 @@ std::wstring s2ws(const std::string& s)
 CardHandler::CardHandler(int flips, bool useText)
 {	
 	
-	bufferFlag = true;
+	drawFlag = true;
+	bufferFlag = false;
 	killFlag = false;
 	underInitiated = false;
 	totalFlips = flips;
@@ -195,26 +196,15 @@ void CardHandler::Kill()
 void CardHandler::UpdateMeshBuffers(DrawingBoard* db)
 {
 
-	while (bufferFlag && !killFlag)
-	{
+	bH->UpdateMeshBuffers(db, bufferContext);
+	ID3D11Buffer* vertices = bH->GetVertexBuffer();
+	ID3D11Buffer* indices = bH->GetIndexBuffer();
+	unsigned int offset = 0;
+	unsigned int vStride = sizeof(BufferVertex);
+	context1->IASetVertexBuffers(0, 1, &vertices, &vStride, &offset);//Set buffers
+	context1->IASetIndexBuffer(indices, DXGI_FORMAT_R32_UINT, 0);//Set the index buffer
 
-		std::this_thread::yield();
 
-	}
-
-	if (!killFlag)
-	{
-
-		bH->UpdateMeshBuffers(db, bufferContext);
-		ID3D11Buffer* vertices = bH->GetVertexBuffer();
-		ID3D11Buffer* indices = bH->GetIndexBuffer();
-		unsigned int offset = 0;
-		unsigned int vStride = sizeof(BufferVertex);
-		bufferContext->IASetVertexBuffers(0, 1, &vertices, &vStride, &offset);//Set buffers
-		bufferContext->IASetIndexBuffer(indices, DXGI_FORMAT_R32_UINT, 0);//Set the index buffer
-		bufferFlag = true;
-
-	}
 }
 
 void CardHandler::UpdateInstanceBuffers(DrawingBoard* db, unsigned int flip)
@@ -237,16 +227,6 @@ void CardHandler::SetInstanceBuffers(unsigned int flip)
 void CardHandler::playCommands()
 {
 
-	if (bufferFlag)
-	{
-
-		bufferContext->FinishCommandList(false, &commandList);
-		context1->ExecuteCommandList(commandList, true);
-		commandList->Release();
-		commandList = nullptr;
-		bufferFlag = false;
-
-	}
 }
 
 void CardHandler::JustClear()
@@ -273,28 +253,32 @@ void CardHandler::Draw(Entities::ViewObject* vObj, GraphicalMesh* meshes, unsign
 
 void CardHandler::Draw(CelestialList<GUIObject*>* objects)
 {
-
-	basic2DHandler->Begin();
-
-	if (!underInitiated)
+	
+	if (basic2DHandler != nullptr)
 	{
 
-		basic2DHandler->Clear();
+		basic2DHandler->Begin();
+
+		if (!underInitiated)
+		{
+
+			basic2DHandler->Clear();
+
+		}
+
+		CelestialListNode<GUIObject*>* object = objects->GetFirstNode();
+
+		while (object != nullptr)
+		{
+
+			basic2DHandler->DrawGUIObject(object->GetNodeObject());
+			object = object->GetNext();
+
+		}
+
+		basic2DHandler->End();
 
 	}
-
-	CelestialListNode<GUIObject*>* object = objects->GetFirstNode();
-
-	while (object != nullptr)
-	{
-
-		basic2DHandler->DrawGUIObject(object->GetNodeObject());
-		object = object->GetNext();
-
-	}
-
-	basic2DHandler->End();
-
 }
 
 void CardHandler::DrawTextOnScreen(std::string text,float x,float y)

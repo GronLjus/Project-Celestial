@@ -50,14 +50,14 @@ DXTextureResource* GraphicalMesh::GetNormalTexture() const
 unsigned int GraphicalMesh::GetIndexStart() const
 {
 
-	return meshIndLength;
+	return meshIndStart;
 
 }
 
 unsigned int GraphicalMesh::GetIndexLength() const
 {
 
-	return meshIndStart;
+	return meshIndLength;
 
 }
 

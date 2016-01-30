@@ -11,6 +11,7 @@ GameObject::GameObject(BoundingBox* box, BoundingSphere* baseSphere, unsigned in
 	this->box = box;
 	this->sphere = baseSphere;
 	this->mesh = meshId;
+	flipInit = false;
 
 }
 
@@ -19,7 +20,22 @@ void GameObject::Update(Message* mess)
 
 	//DOSTUFF
 
+}bool GameObject::IsFlipBuffered(unsigned char flip)
+{
+
+	if (!flipInit || flip != flipBuffered)
+	{
+
+		flipInit = true;
+		flipBuffered = flip;
+		return false;
+
+	}
+
+	return true;
+
 }
+
 Matrix GameObject::GetInverseTransformation() const
 {
 

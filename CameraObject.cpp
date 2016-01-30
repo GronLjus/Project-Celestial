@@ -22,6 +22,14 @@ CameraObject::CameraObject(unsigned int width, unsigned int height, float depth,
 	port.topY = 0;
 	port.width = width;
 
+	Message mess = Message();
+	mess.type = MessageType_OBJECT;
+	mess.mess = ObjectMess_MOVE;
+	mess.param1 = 5;
+	mess.param2 = 5;
+	mess.param3 = 5;
+	PositionableObject::Update(&mess);
+
 	theView = new ViewObject(this->GetPosition(),sidePoint,lookAtPoint,up,fov, flips, port);
 
 }

@@ -19,7 +19,7 @@ namespace Entities
 			void AddMesh(Resources::MeshObject* mesh);
 			Graphics::GraphicalMesh* GetMeshes() const;
 			void StartAddingInstances();
-			unsigned int AddInstance(Resources::GameObject* object);
+			void AddInstance(Resources::GameObject* object);
 			void FinalizeInstances(Entities::ViewObject* onView);
 			CrossHandlers::BufferObject2<CrossHandlers::BufferVertex>* GetVertexBuffers() const;
 			CrossHandlers::BufferObject2<CrossHandlers::Instance>* GetInstanceBuffer() const;
@@ -28,6 +28,7 @@ namespace Entities
 
 		private:
 			
+			unsigned char bufflip;
 			unsigned int meshes;
 			Graphics::GraphicalMesh* meshesArr;
 			unsigned int addObjectToVertexBuffer(Resources::MeshObject* mesh);

@@ -52,7 +52,7 @@ HRESULT CelestialBufferHandler::InitVertexLayout(void* signature,SIZE_T size)
 		{"INVTRANMTRANSFORM",  1, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_INSTANCE_DATA, 1}, 
 		{"INVTRANMTRANSFORM",  2, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_INSTANCE_DATA, 1}, 
 		{"INVTRANMTRANSFORM",  3, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_INSTANCE_DATA, 1},  
-		{"OMTRANSFORM",  0, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 0, D3D11_INPUT_PER_INSTANCE_DATA, 1},  
+		{ "OMTRANSFORM", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
 		{"OMTRANSFORM",  1, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_INSTANCE_DATA, 1}, 
 		{"OMTRANSFORM",  2, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_INSTANCE_DATA, 1}, 
 		{"OMTRANSFORM",  3, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_INSTANCE_DATA, 1}
@@ -170,11 +170,11 @@ void CelestialBufferHandler::UpdateMeshBuffers(DrawingBoard* db, ID3D11DeviceCon
 		BufferVertex* mapped1 = nullptr;
 		D3D11_MAPPED_SUBRESOURCE mapped = D3D11_MAPPED_SUBRESOURCE();
 		context->Map(vertices, 0, D3D11_MAP_WRITE_DISCARD, 0, &mapped);
-		mapped.pData = db->GetVertexBuffers()->GetBuffer();
+		memcpy(mapped.pData, db->GetVertexBuffers()->GetBuffer(), sizeof(BufferVertex)*db->GetVertexBuffers()->GetBufferSize());
 		context->Unmap(vertices, 0);
 
 		context->Map(indices, 0, D3D11_MAP_WRITE_DISCARD, 0, &mapped);
-		mapped.pData = db->GetIndexBuffers()->GetBuffer();
+		memcpy(mapped.pData, db->GetIndexBuffers()->GetBuffer(), sizeof(unsigned int)*db->GetIndexBuffers()->GetBufferSize());
 		context->Unmap(indices, 0);
 
 	}
@@ -204,7 +204,7 @@ void CelestialBufferHandler::UpdateInstanceBuffer(DrawingBoard* db, ID3D11Device
 
 		D3D11_MAPPED_SUBRESOURCE mapped = D3D11_MAPPED_SUBRESOURCE();
 		context->Map(instances[flip], 0, D3D11_MAP_WRITE_DISCARD, 0, &mapped);
-		mapped.pData = db->GetInstanceBuffer()->GetBuffer();
+		memcpy(mapped.pData, db->GetInstanceBuffer()->GetBuffer(), sizeof(Instance)*db->GetInstanceBuffer()->GetBufferSize());
 		context->Unmap(instances[flip], 0);
 
 	}

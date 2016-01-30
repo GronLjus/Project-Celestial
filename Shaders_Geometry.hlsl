@@ -163,22 +163,15 @@ PS_INPUTRENDER commonFaceGeometry(GS_INPUTRENDER gsIn)
 void GSTriangles(triangleadj GS_INPUTRENDER input[6], inout TriangleStream<PS_INPUTRENDER> OutStream )
 {
 	
-	float3 faceNormal = calculateTriangleNormal(input[0].Pos,input[2].Pos,input[4].Pos);//Get the normal of the triangle
-
-	if(!checkBack(input[0].Pos,faceNormal))//Perform backface culling
+	for(int j=0;j<3;j++)
 	{
-
-		for(int j=0;j<3;j++)
-		{
 		
-			PS_INPUTRENDER outPut = commonFaceGeometry(input[j*2]);
-			OutStream.Append(outPut);
-
-		}
-
-		OutStream.RestartStrip();
+		PS_INPUTRENDER outPut = commonFaceGeometry(input[j*2]);
+		OutStream.Append(outPut);
 
 	}
+
+	OutStream.RestartStrip();
 }
 
 [maxvertexcount(39)]//3 points on the face + 3 borders each having a maximum of 12 vertices (3+(3*12))

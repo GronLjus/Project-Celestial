@@ -49,6 +49,7 @@ Overlord::Overlord(void)
 	messageHandlers[MessageSource_GRAPHICS] = gH;
 	messageHandlers[MessageSource_INPUT] = iH;
 	messageHandlers[MessageSource_MASTER] = nullptr;
+	messageHandlers[MessageSource_OBJECT] = nullptr;
 
 	dbgIn = nullptr;
 	dbgOut = nullptr;

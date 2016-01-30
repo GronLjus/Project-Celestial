@@ -10,6 +10,7 @@ using namespace Graphics;
 DrawingBoard::DrawingBoard()
 {
 
+	bufflip = 0;
 	vertexBuffer = new BufferObject2<BufferVertex>(100);
 	indexBuffer = new BufferObject2<unsigned int>(2048);
 	instanceBuffer = new BufferObject2<Instance>(256);
@@ -38,29 +39,34 @@ GraphicalMesh* DrawingBoard::GetMeshes() const
 
 }
 
-unsigned int DrawingBoard::AddInstance(GameObject* object)
+void DrawingBoard::AddInstance(GameObject* object)
 {
 
-	Matrix invTranW = MatrixTranspose(object->GetInverseTransformation());
-	Matrix oW = object->GetLastTransformation();
-	Matrix w = object->GetMatrix();
-	
-	if (!(hasInstance->GetValue(object->GetMeshId())))
+	if (!object->IsFlipBuffered(bufflip))
 	{
 
-		meshInstance->PushElement(object->GetMeshId());
-		hasInstance->Add(true, object->GetMeshId());
+		Matrix invTranW = object->GetInverseTransformation();
+		Matrix oW = MatrixTranspose(object->GetLastTransformation());
+		Matrix w = MatrixTranspose(object->GetMatrix());
+
+		if (!(hasInstance->GetValue(object->GetMeshId())))
+		{
+
+			meshInstance->PushElement(object->GetMeshId());
+			hasInstance->Add(true, object->GetMeshId());
+
+		}
+
+		BufferObject2<Instance>* instBuff = meshInstances->GetValue(meshDictionary->GetValue(object->GetMeshId()));
+		instBuff->Add(Instance(w, invTranW, oW));
 
 	}
-
-	BufferObject2<Instance>* instBuff = meshInstances->GetValue(meshDictionary->GetValue(object->GetMeshId()));
-	return instBuff->Add(Instance(w, invTranW, oW));
-
 }
 
 void DrawingBoard::FinalizeInstances(ViewObject* onView)
 {
 
+	bufflip++;
 	unsigned int totalInst = 0;
 
 	while (meshInstance->GetCount() > 0)

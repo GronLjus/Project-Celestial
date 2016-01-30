@@ -125,6 +125,7 @@ namespace Graphics
 			ID3D11DeviceContext* context1;
 			ID3D11DeviceContext* bufferContext;
 			bool bufferFlag;
+			bool drawFlag;
 			bool killFlag; 
 			ID3D11CommandList* commandList;
 			///<summary>The drivertype the device uses</summary>
