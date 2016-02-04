@@ -27,10 +27,12 @@ void GameBoardHandler::Update(unsigned int time)
 	while (currentMessage->type != MessageType_NA)
 	{
 
+		unsigned int param1 = currentMessage->params[0] | ((int)currentMessage->params[1] << 8) | ((int)currentMessage->params[2] << 16) | ((int)currentMessage->params[3] << 24);
+
 		if (currentMessage->mess == GameBoardMess_ADDMESH && localGameBoard != nullptr)
 		{
 
-			localGameBoard->GetDrawingBoard()->AddMesh((MeshObject*)(gameObjects->GetValue(currentMessage->param1)));
+			localGameBoard->GetDrawingBoard()->AddMesh((MeshObject*)(gameObjects->GetValue(param1)));
 
 			messageBuffer[this->currentMessage].timeSent = time;
 			messageBuffer[this->currentMessage].destination = MessageSource_GRAPHICS;
@@ -44,20 +46,20 @@ void GameBoardHandler::Update(unsigned int time)
 		else if (currentMessage->mess == GameBoardMess_ADDOBJECT && localGameBoard != nullptr)
 		{
 
-			localGameBoard->AddObject((GameObject*)(gameObjects->GetValue(currentMessage->param1)));
+			localGameBoard->AddObject((GameObject*)(gameObjects->GetValue(param1)));
 
 		}
 		else if (currentMessage->mess == GameBoardMess_SETCAM && localGameBoard != nullptr)
 		{
 
-			localGameBoard->SetCamera((CameraObject*)(gameObjects->GetValue(currentMessage->param1)));
+			localGameBoard->SetCamera((CameraObject*)(gameObjects->GetValue(param1)));
 
 			messageBuffer[this->currentMessage].timeSent = time;
 			messageBuffer[this->currentMessage].destination = MessageSource_GRAPHICS;
 			messageBuffer[this->currentMessage].type = MessageType_GRAPHICS;
 			messageBuffer[this->currentMessage].mess = GraphicMess_SETCAMERA;
 			messageBuffer[this->currentMessage].read = false;
-			messageBuffer[this->currentMessage].param1 = currentMessage->param1;
+			messageBuffer[this->currentMessage].SetParams(currentMessage->params,0,4);
 			outQueue->PushMessage(&messageBuffer[this->currentMessage]);
 			this->currentMessage = (this->currentMessage + 1) % outMessages;
 
@@ -65,14 +67,14 @@ void GameBoardHandler::Update(unsigned int time)
 		else if (currentMessage->mess == GameBoardMess_SETGAMEBOARD)
 		{
 
-			localGameBoard = (GameBoard*)(gameObjects->GetValue(currentMessage->param1));
+			localGameBoard = (GameBoard*)(gameObjects->GetValue(param1));
 
 			messageBuffer[this->currentMessage].timeSent = time;
 			messageBuffer[this->currentMessage].destination = MessageSource_GRAPHICS;
 			messageBuffer[this->currentMessage].type = MessageType_GRAPHICS;
 			messageBuffer[this->currentMessage].mess = GraphicMess_SETGAMEBOARD;
 			messageBuffer[this->currentMessage].read = false;
-			messageBuffer[this->currentMessage].param1 = currentMessage->param1;
+			messageBuffer[this->currentMessage].SetParams(currentMessage->params, 0, 4);
 			outQueue->PushMessage(&messageBuffer[this->currentMessage]);
 			this->currentMessage = (this->currentMessage + 1) % outMessages;
 			

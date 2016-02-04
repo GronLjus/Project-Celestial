@@ -27,7 +27,26 @@ namespace CrossHandlers
 	{
 
 		public:
-			Message(){}
+			Message() :params(nullptr)
+			{ 
+				numParams = 128; 
+				params = new char[numParams]; 
+				for (unsigned char i = 0; i < numParams; i++)
+				{ 
+					params[i] = 0; 
+				} 
+			}
+			Message(const Message& mess) : Message(){ 
+				source = mess.source; 
+				destination = mess.destination; 
+				type = mess.type; 
+				read = mess.read;
+				senderId = mess.senderId;
+				returnParam = mess.returnParam; 
+				timeSent = mess.timeSent; 
+				this->mess = mess.mess;
+				SetParams(mess.params, 0, mess.numParams-1); 
+			}
 			MessageSource source;
 			MessageSource destination;
 			MessageType type;
@@ -36,10 +55,33 @@ namespace CrossHandlers
 			unsigned int returnParam;
 			unsigned int timeSent;
 			unsigned int mess;
-			unsigned int param1;
-			unsigned int param2;
-			unsigned int param3;
-			std::string stringParam;
+			char* params = nullptr;
+			unsigned int numParams;
+			void SetParams(const char* newParams, unsigned int offset, unsigned int length)
+			{
+				if (offset + length >= numParams)
+				{
+
+					numParams += 128;
+					char* newPar = new char[numParams]; 
+					for (unsigned int i = 0; i < 128; i++)
+					{ 
+						newPar[numParams - 1 - i] = 0; 
+					}
+
+					memcpy(newPar, params, numParams - 128);
+					delete[] params;
+					params = newPar;
+
+				}
+
+				memcpy(&params[offset], newParams, length);
+
+			}
+			~Message(){ 
+				delete[] params;
+				params = nullptr;
+			}
 
 	};
 }

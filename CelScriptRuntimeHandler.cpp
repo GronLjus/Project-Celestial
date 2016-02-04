@@ -28,12 +28,12 @@ RunTimeError SetVarValOperator(unsigned int returnVar, unsigned char* params, un
 
 }
 
-std::string loadString(unsigned int var, unsigned int mId, RunTimeCommons* rtc)
+char* loadString(unsigned int var, unsigned int mId, RunTimeCommons* rtc, unsigned int &length)
 {
 
 	unsigned int s = 4;
 	rtc->memory->ReadVariable(var - 1, rtc->intLoader, s);
-	unsigned int length = (rtc->intLoader[0] | ((int)rtc->intLoader[1] << 8) | ((int)rtc->intLoader[2] << 16) | ((int)rtc->intLoader[3] << 24));
+	length = (rtc->intLoader[0] | ((int)rtc->intLoader[1] << 8) | ((int)rtc->intLoader[2] << 16) | ((int)rtc->intLoader[3] << 24));
 	rtc->currentStringSize = length;
 
 	if (length > rtc->stringLoadSize)
@@ -46,7 +46,7 @@ std::string loadString(unsigned int var, unsigned int mId, RunTimeCommons* rtc)
 	}
 
 	rtc->memory->ReadVariable(var - 1, 4, length, rtc->stringLoader);
-	return std::string((char*)(rtc->stringLoader), length);
+	return (char*)(rtc->stringLoader);
 
 }
 
@@ -55,10 +55,7 @@ RunTimeError sendMessageOut(Message& mess, RunTimeCommons* rtc)
 	rtc->outMessageBuffer[rtc->outCurrentMessage].destination = mess.destination;
 	rtc->outMessageBuffer[rtc->outCurrentMessage].mess = mess.mess;
 	rtc->outMessageBuffer[rtc->outCurrentMessage].returnParam = mess.returnParam;
-	rtc->outMessageBuffer[rtc->outCurrentMessage].param1 = mess.param1;
-	rtc->outMessageBuffer[rtc->outCurrentMessage].param2 = mess.param2;
-	rtc->outMessageBuffer[rtc->outCurrentMessage].param3 = mess.param3;
-	rtc->outMessageBuffer[rtc->outCurrentMessage].stringParam = mess.stringParam;
+	rtc->outMessageBuffer[rtc->outCurrentMessage].SetParams(mess.params, 0, mess.numParams);
 	rtc->outMessageBuffer[rtc->outCurrentMessage].timeSent = mess.timeSent;
 	rtc->outMessageBuffer[rtc->outCurrentMessage].type = mess.type;
 	rtc->outMessageBuffer[rtc->outCurrentMessage].read = false;
@@ -105,7 +102,7 @@ RunTimeError LoadGameBoardOperator(unsigned int returnVar, unsigned char* params
 	mess.destination = MessageSource_RESOURCES;
 	mess.type = MessageType_RESOURCES;
 	mess.mess = ResourceMess_LOADGAMEBOARD;
-	mess.param1 = (rtc->intLoader[0] | ((int)rtc->intLoader[1] << 8) | ((int)rtc->intLoader[2] << 16) | ((int)rtc->intLoader[3] << 24));
+	mess.SetParams((char*)rtc->intLoader, 0, 4);
 	rtc->varWaiting->Add(true, returnVar-1);
 	return sendMessageOut(mess, rtc);
 
@@ -144,7 +141,7 @@ RunTimeError LoadObjectOperator(unsigned int returnVar, unsigned char* params, u
 	mess.destination = MessageSource_RESOURCES;
 	mess.type = MessageType_RESOURCES;
 	mess.mess = ResourceMess_LOADOBJECT;
-	mess.param1 = meshId;
+	mess.SetParams((char*)rtc->intLoader, 0, 4);
 	rtc->varWaiting->Add(true, returnVar - 1);
 
 	return sendMessageOut(mess, rtc);
@@ -162,14 +159,15 @@ RunTimeError LoadMeshOperator(unsigned int returnVar, unsigned char* params, uns
 	}
 
 	unsigned int var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
-	std::string dir = loadString(var, mId, rtc);
+	unsigned int stringChar;
+	char* dir = loadString(var, mId, rtc, stringChar);
 
 	Message mess;
 	mess.returnParam = returnVar;
 	mess.destination = MessageSource_RESOURCES;
 	mess.type = MessageType_RESOURCES;
 	mess.mess = ResourceMess_LOADMESH;
-	mess.stringParam = dir;
+	mess.SetParams(dir, 0, stringChar);
 	rtc->varWaiting->Add(true, returnVar-1);
 
 	return sendMessageOut(mess, rtc);
@@ -191,21 +189,18 @@ RunTimeError LoadLightOperator(unsigned int returnVar, unsigned char* params, un
 	unsigned int var1 = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
 	unsigned int var2 = (params[4] | ((int)params[5] << 8) | ((int)params[6] << 16) | ((int)params[7] << 24));
 	unsigned int var3 = (params[8] | ((int)params[9] << 8) | ((int)params[10] << 16) | ((int)params[11] << 24));
-	rtc->memory->ReadVariable(var1 - 1, rtc->intLoader, s);
-	unsigned int r = (rtc->intLoader[0] | ((int)rtc->intLoader[1] << 8) | ((int)rtc->intLoader[2] << 16) | ((int)rtc->intLoader[3] << 24));
-	rtc->memory->ReadVariable(var2 - 1, rtc->intLoader, s);
-	unsigned int g = (rtc->intLoader[0] | ((int)rtc->intLoader[1] << 8) | ((int)rtc->intLoader[2] << 16) | ((int)rtc->intLoader[3] << 24));
-	rtc->memory->ReadVariable(var3 - 1, rtc->intLoader, s);
-	unsigned int b = (rtc->intLoader[0] | ((int)rtc->intLoader[1] << 8) | ((int)rtc->intLoader[2] << 16) | ((int)rtc->intLoader[3] << 24));
-
 	Message mess;
+	rtc->memory->ReadVariable(var1 - 1, rtc->intLoader, s);
+	mess.SetParams((char*)rtc->intLoader, 0, 4);
+	rtc->memory->ReadVariable(var2 - 1, rtc->intLoader, s);
+	mess.SetParams((char*)rtc->intLoader, 4, 4);
+	rtc->memory->ReadVariable(var3 - 1, rtc->intLoader, s);
+	mess.SetParams((char*)rtc->intLoader, 8, 4);
+
 	mess.destination = MessageSource_RESOURCES;
 	mess.type = MessageType_RESOURCES;
 	mess.mess = ResourceMess_LOADLIGHT;
 	mess.returnParam = returnVar;
-	mess.param1 = r | (g << 8) | (b << 16) | (255 << 24);
-	mess.param2 = 10;
-	mess.param3 = 10;
 	rtc->varWaiting->Add(true, returnVar-1);
 	return sendMessageOut(mess, rtc);
 
@@ -222,14 +217,15 @@ RunTimeError LoadScriptOperator(unsigned int returnVar, unsigned char* params, u
 	}
 
 	unsigned int var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
-	std::string path = loadString(var, mId, rtc);
+	unsigned int length;
+	char* path = loadString(var, mId, rtc, length);
 	Message mess;
 
 	mess.destination = MessageSource_RESOURCES;
 	mess.type = MessageType_RESOURCES;
 	mess.mess = ResourceMess_LOADSCRIPT;
 	mess.returnParam = returnVar;
-	mess.stringParam = path;
+	mess.SetParams(path, 0, length);
 
 	rtc->varWaiting->Add(true, returnVar-1);
 	return sendMessageOut(mess, rtc);
@@ -246,12 +242,14 @@ RunTimeError LoadKeyTriggerOperatorChar(unsigned int returnVar, unsigned char* p
 
 	}
 
+	unsigned int length;
+	char* tempString = loadString((params[4] | ((int)params[5] << 8) | ((int)params[6] << 16) | ((int)params[7] << 24)), mId, rtc, length);
 	Message mess;
 	mess.destination = MessageSource_RESOURCES;
 	mess.type = MessageType_RESOURCES;
 	mess.mess = ResourceMess_LOADCHARKEYTRIGGER;
-	mess.param1 = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
-	mess.stringParam = loadString((params[4] | ((int)params[5] << 8) | ((int)params[6] << 16) | ((int)params[7] << 24)), mId, rtc);
+	mess.SetParams((char*)params, 0, 4);
+	mess.SetParams(tempString, 4, length);
 	return sendMessageOut(mess, rtc);
 
 }
@@ -270,8 +268,7 @@ RunTimeError LoadKeyTriggerOperator(unsigned int returnVar, unsigned char* param
 	mess.destination = MessageSource_RESOURCES;
 	mess.type = MessageType_RESOURCES;
 	mess.mess = ResourceMess_LOADKEYTRIGGER;
-	mess.param1 = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
-	mess.param2 = (params[4] | ((int)params[5] << 8) | ((int)params[6] << 16) | ((int)params[7] << 24));
+	mess.SetParams((char*)params, 0, 8);
 	return sendMessageOut(mess, rtc);
 
 }
@@ -283,7 +280,9 @@ RunTimeError LoadTextBoxOperator(unsigned int returnVar, unsigned char* params, 
 	mess.destination = MessageSource_RESOURCES;
 	mess.type = MessageType_RESOURCES;
 	mess.mess = ResourceMess_LOADGUI;
-	mess.param1 = GUIObjects_TEXTBOX;
+	int enu = GUIObjects_TEXTBOX;
+	char tempBuff[]{enu >> 0, enu >> 8, enu >> 16, enu >>24};
+	mess.SetParams(tempBuff, 0, 4);
 	return sendMessageOut(mess, rtc);
 
 }
@@ -295,7 +294,9 @@ RunTimeError LoadPanelOperator(unsigned int returnVar, unsigned char* params, un
 	mess.destination = MessageSource_RESOURCES;
 	mess.type = MessageType_RESOURCES;
 	mess.mess = ResourceMess_LOADGUI;
-	mess.param1 = GUIObjects_LAYOUT;
+	int enu = GUIObjects_LAYOUT;
+	char tempBuff[]{enu >> 0, enu >> 8, enu >> 16, enu >> 24};
+	mess.SetParams(tempBuff, 0, 4);
 	return sendMessageOut(mess, rtc);
 
 }
@@ -318,7 +319,7 @@ RunTimeError AddObjectOperator(unsigned int returnVar, unsigned char* params, un
 	mess.destination = MessageSource_ENTITIES;
 	mess.type = MessageType_ENTITIES;
 	mess.mess = GameBoardMess_ADDOBJECT;
-	mess.param1 = rtc->intLoader[0] | ((int)rtc->intLoader[1] << 8) | ((int)rtc->intLoader[2] << 16) | ((int)rtc->intLoader[3] << 24);
+	mess.SetParams((char*)rtc->intLoader, 0, 4);
 	return sendMessageOut(mess, rtc);
 
 }
@@ -341,7 +342,7 @@ RunTimeError AddMeshOperator(unsigned int returnVar, unsigned char* params, unsi
 	mess.destination = MessageSource_ENTITIES;
 	mess.type = MessageType_ENTITIES;
 	mess.mess = GameBoardMess_ADDMESH;
-	mess.param1 = rtc->intLoader[0] | ((int)rtc->intLoader[1] << 8) | ((int)rtc->intLoader[2] << 16) | ((int)rtc->intLoader[3] << 24);
+	mess.SetParams((char*)rtc->intLoader, 0, 4);
 	return sendMessageOut(mess, rtc);
 
 }
@@ -354,7 +355,8 @@ RunTimeError GetScreenWidthOperator(unsigned int returnVar, unsigned char* param
 	mess.destination = MessageSource_GRAPHICS;
 	mess.type = MessageType_GRAPHICS;
 	mess.mess = GraphicMess_GETSCREEN;
-	mess.param1 = 0;
+	char tempBuff[]{0 >> 0, 0 >> 8, 0 >> 16, 0 >> 24};
+	mess.SetParams(tempBuff, 0, 4);
 	rtc->varWaiting->Add(true, returnVar-1);
 	return sendMessageOut(mess, rtc);
 
@@ -368,7 +370,8 @@ RunTimeError GetScreenHeightOperator(unsigned int returnVar, unsigned char* para
 	mess.destination = MessageSource_GRAPHICS;
 	mess.type = MessageType_GRAPHICS;
 	mess.mess = GraphicMess_GETSCREEN;
-	mess.param1 = 1;
+	char tempBuff[]{0 >> 0, 0 >> 8, 0 >> 16, 0 >> 24};
+	mess.SetParams(tempBuff, 0, 4);
 	rtc->varWaiting->Add(true, returnVar-1);
 	return sendMessageOut(mess, rtc);
 
@@ -388,9 +391,7 @@ RunTimeError ReSnapOperator(unsigned int returnVar, unsigned char* params, unsig
 	mess.destination = MessageSource_RESOURCES;
 	mess.type = MessageType_RESOURCES;
 	mess.mess = ResourceMess_RESNAPGUI;
-	mess.param1 = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
-	mess.param2 = (params[4] | ((int)params[5] << 8) | ((int)params[6] << 16) | ((int)params[7] << 24));
-	mess.param3 = (params[8] | ((int)params[9] << 8) | ((int)params[10] << 16) | ((int)params[11] << 24));
+	mess.SetParams((char*)params, 0, 12);
 
 	return sendMessageOut(mess, rtc);
 
@@ -410,9 +411,7 @@ RunTimeError Pos2DOperator(unsigned int returnVar, unsigned char* params, unsign
 	mess.destination = MessageSource_RESOURCES;
 	mess.type = MessageType_RESOURCES;
 	mess.mess = ResourceMess_POSGUI;
-	mess.param1 = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
-	mess.param2 = (params[4] | ((int)params[5] << 8) | ((int)params[6] << 16) | ((int)params[7] << 24));
-	mess.param3 = (params[8] | ((int)params[9] << 8) | ((int)params[10] << 16) | ((int)params[11] << 24));
+	mess.SetParams((char*)params, 0, 12);
 	return sendMessageOut(mess, rtc);
 
 }
@@ -431,9 +430,7 @@ RunTimeError Size2DOperator(unsigned int returnVar, unsigned char* params, unsig
 	mess.destination = MessageSource_RESOURCES;
 	mess.type = MessageType_RESOURCES;
 	mess.mess = ResourceMess_SIZEGUI;
-	mess.param1 = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
-	mess.param2 = (params[4] | ((int)params[5] << 8) | ((int)params[6] << 16) | ((int)params[7] << 24));
-	mess.param3 = (params[8] | ((int)params[9] << 8) | ((int)params[10] << 16) | ((int)params[11] << 24));
+	mess.SetParams((char*)params, 0, 12);
 	return sendMessageOut(mess, rtc);
 
 }
@@ -452,8 +449,7 @@ RunTimeError Add2DOperator(unsigned int returnVar, unsigned char* params, unsign
 	mess.destination = MessageSource_RESOURCES;
 	mess.type = MessageType_RESOURCES;
 	mess.mess = ResourceMess_ADDGUITOGUI;
-	mess.param1 = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
-	mess.param2 = (params[4] | ((int)params[5] << 8) | ((int)params[6] << 16) | ((int)params[7] << 24));
+	mess.SetParams((char*)params, 0, 8);
 	return sendMessageOut(mess, rtc);
 
 }
@@ -472,9 +468,10 @@ RunTimeError AddKeyTriggerOperator(unsigned int returnVar, unsigned char* params
 	mess.destination = MessageSource_RESOURCES;
 	mess.type = MessageType_RESOURCES;
 	mess.mess = ResourceMess_ADDGUITRIGGER;
-	mess.param1 = TriggerType_KEYTRIGGER;
-	mess.param2 = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
-	mess.param3 = (params[4] | ((int)params[5] << 8) | ((int)params[6] << 16) | ((int)params[7] << 24));
+	mess.mess = GraphicMess_GETSCREEN;
+	char tempBuff[]{0 >> 0, 0 >> 8, 0 >> 16, 0 >> 24};
+	mess.SetParams(tempBuff, 0, 4);
+	mess.SetParams((char*)params, 4, 8);
 	return sendMessageOut(mess, rtc);
 
 }
@@ -490,15 +487,17 @@ RunTimeError PostStrOperator(unsigned int returnVar, unsigned char* params, unsi
 	}
 
 	unsigned int var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
-	std::string message = loadString(var, mId, rtc);
+	unsigned int length;
+	char* message = loadString(var, mId, rtc, length);
 
 	Message mess;
 	mess.destination = MessageSource_GUIENTITIES;
 	mess.type = MessageType_GUIENTITIES;
 	mess.mess = GUIMess_POST;
-	mess.stringParam = message;
 	///TODO: Remove magic number
-	mess.param1 = 1;
+	char tempBuff[]{1 >> 0, 1 >> 8, 1 >> 16, 1 >> 24};
+	mess.SetParams(tempBuff, 0, 4);
+	mess.SetParams(message, 4, length);
 	return sendMessageOut(mess, rtc);
 
 }
@@ -521,9 +520,11 @@ RunTimeError PostNumOperator(unsigned int returnVar, unsigned char* params, unsi
 	mess.destination = MessageSource_GUIENTITIES;
 	mess.type = MessageType_GUIENTITIES;
 	mess.mess = GUIMess_POST;
-	mess.stringParam = std::to_string(val);
+	std::string stringParam = std::to_string(val);
 	///TODO: Remove magic number
-	mess.param1 = 1;
+	char tempBuff[]{1 >> 0, 1 >> 8, 1 >> 16, 1 >> 24};
+	mess.SetParams(tempBuff, 0, 4);
+	mess.SetParams(stringParam.c_str(), 4, stringParam.length());
 	return sendMessageOut(mess, rtc);
 
 }
@@ -543,9 +544,11 @@ RunTimeError PostNumConstOperator(unsigned int returnVar, unsigned char* params,
 	mess.destination = MessageSource_GUIENTITIES;
 	mess.type = MessageType_GUIENTITIES;
 	mess.mess = GUIMess_POST;
-	mess.stringParam = std::to_string(val);
+	std::string stringParam = std::to_string(val);
 	///TODO: Remove magic number
-	mess.param1 = 1;
+	char tempBuff[]{1 >> 0, 1 >> 8, 1 >> 16, 1 >> 24};
+	mess.SetParams(tempBuff, 0, 4);
+	mess.SetParams(stringParam.c_str(), 4, stringParam.length());
 	return sendMessageOut(mess, rtc);
 
 }
@@ -983,7 +986,8 @@ RunTimeError StrEqlConst1Operator(unsigned int returnVar, unsigned char* params,
 	}
 
 	unsigned int var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
-	std::string varVal = loadString(var, mId, rtc);
+	unsigned int length;
+	std::string varVal = loadString(var, mId, rtc, length);
 
 	char* tempVal = (char*)params;
 	std::string constVal = std::string(&(tempVal[8]), paramSize - 7);
@@ -1016,7 +1020,8 @@ RunTimeError StrEql1ConstOperator(unsigned int returnVar, unsigned char* params,
 	length += 4;
 
 	unsigned int var = (params[length] | ((int)params[length + 1] << 8) | ((int)params[length + 2] << 16) | ((int)params[length + 3] << 24));
-	std::string varVal = loadString(var, mId, rtc);;
+	unsigned int stringlength;
+	std::string varVal = loadString(var, mId, rtc, stringlength);
 	int val = varVal == constVal ? 1 : 0;
 
 	rtc->intLoader[0] = val >> 0;
@@ -1034,9 +1039,10 @@ RunTimeError StrEqlVarOperator(unsigned int returnVar, unsigned char* params, un
 {
 
 	unsigned int var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
-	std::string varVal1 = loadString(var, mId, rtc);
+	unsigned int length;
+	std::string varVal1 = loadString(var, mId, rtc, length);
 	var = (params[4] | ((int)params[5] << 8) | ((int)params[6] << 16) | ((int)params[7] << 24));
-	std::string varVal2 = loadString(var, mId, rtc);
+	std::string varVal2 = loadString(var, mId, rtc, length);
 
 
 	int val = varVal1 == varVal2 ? 1 : 0;
@@ -1154,8 +1160,9 @@ RunTimeError RunScriptOperator(unsigned int returnVar, unsigned char* params, un
 	mess.destination = MessageSource_CELSCRIPT;
 	mess.type = MessageType_SCRIPT;
 	mess.mess = ScriptMess_RUNFROM;
-	mess.param1 = (rtc->intLoader[0] | ((int)rtc->intLoader[1] << 8) | ((int)rtc->intLoader[2] << 16) | ((int)rtc->intLoader[3] << 24));
-	mess.param2 = rtc->stack;
+	mess.SetParams((char*)rtc->intLoader, 0, 4);
+	char tempBuff[]{rtc->stack >> 0, rtc->stack >> 8, rtc->stack >> 16, rtc->stack >> 24};
+	mess.SetParams(tempBuff, 4, 4);
 	return sendMessageOut(mess, rtc);
 
 }
@@ -1178,7 +1185,7 @@ RunTimeError SetGameBoardOperator(unsigned int returnVar, unsigned char* params,
 	mess.destination = MessageSource_ENTITIES;
 	mess.type = MessageType_ENTITIES;
 	mess.mess = GameBoardMess_SETGAMEBOARD;
-	mess.param1 = (rtc->intLoader[0] | ((int)rtc->intLoader[1] << 8) | ((int)rtc->intLoader[2] << 16) | ((int)rtc->intLoader[3] << 24));
+	mess.SetParams((char*)rtc->intLoader, 0, 4);
 	return sendMessageOut(mess, rtc);
 
 }
@@ -1201,7 +1208,7 @@ RunTimeError SetCameraOperator(unsigned int returnVar, unsigned char* params, un
 	mess.destination = MessageSource_ENTITIES;
 	mess.type = MessageType_ENTITIES;
 	mess.mess = GameBoardMess_SETCAM;
-	mess.param1 = (rtc->intLoader[0] | ((int)rtc->intLoader[1] << 8) | ((int)rtc->intLoader[2] << 16) | ((int)rtc->intLoader[3] << 24));
+	mess.SetParams((char*)rtc->intLoader, 0, 4);
 	return sendMessageOut(mess, rtc);
 
 }
@@ -1225,9 +1232,9 @@ RunTimeError SetScriptParNumOperator(unsigned int returnVar, unsigned char* para
 	mess.type = MessageType_SCRIPT;
 	mess.mess = ScriptMess_ADDPARNUM;
 	rtc->memory->ReadVariable(var2 - 1, rtc->intLoader, s);
-	mess.param1 = (rtc->intLoader[0] | ((int)rtc->intLoader[1] << 8) | ((int)rtc->intLoader[2] << 16) | ((int)rtc->intLoader[3] << 24));
+	mess.SetParams((char*)rtc->intLoader, 0, 4);
 	rtc->memory->ReadVariable(var - 1, rtc->intLoader, s);
-	mess.param2 = (rtc->intLoader[0] | ((int)rtc->intLoader[1] << 8) | ((int)rtc->intLoader[2] << 16) | ((int)rtc->intLoader[3] << 24));
+	mess.SetParams((char*)rtc->intLoader, 4, 4);
 	return sendMessageOut(mess, rtc);
 
 }
@@ -1245,15 +1252,16 @@ RunTimeError SetScriptParStrOperator(unsigned int returnVar, unsigned char* para
 	unsigned int s = 4;
 	unsigned int var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
 	unsigned int var2 = (params[4] | ((int)params[5] << 8) | ((int)params[6] << 16) | ((int)params[7] << 24));
-	std::string tempString = loadString(var, mId, rtc);
+	unsigned int length;
+	char* tempString = loadString(var, mId, rtc, length);
 
 	Message mess;
 	mess.destination = MessageSource_CELSCRIPT;
 	mess.type = MessageType_SCRIPT;
 	mess.mess = ScriptMess_ADDPARASTR;
 	rtc->memory->ReadVariable(var2 - 1, rtc->intLoader, s);
-	mess.param1 = (rtc->intLoader[0] | ((int)rtc->intLoader[1] << 8) | ((int)rtc->intLoader[2] << 16) | ((int)rtc->intLoader[3] << 24));
-	mess.stringParam = tempString;
+	mess.SetParams((char*)rtc->intLoader, 0, 4);
+	mess.SetParams(tempString, 4, length);
 	return sendMessageOut(mess, rtc);
 
 }

@@ -35,9 +35,11 @@ void CelscriptHandler::Update(unsigned int time)
 	while (currentMessage->type != MessageType_NA)
 	{
 
+		unsigned int param1 = currentMessage->params[0] | ((int)currentMessage->params[1] << 8) | ((int)currentMessage->params[2] << 16) | ((int)currentMessage->params[3] << 24);
+
 		if (currentMessage->mess == ScriptMess_RUN)
 		{
-			CelScriptCompiled* script = (CelScriptCompiled*)objectContainer->GetValue(currentMessage->param1);
+			CelScriptCompiled* script = (CelScriptCompiled*)objectContainer->GetValue(param1);
 
 			if (script != nullptr)
 			{
@@ -53,10 +55,10 @@ void CelscriptHandler::Update(unsigned int time)
 
 				}
 
-				reverseStacks->Add(chosenStack, currentMessage->param1);
+				reverseStacks->Add(chosenStack, param1);
 				ScriptStack* stack = scriptStacks->GetValue(chosenStack);
 				stack->sleep = 0;
-				stack->stack->PushElement(currentMessage->param1);
+				stack->stack->PushElement(param1);
 				stack->status = stackStatus_PREPPED;
 
 			}
@@ -64,29 +66,34 @@ void CelscriptHandler::Update(unsigned int time)
 		else if (currentMessage->mess == ScriptMess_RUNFROM)
 		{
 
-			reverseStacks->Add(currentMessage->param2, currentMessage->param1);
-			scriptStacks->GetValue(currentMessage->param2)->stack->PushElement(currentMessage->param1);
-			scriptStacks->GetValue(currentMessage->param2)->status = stackStatus_PREPPED;
+			unsigned int param2 = currentMessage->params[4] | ((int)currentMessage->params[5] << 8) | ((int)currentMessage->params[6] << 16) | ((int)currentMessage->params[7] << 24);
+			reverseStacks->Add(param2, param1);
+			scriptStacks->GetValue(param2)->stack->PushElement(param1);
+			scriptStacks->GetValue(param2)->status = stackStatus_PREPPED;
 
 		}
 		else if (currentMessage->mess == ScriptMess_RESUME)
 		{
 
-			runTime->SetWaitingScriptVar(currentMessage->param1, currentMessage->param2, currentMessage->param3);
-			unsigned int val1 = reverseStacks->GetValue(currentMessage->param1);
+			unsigned int param2 = currentMessage->params[4] | ((int)currentMessage->params[5] << 8) | ((int)currentMessage->params[6] << 16) | ((int)currentMessage->params[7] << 24);
+			unsigned int param3 = currentMessage->params[8] | ((int)currentMessage->params[9] << 8) | ((int)currentMessage->params[10] << 16) | ((int)currentMessage->params[11] << 24);
+			runTime->SetWaitingScriptVar(param1, param2, param3);
+			unsigned int val1 = reverseStacks->GetValue(param1);
 			scriptStacks->GetValue(val1)->status = stackStatus_PREPPED;
 
 		}
 		else if (currentMessage->mess == ScriptMess_ADDPARASTR)
 		{
 
-			runTime->AddScriptParam(currentMessage->param1, currentMessage->stringParam);
+			string parString(&currentMessage->params[8]);
+			runTime->AddScriptParam(param1, parString);
 
 		}
 		else if (currentMessage->mess == ScriptMess_ADDPARNUM)
 		{
 
-			runTime->AddScriptParam(currentMessage->param1, currentMessage->param2);
+			unsigned int param2 = currentMessage->params[4] | ((int)currentMessage->params[5] << 8) | ((int)currentMessage->params[6] << 16) | ((int)currentMessage->params[7] << 24);
+			runTime->AddScriptParam(param1, param2);
 
 		}
 

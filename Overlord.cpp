@@ -97,31 +97,43 @@ HRESULT Overlord::Init(HWND hwnd)
 	mess.destination = MessageSource_RESOURCES;
 	mess.type = MessageType_RESOURCES;
 	mess.mess = ResourceMess_LOADGUI;
-	mess.param1 = GUIObjects_TEXTBOX;
-	mess.param2 = GUISnap_LEFT;
-	mess.param3 = GUISnap_TOP;
-	Message mess2 = Message(mess);
-	Message mess3 = Message(mess);
-	Message mess4 = Message(mess);
+	char tempBuff[]{GUIObjects_TEXTBOX >> 0, GUIObjects_TEXTBOX >> 8, GUIObjects_TEXTBOX >> 16, GUIObjects_TEXTBOX >> 24,
+		GUISnap_LEFT >> 0, GUISnap_LEFT >> 8, GUISnap_LEFT >> 16, GUISnap_LEFT >> 24,
+		GUISnap_TOP >> 0, GUISnap_TOP >> 8, GUISnap_TOP >> 16, GUISnap_TOP >> 24
+	};
+	mess.SetParams(tempBuff, 0, 12);
+	Message mess2 = mess;
+	Message mess3 = mess;
+	Message mess4 = mess;
 	rH->HandleMessage(&mess);
 	rH->HandleMessage(&mess2);
 	rH->HandleMessage(&mess3);
-	mess4.param1 = GUIObjects_LAYOUT;
+	tempBuff[0] = GUIObjects_LAYOUT >> 0;
+	tempBuff[1] = GUIObjects_LAYOUT >> 8;
+	tempBuff[2] = GUIObjects_LAYOUT >> 16;
+	tempBuff[3] = GUIObjects_LAYOUT >> 24;
+	mess4.SetParams(tempBuff, 0, 12);
 	rH->HandleMessage(&mess4);
 	rH->Update(0);
 
-	dbgIn = (GUITextBox*)(rH->GetObjectContainer()->GetValue(rH->GetMessages()->PopMessage()->param1));
+	Message* retMess = rH->GetMessages()->PopMessage();
+	unsigned int param1 = retMess->params[0] | ((int)retMess->params[1] << 8) | ((int)retMess->params[2] << 16) | ((int)retMess->params[3] << 24);
+	dbgIn = (GUITextBox*)(rH->GetObjectContainer()->GetValue(param1));
 	dbgIn->SetPosition(Vector2(0, 0));
 	dbgIn->SetSize(Vector2(1, 1));
 	dbgIn->Toggle(true);
 
-	int dbgOutId = rH->GetMessages()->PopMessage()->param1;
+	retMess = rH->GetMessages()->PopMessage();
+	param1 = retMess->params[0] | ((int)retMess->params[1] << 8) | ((int)retMess->params[2] << 16) | ((int)retMess->params[3] << 24);
+	int dbgOutId = param1;
 	dbgOut = (GUITextBox*)(rH->GetObjectContainer()->GetValue(dbgOutId));
 	dbgOut->SetPosition(Vector2(0.0f, 0.0f));
 	dbgOut->SetSize(Vector2(0.5f, 1.0f));
 	dbgOut->Toggle(true);
 
-	dbgPnl = (GUITextBox*)(rH->GetObjectContainer()->GetValue(rH->GetMessages()->PopMessage()->param1));
+	retMess = rH->GetMessages()->PopMessage();
+	param1 = retMess->params[0] | ((int)retMess->params[1] << 8) | ((int)retMess->params[2] << 16) | ((int)retMess->params[3] << 24);
+	dbgPnl = (GUITextBox*)(rH->GetObjectContainer()->GetValue(param1));
 	dbgPnl->SetPosition(Vector2(0.75, 0.0f));
 	dbgPnl->SetSize(Vector2(0.25f, 0.25f));
 	dbgPnl->Toggle(true);
@@ -140,7 +152,9 @@ HRESULT Overlord::Init(HWND hwnd)
 	iH->Init(hwnd);
 	pH->Init(nullptr, cam, iH);
 
-	GUILayout* tempLayout = (GUILayout*)(rH->GetObjectContainer()->GetValue(rH->GetMessages()->PopMessage()->param1));
+	retMess = rH->GetMessages()->PopMessage();
+	param1 = retMess->params[0] | ((int)retMess->params[1] << 8) | ((int)retMess->params[2] << 16) | ((int)retMess->params[3] << 24);
+	GUILayout* tempLayout = (GUILayout*)(rH->GetObjectContainer()->GetValue(param1));
 	tempLayout->SetPosition(Vector2(0, 0));
 	tempLayout->SetSize(Vector2(1, 1));
 
@@ -169,100 +183,28 @@ HRESULT Overlord::Init(HWND hwnd)
 
 	dbgOut->AddText("Engine Loaded!");
 	dbgOut->AddText("Loading root script");
-	Message mess5 = Message(mess);
+	Message mess5 = mess;
 	mess5.source = MessageSource_CELSCRIPT;
-	mess5.stringParam = "TestRoot.celsrc";
+	mess5.SetParams("TestRoot.celsrc", 0, 15);
 	mess5.mess = ResourceMess_LOADSCRIPT;
 	rH->HandleMessage(&mess5);
 	rH->Update(0);
-	unsigned int scriptId = rH->GetMessages()->PopMessage()->param3;
+	retMess = rH->GetMessages()->PopMessage();
+	unsigned int scriptId = retMess->params[8] | ((int)retMess->params[9] << 8) | ((int)retMess->params[10] << 16) | ((int)retMess->params[11] << 24);
 
 	if (scriptId != 0)
 	{
 
-		firstMessage = Message(mess);
+		firstMessage.source = MessageSource_NA;
 		firstMessage.destination = MessageSource_CELSCRIPT;
 		firstMessage.type = MessageType_SCRIPT;
 		firstMessage.mess = ScriptMess_RUN;
-		firstMessage.param1 = scriptId;
+		firstMessage.SetParams(&(retMess->params[8]),0,4);
 		cH->HandleMessage(&firstMessage);
 		//cH->Update(0);
 
 	}
-	if(res == S_OK)
-	{
-
-/*
-		ResourceObject* tempObject = nullptr;
-		meshes = 2;
-		baseMeshes = new int[meshes];
-
-		dbgOut->AddText("Loading Plane");
-		baseMeshes[0] = rH->LoadBasicShape(Resources::Shape_PLANE, nullptr);
-		tempObject = rH->GetResourceObject(baseMeshes[0], LightType_NA, BaseLightDesc(), -1);
-		tempObject->SetPosition(Vector3(0, -1, 0));
-		tempObject->SetScale(Vector3(60, 1, 60));
-		scene->AddObject(tempObject);
-
-		dbgOut->AddText("Loading Ball");
-		baseMeshes[1] = rH->LoadMeshFromFile("Tennisboll.obj");
-		tempObject = rH->GetResourceObject(baseMeshes[1], LightType_NA, BaseLightDesc(), -1);
-		tempObject->SetPosition(Vector3(0, 5, 0));
-		scene->AddObject(tempObject);
-
-		BaseParticle basePart = BaseParticle();
-		basePart.baseSize = Vector3(1, 1, 1);
-		basePart.baseVelocity = 1.0f;
-		basePart.size = 50;
-		basePart.sizeFactor = 1;
-		basePart.timeToLive = 2000;
-		basePart.velFactor = 1;
-
-		std::cout << "Loading lightparticle";
-		rH->LoadParticleEffect(ParticleSystem_Light, basePart);
-
-		BaseLightDesc baseLight = BaseLightDesc();
-		baseLight.diff = Vector4(1, 1, 1, 1);
-		baseLight.intensity = 150;
-		baseLight.size = 3.2f;
-		baseLight.spec = Vector4(0, 0, 0, 1);
-
-		tempObject = rH->GetResourceObject(-1, LightType_POINT, baseLight, 0);
-		tempObject->SetPosition(Vector3(0, 10, 0));
-		scene->AddObject(tempObject);*/
-
-		/*baseLight.diff = Vector4(1, 0, 0, 1);
-		baseLight.intensity = 80;
-		tempObject = rH->GetResourceObject(-1, LightType_POINT, baseLight, 0);
-		tempObject->SetPosition(Vector3(10, 10, 0));
-		scene->AddObject(tempObject);
-
-		baseLight.diff = Vector4(0, 0, 1, 1);
-		baseLight.intensity = 110;
-		tempObject = rH->GetResourceObject(-1, LightType_POINT, baseLight, 0);
-		tempObject->SetPosition(Vector3(-10, 11, 0));
-		scene->AddObject(tempObject);
-
-		baseLight.diff = Vector4(0, 1, 0, 1);
-		baseLight.intensity = 90;
-		tempObject = rH->GetResourceObject(-1, LightType_POINT, baseLight, 0);
-		tempObject->SetPosition(Vector3(0, 9, 10));
-		scene->AddObject(tempObject);
-
-		baseLight.diff = Vector4(1, 1, 0, 1);
-		baseLight.intensity = 125;
-		tempObject = rH->GetResourceObject(-1, LightType_POINT, baseLight, 0);
-		tempObject->SetPosition(Vector3(0, 12, -10));
-		scene->AddObject(tempObject);*/
-
-		/*basePart.size = 1;
-		std::cout << "Loading Skybox";
-		tempObject = rH->GetResourceObject(-1, LightType_NA, baseLight, rH->LoadParticleEffectFromFile(ParticleSystem_SkyBox, basePart, "SkyMapTest1.png"));
-		scene->AddObject(tempObject);*/
-
 	
-	}
-
 	return res;
 
 }
@@ -398,7 +340,7 @@ void Overlord::Update(unsigned int time)
 	if(gH->GetIsInited())
 	{
 
-		iH->Update(time);
+		//iH->Update(time);
 		cH->Update(time);
 		pH->Update();
 		rH->Update(time);

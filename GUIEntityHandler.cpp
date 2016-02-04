@@ -34,21 +34,25 @@ void GUIEntityHandler::Update(unsigned int time)
 			currentMessage->mess == GUIMess_ERASE)
 		{
 
-			if (GUIObjects_TEXTBOX == ((GUIObject*)gameObjects->GetValue(currentMessage->param1))->GetType())
+			unsigned int param1 = currentMessage->params[0] | ((int)currentMessage->params[1] << 8) | ((int)currentMessage->params[2] << 16) | ((int)currentMessage->params[3] << 24);
+
+			if (GUIObjects_TEXTBOX == ((GUIObject*)gameObjects->GetValue(param1))->GetType())
 			{
 
-				GUITextBox* obj = ((GUITextBox*)gameObjects->GetValue(currentMessage->param1));
+				GUITextBox* obj = ((GUITextBox*)gameObjects->GetValue(param1));
 
 				if (currentMessage->mess == GUIMess_POST)
 				{
 
-					obj->AddText(currentMessage->stringParam);
+					std::string stringParam(currentMessage->params);
+					obj->AddText(stringParam);
 
 				}
 				else if (currentMessage->mess == GUIMess_APPEND)
 				{
 
-					obj->AppendText(currentMessage->stringParam);
+					std::string stringParam(currentMessage->params);
+					obj->AppendText(stringParam);
 
 				}
 				else if (currentMessage->mess == GUIMess_CLEAR)
@@ -60,7 +64,7 @@ void GUIEntityHandler::Update(unsigned int time)
 				else if (currentMessage->mess == GUIMess_ERASE)
 				{
 
-					obj->EraseText(currentMessage->param1);
+					obj->EraseText(param1);
 
 				}
 			}

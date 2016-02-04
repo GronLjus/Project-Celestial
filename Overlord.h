@@ -59,7 +59,6 @@ namespace Logic
 			CelscriptHandler* cH;
 			Entities::GUIEntityHandler* guiH;
 			Message firstMessage;
-			Message lastMessage;
 
 			///<summary>The number of basemeshes</summary>
 			int meshes;

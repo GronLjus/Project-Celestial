@@ -34,6 +34,10 @@ void InputHandler::Update(unsigned int time)
 	{
 
 		messageBuffer[this->currentMessage].timeSent = time;
+		unsigned int param1 = currentMessage->params[0] | ((int)currentMessage->params[1] << 8) | ((int)currentMessage->params[2] << 16) | ((int)currentMessage->params[3] << 24);
+		unsigned int param2 = currentMessage->params[4] | ((int)currentMessage->params[5] << 8) | ((int)currentMessage->params[6] << 16) | ((int)currentMessage->params[7] << 24);
+		unsigned int param3 = currentMessage->params[8] | ((int)currentMessage->params[9] << 8) | ((int)currentMessage->params[10] << 16) | ((int)currentMessage->params[11] << 24);
+
 
 		if (currentMessage->mess == InputMess_CHARDOWN || currentMessage->mess == InputMess_NONCHARDOWN)
 		{
@@ -44,7 +48,7 @@ void InputHandler::Update(unsigned int time)
 			while (trig != nullptr && !breakOut)
 			{
 
-				breakOut = trig->GetNodeObject().filter == currentMessage->param1 && 
+				breakOut = trig->GetNodeObject().filter == param1 && 
 					((currentMessage->mess == InputMess_CHARDOWN) == trig->GetNodeObject().charTrigg);
 
 				if (!breakOut)
@@ -63,26 +67,31 @@ void InputHandler::Update(unsigned int time)
 
 					messageBuffer[this->currentMessage].destination = MessageSource_CELSCRIPT;
 					messageBuffer[this->currentMessage].mess = ScriptMess_ADDPARNUM;
-					messageBuffer[this->currentMessage].param1 = trig->GetNodeObject().scripts[i];
-					messageBuffer[this->currentMessage].param2 = trig->GetNodeObject().obj;
+					char tempBuff[]{trig->GetNodeObject().scripts[i] >> 0, trig->GetNodeObject().scripts[i] >> 8, trig->GetNodeObject().scripts[i] >> 16, trig->GetNodeObject().scripts[i] >> 24,
+						trig->GetNodeObject().obj >> 0, trig->GetNodeObject().obj >> 8, trig->GetNodeObject().obj >> 16, trig->GetNodeObject().obj >> 24};
+
+					messageBuffer[this->currentMessage].SetParams(tempBuff, 0, 8);
 					outQueue->PushMessage(&messageBuffer[this->currentMessage]);
 					this->currentMessage = (this->currentMessage + 1) % outMessages;
 
 					messageBuffer[this->currentMessage].destination = MessageSource_CELSCRIPT;
-					messageBuffer[this->currentMessage].param1 = trig->GetNodeObject().scripts[i];
+					messageBuffer[this->currentMessage].SetParams(tempBuff, 0, 4);
 
 					if (trig->GetNodeObject().charTrigg)
 					{
 
 						messageBuffer[this->currentMessage].mess = ScriptMess_ADDPARASTR;
-						messageBuffer[this->currentMessage].stringParam = ((char)trig->GetNodeObject().filter);
+						char filter = (char)trig->GetNodeObject().filter;
+						messageBuffer[this->currentMessage].SetParams(&filter, 4, 1);
 
 					}
 					else
 					{
 
 						messageBuffer[this->currentMessage].mess = ScriptMess_ADDPARNUM;
-						messageBuffer[this->currentMessage].param2 = trig->GetNodeObject().filter;
+						tempBuff[0] = trig->GetNodeObject().filter >> 0;
+						tempBuff[1] = trig->GetNodeObject().filter >> 8;
+						messageBuffer[this->currentMessage].SetParams(tempBuff,4,2);
 
 					}
 
@@ -91,7 +100,7 @@ void InputHandler::Update(unsigned int time)
 
 					messageBuffer[this->currentMessage].destination = MessageSource_CELSCRIPT;
 					messageBuffer[this->currentMessage].mess = ScriptMess_RUN;
-					messageBuffer[this->currentMessage].param1 = trig->GetNodeObject().scripts[i];;
+					messageBuffer[this->currentMessage].SetParams(tempBuff, 0, 4);
 					outQueue->PushMessage(&messageBuffer[this->currentMessage]);
 					this->currentMessage = (this->currentMessage + 1) % outMessages;
 
@@ -105,9 +114,12 @@ void InputHandler::Update(unsigned int time)
 			{
 
 				messageBuffer[this->currentMessage].destination = MessageSource_CELSCRIPT;
-				messageBuffer[this->currentMessage].param1 = mouseTriggerId-1;
-				messageBuffer[this->currentMessage].param2 = currentMessage->param1;
-				messageBuffer[this->currentMessage].param3 = currentMessage->param2;
+
+				unsigned int tempMouse = mouseTriggerId - 1;
+				char tempBuff[]{tempMouse >> 0, tempMouse >> 8, tempMouse >> 16, tempMouse >> 24};
+
+				messageBuffer[this->currentMessage].SetParams(tempBuff, 0, 8);
+				messageBuffer[this->currentMessage].SetParams(currentMessage->params, 8, 16);
 				messageBuffer[this->currentMessage].read = false;
 				outQueue->PushMessage(&messageBuffer[this->currentMessage]);
 				this->currentMessage = (this->currentMessage + 1) % outMessages;
@@ -119,8 +131,8 @@ void InputHandler::Update(unsigned int time)
 			GetClientRect( hWnd, &rc );
 			float screenWidth = (float)(rc.right - rc.left);
 			float screenHeight = (float)(rc.bottom - rc.top);
-			float x = ((float)(currentMessage->param1) / screenWidth) * 2 - 1;
-			float y = ((float)(currentMessage->param2) / screenHeight) * 2 - 1;
+			float x = ((float)(param1 | param1 << 8) / screenWidth) * 2 - 1;
+			float y = ((float)(param1 << 16 | param1 << 24) / screenHeight) * 2 - 1;
 
 			//mouseMoved = (keys[Key_SHIFT] && !contain) || (contain && ((x > epsilon || x < -epsilon) || (y > epsilon || y < -epsilon)));
 
@@ -147,9 +159,9 @@ void InputHandler::Update(unsigned int time)
 		else if (currentMessage->mess == InputMess_TOGGLESCRIPTTRIGGER_KEYPRESS)
 		{
 
-			short filterVal = currentMessage->param1 >> 0;
-			bool charFilter = currentMessage->param1 >> 16;
-			bool add = currentMessage->param1 >> 17;
+			short filterVal = param1 >> 0;
+			bool charFilter = param1 >> 16;
+			bool add = param1 >> 17;
 
 			if (add)
 			{
@@ -169,12 +181,12 @@ void InputHandler::Update(unsigned int time)
 				{
 
 					keyTrigger tr;
-					tr.obj = currentMessage->param2;
+					tr.obj = param2;
 					tr.filter = filterVal;
 					tr.maxScripts = 10;
 					tr.scriptAmount = 1;
 					tr.scripts = new unsigned int[tr.maxScripts];
-					tr.scripts[0] = currentMessage->param3;
+					tr.scripts[0] = param3;
 					tr.charTrigg = charFilter;
 					triggers->AddElement(tr);
 
@@ -202,7 +214,7 @@ void InputHandler::Update(unsigned int time)
 
 					}
 		
-					tr.scripts[tr.scriptAmount] = currentMessage->param3;
+					tr.scripts[tr.scriptAmount] = param3;
 					tr.scriptAmount++;
 					triggers->AddElement(tr);
 
@@ -234,7 +246,7 @@ void InputHandler::Update(unsigned int time)
 						if (!sortLoop)
 						{
 
-							sortLoop = trigg.scripts[i] == currentMessage->param3;
+							sortLoop = trigg.scripts[i] == param3;
 
 						}
 						else
@@ -260,7 +272,7 @@ void InputHandler::Update(unsigned int time)
 		else if (currentMessage->mess == InputMess_TOGGLESCRIPTTRIGGER_MOUSEMOVE)
 		{
 
-			mouseTriggerId = currentMessage->param2 == 1 ? currentMessage->param3 + 1 : 0;
+			mouseTriggerId = param2 == 1 ? param3 + 1 : 0;
 
 		}
 

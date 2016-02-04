@@ -138,14 +138,11 @@ void GraphicHandler::Update(unsigned int time)
 
 		if (currentMessage->mess == GraphicMess_GETSCREEN)
 		{
-
+			///TODO:REMOVE
 			messageBuffer[this->currentMessage].timeSent = time;
 			messageBuffer[this->currentMessage].destination = MessageSource_NA;
 			messageBuffer[this->currentMessage].type = MessageType_NA;
 			messageBuffer[this->currentMessage].mess = ScriptMess_RESUME;
-			messageBuffer[this->currentMessage].param1 = currentMessage->senderId;
-			messageBuffer[this->currentMessage].param2 = currentMessage->returnParam;
-			messageBuffer[this->currentMessage].param3 = currentMessage->param1 == 0 ? this->quality.resolutionX : this->quality.resolutionY;
 			messageBuffer[this->currentMessage].read = false;
 			outQueue->PushMessage(&messageBuffer[this->currentMessage]);
 			this->currentMessage = (this->currentMessage + 1) % outMessages;
@@ -163,9 +160,10 @@ void GraphicHandler::Update(unsigned int time)
 		else if (currentMessage->mess == GraphicMess_SETGAMEBOARD)
 		{
 
+			unsigned int param1 = currentMessage->params[0] | ((int)currentMessage->params[1] << 8) | ((int)currentMessage->params[2] << 16) | ((int)currentMessage->params[3] << 24);
 			canDraw = false;//Pause rendering
 			while (isDrawing){ this_thread::yield(); }//Wait until we aren't rendering
-			this->gameBoard = (GameBoard*)gameObjects->GetValue(currentMessage->param1);
+			this->gameBoard = (GameBoard*)gameObjects->GetValue(param1);
 			cardHandler->UpdateMeshBuffers(gameBoard->GetDrawingBoard());
 			canDraw = true;
 
@@ -173,9 +171,10 @@ void GraphicHandler::Update(unsigned int time)
 		else if (currentMessage->mess == GraphicMess_SETCAMERA)
 		{
 
+			unsigned int param1 = currentMessage->params[0] | ((int)currentMessage->params[1] << 8) | ((int)currentMessage->params[2] << 16) | ((int)currentMessage->params[3] << 24);
 			canDraw = false;//Pause rendering
 			while (isDrawing){ this_thread::yield(); }//Wait until we aren't rendering
-			this->cameraObject = (CameraObject*)gameObjects->GetValue(currentMessage->param1);
+			this->cameraObject = (CameraObject*)gameObjects->GetValue(param1);
 			canDraw = true;
 
 		}

@@ -397,8 +397,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	Message* messag = &messageBuffer[currentMsg];
 	messag->source = MessageSource_NA;
 	currentMsg = (currentMsg + 1) % maxBuffer;
+	char tempBuff[]{0, 0, 0, 0};
 
-	bool charDown = false;
+	bool charDown = false; 
+	LPARAM xPar = GET_X_LPARAM(lParam);
+	LPARAM yPar = GET_Y_LPARAM(lParam);
 
 	switch (message)
 	{
@@ -440,7 +443,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 		messag->mess = InputMess_CHARDOWN;
 		messag->destination = MessageSource_INPUT;
-		messag->param1 = wParam;
+		tempBuff[0] = wParam >> 0;
+		tempBuff[1] = wParam >> 8;
+		tempBuff[2] = wParam >> 16;
+		tempBuff[3] = wParam >> 24;
+		messag->SetParams(tempBuff, 0, 4);
 			
 		overlord->SendMsg(messag);
 
@@ -450,7 +457,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 		messag->mess = InputMess_NONCHARDOWN;
 		messag->destination = MessageSource_INPUT;
-		messag->param1 = keyCodeAllChar;
+		tempBuff[0] = keyCodeAllChar >> 0;
+		tempBuff[1] = keyCodeAllChar >> 8;
+		tempBuff[2] = keyCodeAllChar >> 16;
+		tempBuff[3] = keyCodeAllChar >> 24;
+		messag->SetParams(tempBuff, 0, 4);
 		overlord->SendMsg(messag);
 		charDown = true;
 
@@ -465,7 +476,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 			messag->mess = InputMess_NONCHARDOWN;
 			messag->destination = MessageSource_INPUT;
-			messag->param1 = translateKey(wParam);
+			keyCode code = translateKey(wParam);
+			tempBuff[0] = code >> 0;
+			tempBuff[1] = code >> 8;
+			tempBuff[2] = code >> 16;
+			tempBuff[3] = code >> 24;
+			messag->SetParams(tempBuff, 0, 4);
 			overlord->SendMsg(messag);
 
 			if (wParam == VK_SHIFT ||
@@ -480,7 +496,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 				messag->mess = InputMess_NONCHARDOWN;
 				messag->destination = MessageSource_INPUT;
-				messag->param1 = keyCodeMod;
+				tempBuff[0] = keyCodeMod >> 0;
+				tempBuff[1] = keyCodeMod >> 8;
+				tempBuff[2] = keyCodeMod >> 16;
+				tempBuff[3] = keyCodeMod >> 24;
+				messag->SetParams(tempBuff, 0, 4);
 
 			}
 			else if (
@@ -494,7 +514,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 				messag->mess = InputMess_NONCHARDOWN;
 				messag->destination = MessageSource_INPUT;
-				messag->param1 = translateKey(wParam);
+				messag->SetParams(tempBuff, 0, 4);
 
 				messag = &messageBuffer[currentMsg];
 				messag->source = MessageSource_NA;
@@ -502,7 +522,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 				messag->mess = InputMess_NONCHARDOWN;
 				messag->destination = MessageSource_INPUT;
-				messag->param1 = keyCodeAnyMouse;
+				tempBuff[0] = keyCodeAnyMouse >> 0;
+				tempBuff[1] = keyCodeAnyMouse >> 8;
+				tempBuff[2] = keyCodeAnyMouse >> 16;
+				tempBuff[3] = keyCodeAnyMouse >> 24;
+				messag->SetParams(tempBuff, 0, 4);
 
 			}
 
@@ -514,14 +538,21 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 		messag->mess = InputMess_NONCHARDOWN;
 		messag->destination = MessageSource_INPUT;
-		messag->param1 = keyCodeOmni;
+		tempBuff[0] = keyCodeOmni >> 0;
+		tempBuff[1] = keyCodeOmni >> 8;
+		tempBuff[2] = keyCodeOmni >> 16;
+		tempBuff[3] = keyCodeOmni >> 24;
+		messag->SetParams(tempBuff, 0, 4);
 
 		break;
 	case WM_MOUSEMOVE:
 		messag->mess = InputMess_MOUSEMOVE;
 		messag->destination = MessageSource_INPUT;
-		messag->param1 = GET_X_LPARAM(lParam);
-		messag->param2 = GET_Y_LPARAM(lParam);
+		tempBuff[0] = xPar >> 0;
+		tempBuff[1] = xPar >> 8;
+		tempBuff[2] = xPar >> 16;
+		tempBuff[3] = xPar >> 24;
+		messag->SetParams(tempBuff, 0, 4);
 		overlord->SendMsg(messag);
 		break;
 	default:

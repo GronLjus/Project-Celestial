@@ -25,9 +25,11 @@ CameraObject::CameraObject(unsigned int width, unsigned int height, float depth,
 	Message mess = Message();
 	mess.type = MessageType_OBJECT;
 	mess.mess = ObjectMess_MOVE;
-	mess.param1 = 5;
-	mess.param2 = 5;
-	mess.param3 = 5;
+	char tempBuff[]{5 >> 0, 5 >> 8, 5 >> 16, 5 >> 24,
+		5 >> 0, 5 >> 8, 5 >> 16, 5 >> 24,
+		5 >> 0, 5 >> 8, 5 >> 16, 5 >> 24
+	};
+	mess.SetParams(tempBuff, 0, 12);
 	PositionableObject::Update(&mess);
 
 	theView = new ViewObject(this->GetPosition(),sidePoint,lookAtPoint,up,fov, flips, port);

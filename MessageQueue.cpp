@@ -7,10 +7,8 @@ MessageQueue::MessageQueue()
 {
 
 	queueCount = 0; 
-	baseMess.param1 = 0;
 	baseMess.destination = MessageSource_NA;
 	baseMess.source = MessageSource_NA;
-	baseMess.param2 = 0;
 	baseMess.type = MessageType_NA;
 	readQueue = new CelestialListNode<Message*>(&baseMess);
 	addQueue = readQueue;
