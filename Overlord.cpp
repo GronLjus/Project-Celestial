@@ -339,15 +339,23 @@ void Overlord::Update(unsigned int time)
 
 	if(gH->GetIsInited())
 	{
-
-		//iH->Update(time);
+		unsigned int start = clock();
+		iH->Update(time);
+		unsigned int start1 = clock();
 		cH->Update(time);
+		unsigned int start2 = clock();
 		pH->Update();
+		unsigned int start3 = clock();
 		rH->Update(time);
+		unsigned int start4 = clock();
 		gBH->Update(time);
+		unsigned int start5 = clock();
 		guiH->Update(time);
+		unsigned int start6 = clock();
 		gH->Update(time);
 
+		unsigned int stop = clock();
+		unsigned int diff = stop - start;
 		waitForMessages = false;
 		handleMessages.notify_all();
 

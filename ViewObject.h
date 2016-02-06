@@ -36,6 +36,7 @@ namespace Entities
 			ViewObject(CelestialMath::Vector3 pos,CelestialMath::Vector3 sidePoint, CelestialMath::Vector3 lookAtPoint, CelestialMath::Vector3 up, float fov, unsigned int bufferFlips, ViewPort port);
 			void Update(CelestialMath::Matrix transform);
 			void IncrementInstances();
+			unsigned int PeekNextFlip() const;
 			void AddInstanceFragment(unsigned int mesh, unsigned int start, unsigned int length);
 			void ResetInstances();
 			CrossHandlers::Frustum* GetFrustum() const;

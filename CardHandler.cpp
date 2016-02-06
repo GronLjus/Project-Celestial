@@ -196,7 +196,7 @@ void CardHandler::Kill()
 void CardHandler::UpdateMeshBuffers(DrawingBoard* db)
 {
 
-	bH->UpdateMeshBuffers(db, bufferContext);
+	bH->UpdateMeshBuffers(db, context1);
 	ID3D11Buffer* vertices = bH->GetVertexBuffer();
 	ID3D11Buffer* indices = bH->GetIndexBuffer();
 	unsigned int offset = 0;
@@ -210,7 +210,7 @@ void CardHandler::UpdateMeshBuffers(DrawingBoard* db)
 void CardHandler::UpdateInstanceBuffers(DrawingBoard* db, unsigned int flip)
 {
 
-	bH->UpdateInstanceBuffer(db, context1, flip);
+	bH->UpdateInstanceBuffer(db, bufferContext, flip);
 
 }
 

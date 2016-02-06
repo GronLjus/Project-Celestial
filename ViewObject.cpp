@@ -53,6 +53,16 @@ void ViewObject::IncrementInstances()
 
 }
 
+unsigned int ViewObject::PeekNextFlip() const
+{
+
+	unsigned int nextFlip = flip;
+	nextFlip++;
+	nextFlip %= flips;
+	return nextFlip;
+
+}
+
 void ViewObject::Update(Matrix transform)
 {
 

@@ -44,6 +44,13 @@ void CameraObject::IncrementFlipBuff()
 
 }
 
+unsigned int CameraObject::PeekNextFlip() const
+{
+
+	return theView->PeekNextFlip();
+
+}
+
 unsigned int CameraObject::GetFlip() const
 {
 

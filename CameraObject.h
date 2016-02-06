@@ -11,6 +11,7 @@ namespace Resources
 			CameraObject(unsigned int width, unsigned int height, float depth,unsigned int flips);
 			virtual void Update(CrossHandlers::Message* mess);
 			void IncrementFlipBuff();
+			unsigned int PeekNextFlip() const;
 			unsigned int GetFlip() const;
 			Entities::ViewObject* GetView() const;
 			~CameraObject();

@@ -175,6 +175,8 @@ void GraphicHandler::Update(unsigned int time)
 			canDraw = false;//Pause rendering
 			while (isDrawing){ this_thread::yield(); }//Wait until we aren't rendering
 			this->cameraObject = (CameraObject*)gameObjects->GetValue(param1);
+			nextFlip = cameraObject->PeekNextFlip();
+			renderFlip = cameraObject->PeekNextFlip();
 			canDraw = true;
 
 		}
@@ -188,21 +190,22 @@ void GraphicHandler::Update(unsigned int time)
 	{
 
 		unsigned int newFlip = cameraObject->GetFlip();
-		cameraObject->IncrementFlipBuff();
-
-		canDraw = false;//Pause rendering
-		while (isDrawing){ this_thread::yield(); }//Wait until we aren't rendering
 		cardHandler->UpdateInstanceBuffers(gameBoard->GetDrawingBoard(), newFlip);
-		cardHandler->SetInstanceBuffers(renderFlip);
 		nextFlip = newFlip;
-		canDraw = true;
 
-		while (cameraObject->GetFlip() == renderFlip && isInited)
+		unsigned int waitTimeStart = clock();
+		while (cameraObject->PeekNextFlip() == renderFlip && isInited)
 		{
 
 			this_thread::yield();
 
 		}
+
+		unsigned int waitTimeEnd = clock();
+		unsigned int waitTimeDiff = waitTimeEnd - waitTimeStart;
+		cameraObject->IncrementFlipBuff();
+		canDraw = true;
+
 	}
 }
 
@@ -235,6 +238,7 @@ void GraphicHandler::Draw()
 		{
 
 			renderFlip = nextFlip;
+			cardHandler->SetInstanceBuffers(renderFlip);
 
 		}
 
