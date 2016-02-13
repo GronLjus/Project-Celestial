@@ -25,7 +25,6 @@ namespace Logic
 			HRESULT Init(HWND hwnd);
 			///<summary>Updates the overlord along with every underhandler</summary>
 			void Update(unsigned int time);
-			void UpdateMessages(unsigned int time);
 			void HandleDrawing(unsigned int time);
 			///<summary>Send a message to be handled and forwarded to the right underobject</summary>
 			///<param name='msg'>[in]The message chain to process</param>
@@ -35,6 +34,7 @@ namespace Logic
 			virtual ~Overlord();
 
 		private:
+			void updateMessages(MessageSource handler);
 			CrossHandlers::MessageQueue* inQueue;
 			bool die;
 			bool okToDraw;
@@ -74,8 +74,6 @@ namespace Logic
 		
 			bool isDrawingBool;
 			std::mutex isDrawing;
-			std::condition_variable handleMessages;
-			bool waitForMessages;
 			Resources::GUITextBox* dbgIn;
 			Resources::GUITextBox* dbgOut;
 			Resources::GUITextBox* dbgPnl;

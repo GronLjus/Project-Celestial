@@ -3,6 +3,8 @@
 #include "BoundingBox.h"
 #include "BoundingSphere.h"
 
+#include <time.h>
+
 using namespace CrossHandlers;
 using namespace CelestialMath;
 
@@ -84,7 +86,29 @@ IBounding* BoundingBox::GetCopy() const
 
 }
 
-Intersection BoundingBox::getPlaneDistSquare(Vector3 origin, Vector3 direction, BoundingPlane plane, float& distSquare)
+Intersection BoundingBox::getPlaneDistSquare(Vector3 &point1, Vector3 &point2, BoundingPlane& plane)
+{
+
+	float distance1 = VectorDot(plane.unitNormals, point1);
+	float distance2 = VectorDot(plane.unitNormals, point2);
+
+	if (distance1 < 0 && distance2 >= 0)
+	{
+		return Intersection_THROUGH;
+
+	}
+	else if (distance1 >= 0 && distance2 >= 0)
+	{
+
+		return Intersection_FRONT;
+
+	}
+
+	return Intersection_BACK;
+
+}
+
+Intersection BoundingBox::getPlaneDistSquare(Vector3& origin, Vector3& direction, BoundingPlane& plane, float& distSquare)
 {
 
 	Vector3 point(0, 0, 0);
@@ -113,9 +137,9 @@ Intersection BoundingBox::getPlaneDistSquare(Vector3 origin, Vector3 direction, 
 
 	if (dotProduct <= epsilon)
 	{
-		
-		distSquare = VectorDot(point,plane.GetUnitNormal())+plane.GetP();
-		Intersection retVal = distSquare > 0 ? 
+
+		distSquare = VectorDot(point, plane.GetUnitNormal()) + plane.GetP();
+		Intersection retVal = distSquare > 0 ?
 		Intersection_FRONT : distSquare < 0 ? Intersection_BACK : Intersection_ON;
 		distSquare *= distSquare;
 		return retVal;
@@ -139,7 +163,6 @@ Intersection BoundingBox::IntersectsLine(Vector3 origin, Vector3 direction, floa
 	char dims[] = { 'x', 'x', 'y', 'y', 'z', 'z' };
 	float distances[6];
 	Intersection inters[6];
-	Intersection returnVal = Intersection_FRONT;
 	//Check line against all planes containing tha box
 	inters[0] = getPlaneDistSquare(origin, direction, rightPlane, distances[0]);
 
@@ -171,21 +194,23 @@ Intersection BoundingBox::IntersectsLine(Vector3 origin, Vector3 direction, floa
 						if (inters[5] != Intersection_BACK)
 						{
 
+							bool foundSmallest = false;
 							//The line crosses all planes
 							//Sort hits by distance or if the line starts in front of a plane 
 							for (unsigned char i = 0; i < 6; i++)
 							{
 
-								for (unsigned char k = i+1; k < 6; k++)
+								for (unsigned char k = i + 1; k < 6; k++)
 								{
 
 									if (inters[i] != Intersection_FRONT)
 									{
 
-										if (distances[i] < smallestDistanceSquare)
+										if (distances[i] < smallestDistanceSquare || smallestDistanceSquare == 0)
 										{
 
 											smallestDistanceSquare = distances[i];
+											foundSmallest = true;
 
 										}
 
@@ -207,45 +232,52 @@ Intersection BoundingBox::IntersectsLine(Vector3 origin, Vector3 direction, floa
 										}
 									}
 								}
+							}
 
-								//Figure out the order of hits
-								bool hitx = false;
-								bool hity = false;
-								bool hitz = false;
-								bool outside = false;
+							if (!foundSmallest)
+							{
 
-								for (unsigned char i = 2; i >= 0 && !outside; i--)
+								return Intersection_BACK;
+
+							}
+
+							//Figure out the order of hits
+							bool hitx = false;
+							bool hity = false;
+							bool hitz = false;
+							bool outside = false;
+
+							for (unsigned char i = 2; i >= 0 && !outside; i--)
+							{
+
+								if (dims[i] == 'x')
 								{
 
-									if (dims[i] == 'x')
-									{
+									outside = hitx;
+									hitx = true;
 
-										outside = hitx;
-										hitx = true;
-
-									}
-									else if (dims[i] == 'y')
-									{
-
-										outside = hity;
-										hity = true;
-
-									}
-									else if (dims[i] == 'z')
-									{
-
-										outside = hitz;
-										hitz = true;
-
-									}
 								}
-
-								if (!outside)
+								else if (dims[i] == 'y')
 								{
 
-									returnVal = Intersection_THROUGH;
+									outside = hity;
+									hity = true;
 
 								}
+								else if (dims[i] == 'z')
+								{
+
+									outside = hitz;
+									hitz = true;
+
+								}
+							}
+
+							if (!outside)
+							{
+
+								return Intersection_THROUGH;
+
 							}
 						}
 					}
@@ -254,79 +286,78 @@ Intersection BoundingBox::IntersectsLine(Vector3 origin, Vector3 direction, floa
 		}
 	}
 
-	return returnVal;
+	return Intersection_BACK;
 
 }
 
 Intersection BoundingBox::IntersectsPlane(BoundingPlane* bp)
 {
 
-	Vector3 topLeftBack = pos + (rightPlane.GetUnitNormal()*(dimensions.x)) + (bottomPlane.GetUnitNormal()*(dimensions.y)) + (frontPlane.GetUnitNormal()*(dimensions.z));
-	Vector3 bottomRightBack = pos + (leftPlane.GetUnitNormal()*(dimensions.x)) + (topPlane.GetUnitNormal()*(dimensions.y)) + (frontPlane.GetUnitNormal()*(dimensions.z));
-	Vector3 topRightFront = pos + (leftPlane.GetUnitNormal()*(dimensions.x)) + (bottomPlane.GetUnitNormal()*(dimensions.y)) + (rearPlane.GetUnitNormal()*(dimensions.z));
-	Vector3 bottomLeftFront = pos + (rightPlane.GetUnitNormal()*(dimensions.x)) + (topPlane.GetUnitNormal()*(dimensions.y)) + (rearPlane.GetUnitNormal()*(dimensions.z));
+	float upCache = bottomPlane.unitNormals.y * dimensions.y;
+	float downCache = -upCache;
+	float frontCache = rearPlane.unitNormals.z * dimensions.z;
+	float rearCache = -frontCache;
 
-	float tlbx = 0;
-	Intersection tlbxInter = getPlaneDistSquare(topLeftBack, leftPlane.GetUnitNormal(), *bp, tlbx);
-	if (tlbxInter == Intersection_FRONT || tlbxInter == Intersection_THROUGH && tlbx <= dimensions.x * 2)
-	{return tlbxInter;}
-	float tlby = 0;
-	Intersection tlbyInter = getPlaneDistSquare(topLeftBack, topPlane.GetUnitNormal(), *bp, tlby);
-	if (tlbyInter == Intersection_FRONT || tlbyInter == Intersection_THROUGH && tlbx <= dimensions.y * 2)
-	{return tlbyInter;}
-	float tlbz = 0;
-	Intersection tlbzInter = getPlaneDistSquare(topLeftBack, rearPlane.GetUnitNormal(), *bp, tlbz);
-	if (tlbzInter == Intersection_FRONT || tlbzInter == Intersection_THROUGH && tlbz <= dimensions.z * 2)
-	{return tlbzInter;}
+	Vector3 ltfCache = leftPoint + Vector3(0, upCache, frontCache);
+	Vector3 ltrCache = leftPoint + Vector3(0, upCache, rearCache);
+	Vector3 lbfCache = leftPoint + Vector3(0, downCache, frontCache);
+	Vector3 lbrCache = leftPoint + Vector3(0, downCache, rearCache);
 
-	float brbx = 0;
-	Intersection brbxInter = getPlaneDistSquare(bottomRightBack, rightPlane.GetUnitNormal(), *bp, brbx);
-	if (brbxInter == Intersection_FRONT || brbxInter == Intersection_THROUGH && brbx <= dimensions.x * 2)
-	{return brbxInter;}
-	float brby = 0;
-	Intersection brbyInter = getPlaneDistSquare(bottomRightBack, bottomPlane.GetUnitNormal(), *bp, brby);
-	if (brbyInter == Intersection_FRONT || brbyInter == Intersection_THROUGH && brbx <= dimensions.y * 2)
-	{return brbyInter;}
-	float brbz = 0;
-	Intersection brbzInter = getPlaneDistSquare(bottomRightBack, rearPlane.GetUnitNormal(), *bp, brbz);
-	if (brbzInter == Intersection_FRONT || brbzInter == Intersection_THROUGH && brbz <= dimensions.z * 2)
-	{return brbzInter;}
-	
-	float trfx = 0;
-	Intersection trfxInter = getPlaneDistSquare(topRightFront, rightPlane.GetUnitNormal(), *bp, trfx);
-	if (trfxInter == Intersection_FRONT || trfxInter == Intersection_THROUGH && trfx <= dimensions.x * 2)
-	{return trfxInter;}
-	float trfy = 0;
-	Intersection trfyInter = getPlaneDistSquare(topRightFront, topPlane.GetUnitNormal(), *bp, trfy);
-	if (trfyInter == Intersection_FRONT || trfyInter == Intersection_THROUGH && trfx <= dimensions.y * 2)
-	{return trfyInter;}
-	float trfz = 0;
-	Intersection trfzInter = getPlaneDistSquare(topRightFront, frontPlane.GetUnitNormal(), *bp, trfz);
-	if (trfzInter == Intersection_FRONT || trfzInter == Intersection_THROUGH && trfz <= dimensions.z * 2)
-	{return trfzInter;}
-	
-	float blfx = 0;
-	Intersection blfxInter = getPlaneDistSquare(bottomLeftFront, leftPlane.GetUnitNormal(), *bp, blfx);
-	if (blfxInter == Intersection_FRONT || blfxInter == Intersection_THROUGH && blfx <= dimensions.x * 2)
-	{return blfxInter;}
-	float blfy = 0;
-	Intersection blfyInter = getPlaneDistSquare(bottomLeftFront, bottomPlane.GetUnitNormal(), *bp, blfy);
-	if (blfyInter == Intersection_FRONT || blfyInter == Intersection_THROUGH && blfx <= dimensions.y * 2)
-	{return blfyInter;}
-	float blfz = 0;
-	Intersection blfzInter = getPlaneDistSquare(bottomLeftFront, frontPlane.GetUnitNormal(), *bp, blfz);
-	if (blfzInter == Intersection_FRONT || blfzInter == Intersection_THROUGH && blfz <= dimensions.z * 2)
-	{return blfzInter;}
+	Vector3 rtfCache = rightPoint + Vector3(0, upCache, frontCache);
+	Vector3 rtrCache = rightPoint + Vector3(0, upCache, rearCache);
+	Vector3 rbfCache = rightPoint + Vector3(0, downCache, frontCache);
+	Vector3 rbrCache = rightPoint + Vector3(0, downCache, rearCache);
 
-	return Intersection_BACK;
+	Intersection ftxInter = getPlaneDistSquare(ltfCache, rtfCache, *bp);
+	if (ftxInter == Intersection_THROUGH)
+	{return Intersection_THROUGH;}
+	Intersection fbxInter = getPlaneDistSquare(lbfCache, rbfCache, *bp);
+	if (fbxInter == Intersection_THROUGH || fbxInter != ftxInter)
+	{return Intersection_THROUGH;}
+	Intersection flyInter = getPlaneDistSquare(ltfCache, lbfCache, *bp);
+	if (fbxInter == Intersection_THROUGH || fbxInter != flyInter)
+	{return Intersection_THROUGH;}
+	Intersection fryInter = getPlaneDistSquare(rtfCache, rbfCache, *bp);
+	if (fbxInter == Intersection_THROUGH || fryInter != flyInter)
+	{return Intersection_THROUGH;}
+
+	Intersection rtxInter = getPlaneDistSquare(ltrCache, rtrCache, *bp);
+	if (rtxInter == Intersection_THROUGH || rtxInter != fryInter)
+	{return Intersection_THROUGH;}
+	Intersection rbxInter = getPlaneDistSquare(lbrCache, rbrCache, *bp);
+	if (rbxInter == Intersection_THROUGH || rbxInter != rtxInter)
+	{return Intersection_THROUGH;}
+	Intersection rlyInter = getPlaneDistSquare(ltrCache, lbrCache, *bp);
+	if (rbxInter == Intersection_THROUGH || rbxInter != rlyInter)
+	{return Intersection_THROUGH;}
+	Intersection rryInter = getPlaneDistSquare(rtrCache, rbrCache, *bp);
+	if (rbxInter == Intersection_THROUGH || rryInter != rlyInter)
+	{return Intersection_THROUGH;}
+
+	Intersection rtzInter = getPlaneDistSquare(rtrCache, rtfCache, *bp);
+	if (rtxInter == Intersection_THROUGH || rtzInter != rryInter)
+	{return Intersection_THROUGH;}
+	Intersection rbzInter = getPlaneDistSquare(rbfCache, rbrCache, *bp);
+	if (rbxInter == Intersection_THROUGH || rtzInter != rbzInter)
+	{return Intersection_THROUGH;}
+	Intersection ltzInter = getPlaneDistSquare(ltrCache, ltfCache, *bp);
+	if (rbxInter == Intersection_THROUGH || rbzInter != ltzInter)
+	{return Intersection_THROUGH;}
+	Intersection lbzInter = getPlaneDistSquare(lbfCache, lbrCache, *bp);
+	if (rbxInter == Intersection_THROUGH || lbzInter != ltzInter)
+	{return Intersection_THROUGH;}
+
+	return ftxInter;
 
 }
 
 Intersection BoundingBox::IntersectsBetweenPlanes(BoundingPlane* p1, BoundingPlane* p2)
 {
 
+	unsigned int time1 = clock();
 	Intersection p1Result = IntersectsPlane(p1);
 	Intersection p2Result = IntersectsPlane(p2);
+	unsigned int time2 = clock();
 
 	if (p1Result == Intersection_BACK || p2Result == Intersection_BACK)
 	{
@@ -484,6 +515,15 @@ void BoundingBox::Transform(Matrix mat)
 
 void BoundingBox::constructBox(Vector3 x1, Vector3 x2, Vector3 y1, Vector3 y2, Vector3 z1, Vector3 z2)
 {
+
+	rightPoint = x1;
+	leftPoint = x2;
+
+	topPoint = y1;
+	bottomPoint = y2;
+
+	frontPoint = z1;
+	rearPoint = z2;
 
 	Vector3 xNormal = pos - x1;
 	Vector3 yNormal = pos - y1;

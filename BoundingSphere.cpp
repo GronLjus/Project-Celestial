@@ -90,7 +90,7 @@ Intersection BoundingSphere::IntersectsLine(Vector3 origin, Vector3 direction, f
 	if (smallestDistanceSquare != 0 && smallestDistanceSquare < distance)
 	{
 
-		return Intersection_NA;
+		return Intersection_BACK;
 
 	}
 
@@ -101,7 +101,7 @@ Intersection BoundingSphere::IntersectsLine(Vector3 origin, Vector3 direction, f
 	if (smallestDistanceSquared > radi*radi)
 	{
 
-		return Intersection_FRONT;
+		return Intersection_BACK;
 
 	}
 

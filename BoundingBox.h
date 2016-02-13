@@ -24,7 +24,15 @@ namespace CrossHandlers
 			BoundingPlane frontPlane;
 			BoundingPlane rearPlane;
 
-			Intersection getPlaneDistSquare(CelestialMath::Vector3 origin, CelestialMath::Vector3 direction, BoundingPlane plane, float& distSquare);
+			CelestialMath::Vector3 rightPoint;
+			CelestialMath::Vector3 leftPoint;
+			CelestialMath::Vector3 topPoint;
+			CelestialMath::Vector3 bottomPoint;
+			CelestialMath::Vector3 frontPoint;
+			CelestialMath::Vector3 rearPoint;
+
+			Intersection getPlaneDistSquare(CelestialMath::Vector3 &point1, CelestialMath::Vector3 &point2, BoundingPlane &plane); 
+			Intersection getPlaneDistSquare(CelestialMath::Vector3 &origin, CelestialMath::Vector3 &direction, BoundingPlane &plane, float& distSquare);
 			void constructBox(CelestialMath::Vector3 x1, CelestialMath::Vector3 x2, CelestialMath::Vector3 y1, CelestialMath::Vector3 y2, CelestialMath::Vector3 z1, CelestialMath::Vector3 z2);
 
 		public:

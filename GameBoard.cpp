@@ -8,7 +8,7 @@ GameBoard::GameBoard(unsigned int cells)
 {
 
 	drawingBoard = new DrawingBoard();
-	objectRoot = new ObjectTree(cells, 16, 1, CelestialMath::Vector2(0.0f, 0.0f));
+	objectRoot = new ObjectTree(cells, 32, CelestialMath::Vector2(0.0f, 0.0f));
 	camera = nullptr;
 
 }
@@ -21,7 +21,7 @@ void GameBoard::FillInstanceBuffer()
 
 		camera->GetView()->ResetInstances();
 		drawingBoard->StartAddingInstances();
-		objectRoot->AddInstance(camera->GetView(), drawingBoard);
+		unsigned int checkedBoxes = objectRoot->AddInstance(camera->GetView(), drawingBoard);
 		drawingBoard->FinalizeInstances(camera->GetView());
 
 	}
@@ -53,6 +53,13 @@ DrawingBoard* GameBoard::GetDrawingBoard() const
 {
 
 	return drawingBoard;
+
+}
+
+unsigned int GameBoard::GetClosestObject(Vector3 origin, Vector3 unitDirection, float &smallestDistance) const
+{
+
+	return objectRoot->GetClosestObject(origin, unitDirection, smallestDistance);
 
 }
 

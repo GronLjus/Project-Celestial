@@ -10,8 +10,6 @@ namespace CrossHandlers
 		private:
 			///<summary>An array containing the normals for this plane</summary>
 			CelestialMath::Vector3 normals;
-			///<summary>An array containing the normalized normals for this plane</summary>
-			CelestialMath::Vector3 unitNormals;
 			///<summary>The d-component of the plane-equation</summary>
 			float dComponent;
 			///<summary>The normalized D-component of the plane</summary>
@@ -42,6 +40,8 @@ namespace CrossHandlers
 			float GetP() const;
 			///<summary>Gets the length of the normals in this planes</summary>
 			float GetNormalLength() const;
+			///<summary>An array containing the normalized normals for this plane</summary>
+			CelestialMath::Vector3 unitNormals;
 			~BoundingPlane();
 		
 	};

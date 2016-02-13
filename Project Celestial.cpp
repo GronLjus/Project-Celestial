@@ -23,7 +23,6 @@ int maxBuffer = 100;
 
 bool gStop = false;
 bool lStop = false;
-bool mStop = false;
 
 unsigned int totalKeys = 10;
 
@@ -56,41 +55,8 @@ enum keyCode{
 
 bool lHasStopped = false;
 bool gHasStopped = false;
-bool mHasStopped = false;
 std::thread gThread;
 std::thread lThread;
-std::thread mThread;
-
-unsigned int mFrameRate = 16;
-unsigned int mLastTime = 0;
-
-int runMessaging(Overlord* lordie)
-{
-
-	while (!mStop)
-	{
-
-		unsigned int time = clock();
-
-		if (time - mLastTime >= mFrameRate)
-		{
-
-			mLastTime = time;
-			lordie->UpdateMessages(time);
-
-		}
-		else
-		{
-
-			std::this_thread::yield();
-
-		}
-	}
-
-	mHasStopped = true;
-	return 0;
-
-}
 
 unsigned int lFrameRate = 0;
 unsigned int lLastTime = 0;
@@ -101,15 +67,12 @@ int runLogic(Overlord* lordie)
 {
 
 	HRESULT hr = overlord->Init(hWnd);
-	mThread = std::thread(runMessaging, overlord);
-	mThread.detach();
 	
 	if (hr != S_OK)
 	{
 
 		lStop = true;
 		gStop = true;
-		mStop = true;
 
 	}
 
@@ -133,7 +96,7 @@ int runLogic(Overlord* lordie)
 		}
 	}
 
-	while (!gHasStopped || !mHasStopped)
+	while (!gHasStopped)
 	{
 
 		std::this_thread::yield();
@@ -225,17 +188,9 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 
 	//Deletes the overlord when the window is closed
 	gStop = true;
-	mStop = true;
 	overlord->Kill();
 
 	delete[] messageBuffer;
-
-	while (!mHasStopped)
-	{
-
-		std::this_thread::yield();
-
-	}
 
 	lStop = true;
 
@@ -323,7 +278,6 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
    UpdateWindow(hWnd);
    lStop = false;
    gStop = false;
-   mStop = false;
 
    gThread = std::thread(runGraphics, overlord);
    lThread = std::thread(runLogic, overlord);

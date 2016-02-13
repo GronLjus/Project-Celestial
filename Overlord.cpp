@@ -311,6 +311,36 @@ void Overlord::HandleDrawing(unsigned int time)
 
 }
 
+void Overlord::updateMessages(MessageSource handler)
+{
+
+	if (messageHandlers[handler] != nullptr)
+	{
+
+		Message* currentMessage = messageHandlers[handler]->GetMessages()->PopMessage();
+
+		while (currentMessage->type != MessageType_NA)
+		{
+
+			if (currentMessage->destination != MessageSource_NA &&currentMessage->destination != MessageSource_MASTER && messageHandlers[currentMessage->destination] != nullptr)
+			{
+
+				messageHandlers[currentMessage->destination]->HandleMessage(currentMessage);
+
+			}
+			else if (currentMessage->destination == MessageSource_MASTER)
+			{
+
+				inQueue->PushMessage(currentMessage);
+
+			}
+
+			currentMessage = messageHandlers[handler]->GetMessages()->PopMessage();
+
+		}
+	}
+}
+
 void Overlord::Update(unsigned int time)
 {
 
@@ -341,65 +371,30 @@ void Overlord::Update(unsigned int time)
 	{
 		unsigned int start = clock();
 		iH->Update(time);
+		updateMessages(MessageSource_INPUT);
 		unsigned int start1 = clock();
+		gBH->UpdateMessages(time);
+		updateMessages(MessageSource_ENTITIES);
 		cH->Update(time);
+		updateMessages(MessageSource_CELSCRIPT);
 		unsigned int start2 = clock();
 		pH->Update();
 		unsigned int start3 = clock();
 		rH->Update(time);
+		updateMessages(MessageSource_RESOURCES);
 		unsigned int start4 = clock();
 		gBH->Update(time);
+		updateMessages(MessageSource_ENTITIES);
 		unsigned int start5 = clock();
 		guiH->Update(time);
+		updateMessages(MessageSource_GUIENTITIES);
 		unsigned int start6 = clock();
 		gH->Update(time);
+		updateMessages(MessageSource_GRAPHICS);
 
 		unsigned int stop = clock();
 		unsigned int diff = stop - start;
-		waitForMessages = false;
-		handleMessages.notify_all();
 
-	}
-}
-
-void Overlord::UpdateMessages(unsigned int time)
-{
-
-	while (!die && (waitForMessages))
-	{
-
-		//handleMessages.wait(unique_lock<mutex>());
-		std::this_thread::yield();
-	}
-
-	for (int i = 0; i < MessageSource_NA && !die; i++)
-	{
-
-		if (messageHandlers[i] != nullptr)
-		{
-
-			Message* currentMessage = messageHandlers[i]->GetMessages()->PopMessage();
-
-			while (currentMessage->type != MessageType_NA)
-			{
-				
-				if (currentMessage->destination != MessageSource_NA &&currentMessage->destination != MessageSource_MASTER && messageHandlers[currentMessage->destination] != nullptr)
-				{
-
-					messageHandlers[currentMessage->destination]->HandleMessage(currentMessage);
-
-				}
-				else if (currentMessage->destination == MessageSource_MASTER)
-				{
-
-					inQueue->PushMessage(currentMessage);
-
-				}
-
-				currentMessage = messageHandlers[i]->GetMessages()->PopMessage();
-
-			}
-		}
 	}
 }
 

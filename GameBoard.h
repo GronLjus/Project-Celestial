@@ -15,6 +15,7 @@ namespace Resources
 			void SetCamera(Resources::CameraObject* cam);
 			Resources::CameraObject* GetCam() const;
 			Entities::DrawingBoard* GetDrawingBoard() const;
+			unsigned int GetClosestObject(CelestialMath::Vector3 origin, CelestialMath::Vector3 unitDirection, float &smallestDistance) const;
 			~GameBoard();
 
 		private:

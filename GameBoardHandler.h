@@ -12,6 +12,7 @@ namespace Entities
 		public:
 			GameBoardHandler();
 			void Init(CrossHandlers::CelestialSlicedList<Resources::BaseObject*>* gameObjects);
+			void UpdateMessages(unsigned int time);
 			void Update(unsigned int time);
 			~GameBoardHandler();
 
