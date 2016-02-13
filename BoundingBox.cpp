@@ -467,7 +467,6 @@ Intersection BoundingBox::IntersectsBounding(IBounding* bounding,Shape shape)
 void BoundingBox::Transform(Matrix mat)
 {
 
-	
 	pos = VectorTransform(Vector3(0,0,0),mat);
 
 	Vector3 x1 = VectorTransform(Vector3(dimensions.x, 0, 0), mat);
@@ -479,6 +478,7 @@ void BoundingBox::Transform(Matrix mat)
 	Vector3 z2 = VectorTransform(Vector3(0, 0, -dimensions.z), mat);
 
 	constructBox(x1, x2, y1, y2, z1, z2);
+	dimensions = Vector3(leftPlane.GetNormalLength(), topPlane.GetNormalLength(), frontPlane.GetNormalLength());
 
 }
 

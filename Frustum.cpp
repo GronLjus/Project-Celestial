@@ -29,7 +29,7 @@ Frustum::Frustum(Frustum* copy)
 		if(plane != nullptr)
 		{
 		
-			planes[i] = new BoundingPlane(plane);
+			planes[i] = new BoundingPlane(*plane);
 
 		}
 	}
@@ -270,7 +270,7 @@ void Frustum::Construct(Matrix viewProjection,Matrix invViewProjection,bool proj
 	
 		isFace[i] = false;
 
-		if(planes[i]->GetNormal()[1] < -epsilon)//See if the plane points upwards
+		if(planes[i]->GetNormal().y < -epsilon)//See if the plane points upwards
 		{
 
 			isFace[i] = true;
@@ -375,7 +375,7 @@ void Frustum::Construct(Matrix viewProjection,Matrix invViewProjection,bool proj
 	delete[] points;
 	delete[] isFace;
 
-	float depth = abs(planes[Plane_FAR]->GetNormal()[0]*leftLowerNear.x+planes[Plane_FAR]->GetNormal()[1]*leftLowerNear.y+planes[Plane_FAR]->GetNormal()[2]*leftLowerNear.z+planes[Plane_FAR]->GetD())/planes[Plane_FAR]->GetNormalLength();
+	float depth = abs(planes[Plane_FAR]->GetNormal().x*leftLowerNear.x+planes[Plane_FAR]->GetNormal().y*leftLowerNear.y+planes[Plane_FAR]->GetNormal().z*leftLowerNear.z+planes[Plane_FAR]->GetD())/planes[Plane_FAR]->GetNormalLength();
 
 	//Find the center of the frustum
 	Vector3 center = Vector3(leftUpperNear.x+(rightUpperNear.x-leftUpperNear.x)*0.5f,leftUpperNear.y+(rightUpperNear.y-leftUpperNear.y)*0.5f,leftUpperNear.z+(rightUpperNear.z-leftUpperNear.z)*0.5f);
@@ -398,11 +398,11 @@ void Frustum::Construct(Matrix viewProjection,Matrix invViewProjection,bool proj
 		{
 	
 			point1 = rightLowerNear;
-			depthConstant = (lineVecNear.x*planes[Plane_FAR]->GetNormal()[0]+lineVecNear.y*planes[Plane_FAR]->GetNormal()[1]+lineVecNear.z*planes[Plane_FAR]->GetNormal()[2])/(planes[Plane_FAR]->GetNormalLength()*planes[Plane_FAR]->GetNormalLength());
+			depthConstant = (lineVecNear.x*planes[Plane_FAR]->GetNormal().x+lineVecNear.y*planes[Plane_FAR]->GetNormal().y+lineVecNear.z*planes[Plane_FAR]->GetNormal().z)/(planes[Plane_FAR]->GetNormalLength()*planes[Plane_FAR]->GetNormalLength());
 			
-			point2.x = point1.x+planes[Plane_FAR]->GetNormal()[0]*depthConstant;
-			point2.y = point1.y+planes[Plane_FAR]->GetNormal()[1]*depthConstant;
-			point2.z = point1.z+planes[Plane_FAR]->GetNormal()[2]*depthConstant;
+			point2.x = point1.x+planes[Plane_FAR]->GetNormal().x*depthConstant;
+			point2.y = point1.y+planes[Plane_FAR]->GetNormal().y*depthConstant;
+			point2.z = point1.z+planes[Plane_FAR]->GetNormal().z*depthConstant;
 			
 			point1 = leftUpperNear;
 
@@ -411,11 +411,11 @@ void Frustum::Construct(Matrix viewProjection,Matrix invViewProjection,bool proj
 		{
 
 			point1 = rightLowerFar;
-			depthConstant = (lineVecFar.x*planes[Plane_NEAR]->GetNormal()[0]+lineVecFar.y*planes[Plane_NEAR]->GetNormal()[1]+lineVecFar.z*planes[Plane_NEAR]->GetNormal()[2])/(planes[Plane_NEAR]->GetNormalLength()*planes[Plane_NEAR]->GetNormalLength());
+			depthConstant = (lineVecFar.x*planes[Plane_NEAR]->GetNormal().x+lineVecFar.y*planes[Plane_NEAR]->GetNormal().y+lineVecFar.z*planes[Plane_NEAR]->GetNormal().z)/(planes[Plane_NEAR]->GetNormalLength()*planes[Plane_NEAR]->GetNormalLength());
 			
-			point2.x = planes[Plane_NEAR]->GetNormal()[0]*depthConstant;
-			point2.y = planes[Plane_NEAR]->GetNormal()[1]*depthConstant;
-			point2.z = planes[Plane_NEAR]->GetNormal()[2]*depthConstant;
+			point2.x = planes[Plane_NEAR]->GetNormal().x*depthConstant;
+			point2.y = planes[Plane_NEAR]->GetNormal().y*depthConstant;
+			point2.z = planes[Plane_NEAR]->GetNormal().z*depthConstant;
 
 			point2 = point1+point2;
 			point1 = leftUpperFar;
@@ -453,19 +453,19 @@ Vector3 Frustum::getCommonPoint(BoundingPlane* plane1,BoundingPlane* plane2,Boun
 
 	//Solve by creating a system of linear equation
 	float epsilon = 0.00000002f;
-	float x1 = plane1->GetNormal()[0];
-	float y1 = plane1->GetNormal()[1];
-	float z1 = plane1->GetNormal()[2];
+	float x1 = plane1->GetNormal().x;
+	float y1 = plane1->GetNormal().y;
+	float z1 = plane1->GetNormal().z;
 	float a1 = -plane1->GetD();
 	
-	float x2 = plane2->GetNormal()[0];
-	float y2 = plane2->GetNormal()[1];
-	float z2 = plane2->GetNormal()[2];
+	float x2 = plane2->GetNormal().x;
+	float y2 = plane2->GetNormal().y;
+	float z2 = plane2->GetNormal().z;
 	float a2 = -plane2->GetD();
 
-	float x3 = plane3->GetNormal()[0];
-	float y3 = plane3->GetNormal()[1];
-	float z3 = plane3->GetNormal()[2];
+	float x3 = plane3->GetNormal().x;
+	float y3 = plane3->GetNormal().y;
+	float z3 = plane3->GetNormal().z;
 	float a3 = -plane3->GetD();
 	
 	//Change row 1 with row 2

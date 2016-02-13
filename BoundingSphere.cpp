@@ -121,8 +121,8 @@ Intersection BoundingSphere::IntersectsLine(Vector3 origin, Vector3 direction, f
 Intersection BoundingSphere::IntersectsPlane(BoundingPlane* bp)
 {
 
-	float* planeNormal = bp->GetUnitNormal();
-	float dot = planeNormal[0]*pos.x+planeNormal[1]*pos.y+planeNormal[2]*pos.z;
+	Vector3 planeNormal = bp->GetUnitNormal();
+	float dot = VectorDot(planeNormal, pos);
 	float distance = dot+bp->GetP();
 
 	if((distance < 0 && distance+radi > -epsilon && distance+radi < epsilon) || (distance > 0 && distance-radi > -epsilon && distance-radi < epsilon))

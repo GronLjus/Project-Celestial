@@ -26,8 +26,8 @@ namespace CrossHandlers
 			///<param name='c'>[in]The z-normal of the plane-equation</param>
 			///<param name='d'>[in]The d-component of the plane-equation</param>
 			BoundingPlane(float a, float b, float c, float d);
-			BoundingPlane(Vector3 abc, float d);
-			BoundingPlane(Vector3 abc, float d, float length);
+			BoundingPlane(CelestialMath::Vector3 abc, float d);
+			BoundingPlane(CelestialMath::Vector3 abc, float d, float length);
 			///<summary>Gets the normals of this plane</summary>
 			///<returns>The array containing the normals, this array is always of size 3</returns>
 			CelestialMath::Vector3 GetNormal() const;
