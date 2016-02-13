@@ -55,10 +55,10 @@ void ObjectTree::AddObject(GameObject* object)
 		for (unsigned int i = 0; i < 4; i++)
 		{
 
-			if (subTrees[i]->GetBox()->IntersectsBounding(object->GetSphere(), Shape_SPHERE))
+			if (subTrees[i]->GetBox()->IntersectsBounding(object->GetSphere(), Shape_SPHERE) != Intersection_FRONT)
 			{
 
-				if (subTrees[i]->GetBox()->IntersectsBounding(object->GetBox(), Shape_BOX))
+				if (subTrees[i]->GetBox()->IntersectsBounding(object->GetBox(), Shape_BOX) != Intersection_FRONT)
 				{
 
 					subTrees[i]->AddObject(object);

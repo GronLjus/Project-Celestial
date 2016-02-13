@@ -323,6 +323,15 @@ Vector4 CelestialMath::VectorTransform(Vector4 &vec, Matrix &mat)
 
 }
 
+Vector3 CelestialMath::VectorTransform(Vector3 &vec, Matrix &mat)
+{
+
+	return Vector3(vec.x*mat._11 + vec.y*mat._21 + vec.z*mat._31 + 1*mat._41,
+		vec.x*mat._12 + vec.y*mat._22 + vec.z*mat._32 + 1*mat._42,
+		vec.x*mat._13 + vec.y*mat._23 + vec.z*mat._33 + 1*mat._43);
+
+}
+
 Vector3 CelestialMath::VectorCross(Vector3 &vecA, Vector3 &vecB)
 {
 

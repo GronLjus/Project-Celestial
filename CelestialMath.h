@@ -22,6 +22,7 @@ namespace CelestialMath
 	Matrix MatrixTranslation(float x, float y, float z);
 
 	Vector4 VectorTransform(Vector4 &vec, Matrix &mat);
+	Vector3 VectorTransform(Vector3 &vec, Matrix &mat);
 	Vector3 VectorCross(Vector3 &vecA, Vector3 &vecB);
 	float VectorDot(Vector4 &vecA, Vector4 &vecB);
 	float VectorDot(Vector3 &vecA, Vector3 &vecB);

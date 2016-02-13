@@ -54,6 +54,7 @@ namespace CrossHandlers
 
 			virtual ShapeComplexity GetComplexity();
 
+			virtual Intersection IntersectsLine(CelestialMath::Vector3 origin, CelestialMath::Vector3 direction, float& smallestDistanceSquare);
 			///<summary>Checks this sphere against a plane to see if they intersect</summary>
 			///<param name='bp'>[in]A pointer to the boundingplane to check against</param>
 			///<returns>How the sphere intersects with the plane</returns>

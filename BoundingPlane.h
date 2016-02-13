@@ -1,5 +1,5 @@
 #pragma once
-
+#include "CelestialMath.h"
 namespace CrossHandlers
 {
 
@@ -9,9 +9,9 @@ namespace CrossHandlers
 
 		private:
 			///<summary>An array containing the normals for this plane</summary>
-			float* normals;
+			CelestialMath::Vector3 normals;
 			///<summary>An array containing the normalized normals for this plane</summary>
-			float* unitNormals;
+			CelestialMath::Vector3 unitNormals;
 			///<summary>The d-component of the plane-equation</summary>
 			float dComponent;
 			///<summary>The normalized D-component of the plane</summary>
@@ -25,17 +25,15 @@ namespace CrossHandlers
 			///<param name='b'>[in]The y-normal of the plane-equation</param>
 			///<param name='c'>[in]The z-normal of the plane-equation</param>
 			///<param name='d'>[in]The d-component of the plane-equation</param>
-			BoundingPlane(float a,float b,float c,float d);
-			///<param name='c'>[in]A pointer to the boundingplane to copy data from</param> 
-			BoundingPlane(const BoundingPlane* c);
-			///<param name='c'>[in]A reference to the boundingplane to copy data from</param>
-			BoundingPlane(const BoundingPlane&c);
+			BoundingPlane(float a, float b, float c, float d);
+			BoundingPlane(Vector3 abc, float d);
+			BoundingPlane(Vector3 abc, float d, float length);
 			///<summary>Gets the normals of this plane</summary>
 			///<returns>The array containing the normals, this array is always of size 3</returns>
-			float* GetNormal() const;
+			CelestialMath::Vector3 GetNormal() const;
 			///<summary>Gets the normalized normals of this plane</summary>
 			///<returns>The array containing the normalized normals, this array is always of size 3</returns>
-			float* GetUnitNormal() const;
+			CelestialMath::Vector3 GetUnitNormal() const;
 			///<summary>Gets this planes D-component</summary>
 			///<returns>A value containing the d-component of this planes equation</returns>
 			float GetD() const;

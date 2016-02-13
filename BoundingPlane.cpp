@@ -3,84 +3,60 @@
 #include <cmath>
 
 using namespace CrossHandlers;
+using namespace CelestialMath;
 
 BoundingPlane::BoundingPlane()
 {
-
-	normals = nullptr;
-	unitNormals = nullptr;
 
 }
 
 BoundingPlane::BoundingPlane(float a,float b,float c,float d)
 {
 
-	normals = new float[3];
-	normals[0] = a;
-	normals[1] = b;
-	normals[2] = c;
+	normals = Vector3(a,b,c);
 	dComponent = d;
 
-	unitNormals = new float[3];
 	normalLength = sqrt(a*a+b*b+c*c);
-
-	for(int i=0;i<3;i++)
-	{
-
-		unitNormals[i] = normals[i]/normalLength;
-
-	}
+	unitNormals = Vector3(a / normalLength, b / normalLength, c / normalLength);
 
 	pConstant = d/normalLength;
 
 }
 
-BoundingPlane::BoundingPlane(const BoundingPlane* plane)
+BoundingPlane::BoundingPlane(Vector3 abc, float d)
 {
-	
-	normals = new float[3];
-	unitNormals = new float[3];
 
-	for(int i=0;i<3;i++)
-	{
+	normals = abc;
+	dComponent = d;
 
-		normals[i] = plane->GetNormal()[i];
-		unitNormals[i] = plane->GetUnitNormal()[i];
+	normalLength = sqrt(abc.x*abc.x + abc.y*abc.y + abc.z*abc.z);
+	unitNormals = abc/normalLength;
 
-	}
-
-	dComponent = plane->GetD();
-	pConstant = plane->GetP();
+	pConstant = d / normalLength;
 
 }
 
-BoundingPlane::BoundingPlane(const BoundingPlane& plane)
+BoundingPlane::BoundingPlane(Vector3 abc, float d, float length)
 {
-	
-	normals = new float[3];
-	unitNormals = new float[3];
 
-	for(int i=0;i<3;i++)
-	{
+	normals = abc;
+	dComponent = d;
 
-		normals[i] = plane.GetNormal()[i];
-		unitNormals[i] = plane.GetUnitNormal()[i];
+	normalLength = length;
+	unitNormals = abc / normalLength;
 
-	}
-
-	dComponent = plane.GetD();
-	pConstant = plane.GetP();
+	pConstant = d / normalLength;
 
 }
 
-float* BoundingPlane::GetNormal() const
+CelestialMath::Vector3 BoundingPlane::GetNormal() const
 {
 
 	return normals;
 
 }
 
-float* BoundingPlane::GetUnitNormal() const
+CelestialMath::Vector3 BoundingPlane::GetUnitNormal() const
 {
 
 	return unitNormals;
@@ -111,19 +87,4 @@ float BoundingPlane::GetNormalLength() const
 BoundingPlane::~BoundingPlane()
 {
 
-	if(normals != nullptr)
-	{
-
-		delete[] normals;
-		normals = nullptr;
-	
-	}
-
-	if(unitNormals)
-	{
-
-		delete[] unitNormals;
-		unitNormals = nullptr;
-
-	}
 }

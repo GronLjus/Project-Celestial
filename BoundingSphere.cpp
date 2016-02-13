@@ -80,6 +80,44 @@ ShapeComplexity BoundingSphere::GetComplexity()
 
 }
 
+Intersection BoundingSphere::IntersectsLine(Vector3 origin, Vector3 direction, float& smallestDistanceSquare)
+{
+
+	Vector3 pointSphere = pos - origin;
+	float scalarProjection = VectorDot(pointSphere, direction);
+	float distance = VectorDot(pointSphere, pointSphere)-(radi*radi);
+
+	if (smallestDistanceSquare != 0 && smallestDistanceSquare < distance)
+	{
+
+		return Intersection_NA;
+
+	}
+
+	Vector3 projectedLine = direction * scalarProjection;
+	Vector3 sphereToLine = projectedLine - pointSphere;
+	float smallestDistanceSquared = VectorDot(sphereToLine, sphereToLine);
+
+	if (smallestDistanceSquared > radi*radi)
+	{
+
+		return Intersection_FRONT;
+
+	}
+
+	smallestDistanceSquare = VectorDot(projectedLine, projectedLine);
+
+	if (smallestDistanceSquared == radi*radi)
+	{
+
+		return Intersection_ON;
+
+	}
+
+	return Intersection_THROUGH;
+
+}
+
 Intersection BoundingSphere::IntersectsPlane(BoundingPlane* bp)
 {
 

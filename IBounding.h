@@ -39,6 +39,7 @@ namespace CrossHandlers
 			///<returns>How complex the shape is</returns>
 			virtual ShapeComplexity GetComplexity() = 0;
 
+			virtual Intersection IntersectsLine(CelestialMath::Vector3 origin, CelestialMath::Vector3 direction, float& smallestDistanceSquare) = 0;
 			///<summary>Checks this volume against a plane to see if they intersect</summary>
 			///<param name='bp'>[in]A pointer to the boundingplane to check against</param>
 			///<returns>How the box intersects with the plane</returns>

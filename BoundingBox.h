@@ -10,71 +10,22 @@ namespace CrossHandlers
 	{
 		private:
 
-			///<summary>This struct represents a single point int a three-dimensional space</summary>
-			struct Point
-			{
-		
-				private:
-					///<summary>The position of the point</summary>
-					CelestialMath::Vector3 pos;
-
-				public:
-					Point(){}
-					///<param name='xP'>[in]The x-value of the points position</param>
-					///<param name='yP'>[in]The y-value of the points position</param>
-					///<param name='zP'>[in]The z-value of the points position</param>
-					Point(float xP,float yP,float zP)
-					{
-
-						pos = CelestialMath::Vector3(xP, yP, zP);
-
-					}
-
-					///<summary>Gets the points x-coordinate</summary>
-					///<returns>THis points x-coordinate</returns>
-					float GetX()
-					{
-
-						return pos.x;
-
-					}
-				
-					///<summary>Gets the points y-coordinate</summary>
-					///<returns>THis points y-coordinate</returns>
-					float GetY()
-					{
-
-						return pos.y;
-
-					}
-				
-					///<summary>Gets the points z-coordinate</summary>
-					///<returns>THis points z-coordinate</returns>
-					float GetZ()
-					{
-
-						return pos.z;
-
-					}
-			};
-
 			///<summary>The epsilon-value used in comparisions</summary>
 			float epsilon;
-			///<summary>The nr of points used by this box</summary>
-			int nrOfPoints;
-			///<summary>The array of points that builds the box</summary>
-			Point* points;
-			///<summary>The array of points that builds the untransformed box</summary>
-			Point* basePoints;
 			///<summary>The centerpoint of the box</summary>
 			CelestialMath::Vector3 pos;
-			///<summary>The original position of the centerpoint</summary>
-			CelestialMath::Vector3 orgPos;
 			///<summary>The dimensions of the box</summary>
 			CelestialMath::Vector3 dimensions;
 
-			///<summary>Checks a point against a plane</summary>
-			Intersection checkPlaneSide(BoundingPlane* bp,Point p);
+			BoundingPlane topPlane;
+			BoundingPlane bottomPlane;
+			BoundingPlane rightPlane;
+			BoundingPlane leftPlane;
+			BoundingPlane frontPlane;
+			BoundingPlane rearPlane;
+
+			Intersection getPlaneDistSquare(CelestialMath::Vector3 origin, CelestialMath::Vector3 direction, BoundingPlane plane, float& distSquare);
+			void constructBox(CelestialMath::Vector3 x1, CelestialMath::Vector3 x2, CelestialMath::Vector3 y1, CelestialMath::Vector3 y2, CelestialMath::Vector3 z1, CelestialMath::Vector3 z2);
 
 		public:
 			BoundingBox();
@@ -107,6 +58,7 @@ namespace CrossHandlers
 
 			virtual ShapeComplexity GetComplexity();
 
+			virtual Intersection IntersectsLine(CelestialMath::Vector3 origin, CelestialMath::Vector3 direction, float& smallestDistanceSquare);
 			///<summary>Checks this box against a plane to see if they intersect</summary>
 			///<param name='bp'>[in]A pointer to the boundingplane to check against</param>
 			///<returns>How the box intersects with the plane</returns>
