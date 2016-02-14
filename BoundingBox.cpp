@@ -138,9 +138,9 @@ Intersection BoundingBox::getPlaneDistSquare(Vector3& origin, Vector3& direction
 	if (dotProduct <= epsilon)
 	{
 
-		distSquare = VectorDot(point, plane.GetUnitNormal()) + plane.GetP();
-		Intersection retVal = distSquare > 0 ?
-		Intersection_FRONT : distSquare < 0 ? Intersection_BACK : Intersection_ON;
+		distSquare = VectorDot(origin, plane.GetUnitNormal()) + plane.GetP();
+		Intersection retVal = distSquare >= -epsilon ?
+		Intersection_FRONT : Intersection_BACK;
 		distSquare *= distSquare;
 		return retVal;
 
@@ -247,27 +247,27 @@ Intersection BoundingBox::IntersectsLine(Vector3 origin, Vector3 direction, floa
 							bool hitz = false;
 							bool outside = false;
 
-							for (unsigned char i = 2; i >= 0 && !outside; i--)
+							for (unsigned char i = 0; i < 6 && !outside && !hitx && !hity && hitz; i++)
 							{
 
 								if (dims[i] == 'x')
 								{
 
-									outside = hitx;
+									outside = hitx && inters[i] != Intersection_FRONT;
 									hitx = true;
 
 								}
 								else if (dims[i] == 'y')
 								{
 
-									outside = hity;
+									outside = hity && inters[i] != Intersection_FRONT;
 									hity = true;
 
 								}
 								else if (dims[i] == 'z')
 								{
 
-									outside = hitz;
+									outside = hitz && inters[i] != Intersection_FRONT;
 									hitz = true;
 
 								}
