@@ -1,73 +1,50 @@
 #pragma once
 #include "IHandleMessages.h"
-#include "IKeyBoardHandler.h"
-#include "CelestialList.h"
+#include "CelestialSlicedList.h"
+#include "ScreenTarget.h"
+#include "CelestialMath.h"
 
 namespace Input
 {
 
 	///<summary>This class handles all matters regarding input</summary>
-	class InputHandler : public IKeyBoardHandler, public CrossHandlers::IHandleMessages
+	class InputHandler : public CrossHandlers::IHandleMessages
 	{
 
 		public:
 			InputHandler();
 			///<summary>Initializes the inpuhandler</summary>
 			///<param name='hWnd'>[in]The handle to the window we're using</param>
-			void Init(HWND hWnd);
+			void Init(CrossHandlers::CelestialSlicedList<Resources::BaseObject*>* gameObjects);
 			///<summary>Updates the handler</summary>
 			void Update(unsigned int time);
-			///<summary>Gets an array of movement-factors</summary>
-			///<returns>An array of values ranging from [-1,1] in three dimensions</returns>
-			int* GetMovement();
-
-			virtual int GetNumberKeyDown();
-			virtual bool IsKeyDown(Key key);
-
-			///<summary>Gets the current position of the mouse</summary>
-			///<returns>An array containing the positions of the mouse in the window</returns>
-			float* GetMousePos();
-			///<summary>Gets the last position of the mouse</summary>
-			///<returns>An array containing the last positions of the mouse in the window</returns>
-			float* GetLastMousePos();
-			///<summary>Gets whether or not the mouse has moved</summary>
-			///<returns>A value indicating if the mouse has moved</returns>
-			bool HasMouseMoved();
-			///<summary>Toggles whether the handler should contain the mouse in the center of the window</summary>
-			void ToggleContainMouse();
 
 			~InputHandler();
 
+			enum keyCode{
+				keyCodeMouseL,
+				keyCodeMouseR,
+				keyCodeNA
+			};
+
 		private:
 
-			///<summary>The position of the mouse</summary>
-			float* mousePos;
-			///<summary>The last position of the mouse</summary>
-			float* lastMousePos;
-			///<summary>If a mouse has moved</summary>
-			bool mouseMoved;
-			///<summary>The handle to the window we're using</summary>
-			HWND hWnd;
-			///<summary>If mouse should be contained within one place</summary>
-			bool contain;
-			///<summary>Centers the mouse in the center of the window</summary>
-			void centerMouse();
+			struct keyState{
 
-			bool keyFit(unsigned char celKey,unsigned int sourceKey);
-
-			struct keyTrigger
-			{
-
-				unsigned char scriptAmount;
-				unsigned char maxScripts;
-				unsigned int* scripts;
-				unsigned short filter;
-				unsigned int obj;
-				bool charTrigg;
+				keyState() : lastState(true), state(true), lastTime(0), thisTime(0){}
+				bool lastState;
+				bool state;
+				unsigned int lastTime;
+				unsigned int thisTime;
 
 			};
 
-			unsigned int mouseTriggerId;
-			CrossHandlers::CelestialList<keyTrigger>* triggers;
+			void triggerScript(unsigned int script, unsigned int time);
+			keyState* keyStates;
+			CrossHandlers::CelestialSlicedList<Resources::BaseObject*>* gameObjects;
+			CrossHandlers::CelestialSlicedList<Resources::ScreenTarget*>* screenTargets;
+			unsigned int maxScreenTargets;
+			CelestialMath::vectorUI2 mouse;
+			void handleMouse(unsigned int time);
 	};
 }

@@ -80,7 +80,7 @@ void ResourceHandler::Update(unsigned int time)
 		else if (currentMessage->mess == ResourceMess_LOADSCRIPT)
 		{
 
-			std::string stringParam(currentMessage->params);
+			std::string stringParam((char*)currentMessage->params);
 			CelScriptCompiled* bo = loader->LoadCLScript(stringParam);
 
 			if (bo != nullptr)
@@ -121,7 +121,7 @@ void ResourceHandler::Update(unsigned int time)
 		else if (currentMessage->mess == ResourceMess_LOADMESH)
 		{
 
-			std::string stringParam(&currentMessage->params[0]);
+			std::string stringParam((char*)(&currentMessage->params[0]));
 			BaseObject* bo = loader->LoadMeshFromFile(stringParam);
 			bo->SetId(gameObjects->GetFirstEmpty());
 			outId = gameObjects->Add(bo);
@@ -130,7 +130,7 @@ void ResourceHandler::Update(unsigned int time)
 			messageBuffer[this->currentMessage].destination = MessageSource_ENTITIES;
 			messageBuffer[this->currentMessage].type = MessageType_ENTITIES;
 			messageBuffer[this->currentMessage].mess = GameBoardMess_ADDMESH;
-			char tempBuff[]{outId >> 0, outId >> 8, outId >> 16, outId >> 24};
+			unsigned char tempBuff[]{outId >> 0, outId >> 8, outId >> 16, outId >> 24};
 			messageBuffer[this->currentMessage].SetParams(tempBuff, 0, 4);
 			messageBuffer[this->currentMessage].read = false;
 			outQueue->PushMessage(&messageBuffer[this->currentMessage]);
@@ -150,7 +150,7 @@ void ResourceHandler::Update(unsigned int time)
 			messageBuffer[this->currentMessage].destination = MessageSource_CELSCRIPT;
 			messageBuffer[this->currentMessage].type = MessageType_SCRIPT;
 			messageBuffer[this->currentMessage].mess = EventMess_GUIOBJECTADDED;
-			char tempBuff[]{outId >> 0, outId >> 8, outId >> 16, outId >> 24};
+			unsigned char tempBuff[]{outId >> 0, outId >> 8, outId >> 16, outId >> 24};
 			messageBuffer[this->currentMessage].SetParams(tempBuff, 0, 4);
 			messageBuffer[this->currentMessage].read = false;
 			outQueue->PushMessage(&messageBuffer[this->currentMessage]);
@@ -274,24 +274,6 @@ void ResourceHandler::Update(unsigned int time)
 
 				obj1->ToggleOnScreen(true);
 
-				if (obj1->GetTrigger(TriggerType_KEYTRIGGER) > 0)
-				{
-
-					KeyTrigger* kt = (KeyTrigger*)gameObjects->GetValue(obj1->GetTrigger(TriggerType_KEYTRIGGER));
-
-					messageBuffer[this->currentMessage].timeSent = time;
-					messageBuffer[this->currentMessage].destination = MessageSource_INPUT;
-					messageBuffer[this->currentMessage].type = MessageType_INPUT;
-					messageBuffer[this->currentMessage].mess = InputMess_TOGGLESCRIPTTRIGGER_KEYPRESS;
-					char tempBuff[]{kt->keyCode >> 0, kt->keyCode >> 8, kt->keyCode >> 16, 1 >> 17,
-						currentMessage->params[0], currentMessage->params[1], currentMessage->params[2], currentMessage->params[3],
-						kt->scriptToRun >> 0, kt->scriptToRun >> 8, kt->scriptToRun >> 16, kt->scriptToRun >> 24
-					};
-					messageBuffer[this->currentMessage].SetParams(tempBuff, 0, 12);
-					messageBuffer[this->currentMessage].read = false;
-					outQueue->PushMessage(&messageBuffer[this->currentMessage]);
-					this->currentMessage = (this->currentMessage + 1) % outMessages;
-				}
 			}
 		}
 
@@ -302,7 +284,7 @@ void ResourceHandler::Update(unsigned int time)
 			messageBuffer[this->currentMessage].destination = MessageSource_CELSCRIPT;
 			messageBuffer[this->currentMessage].type = MessageType_SCRIPT;
 			messageBuffer[this->currentMessage].mess = ScriptMess_RESUME;
-			char tempBuff[]{currentMessage->senderId >> 0, currentMessage->senderId >> 8, currentMessage->senderId >> 16, currentMessage->senderId >> 24,
+			unsigned char tempBuff[]{currentMessage->senderId >> 0, currentMessage->senderId >> 8, currentMessage->senderId >> 16, currentMessage->senderId >> 24,
 				currentMessage->returnParam >> 0, currentMessage->returnParam >> 8, currentMessage->returnParam >> 16, currentMessage->returnParam >> 24,
 				outId >> 0, outId >> 8, outId >> 16, outId >> 24
 			};

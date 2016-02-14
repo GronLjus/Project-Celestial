@@ -253,6 +253,7 @@
     <ClInclude Include="ResourceHandler.h" />
     <ClInclude Include="ResourceHeader.h" />
     <ClInclude Include="RunTimeOperations.h" />
+    <ClInclude Include="ScreenTarget.h" />
     <ClInclude Include="ShadowMapConstants.h" />
     <ClInclude Include="LightParticleEmitter.h" />
     <ClInclude Include="DrawScene.h" />
@@ -344,6 +345,7 @@
     <ClCompile Include="ObjectTree.cpp" />
     <ClCompile Include="PositionableObject.cpp" />
     <ClCompile Include="ResourceHandler.cpp" />
+    <ClCompile Include="ScreenTarget.cpp" />
     <ClCompile Include="ShadowMapConstants.cpp" />
     <ClCompile Include="LightParticleEmitter.cpp" />
     <ClCompile Include="LogicScene.cpp" />

@@ -22,7 +22,7 @@ namespace CrossHandlers
 		///<summary>The first node in the list</summary>
 		CelestialDoubleListNode<T>* first;
 		CelestialDoubleListNode<T>* root;
-		int count;
+		unsigned int count;
 		unsigned int maxCount;
 		bool del;
 	};

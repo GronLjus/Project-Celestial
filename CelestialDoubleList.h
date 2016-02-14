@@ -46,7 +46,7 @@ namespace CrossHandlers
 		CelestialDoubleListNode<T>* first;
 		///<summary>The last node in the list</summary>
 		CelestialDoubleListNode<T>* last;
-		int count;
+		unsigned int count;
 		unsigned int deleteOver;
 	};
 }

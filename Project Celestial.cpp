@@ -26,33 +26,6 @@ bool lStop = false;
 
 unsigned int totalKeys = 10;
 
-enum keyCode{
-	keyCodeOmni = 0,
-	keyCodeMod = 1,
-	keyCodeAllChar = 2,
-	keyCodeShift = 3,
-	keyCodeControl = 4,
-	keyCodeAlt = 5,
-
-	keyCodeF1 = 6,
-	keyCodeF2 = 7,
-	keyCodeF3 = 8,
-	keyCodeF4 = 9,
-	keyCodeF5 = 10,
-	keyCodeF6 = 11,
-	keyCodeF7 = 12,
-	keyCodeF8 = 13,
-	keyCodeF9 = 14,
-	keyCodeF10 = 15,
-	keyCodeF11 = 16,
-	keyCodeF12 = 17,
-
-	keyCodeAnyMouse = 18,
-	keyCodeMouseL = 19,
-	keyCodeMouseR = 20,
-	keyCodeNA
-};
-
 bool lHasStopped = false;
 bool gHasStopped = false;
 std::thread gThread;
@@ -152,6 +125,17 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
  	// TODO: Place code here
 
 	messageBuffer = new Message[maxBuffer];
+
+	for (unsigned int i = 0; i < maxBuffer; i++)
+	{
+
+		messageBuffer[i].read = true;
+		messageBuffer[i].destination = MessageSource_INPUT;
+		messageBuffer[i].source = MessageSource_NA;
+		messageBuffer[i].type = MessageType_INPUT;
+
+	}
+
 	currentMsg = 0;
 
 	MSG msg = {0};
@@ -299,32 +283,33 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 
 }
 
-keyCode translateKey(WPARAM keyParam)
+Input::InputHandler::keyCode translateKey(WPARAM keyParam)
 {
 
-	keyCode retVal = 
-		keyParam == VK_SHIFT ? keyCodeShift :
-		keyParam == VK_CONTROL ? keyCodeControl :
-		keyParam == VK_MENU ? keyCodeAlt :
-
-		keyParam == VK_F1 ? keyCodeF1 :
-		keyParam == VK_F2 ? keyCodeF2 :
-		keyParam == VK_F3 ? keyCodeF3 :
-		keyParam == VK_F4 ? keyCodeF4 :
-		keyParam == VK_F5 ? keyCodeF5 :
-		keyParam == VK_F6 ? keyCodeF6 :
-		keyParam == VK_F7 ? keyCodeF7 :
-		keyParam == VK_F8 ? keyCodeF8 :
-		keyParam == VK_F9 ? keyCodeF9 :
-		keyParam == VK_F10 ? keyCodeF10 :
-		keyParam == VK_F11 ? keyCodeF11 :
-		keyParam == VK_F12 ? keyCodeF12 :
-
-		keyParam == VK_LBUTTON ? keyCodeMouseL :
-		keyParam == VK_RBUTTON ? keyCodeMouseR :
-		keyCodeNA;
+	Input::InputHandler::keyCode retVal = 
+		keyParam == VK_LBUTTON ? Input::InputHandler::keyCodeMouseL :
+		keyParam == VK_RBUTTON ? Input::InputHandler::keyCodeMouseR :
+		Input::InputHandler::keyCodeNA;
 
 	return retVal;
+
+}
+
+Message* getNextMessage()
+{
+
+	Message* messag = &messageBuffer[currentMsg];
+
+	while (!messag->read)
+	{
+
+		std::this_thread::yield();
+
+	}
+
+	messag->read = false;
+	currentMsg = (currentMsg + 1) % maxBuffer;
+	return messag;
 
 }
 //
@@ -348,14 +333,14 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	mess.lParam = lParam;
 	int x = 0; 
 	int y = 0;
-	Message* messag = &messageBuffer[currentMsg];
-	messag->source = MessageSource_NA;
-	currentMsg = (currentMsg + 1) % maxBuffer;
-	char tempBuff[]{0, 0, 0, 0};
 
+	unsigned char tempBuff[]{0, 0, 0, 0 ,0 ,0 ,0 ,0};
+	bool up = false;
+	bool right = false;
+	bool mouse = false;
 	bool charDown = false; 
-	LPARAM xPar = GET_X_LPARAM(lParam);
-	LPARAM yPar = GET_Y_LPARAM(lParam);
+	short xPar = GET_X_LPARAM(lParam);
+	short yPar = GET_Y_LPARAM(lParam);
 
 	switch (message)
 	{
@@ -394,121 +379,46 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 		break;
 	case WM_CHAR:
-
-		messag->mess = InputMess_CHARDOWN;
-		messag->destination = MessageSource_INPUT;
-		tempBuff[0] = wParam >> 0;
-		tempBuff[1] = wParam >> 8;
-		tempBuff[2] = wParam >> 16;
-		tempBuff[3] = wParam >> 24;
-		messag->SetParams(tempBuff, 0, 4);
-			
-		overlord->SendMsg(messag);
-
-		messag = &messageBuffer[currentMsg];
-		messag->source = MessageSource_NA;
-		currentMsg = (currentMsg + 1) % maxBuffer;
-
-		messag->mess = InputMess_NONCHARDOWN;
-		messag->destination = MessageSource_INPUT;
-		tempBuff[0] = keyCodeAllChar >> 0;
-		tempBuff[1] = keyCodeAllChar >> 8;
-		tempBuff[2] = keyCodeAllChar >> 16;
-		tempBuff[3] = keyCodeAllChar >> 24;
-		messag->SetParams(tempBuff, 0, 4);
-		overlord->SendMsg(messag);
-		charDown = true;
-
-		messag = &messageBuffer[currentMsg];
-		messag->source = MessageSource_NA;
-		currentMsg = (currentMsg + 1) % maxBuffer;
-		
+		break;
+	case WM_RBUTTONUP:
+		up = true;
+	case WM_RBUTTONDOWN:
+		right = true;
+		break;
+	case WM_LBUTTONUP:
+		up = true;
+	case WM_LBUTTONDOWN:
+		mouse = true;
 	case WM_KEYDOWN:
-
-		if (!charDown)
+		if (mouse)
 		{
 
-			messag->mess = InputMess_NONCHARDOWN;
-			messag->destination = MessageSource_INPUT;
-			keyCode code = translateKey(wParam);
-			tempBuff[0] = code >> 0;
-			tempBuff[1] = code >> 8;
-			tempBuff[2] = code >> 16;
-			tempBuff[3] = code >> 24;
+			Input::InputHandler::keyCode translatedKey = right ? Input::InputHandler::keyCodeMouseR : Input::InputHandler::keyCodeMouseL;
+			Message* messag = getNextMessage();
+			messag->mess = up ? InputMess_KEYUP : InputMess_KEYDWN;
+			tempBuff[0] = translatedKey >> 0;
+			tempBuff[1] = translatedKey >> 8;
+			tempBuff[2] = translatedKey >> 16;
+			tempBuff[3] = translatedKey >> 24;
 			messag->SetParams(tempBuff, 0, 4);
 			overlord->SendMsg(messag);
 
-			if (wParam == VK_SHIFT ||
-				wParam == VK_CONTROL ||
-				wParam == VK_MENU ||
-				wParam == VK_CAPITAL)
-			{
-
-				messag = &messageBuffer[currentMsg];
-				messag->source = MessageSource_NA;
-				currentMsg = (currentMsg + 1) % maxBuffer;
-
-				messag->mess = InputMess_NONCHARDOWN;
-				messag->destination = MessageSource_INPUT;
-				tempBuff[0] = keyCodeMod >> 0;
-				tempBuff[1] = keyCodeMod >> 8;
-				tempBuff[2] = keyCodeMod >> 16;
-				tempBuff[3] = keyCodeMod >> 24;
-				messag->SetParams(tempBuff, 0, 4);
-
-			}
-			else if (
-				wParam == VK_LBUTTON ||
-				wParam == VK_RBUTTON)
-			{
-
-				messag = &messageBuffer[currentMsg];
-				messag->source = MessageSource_NA;
-				currentMsg = (currentMsg + 1) % maxBuffer;
-
-				messag->mess = InputMess_NONCHARDOWN;
-				messag->destination = MessageSource_INPUT;
-				messag->SetParams(tempBuff, 0, 4);
-
-				messag = &messageBuffer[currentMsg];
-				messag->source = MessageSource_NA;
-				currentMsg = (currentMsg + 1) % maxBuffer;
-
-				messag->mess = InputMess_NONCHARDOWN;
-				messag->destination = MessageSource_INPUT;
-				tempBuff[0] = keyCodeAnyMouse >> 0;
-				tempBuff[1] = keyCodeAnyMouse >> 8;
-				tempBuff[2] = keyCodeAnyMouse >> 16;
-				tempBuff[3] = keyCodeAnyMouse >> 24;
-				messag->SetParams(tempBuff, 0, 4);
-
-			}
-
-			messag = &messageBuffer[currentMsg];
-			messag->source = MessageSource_NA;
-			currentMsg = (currentMsg + 1) % maxBuffer;
-
 		}
-
-		messag->mess = InputMess_NONCHARDOWN;
-		messag->destination = MessageSource_INPUT;
-		tempBuff[0] = keyCodeOmni >> 0;
-		tempBuff[1] = keyCodeOmni >> 8;
-		tempBuff[2] = keyCodeOmni >> 16;
-		tempBuff[3] = keyCodeOmni >> 24;
-		messag->SetParams(tempBuff, 0, 4);
-
 		break;
 	case WM_MOUSEMOVE:
-		messag->mess = InputMess_MOUSEMOVE;
-		messag->destination = MessageSource_INPUT;
-		tempBuff[0] = xPar >> 0;
-		tempBuff[1] = xPar >> 8;
-		tempBuff[2] = xPar >> 16;
-		tempBuff[3] = xPar >> 24;
-		messag->SetParams(tempBuff, 0, 4);
-		overlord->SendMsg(messag);
-		break;
+		if (xPar >= 0 && yPar >= 0)
+		{
+
+			Message* messag = getNextMessage();
+			messag->mess = InputMess_MOUSEMOVE;
+			tempBuff[0] = xPar >> 0;
+			tempBuff[1] = xPar >> 8;
+			tempBuff[2] = yPar >> 0;
+			tempBuff[3] = yPar >> 8;
+			messag->SetParams(tempBuff, 0, 8);
+			overlord->SendMsg(messag);
+			break;
+		}
 	default:
 		return DefWindowProc(hWnd, message, wParam, lParam);
 	}

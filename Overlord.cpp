@@ -97,7 +97,7 @@ HRESULT Overlord::Init(HWND hwnd)
 	mess.destination = MessageSource_RESOURCES;
 	mess.type = MessageType_RESOURCES;
 	mess.mess = ResourceMess_LOADGUI;
-	char tempBuff[]{GUIObjects_TEXTBOX >> 0, GUIObjects_TEXTBOX >> 8, GUIObjects_TEXTBOX >> 16, GUIObjects_TEXTBOX >> 24,
+	unsigned char tempBuff[]{GUIObjects_TEXTBOX >> 0, GUIObjects_TEXTBOX >> 8, GUIObjects_TEXTBOX >> 16, GUIObjects_TEXTBOX >> 24,
 		GUISnap_LEFT >> 0, GUISnap_LEFT >> 8, GUISnap_LEFT >> 16, GUISnap_LEFT >> 24,
 		GUISnap_TOP >> 0, GUISnap_TOP >> 8, GUISnap_TOP >> 16, GUISnap_TOP >> 24
 	};
@@ -149,7 +149,7 @@ HRESULT Overlord::Init(HWND hwnd)
 	guiH->Init(rH->GetObjectContainer());
 	cH->Init(rH->GetObjectContainer());
 	gBH->Init(rH->GetObjectContainer());
-	iH->Init(hwnd);
+	iH->Init(rH->GetObjectContainer());
 	pH->Init(nullptr, cam, iH);
 
 	retMess = rH->GetMessages()->PopMessage();
@@ -185,7 +185,7 @@ HRESULT Overlord::Init(HWND hwnd)
 	dbgOut->AddText("Loading root script");
 	Message mess5 = mess;
 	mess5.source = MessageSource_CELSCRIPT;
-	mess5.SetParams("TestRoot.celsrc", 0, 15);
+	mess5.SetParams((unsigned char*)"TestRoot.celsrc", 0, 15);
 	mess5.mess = ResourceMess_LOADSCRIPT;
 	rH->HandleMessage(&mess5);
 	rH->Update(0);

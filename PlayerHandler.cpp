@@ -36,7 +36,7 @@ void PlayerHandler::Init(ResourceObject* ro,ILogicCamera* cam,InputHandler* iH)
 void PlayerHandler::Update()
 {
 
-	float* movement = new float[3];
+	/*float* movement = new float[3];
 	int* moves = iH->GetMovement();
 	float* pos = iH->GetMousePos();
 	float* oldMouse = iH->GetLastMousePos();
@@ -121,7 +121,7 @@ void PlayerHandler::Update()
 	delete[] sid;
 	delete[] u;
 	delete[] movement;
-	delete[] moves;
+	delete[] moves;*/
 
 }
 

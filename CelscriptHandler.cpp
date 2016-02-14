@@ -85,7 +85,7 @@ void CelscriptHandler::Update(unsigned int time)
 		else if (currentMessage->mess == ScriptMess_ADDPARASTR)
 		{
 
-			string parString(&currentMessage->params[8]);
+			string parString((char*)(&currentMessage->params[8]));
 			runTime->AddScriptParam(param1, parString);
 
 		}

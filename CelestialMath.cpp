@@ -326,9 +326,10 @@ Vector4 CelestialMath::VectorTransform(Vector4 &vec, Matrix &mat)
 Vector3 CelestialMath::VectorTransform(Vector3 &vec, Matrix &mat)
 {
 
-	return Vector3(vec.x*mat._11 + vec.y*mat._21 + vec.z*mat._31 + 1*mat._41,
-		vec.x*mat._12 + vec.y*mat._22 + vec.z*mat._32 + 1*mat._42,
-		vec.x*mat._13 + vec.y*mat._23 + vec.z*mat._33 + 1*mat._43);
+	float w = vec.x*mat._14 + vec.y*mat._24 + vec.z*mat._34 + 1*mat._44;
+	return Vector3((vec.x*mat._11 + vec.y*mat._21 + vec.z*mat._31 + 1*mat._41)/w,
+		(vec.x*mat._12 + vec.y*mat._22 + vec.z*mat._32 + 1 * mat._42) / w,
+		(vec.x*mat._13 + vec.y*mat._23 + vec.z*mat._33 + 1 * mat._43) / w);
 
 }
 

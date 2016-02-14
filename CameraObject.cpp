@@ -11,7 +11,7 @@ CameraObject::CameraObject(unsigned int width, unsigned int height, float depth,
 
 	Vector3 sidePoint (1, 0, 0);
 	Vector3 up(0, 1, 0);
-	Vector3 lookAtPoint(0, 0, 1);
+	Vector3 lookAtPoint(0, 0, 0);
 	fov = CELESTIAL_PI*0.25f;
 
 	ViewObject::ViewPort port;
@@ -25,8 +25,8 @@ CameraObject::CameraObject(unsigned int width, unsigned int height, float depth,
 	Message mess = Message();
 	mess.type = MessageType_OBJECT;
 	mess.mess = ObjectMess_MOVE;
-	char tempBuff[]{5 >> 0, 5 >> 8, 5 >> 16, 5 >> 24,
-		5 >> 0, 5 >> 8, 5 >> 16, 5 >> 24,
+	unsigned char tempBuff[]{0 >> 0, 0 >> 8, 5 >> 16, 5 >> 24,
+		0 >> 0, 0 >> 8, 0 >> 16, 0 >> 24,
 		5 >> 0, 5 >> 8, 5 >> 16, 5 >> 24
 	};
 	mess.SetParams(tempBuff, 0, 12);

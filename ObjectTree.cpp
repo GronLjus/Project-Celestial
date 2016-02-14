@@ -76,21 +76,25 @@ unsigned int ObjectTree::GetClosestObject(Vector3 origin, Vector3 unitDirection,
 
 			float dist = 0;
 
-			if (subTrees[i]->GetBox()->IntersectsLine(origin,unitDirection,dist) != Intersection_BACK)
+			if (subTrees[i]->GetObjects() > 0)
 			{
 
-				if (smallestDistance == 0 || smallestDistance >= dist)
+				if (subTrees[i]->GetBox()->IntersectsLine(origin,unitDirection,dist) != Intersection_BACK)
 				{
 
-					dist = 0;
-					unsigned int closestObject = subTrees[i]->GetClosestObject(origin, unitDirection, dist);
-
-					if (dist < smallestDistance || smallestDistance == 0)
+					if (smallestDistance == 0 || smallestDistance >= dist)
 					{
 
-						closedObject = closestObject;
-						smallestDistance = dist;
+						dist = 0;
+						unsigned int closestObject = subTrees[i]->GetClosestObject(origin, unitDirection, dist);
 
+						if (dist < smallestDistance || smallestDistance == 0)
+						{
+
+							closedObject = closestObject;
+							smallestDistance = dist;
+
+						}
 					}
 				}
 			}

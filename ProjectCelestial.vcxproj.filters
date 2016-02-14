@@ -663,6 +663,9 @@
     <ClInclude Include="GraphicalMesh.h">
       <Filter>Header Files\Graphics</Filter>
     </ClInclude>
+    <ClInclude Include="ScreenTarget.h">
+      <Filter>Header Files\Resources\Objects</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Camera.cpp">
@@ -904,6 +907,9 @@
     </ClCompile>
     <ClCompile Include="GraphicalMesh.cpp">
       <Filter>Source Files\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="ScreenTarget.cpp">
+      <Filter>Source Files\Resources\Objects</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

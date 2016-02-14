@@ -39,8 +39,6 @@ namespace CelestialMath
 		vectorUI2(){}
 		vectorUI2(unsigned int x, unsigned int y) : x(x), y(y){}
 
-		vectorUI2 operator - () const{ return vectorUI2(-x, -y); }
-
 		vectorUI2 operator + (const vectorUI2& vec) const{ return vectorUI2(x + vec.x, y + vec.y); }
 		vectorUI2 operator - (const vectorUI2& vec) const{ return vectorUI2(x - vec.x, y - vec.y); }
 		vectorUI2 operator * (const vectorUI2& vec) const{ return vectorUI2(x * vec.x, y * vec.y); }
