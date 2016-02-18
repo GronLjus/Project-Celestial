@@ -195,41 +195,40 @@ Intersection BoundingBox::IntersectsLine(Vector3 origin, Vector3 direction, floa
 						{
 
 							bool foundSmallest = false;
+
+							for (unsigned char i = 0; i < 6; i++)
+							{
+								if (distances[i] < smallestDistanceSquare || smallestDistanceSquare == 0)
+								{
+
+									smallestDistanceSquare = distances[i];
+									foundSmallest = true;
+
+								}
+							}
+
 							//The line crosses all planes
 							//Sort hits by distance or if the line starts in front of a plane 
 							for (unsigned char i = 0; i < 6; i++)
 							{
 
-								for (unsigned char k = i + 1; k < 6; k++)
+								for (unsigned char k = i + 1; k < 6 && (inters[i] != Intersection_FRONT); k++)
 								{
-
-									if (inters[i] != Intersection_FRONT)
+									if (inters[k] == Intersection_FRONT || distances[k] < distances[i])
 									{
 
-										if (distances[i] < smallestDistanceSquare || smallestDistanceSquare == 0)
-										{
+										char dimTemp = dims[k];
+										Intersection interTemp = inters[k];
+										float distanceTemp = distances[k];
 
-											smallestDistanceSquare = distances[i];
-											foundSmallest = true;
+										dims[k] = dims[i];
+										inters[k] = inters[i];
+										distances[k] = distances[i];
 
-										}
+										dims[i] = dimTemp;
+										inters[i] = interTemp;
+										distances[i] = distanceTemp;
 
-										if (inters[k] == Intersection_FRONT || distances[k] < distances[i]);
-										{
-
-											char dimTemp = dims[k];
-											Intersection interTemp = inters[k];
-											float distanceTemp = distances[k];
-
-											dims[k] = dims[i];
-											inters[k] = inters[i];
-											distances[k] = inters[i];
-
-											dims[i] = dimTemp;
-											inters[i] = interTemp;
-											distances[i] = distanceTemp;
-
-										}
 									}
 								}
 							}
@@ -247,7 +246,7 @@ Intersection BoundingBox::IntersectsLine(Vector3 origin, Vector3 direction, floa
 							bool hitz = false;
 							bool outside = false;
 
-							for (unsigned char i = 0; i < 6 && !outside && !hitx && !hity && hitz; i++)
+							for (unsigned char i = 0; i < 6 && (!outside && ( !hitx || !hity || !hitz)); i++)
 							{
 
 								if (dims[i] == 'x')

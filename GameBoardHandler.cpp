@@ -60,7 +60,7 @@ void GameBoardHandler::UpdateMessages(unsigned int time)
 			float screenY = ((float)mouseY) / (float)(cam->GetView()->GetPort().height);
 			screenX = 2 * screenX - 1;
 			screenY = 2 * screenY - 1;
-			float screenZ = cam->GetView()->GetPort().minDepth;
+			float screenZ = 0;// cam->GetView()->GetPort().minDepth;
 
 			Vector3 worldPoint = VectorTransform(Vector3(screenX, screenY, screenZ), cam->GetView()->GetInverseViewProjection(cam->GetFlip()));
 			Vector3 direction = worldPoint - cam->GetPosition();
