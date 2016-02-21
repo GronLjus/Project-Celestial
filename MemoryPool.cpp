@@ -8,7 +8,7 @@ using namespace CrossHandlers;
 MemoryPool::MemoryPool(unsigned int pageSize)
 {
 
-	memoryA = new CelestialSlicedList<unsigned char>(pageSize);
+	memoryA = new CelestialSlicedList<unsigned char>(pageSize,0);
 	variables = new CelestialSlicedList<memBlock>(100);
 	holeVal = 0;
 	adrLast = 0;
@@ -27,8 +27,6 @@ void MemoryPool::resortHoles(unsigned char pivot)
 		memBlock temp = holes[pivot];
 		holes[pivot] = holes[pivot - 1];
 		holes[pivot - 1] = temp;
-		memoryA->Add(pivot + 1, temp.place);
-		memoryA->Add(pivot + 1, temp.place + temp.length);
 		pivot--;
 
 	}
@@ -39,14 +37,9 @@ void MemoryPool::resortHoles(unsigned char pivot)
 		memBlock temp = holes[pivot];
 		holes[pivot] = holes[pivot + 1];
 		holes[pivot + 1] = temp;
-		memoryA->Add(pivot + 1, temp.place);
-		memoryA->Add(pivot + 1, temp.place + temp.length);
 		pivot++;
 
 	}
-
-	memoryA->Add(pivot + 1, pivBlock.place);
-	memoryA->Add(pivot + 1, pivBlock.place + pivBlock.length);
 
 	if (holes[pivot].length == 0)
 	{
@@ -60,26 +53,34 @@ unsigned int MemoryPool::findAddress(unsigned int var, unsigned int valSize)
 {
 
 	memBlock varMem = variables->GetValue(var);
-	unsigned int adress = varMem.place;
-	bool varExists = varMem.length > 0;
+	unsigned int adress = varMem.length > 0 ? varMem.place : adrLast;
+	unsigned char rightHole = 0;
+	unsigned char leftHole = 0;
+	unsigned char suitableHole = 0;
 
-	if (varMem.length == valSize)
+	for (unsigned char i = 0; i < holeVal && (suitableHole == 0 || rightHole == 0 || (leftHole == 0 && varMem.place > 0)); i++)//Find possible holes
 	{
 
-		adress = varMem.place;
-
+		if (holes[i].place == varMem.place + varMem.length)
+		{rightHole = i + 1;}
+		else if (varMem.place > 0 && holes[i].place + holes[i].length == varMem.place - 1)
+		{leftHole = i + 1;}
+		else if (holes[i].length >= valSize && (suitableHole == 0 || holes[i].length < holes[suitableHole-1].length))
+		{suitableHole = i + 1;}
 	}
-	else if (varMem.length > valSize)
+
+	if (varMem.length > valSize)//We need to shrink the memory block
 	{
 
-		adress = varMem.place;
-		unsigned char rightVal = memoryA->GetValue(varMem.place + varMem.length + 3);
+		unsigned char holeValue = 0;
 
-		if (rightVal != 0)//Expand Hole
+		if (rightHole != 0)//Expand Hole
 		{
 
-			holes[rightVal - 1].length += varMem.length - valSize;
-			resortHoles(rightVal - 1);
+			holeValue = rightHole - 1;
+			holes[rightHole - 1].length += varMem.length - valSize;
+			holes[rightHole - 1].place -= varMem.length - valSize;
+
 
 		}
 		else//Create new Hole
@@ -87,98 +88,68 @@ unsigned int MemoryPool::findAddress(unsigned int var, unsigned int valSize)
 
 			memBlock newHole;
 			newHole.length = varMem.length - valSize;
-			newHole.place = varMem.place + valSize + 3;
-
-			holeVal += holeVal == 255 ? 0 : 1;
+			newHole.place = varMem.place + valSize;
+			holeValue = holeVal;
 			holes[holeVal] = newHole;
-
-			memoryA->Add(holeVal, newHole.place);
-			memoryA->Add(holeVal, newHole.place+newHole.length-1);
-
-			resortHoles(holeVal);
+			holeVal += holeVal == 254 ? 0 : 1;
 
 		}
+
+		resortHoles(holeValue);
+
 	}
-	else if (varMem.place + valSize + 2 != adrLast)
+	else if (valSize > varMem.length)//We need to expand the memory block or move it
 	{
 
-		unsigned int size = valSize + 2;
-		adress = adrLast;
-		
-		if (holes[0].length >= size)
+		unsigned char leftSize = leftHole != 0 ? holes[leftHole - 1].length : 0;
+		unsigned char rightSize = rightHole != 0 ? holes[rightHole - 1].length : 0;
+
+		if (rightSize >= valSize-varMem.length)//We only need to eat the right hole
+		{
+
+			holes[rightHole - 1].length -= valSize - varMem.length;
+			holes[rightHole - 1].place += valSize - varMem.length;
+			resortHoles(rightHole - 1);
+
+		}
+		else if (leftSize >= valSize - varMem.length)//We only need to eat the left hole
+		{
+
+			holes[leftHole - 1].length -= valSize - varMem.length;
+			adress = holes[leftHole - 1].place + holes[leftHole - 1].length + 1;
+			resortHoles(leftHole - 1);
+
+		}
+		else if (leftSize + rightSize >= valSize - varMem.length)//We need to eat both
+		{
+
+			adress = holes[leftHole - 1].place;
+			unsigned char toEat = valSize - (holes[leftHole - 1].length + varMem.length);
+			holes[leftHole - 1].length = 0;
+			resortHoles(leftHole - 1);
+
+			holes[rightHole - 1].length -= toEat;
+			holes[rightHole - 1].place += toEat;
+			resortHoles(rightHole - 1);
+
+		}
+		else if(suitableHole != 0)//There are no nearby holes to eat but one further away
 		{
 
 			unsigned char hole = 0;
-
-			while (hole < holeVal && holes[hole].length > size) { hole++; }
-
-			adress = holes[hole].place;
-			holes[hole].length -= valSize;
-			holes[hole].place += valSize;
-
-			if (holes[hole].length > 0)
-			{
-
-				memoryA->Add(hole - 1, holes[hole].place);
-
-			}
-
-			resortHoles(hole);
+			adress = holes[suitableHole - 1].place;
+			holes[suitableHole - 1].length -= valSize;
+			holes[suitableHole - 1].place += valSize;
+			resortHoles(suitableHole - 1);
 
 		}
-
-		if(varExists)
+		else if (adress != adrLast)//Move the block to the end of the memory
 		{
 
-			unsigned char rightNeighbour = memoryA->GetValue(varMem.place + valSize + 3);
-			unsigned char leftNeighbour = memoryA->GetValue(varMem.place - 1);
+			adress = adrLast;
+			holeVal += holeVal == 254 ? 0 : 1;
+			holes[holeVal] = varMem;
 
-			if (rightNeighbour == 0 && leftNeighbour == 0)
-			{
-
-				memBlock newHole;
-				newHole.length = varMem.length;
-				newHole.place = varMem.place;
-
-				holeVal += holeVal == 255 ? 0 : 1;
-				holes[holeVal] = newHole;
-
-				memoryA->Add(holeVal, newHole.place);
-				memoryA->Add(holeVal, newHole.place + newHole.length - 1);
-				resortHoles(holeVal);
-
-			}
-			else if (rightNeighbour != 0 && leftNeighbour == 0)
-			{
-
-				memoryA->Add(rightNeighbour, varMem.place);
-				holes[rightNeighbour - 1].length += varMem.length + 2;
-				holes[rightNeighbour - 1].place = varMem.place;
-				resortHoles(rightNeighbour - 1);
-
-			}
-			else if (rightNeighbour == 0 && leftNeighbour != 0)
-			{
-
-				memoryA->Add(leftNeighbour, varMem.place+varMem.length+2);
-				holes[leftNeighbour - 1].length += varMem.length+2;
-				resortHoles(leftNeighbour - 1);
-
-			}
-			else
-			{
-
-				holes[leftNeighbour - 1].length += varMem.length + 
-					holes[rightNeighbour - 1].length +
-					2;
-
-				memoryA->Add(leftNeighbour - 1, holes[leftNeighbour - 1].place);
-				memoryA->Add(leftNeighbour - 1, holes[leftNeighbour - 1].place + holes[leftNeighbour - 1].length - 1);
-				resortHoles(leftNeighbour - 1);
-				holes[rightNeighbour - 1].length = 0;
-				resortHoles(rightNeighbour - 1);
-
-			}
 		}
 	}
 
@@ -191,17 +162,14 @@ MemErrorCode MemoryPool::AddVariable(unsigned int var, unsigned char* val, unsig
 
 	MemErrorCode err = ErrorCode_OK;
 
-	unsigned int adress = findAddress(var, valSize+2);
+	unsigned int adress = findAddress(var, valSize);
 
 	if (adress == adrLast)
 	{
 
-		adrLast += valSize + 2;
+		adrLast += valSize;
 
 	}
-
-	memoryA->Add(0, adress);
-	memoryA->Add(0, adress+valSize+2);
 
 	memBlock varMem = variables->GetValue(var);
 	varMem.place = adress;
@@ -218,7 +186,7 @@ void MemoryPool::writeData(unsigned int var, unsigned int bytes, unsigned char* 
 
 	memBlock mem = variables->GetValue(var);
 	unsigned int totalBytes = bytes;
-	unsigned int globalPlace = mem.place + 1;
+	unsigned int globalPlace = mem.place;
 
 	while (totalBytes > 0)
 	{
@@ -242,7 +210,7 @@ MemErrorCode MemoryPool::readData(unsigned int var, unsigned int offset, unsigne
 	memBlock mem = variables->GetValue(var);
 
 	unsigned int totalBytes = bytes;
-	unsigned int globalPlace = mem.place+1+offset;
+	unsigned int globalPlace = mem.place+offset;
 
 	while (totalBytes > 0)
 	{
@@ -286,7 +254,7 @@ MemErrorCode MemoryPool::CopyVariable(unsigned int dst, unsigned int src)
 	memBlock mem = variables->GetValue(src);
 
 	unsigned int totalBytes = mem.length;
-	unsigned int globalPlace = mem.place + mem.length + 2;
+	unsigned int globalPlace = mem.place + mem.length;
 
 	while (totalBytes > 0)
 	{

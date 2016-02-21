@@ -1,7 +1,6 @@
 #pragma once
 #include "BaseObject.h"
 #include "CelestialMath.h"
-#include "Message.h"
 
 namespace Resources
 {

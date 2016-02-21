@@ -5,6 +5,7 @@ $
 }
 
 testPar = load script 'TestRoot2.celsrc'
+testClick = load script 'TestClick.celsrc'
 testPar2 = load gameboard 1024
 tile = load mesh 'Tile.obj'
 cam = load camera
@@ -15,3 +16,4 @@ set gameboard testPar2
 add mesh tile
 add object tileObj
 set camera cam
+set leftclick tileObj testClick

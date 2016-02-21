@@ -20,7 +20,7 @@ namespace Resources
 			int maxCodeSize;
 			///<summary>The scripts offset</summary>
 			int offset;
-
+			virtual void Update(CrossHandlers::Message* mess){}
 			unsigned int* systemParams;
 			unsigned int* paramAdrDic;
 			unsigned int* stringParamAdrDic;

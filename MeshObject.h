@@ -956,6 +956,8 @@ namespace Resources
 			///<param name='copy'>[in]A pointer to the meshobject to copy from</param>
 			///<param name='id'>[in]The unique id of the mesh</param>
 			MeshObject(MeshObject*& copy,int id);
+
+			virtual void Update(CrossHandlers::Message* mess){}
 			///<summary>Gets all groups in use by this mesh</summary>
 			///<returns>An array of pointers to groups</returns>
 			Group** getGroups();

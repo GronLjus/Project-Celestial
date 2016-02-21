@@ -408,6 +408,7 @@
     <None Include="Terrain.trn" />
     <None Include="Testball.fbx" />
     <None Include="testBin.celbin" />
+    <None Include="TestClick.celsrc" />
     <None Include="TestRoot.celsrc" />
     <None Include="TestRoot2.celsrc" />
     <None Include="TestScript.celsrc" />

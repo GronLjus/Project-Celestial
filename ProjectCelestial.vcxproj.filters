@@ -1024,6 +1024,9 @@
     <None Include="TestRoot2.celsrc">
       <Filter>Source Files\Scripts</Filter>
     </None>
+    <None Include="TestClick.celsrc">
+      <Filter>Source Files\Scripts</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Project Celestial.rc">

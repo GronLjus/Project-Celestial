@@ -8,7 +8,8 @@ namespace Resources
 
 	class KeyTrigger : public BaseObject
 	{
-		public:
+	public:
+		virtual void Update(CrossHandlers::Message* mess){}
 			unsigned int scriptToRun;
 			unsigned int keyCode;
 			bool charTrigg;

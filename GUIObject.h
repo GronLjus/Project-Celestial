@@ -15,6 +15,7 @@ namespace Resources
 
 		public:
 			GUIObject();
+			virtual void Update(CrossHandlers::Message* mess){}
 			///<summary>Gets how the object should snap horizontally</summary>
 			///<returns>How the object should snap</returns>
 			GUISnap GetHorizontalSnap();

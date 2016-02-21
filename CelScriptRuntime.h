@@ -23,7 +23,8 @@ namespace Logic
 		unsigned int outMessages;
 		unsigned int outParam;
 		unsigned int stack;
-		unsigned int boundObject;
+		unsigned int boundObject; 
+		CrossHandlers::CelestialSlicedList<Resources::BaseObject*>* gameObjects;
 		///<summary>The array of bytes to use for loading ints</summary>
 		unsigned char* intLoader = new unsigned char[4];
 		///<summary>The maximum size of the stringloader</summary>
