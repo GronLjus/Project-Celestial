@@ -42,10 +42,10 @@ void PositionableObject::Update(Message* mess)
 			position += Vector3(param1, param2, param3);
 			break;
 		case ObjectMess_SETRCSCRPT:
-			rightClickScript = param1;
+			rightClickScript = param1+1;
 			break;
 		case ObjectMess_SETLCSCRPT:
-			leftClickScript = param1;
+			leftClickScript = param1+1;
 			break;
 
 		}

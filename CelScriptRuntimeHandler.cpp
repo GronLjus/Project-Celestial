@@ -1503,9 +1503,16 @@ RunTimeError CelScriptRuntimeHandler::AddScriptParam(int scriptId, int value)
 
 	unsigned int par = scriptNumParams->GetValue(script->GetScriptId() - 1);
 	unsigned int parPlace = script->GetAdr(par, false);
-	scriptNumParams->Add(par + 1, script->GetScriptId() - 1);
-	unsigned char charArr[4]{value >> 0, value >> 8, value >> 16, value >> 24 };
-	rtc->GetValue(script->GetScriptId() - 1)->memory->AddVariable(parPlace - 1, charArr, 4);
+
+	if (parPlace != 0)
+	{
+
+		scriptNumParams->Add(par + 1, script->GetScriptId() - 1);
+		unsigned char charArr[4]{value >> 0, value >> 8, value >> 16, value >> 24 };
+		rtc->GetValue(script->GetScriptId() - 1)->memory->AddVariable(parPlace - 1, charArr, 4);
+
+	}
+
 	return er;
 
 }
@@ -1516,24 +1523,29 @@ RunTimeError CelScriptRuntimeHandler::AddScriptParam(int scriptId, std::string v
 	CelScriptCompiled* script = (CelScriptCompiled*)gameObjects->GetValue(scriptId);
 	RunTimeError er = initScript(script, scriptId);
 
-	unsigned int par = scriptStrParams->GetValue(script->GetScriptId()-1);
+	unsigned int par = scriptStrParams->GetValue(script->GetScriptId() - 1);
 	unsigned int parPlace = script->GetAdr(par, true);
-	scriptStrParams->Add(par + 1, script->GetScriptId() - 1);
-	unsigned char* charArr = new unsigned char[value.length() + 4];
-	charArr[0] = value.length() >> 0; 
-	charArr[1] = value.length() >> 8; 
-	charArr[2] = value.length() >> 16;
-	charArr[3] = value.length() >> 24;
-	
-	for (unsigned int i = 4; i < 4 + value.length(); i++)
-	{
-		
-		charArr[i] = value[i - 4];
 
+	if (parPlace != 0)
+	{
+		scriptStrParams->Add(par + 1, script->GetScriptId() - 1);
+		unsigned char* charArr = new unsigned char[value.length() + 4];
+		charArr[0] = value.length() >> 0;
+		charArr[1] = value.length() >> 8;
+		charArr[2] = value.length() >> 16;
+		charArr[3] = value.length() >> 24;
+
+		for (unsigned int i = 4; i < 4 + value.length(); i++)
+		{
+
+			charArr[i] = value[i - 4];
+
+		}
+
+		rtc->GetValue(script->GetScriptId() - 1)->memory->AddVariable(parPlace - 1, charArr, value.length() + 4);
+		delete[] charArr;
 	}
 
-	rtc->GetValue(script->GetScriptId() - 1)->memory->AddVariable(parPlace - 1, charArr, value.length() + 4);
-	delete[] charArr;
 	return er;
 
 }
@@ -1557,8 +1569,6 @@ RunTimeError CelScriptRuntimeHandler::commonScripts(unsigned int end, RunTimeCom
 		if (thisRtc->status == scriptStatus_RUNOTHERSCRIPT)
 		{
 
-			scriptNumParams->Add(0, (thisRtc->intLoader[0] | ((int)thisRtc->intLoader[1] << 8) | ((int)thisRtc->intLoader[2] << 16) | ((int)thisRtc->intLoader[3] << 24)));
-			scriptStrParams->Add(0, (thisRtc->intLoader[0] | ((int)thisRtc->intLoader[1] << 8) | ((int)thisRtc->intLoader[2] << 16) | ((int)thisRtc->intLoader[3] << 24)));
 			er = RunTimeError_HALT;
 			thisRtc->counter++;
 
@@ -1619,6 +1629,7 @@ RunTimeError CelScriptRuntimeHandler::RunScript(int id,unsigned int stackId, uns
 	if (script != nullptr && thisRtc != nullptr)
 	{
 
+
 		if (thisRtc->status == scriptStatus_PRIMED)
 		{
 
@@ -1631,11 +1642,14 @@ RunTimeError CelScriptRuntimeHandler::RunScript(int id,unsigned int stackId, uns
 				rtc->GetValue(script->GetScriptId() - 1)->memory->AddVariable(parPlace - 1, charArr, 4);
 
 			}
+
+			scriptNumParams->Add(0, script->GetScriptId() - 1);
+			scriptStrParams->Add(0, script->GetScriptId() - 1);
+
 		}
 
 		RunTimeError er = commonScripts(script->GetCodeSize(), thisRtc, script);
 		return abort ? RunTimeError_ABORT : er;
-
 	}
 
 	return RunTimeError_OHNO;

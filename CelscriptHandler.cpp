@@ -48,13 +48,14 @@ void CelscriptHandler::Update(unsigned int time)
 
 				if (scriptStacks->GetValue(chosenStack) == nullptr)
 				{
-
+					
 					ScriptStack* newStack = new ScriptStack();
 					newStack->stack = new CelestialStack<unsigned int>(false);
 					scriptStacks->Add(newStack);
 
 				}
 
+				
 				reverseStacks->Add(chosenStack, param1);
 				ScriptStack* stack = scriptStacks->GetValue(chosenStack);
 				stack->sleep = 0;
@@ -62,6 +63,8 @@ void CelscriptHandler::Update(unsigned int time)
 				stack->status = stackStatus_PREPPED;
 
 			}
+
+
 		}
 		else if (currentMessage->mess == ScriptMess_RUNFROM)
 		{
@@ -85,13 +88,12 @@ void CelscriptHandler::Update(unsigned int time)
 		else if (currentMessage->mess == ScriptMess_ADDPARASTR)
 		{
 
-			string parString((char*)(&currentMessage->params[8]));
+			string parString((char*)(&currentMessage->params[4]));
 			runTime->AddScriptParam(param1, parString);
 
 		}
 		else if (currentMessage->mess == ScriptMess_ADDPARNUM)
 		{
-
 			unsigned int param2 = currentMessage->params[4] | ((int)currentMessage->params[5] << 8) | ((int)currentMessage->params[6] << 16) | ((int)currentMessage->params[7] << 24);
 			runTime->AddScriptParam(param1, param2);
 
@@ -107,7 +109,7 @@ void CelscriptHandler::Update(unsigned int time)
 
 		ScriptStack* stack = scriptStacks->GetValue(i);
 
-		if (scriptStacks->GetValue(i)->sleep == 0 && stack->status == stackStatus_PREPPED)
+		if (stack->sleep == 0 && stack->status == stackStatus_PREPPED)
 		{
 
 			stack->status = stackStatus_RUNNING;

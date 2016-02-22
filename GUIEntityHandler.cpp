@@ -44,14 +44,14 @@ void GUIEntityHandler::Update(unsigned int time)
 				if (currentMessage->mess == GUIMess_POST)
 				{
 
-					std::string stringParam((char*)currentMessage->params);
+					std::string stringParam((char*)(&currentMessage->params[4]));
 					obj->AddText(stringParam);
 
 				}
 				else if (currentMessage->mess == GUIMess_APPEND)
 				{
 
-					std::string stringParam((char*)currentMessage->params);
+					std::string stringParam((char*)(&currentMessage->params[4]));
 					obj->AppendText(stringParam);
 
 				}

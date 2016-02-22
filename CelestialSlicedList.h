@@ -1,5 +1,5 @@
 #pragma once
-#include "CelestialDoubleList.h"
+#include "CelestialStack.h"
 
 namespace CrossHandlers
 {
@@ -69,7 +69,7 @@ namespace CrossHandlers
 
 			T* base;
 			///<summary>Where the holes are</summary>
-			CelestialDoubleList<unsigned int>* holes;
+			CelestialStack<unsigned int>* holes;
 	};
 }
 
@@ -79,7 +79,7 @@ template <class T>
 CelestialSlicedList<T>::CelestialSlicedList(unsigned int sliceSize)
 {
 
-	holes = new CelestialDoubleList<unsigned int>(sliceSize);
+	holes = new CelestialStack<unsigned int>(false);
 	maxSliceSize = sliceSize;
 	slice = 0;
 	maxSlices = 10;
@@ -294,7 +294,7 @@ void CelestialSlicedList<T>::Remove(unsigned int id)
 
 	unsigned int slice = id / maxSliceSize;
 	list[slice][TransformId(id)] = nullptr;
-	holes->AddElement(id);
+	holes->PushElement(id);
 
 }
 
@@ -309,7 +309,7 @@ void CelestialSlicedList<T>::Kill(unsigned int id)
 
 		delete list[slice][TransformId(id)];
 		list[slice][TransformId(id)] = nullptr;
-		holes->AddElement(id);
+		holes->PushElement(id);
 
 	}
 }

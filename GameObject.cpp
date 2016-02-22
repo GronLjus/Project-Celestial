@@ -18,9 +18,11 @@ GameObject::GameObject(BoundingBox* box, BoundingSphere* baseSphere, unsigned in
 void GameObject::Update(Message* mess)
 {
 
-	//DOSTUFF
+	PositionableObject::Update(mess);
 
-}bool GameObject::IsFlipBuffered(unsigned char flip)
+}
+
+bool GameObject::IsFlipBuffered(unsigned char flip)
 {
 
 	if (!flipInit || flip != flipBuffered)
