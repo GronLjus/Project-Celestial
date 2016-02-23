@@ -517,7 +517,8 @@ CelScriptAnalyzer::operatorParams CelScriptAnalyzer::analyzeOperatorParams(Compi
 			newSyn.type = SyntaxType_CONST;
 			newSyn.val = val.val;
 
-			VarType type = newSyn.val[0] == 's' ? VarType_STRING : VarType_NUMBER;
+			VarType type = newSyn.val[0] == 's' ? VarType_STRING : 
+				newSyn.val[0] == 'f' ? VarType_FLOAT : VarType_NUMBER;
 
 			newtree->AddLeaf(new CelestialTreeNode<syntax>(newSyn, newtree));
 			retParams.sigAddrr[retParams.param] = -1;
@@ -702,89 +703,93 @@ CelScriptAnalyzer::operatorParams CelScriptAnalyzer::expandTree(CompileError &er
 			if (!operators[op].parOperatorAppend[ops.opVar][iMod])
 			{
 
-				syntax newSyn;
-				newOps[nrOfNewChildren] = operators[op].parOperators[ops.opVar][operators[op].parOperator[ops.opVar][iMod] - 1];
-				newSyn.type = SyntaxType_OPERATORNA;
-				newSyn.val = operators[newOps[nrOfNewChildren]].keyword;
-				newChildren[nrOfNewChildren] = new CelestialTreeNode<syntax>(newSyn, newtree);
-				newChildren[nrOfNewChildren]->AddLeaf(parameter->GetNodeObject());
-				parameter->SetNodeObject(newChildren[nrOfNewChildren]);
-				newOpTable[nrOfNewChildren].param = 1;
-				ops.sigAddrr[i] = -1;
-				CelestialListNode<CelestialTreeNode<syntax>*>* kParameter = newtree->GetLeafs()->GetFirstNode();
-
-				for (unsigned int k = 0; k < ops.param; k++)
+				if (operators[op].parOperator[ops.opVar][iMod] > 0)
 				{
 
-					unsigned int kMod = k < operators[op].params[ops.opVar] ? k : operators[op].params[ops.opVar] - 1;
+					syntax newSyn;
+					newOps[nrOfNewChildren] = operators[op].parOperators[ops.opVar][operators[op].parOperator[ops.opVar][iMod] - 1];
+					newSyn.type = SyntaxType_OPERATORNA;
+					newSyn.val = operators[newOps[nrOfNewChildren]].keyword;
+					newChildren[nrOfNewChildren] = new CelestialTreeNode<syntax>(newSyn, newtree);
+					newChildren[nrOfNewChildren]->AddLeaf(parameter->GetNodeObject());
+					parameter->SetNodeObject(newChildren[nrOfNewChildren]);
+					newOpTable[nrOfNewChildren].param = 1;
+					ops.sigAddrr[i] = -1;
+					CelestialListNode<CelestialTreeNode<syntax>*>* kParameter = newtree->GetLeafs()->GetFirstNode();
 
-					if (operators[op].parOperatorAppend[ops.opVar][kMod])
+					for (unsigned int k = 0; k < ops.param; k++)
 					{
 
-						CelestialTreeNode<syntax>* syn = analyzeSyntaxNode(err, kParameter->GetNodeObject());
-						syn->SetParent(newChildren[nrOfNewChildren]);
-						newChildren[nrOfNewChildren]->AddLeaf(syn);
-						newOpTable[nrOfNewChildren].param++;
+						unsigned int kMod = k < operators[op].params[ops.opVar] ? k : operators[op].params[ops.opVar] - 1;
+
+						if (operators[op].parOperatorAppend[ops.opVar][kMod])
+						{
+
+							CelestialTreeNode<syntax>* syn = analyzeSyntaxNode(err, kParameter->GetNodeObject());
+							syn->SetParent(newChildren[nrOfNewChildren]);
+							newChildren[nrOfNewChildren]->AddLeaf(syn);
+							newOpTable[nrOfNewChildren].param++;
+
+						}
+
+						kParameter = kParameter->GetNext();
 
 					}
 
-					kParameter = kParameter->GetNext();
 
-				}
+					newOpTable[nrOfNewChildren].sigType = new VarType[newOpTable[nrOfNewChildren].param];
+					newOpTable[nrOfNewChildren].sigSource = new ParamType[newOpTable[nrOfNewChildren].param];
+					newOpTable[nrOfNewChildren].sigAddrr = new int[newOpTable[nrOfNewChildren].param];
 
+					newOpTable[nrOfNewChildren].opVar = 0;
+					newOpTable[nrOfNewChildren].hasEnum = false;
+					newOpTable[nrOfNewChildren].param = 0;
 
-				newOpTable[nrOfNewChildren].sigType = new VarType[newOpTable[nrOfNewChildren].param];
-				newOpTable[nrOfNewChildren].sigSource = new ParamType[newOpTable[nrOfNewChildren].param];
-				newOpTable[nrOfNewChildren].sigAddrr = new int[newOpTable[nrOfNewChildren].param];
+					newOpTable[nrOfNewChildren].sigAddrr[newOpTable[nrOfNewChildren].param] = ops.sigAddrr[i];
+					newOpTable[nrOfNewChildren].sigSource[newOpTable[nrOfNewChildren].param] = ops.sigSource[i];
+					newOpTable[nrOfNewChildren].sigType[newOpTable[nrOfNewChildren].param] = ops.sigType[i];
+					newOpTable[nrOfNewChildren].param = 1;
 
-				newOpTable[nrOfNewChildren].opVar = 0;
-				newOpTable[nrOfNewChildren].hasEnum = false;
-				newOpTable[nrOfNewChildren].param = 0;
-
-				newOpTable[nrOfNewChildren].sigAddrr[newOpTable[nrOfNewChildren].param] = ops.sigAddrr[i];
-				newOpTable[nrOfNewChildren].sigSource[newOpTable[nrOfNewChildren].param] = ops.sigSource[i];
-				newOpTable[nrOfNewChildren].sigType[newOpTable[nrOfNewChildren].param] = ops.sigType[i];
-				newOpTable[nrOfNewChildren].param = 1;
-
-				for (unsigned int k = 0; k < ops.param; k++)
-				{
-
-					unsigned int kMod = k < operators[op].params[ops.opVar] ? k : operators[op].params[ops.opVar] - 1;
-
-					if (operators[op].parOperatorAppend[ops.opVar][kMod])
+					for (unsigned int k = 0; k < ops.param; k++)
 					{
 
-						newOpTable[nrOfNewChildren].sigAddrr[newOpTable[nrOfNewChildren].param] = ops.sigAddrr[k];
-						newOpTable[nrOfNewChildren].sigSource[newOpTable[nrOfNewChildren].param] = ops.sigSource[k];
-						newOpTable[nrOfNewChildren].sigType[newOpTable[nrOfNewChildren].param] = ops.sigType[k];
-						newOpTable[nrOfNewChildren].param++;
+						unsigned int kMod = k < operators[op].params[ops.opVar] ? k : operators[op].params[ops.opVar] - 1;
+
+						if (operators[op].parOperatorAppend[ops.opVar][kMod])
+						{
+
+							newOpTable[nrOfNewChildren].sigAddrr[newOpTable[nrOfNewChildren].param] = ops.sigAddrr[k];
+							newOpTable[nrOfNewChildren].sigSource[newOpTable[nrOfNewChildren].param] = ops.sigSource[k];
+							newOpTable[nrOfNewChildren].sigType[newOpTable[nrOfNewChildren].param] = ops.sigType[k];
+							newOpTable[nrOfNewChildren].param++;
+
+						}
+					}
+
+					if (err.errorType == ScriptError_OK)
+					{
+
+						newOpTable[nrOfNewChildren] = getOperatorVariation(err, line, newOps[nrOfNewChildren], newOpTable[nrOfNewChildren]);
 
 					}
-				}
 
-				if (err.errorType == ScriptError_OK)
-				{
+					if (err.errorType == ScriptError_OK)
+					{
 
-					newOpTable[nrOfNewChildren] = getOperatorVariation(err, line, newOps[nrOfNewChildren], newOpTable[nrOfNewChildren]);
+						newOpTable[nrOfNewChildren] = expandTree(err, line, newOps[nrOfNewChildren], newOpTable[nrOfNewChildren], newChildren[nrOfNewChildren]);
 
-				}
+					}
 
-				if (err.errorType == ScriptError_OK)
-				{
+					if (err.errorType == ScriptError_OK)
+					{
 
-					newOpTable[nrOfNewChildren] = expandTree(err, line, newOps[nrOfNewChildren], newOpTable[nrOfNewChildren], newChildren[nrOfNewChildren]);
+						finalizeNode(err, line, newOps[nrOfNewChildren], newOpTable[nrOfNewChildren], newChildren[nrOfNewChildren], ops.sigType[i], ops.sigSource[i]);
 
-				}
+					}
 
-				if (err.errorType == ScriptError_OK)
-				{
-
-					finalizeNode(err, line, newOps[nrOfNewChildren], newOpTable[nrOfNewChildren], newChildren[nrOfNewChildren], ops.sigType[i], ops.sigSource[i]);
+					nrOfNewChildren++;
 
 				}
-
-				nrOfNewChildren++;
-
 			}
 
 			parameter = parameter->GetNext();
@@ -795,6 +800,13 @@ CelScriptAnalyzer::operatorParams CelScriptAnalyzer::expandTree(CompileError &er
 		delete[] newOpTable;
 		delete[] newChildren;
 
+		if (err.errorType == ScriptError_OK)
+		{
+		
+			ops.opVar = 0;
+			ops = getOperatorVariation(err, line, op, ops);
+
+		}
 	}
 
 	return ops;

@@ -29,7 +29,7 @@ namespace Logic
 		SyntaxType_VAR, SyntaxType_CONST, SyntaxType_CONSTPASS,
 		SyntaxType_FLOW, SyntaxType_NA };
 	///<summary>The different types of variables</summary>
-	enum VarType{ VarType_NUMBER, VarType_STRING, VarType_ENUM, VarType_NA };
+	enum VarType{ VarType_NUMBER, VarType_FLOAT, VarType_STRING, VarType_ENUM, VarType_NA };
 	///<summary>Where the parameters come from</summary>
 	enum ParamType{ ParamType_VAR, ParamType_CONST, ParamType_NA };
 	///<summary>The categorys of keywords</summary>
@@ -41,6 +41,7 @@ namespace Logic
 	///<summary>The different types of operators in the script</summary>
 	enum OperatorTypes{ OperatorTypes_ADD, OperatorTypes_LOAD, OperatorTypes_SET, OperatorTypes_POST, 
 		OperatorTypes_SUM, OperatorTypes_SUB, OperatorTypes_MUL, OperatorTypes_DIV, 
+		OperatorTypes_CAST,
 		OperatorTypes_EQUAL, OperatorTypes_GREATER, 
 		OperatorTypes_GET, OperatorTypes_SNAP,
 		OperatorTypes_POS, OperatorTypes_SIZE,

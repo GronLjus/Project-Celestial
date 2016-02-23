@@ -15,18 +15,18 @@ namespace Logic
 
 		opcode_RESNAP, opcode_2DPOS, opcode_2DSIZE, opcode_2DADDASNODE, opcode_2DADDKYTRGR,
 
-		opcode_POSTSTR, opcode_POSTNMBR, opcode_POSTNMBRCONST,
+		opcode_POSTSTR, opcode_POSTNMBR, opcode_POSTFLOAT,
 
-		opcode_SUM2CONST, opcode_SUM1CONST, opcode_SUMCONST1, opcode_SUMVAR,
-		opcode_SUB2CONST, opcode_SUB1CONST, opcode_SUBCONST1, opcode_SUBVAR,
-		opcode_MUL2CONST, opcode_MUL1CONST, opcode_MULCONST1, opcode_MULVAR,
-		opcode_DIV2CONST, opcode_DIV1CONST, opcode_DIVCONST1, opcode_DIVVAR,
+		opcode_SUM2CONST, opcode_SUMFLOAT, opcode_SUMVAR,
+		opcode_SUB2CONST, opcode_SUBFLOAT, opcode_SUBVAR,
+		opcode_MUL2CONST, opcode_MULFLOAT, opcode_MULVAR,
+		opcode_DIV2CONST, opcode_DIVFLOAT, opcode_DIVVAR,
+		opcode_CASTFLOAT,
 
-		opcode_NUMEQUAL2CONST, opcode_NUMEQUALCONST1, opcode_NUMEQUAL1CONST, opcode_NUMEQUALVAR,
+		opcode_NUMEQUAL2CONST, opcode_NUMEQUALFLOAT, opcode_NUMEQUALVAR,
+		opcode_STREQUAL2CONST, opcode_STREQUALVAR,
 
-		opcode_STREQUAL2CONST, opcode_STREQUALCONST1, opcode_STREQUAL1CONST, opcode_STREQUALVAR,
-
-		opcode_NUMGRT2CONST, opcode_NUMGRTCONST1, opcode_NUMGRT1CONST, opcode_NUMGRTVAR,
+		opcode_NUMGRT2CONST, opcode_NUMGRTFLOAT, opcode_NUMGRTVAR,
 
 		opcode_RNSCRPT, opcode_STSCRPTPRMNMBR, opcode_STSCRPTPRMSTR,
 

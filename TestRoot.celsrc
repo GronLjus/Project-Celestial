@@ -11,6 +11,18 @@ tile = load mesh 'Tile.obj'
 cam = load camera
 tileObj = load object tile
 
+floatConst = 5.5 + 2.75
+floatVal = 2.25
+floatSum = floatConst + floatVal
+floatSum = floatSum + 0.5
+intFloatTest = 10 + 10.0
+
+post intFloatTest
+post floatSum
+post floatSum > floatVal
+post intFloatTest < floatSum
+post 10.5 > 10.5
+
 run testPar 9 'aoe'
 set gameboard testPar2
 add mesh tile

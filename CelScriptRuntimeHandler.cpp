@@ -529,7 +529,7 @@ RunTimeError PostNumOperator(unsigned int returnVar, unsigned char* params, unsi
 
 }
 
-RunTimeError PostNumConstOperator(unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int mId, RunTimeCommons* rtc)
+RunTimeError PostFloatOperator(unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int mId, RunTimeCommons* rtc)
 {
 
 	if (paramSize < 4)
@@ -539,7 +539,12 @@ RunTimeError PostNumConstOperator(unsigned int returnVar, unsigned char* params,
 
 	}
 
-	int val = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
+	unsigned int s = 4;
+	unsigned int var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
+	rtc->memory->ReadVariable(var - 1, rtc->intLoader, s);
+	float val = 0.0f;
+	memcpy(&val, rtc->intLoader, 4);
+
 	Message mess;
 	mess.destination = MessageSource_GUIENTITIES;
 	mess.type = MessageType_GUIENTITIES;
@@ -553,17 +558,10 @@ RunTimeError PostNumConstOperator(unsigned int returnVar, unsigned char* params,
 
 }
 
-RunTimeError SumConst2Operator(unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int mId, RunTimeCommons* rtc)
+RunTimeError CastFloatOperator(unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int mId, RunTimeCommons* rtc)
 {
 
-	return RunTimeError_OK;
-
-}
-
-RunTimeError SumConst1Operator(unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int mId, RunTimeCommons* rtc)
-{
-
-	if (paramSize < 8 || returnVar == 0)
+	if (paramSize < 4 || returnVar == 0)
 	{
 
 		return RunTimeError_BADPARAMS;
@@ -573,37 +571,19 @@ RunTimeError SumConst1Operator(unsigned int returnVar, unsigned char* params, un
 	unsigned int s = 4;
 	unsigned int var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
 	rtc->memory->ReadVariable(var - 1, rtc->intLoader, s);
-	int val = (rtc->intLoader[0] | ((int)rtc->intLoader[1] << 8) | ((int)rtc->intLoader[2] << 16) | ((int)rtc->intLoader[3] << 24)) + (params[4] | ((int)params[5] << 8) | ((int)params[6] << 16) | ((int)params[7] << 24));
-	rtc->intLoader[0] = val >> 0;
-	rtc->intLoader[1] = val >> 8;
-	rtc->intLoader[2] = val >> 16;
-	rtc->intLoader[3] = val >> 24;
-	rtc->memory->AddVariable(returnVar - 1, rtc->intLoader, s);
+	int val = (rtc->intLoader[0] | ((int)rtc->intLoader[1] << 8) | ((int)rtc->intLoader[2] << 16) | ((int)rtc->intLoader[3] << 24));
+	float valF = val;
+	unsigned char bytes[sizeof(float)];
+	memcpy(bytes, &valF, sizeof(float));
+	rtc->memory->AddVariable(returnVar - 1, bytes, s);
 	rtc->varWaiting->Add(false, returnVar - 1);
 	return RunTimeError_OK;
 
 }
 
-RunTimeError Sum1ConstOperator(unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int mId, RunTimeCommons* rtc)
+RunTimeError SumConst2Operator(unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int mId, RunTimeCommons* rtc)
 {
 
-	if (paramSize < 8 || returnVar == 0)
-	{
-
-		return RunTimeError_BADPARAMS;
-
-	}
-
-	unsigned int s = 4;
-	unsigned int var = (params[4] | ((int)params[5] << 8) | ((int)params[6] << 16) | ((int)params[7] << 24));
-	rtc->memory->ReadVariable(var - 1, rtc->intLoader, s);
-	int val = (rtc->intLoader[0] | ((int)rtc->intLoader[1] << 8) | ((int)rtc->intLoader[2] << 16) | ((int)rtc->intLoader[3] << 24)) + (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
-	rtc->intLoader[0] = val >> 0;
-	rtc->intLoader[1] = val >> 8;
-	rtc->intLoader[2] = val >> 16;
-	rtc->intLoader[3] = val >> 24;
-	rtc->memory->AddVariable(returnVar - 1, rtc->intLoader, s);
-	rtc->varWaiting->Add(false, returnVar - 1);
 	return RunTimeError_OK;
 
 }
@@ -636,14 +616,7 @@ RunTimeError SumVarOperator(unsigned int returnVar, unsigned char* params, unsig
 
 }
 
-RunTimeError SubConst2Operator(unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int mId, RunTimeCommons* rtc)
-{
-
-	return RunTimeError_OK;
-
-}
-
-RunTimeError SubConst1Operator(unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int mId, RunTimeCommons* rtc)
+RunTimeError SumFloatOperator(unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int mId, RunTimeCommons* rtc)
 {
 
 	if (paramSize < 8 || returnVar == 0)
@@ -655,38 +628,27 @@ RunTimeError SubConst1Operator(unsigned int returnVar, unsigned char* params, un
 
 	unsigned int s = 4;
 	unsigned int var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
+	unsigned int var2 = (params[4] | ((int)params[5] << 8) | ((int)params[6] << 16) | ((int)params[7] << 24));
 	rtc->memory->ReadVariable(var - 1, rtc->intLoader, s);
-	int val = (rtc->intLoader[0] | ((int)rtc->intLoader[1] << 8) | ((int)rtc->intLoader[2] << 16) | ((int)rtc->intLoader[3] << 24)) - (params[4] | ((int)params[5] << 8) | ((int)params[6] << 16) | ((int)params[7] << 24));
-	rtc->intLoader[0] = val >> 0;
-	rtc->intLoader[1] = val >> 8;
-	rtc->intLoader[2] = val >> 16;
-	rtc->intLoader[3] = val >> 24;
-	rtc->memory->AddVariable(returnVar - 1, rtc->intLoader, s);
+	float val = 0.0f;
+	memcpy(&val, rtc->intLoader, 4);
+	rtc->memory->ReadVariable(var2 - 1, rtc->intLoader, s);
+	float val2 = 0.0f;
+	memcpy(&val2, rtc->intLoader, 4);
+	val += val2;
+
+	unsigned char bytes[sizeof(float)];
+	memcpy(bytes, &val, sizeof(float));
+
+	rtc->memory->AddVariable(returnVar - 1, bytes, s);
 	rtc->varWaiting->Add(false, returnVar - 1);
 	return RunTimeError_OK;
 
 }
 
-RunTimeError Sub1ConstOperator(unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int mId, RunTimeCommons* rtc)
+RunTimeError SubConst2Operator(unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int mId, RunTimeCommons* rtc)
 {
 
-	if (paramSize < 8 || returnVar == 0)
-	{
-
-		return RunTimeError_BADPARAMS;
-
-	}
-
-	unsigned int s = 4;
-	unsigned int var = (params[4] | ((int)params[5] << 8) | ((int)params[6] << 16) | ((int)params[7] << 24));
-	rtc->memory->ReadVariable(var - 1, rtc->intLoader, s);
-	int val = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24)) - (rtc->intLoader[0] | ((int)rtc->intLoader[1] << 8) | ((int)rtc->intLoader[2] << 16) | ((int)rtc->intLoader[3] << 24));
-	rtc->intLoader[0] = val >> 0;
-	rtc->intLoader[1] = val >> 8;
-	rtc->intLoader[2] = val >> 16;
-	rtc->intLoader[3] = val >> 24;
-	rtc->memory->AddVariable(returnVar - 1, rtc->intLoader, s);
-	rtc->varWaiting->Add(false, returnVar - 1);
 	return RunTimeError_OK;
 
 }
@@ -719,57 +681,38 @@ RunTimeError SubVarOperator(unsigned int returnVar, unsigned char* params, unsig
 
 }
 
+RunTimeError SubFloatOperator(unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int mId, RunTimeCommons* rtc)
+{
+
+	if (paramSize < 8 || returnVar == 0)
+	{
+
+		return RunTimeError_BADPARAMS;
+
+	}
+	unsigned int s = 4;
+	unsigned int var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
+	unsigned int var2 = (params[4] | ((int)params[5] << 8) | ((int)params[6] << 16) | ((int)params[7] << 24));
+	rtc->memory->ReadVariable(var - 1, rtc->intLoader, s);
+	float val = 0.0f;
+	memcpy(&val, rtc->intLoader, 4);
+	rtc->memory->ReadVariable(var2 - 1, rtc->intLoader, s);
+	float val2 = 0.0f;
+	memcpy(&val2, rtc->intLoader, 4);
+	val -= val2;
+
+	unsigned char bytes[sizeof(float)];
+	memcpy(bytes, &val, sizeof(float));
+
+	rtc->memory->AddVariable(returnVar - 1, bytes, s);
+	rtc->varWaiting->Add(false, returnVar - 1);
+	return RunTimeError_OK;
+
+}
+
 RunTimeError MulConst2Operator(unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int mId, RunTimeCommons* rtc)
 {
 
-	return RunTimeError_OK;
-
-}
-
-RunTimeError MulConst1Operator(unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int mId, RunTimeCommons* rtc)
-{
-
-	if (paramSize < 8 || returnVar == 0)
-	{
-
-		return RunTimeError_BADPARAMS;
-
-	}
-
-	unsigned int s = 4;
-	unsigned int var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
-	rtc->memory->ReadVariable(var - 1, rtc->intLoader, s);
-	int val = (rtc->intLoader[0] | ((int)rtc->intLoader[1] << 8) | ((int)rtc->intLoader[2] << 16) | ((int)rtc->intLoader[3] << 24)) * (params[4] | ((int)params[5] << 8) | ((int)params[6] << 16) | ((int)params[7] << 24));
-	rtc->intLoader[0] = val >> 0;
-	rtc->intLoader[1] = val >> 8;
-	rtc->intLoader[2] = val >> 16;
-	rtc->intLoader[3] = val >> 24;
-	rtc->memory->AddVariable(returnVar - 1, rtc->intLoader, s);
-	rtc->varWaiting->Add(false, returnVar - 1);
-	return RunTimeError_OK;
-
-}
-
-RunTimeError Mul1ConstOperator(unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int mId, RunTimeCommons* rtc)
-{
-
-	if (paramSize < 8 || returnVar == 0)
-	{
-
-		return RunTimeError_BADPARAMS;
-
-	}
-
-	unsigned int s = 4;
-	unsigned int var = (params[4] | ((int)params[5] << 8) | ((int)params[6] << 16) | ((int)params[7] << 24));
-	rtc->memory->ReadVariable(var - 1, rtc->intLoader, s);
-	int val = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24))*(rtc->intLoader[0] | ((int)rtc->intLoader[1] << 8) | ((int)rtc->intLoader[2] << 16) | ((int)rtc->intLoader[3] << 24));
-	rtc->intLoader[0] = val >> 0;
-	rtc->intLoader[1] = val >> 8;
-	rtc->intLoader[2] = val >> 16;
-	rtc->intLoader[3] = val >> 24;
-	rtc->memory->AddVariable(returnVar - 1, rtc->intLoader, s);
-	rtc->varWaiting->Add(false, returnVar - 1);
 	return RunTimeError_OK;
 
 }
@@ -802,57 +745,38 @@ RunTimeError MulVarOperator(unsigned int returnVar, unsigned char* params, unsig
 
 }
 
+RunTimeError MulFloatOperator(unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int mId, RunTimeCommons* rtc)
+{
+
+	if (paramSize < 8 || returnVar == 0)
+	{
+
+		return RunTimeError_BADPARAMS;
+
+	}
+	unsigned int s = 4;
+	unsigned int var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
+	unsigned int var2 = (params[4] | ((int)params[5] << 8) | ((int)params[6] << 16) | ((int)params[7] << 24));
+	rtc->memory->ReadVariable(var - 1, rtc->intLoader, s);
+	float val = 0.0f;
+	memcpy(&val, rtc->intLoader, 4);
+	rtc->memory->ReadVariable(var2 - 1, rtc->intLoader, s);
+	float val2 = 0.0f;
+	memcpy(&val2, rtc->intLoader, 4);
+	val *= val2;
+
+	unsigned char bytes[sizeof(float)];
+	memcpy(bytes, &val, sizeof(float));
+
+	rtc->memory->AddVariable(returnVar - 1, bytes, s);
+	rtc->varWaiting->Add(false, returnVar - 1);
+	return RunTimeError_OK;
+
+}
+
 RunTimeError DivConst2Operator(unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int mId, RunTimeCommons* rtc)
 {
 
-	return RunTimeError_OK;
-
-}
-
-RunTimeError DivConst1Operator(unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int mId, RunTimeCommons* rtc)
-{
-
-	if (paramSize < 8 || returnVar == 0)
-	{
-
-		return RunTimeError_BADPARAMS;
-
-	}
-
-	unsigned int s = 4;
-	unsigned int var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
-	rtc->memory->ReadVariable(var - 1, rtc->intLoader, s);
-	int val = (rtc->intLoader[0] | ((int)rtc->intLoader[1] << 8) | ((int)rtc->intLoader[2] << 16) | ((int)rtc->intLoader[3] << 24)) / (params[4] | ((int)params[5] << 8) | ((int)params[6] << 16) | ((int)params[7] << 24));
-	rtc->intLoader[0] = val >> 0;
-	rtc->intLoader[1] = val >> 8;
-	rtc->intLoader[2] = val >> 16;
-	rtc->intLoader[3] = val >> 24;
-	rtc->memory->AddVariable(returnVar - 1, rtc->intLoader, s);
-	rtc->varWaiting->Add(false, returnVar - 1);
-	return RunTimeError_OK;
-
-}
-
-RunTimeError Div1ConstOperator(unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int mId, RunTimeCommons* rtc)
-{
-
-	if (paramSize < 8 || returnVar == 0)
-	{
-
-		return RunTimeError_BADPARAMS;
-
-	}
-
-	unsigned int s = 4;
-	unsigned int var = (params[4] | ((int)params[5] << 8) | ((int)params[6] << 16) | ((int)params[7] << 24));
-	rtc->memory->ReadVariable(var - 1, rtc->intLoader, s);
-	int val = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24)) / (rtc->intLoader[0] | ((int)rtc->intLoader[1] << 8) | ((int)rtc->intLoader[2] << 16) | ((int)rtc->intLoader[3] << 24));
-	rtc->intLoader[0] = val >> 0;
-	rtc->intLoader[1] = val >> 8;
-	rtc->intLoader[2] = val >> 16;
-	rtc->intLoader[3] = val >> 24;
-	rtc->memory->AddVariable(returnVar - 1, rtc->intLoader, s);
-	rtc->varWaiting->Add(false, returnVar - 1);
 	return RunTimeError_OK;
 
 }
@@ -885,14 +809,7 @@ RunTimeError DivVarOperator(unsigned int returnVar, unsigned char* params, unsig
 
 }
 
-RunTimeError NumEqlConst2Operator(unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int mId, RunTimeCommons* rtc)
-{
-
-	return RunTimeError_OK;
-
-}
-
-RunTimeError NumEqlConst1Operator(unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int mId, RunTimeCommons* rtc)
+RunTimeError DivFloatOperator(unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int mId, RunTimeCommons* rtc)
 {
 
 	if (paramSize < 8 || returnVar == 0)
@@ -904,38 +821,27 @@ RunTimeError NumEqlConst1Operator(unsigned int returnVar, unsigned char* params,
 
 	unsigned int s = 4;
 	unsigned int var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
+	unsigned int var2 = (params[4] | ((int)params[5] << 8) | ((int)params[6] << 16) | ((int)params[7] << 24));
 	rtc->memory->ReadVariable(var - 1, rtc->intLoader, s);
-	int val = (rtc->intLoader[0] | ((int)rtc->intLoader[1] << 8) | ((int)rtc->intLoader[2] << 16) | ((int)rtc->intLoader[3] << 24)) == (params[4] | ((int)params[5] << 8) | ((int)params[6] << 16) | ((int)params[7] << 24)) ? 1 : 0;
-	rtc->intLoader[0] = val >> 0;
-	rtc->intLoader[1] = val >> 8;
-	rtc->intLoader[2] = val >> 16;
-	rtc->intLoader[3] = val >> 24;
-	rtc->memory->AddVariable(returnVar - 1, rtc->intLoader, s);
+	float val = 0.0f;
+	memcpy(&val, rtc->intLoader, 4);
+	rtc->memory->ReadVariable(var2 - 1, rtc->intLoader, s);
+	float val2 = 0.0f;
+	memcpy(&val2, rtc->intLoader, 4);
+	val /= val2;
+
+	unsigned char bytes[sizeof(float)];
+	memcpy(bytes, &val, sizeof(float));
+
+	rtc->memory->AddVariable(returnVar - 1, bytes, s);
 	rtc->varWaiting->Add(false, returnVar - 1);
 	return RunTimeError_OK;
 
 }
 
-RunTimeError NumEql1ConstOperator(unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int mId, RunTimeCommons* rtc)
+RunTimeError NumEqlConst2Operator(unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int mId, RunTimeCommons* rtc)
 {
 
-	if (paramSize < 8 || returnVar == 0)
-	{
-
-		return RunTimeError_BADPARAMS;
-
-	}
-
-	unsigned int s = 4;
-	unsigned int var = (params[4] | ((int)params[5] << 8) | ((int)params[6] << 16) | ((int)params[7] << 24));
-	rtc->memory->ReadVariable(var - 1, rtc->intLoader, s);
-	int val = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24)) == (rtc->intLoader[0] | ((int)rtc->intLoader[1] << 8) | ((int)rtc->intLoader[2] << 16) | ((int)rtc->intLoader[3] << 24)) ? 1 : 0;
-	rtc->intLoader[0] = val >> 0;
-	rtc->intLoader[1] = val >> 8;
-	rtc->intLoader[2] = val >> 16;
-	rtc->intLoader[3] = val >> 24;
-	rtc->memory->AddVariable(returnVar - 1, rtc->intLoader, s);
-	rtc->varWaiting->Add(false, returnVar - 1);
 	return RunTimeError_OK;
 
 }
@@ -968,67 +874,38 @@ RunTimeError NumEqlVarOperator(unsigned int returnVar, unsigned char* params, un
 
 }
 
+RunTimeError FloatEqlVarOperator(unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int mId, RunTimeCommons* rtc)
+{
+
+	if (paramSize < 8 || returnVar == 0)
+	{
+
+		return RunTimeError_BADPARAMS;
+
+	}
+	unsigned int s = 4;
+	unsigned int var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
+	unsigned int var2 = (params[4] | ((int)params[5] << 8) | ((int)params[6] << 16) | ((int)params[7] << 24));
+	rtc->memory->ReadVariable(var - 1, rtc->intLoader, s);
+	float val = 0.0f;
+	memcpy(&val, rtc->intLoader, 4);
+	rtc->memory->ReadVariable(var2 - 1, rtc->intLoader, s);
+	float val2 = 0.0f;
+	memcpy(&val2, rtc->intLoader, 4);
+	unsigned int eql = val == val2 ? 1 : 0;
+	rtc->intLoader[0] = eql >> 0;
+	rtc->intLoader[1] = eql >> 8;
+	rtc->intLoader[2] = eql >> 16;
+	rtc->intLoader[3] = eql >> 24;
+	rtc->memory->AddVariable(returnVar - 1, rtc->intLoader, s);
+	rtc->varWaiting->Add(false, returnVar - 1);
+	return RunTimeError_OK;
+
+}
+
 RunTimeError StrEqlConst2Operator(unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int mId, RunTimeCommons* rtc)
 {
 
-	return RunTimeError_OK;
-
-}
-
-RunTimeError StrEqlConst1Operator(unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int mId, RunTimeCommons* rtc)
-{
-
-	if (paramSize < 8 || returnVar == 0)
-	{
-
-		return RunTimeError_BADPARAMS;
-
-	}
-
-	unsigned int var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
-	unsigned int length;
-	std::string varVal = std::string((char*)loadString(var, mId, rtc, length));
-
-	std::string constVal = std::string((char)(&(params[8])), paramSize - 7);
-
-	int val = varVal == constVal ? 1 : 0;
-	rtc->intLoader[0] = val >> 0;
-	rtc->intLoader[1] = val >> 8;
-	rtc->intLoader[2] = val >> 16;
-	rtc->intLoader[3] = val >> 24;
-	unsigned int s = 4;
-	rtc->memory->AddVariable(returnVar - 1, rtc->intLoader, s);
-	rtc->varWaiting->Add(false, returnVar - 1);
-	return RunTimeError_OK;
-
-}
-
-RunTimeError StrEql1ConstOperator(unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int mId, RunTimeCommons* rtc)
-{
-
-	if (paramSize < 8 || returnVar == 0)
-	{
-
-		return RunTimeError_BADPARAMS;
-
-	}
-
-	unsigned int length = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
-	std::string constVal = std::string((char*)(&(params[4])), length - 4);
-	length += 4;
-
-	unsigned int var = (params[length] | ((int)params[length + 1] << 8) | ((int)params[length + 2] << 16) | ((int)params[length + 3] << 24));
-	unsigned int stringlength;
-	std::string varVal = std::string((char*)loadString(var, mId, rtc, stringlength));
-	int val = varVal == constVal ? 1 : 0;
-
-	rtc->intLoader[0] = val >> 0;
-	rtc->intLoader[1] = val >> 8;
-	rtc->intLoader[2] = val >> 16;
-	rtc->intLoader[3] = val >> 24;
-	unsigned int s = 4;
-	rtc->memory->AddVariable(returnVar - 1, rtc->intLoader, s);
-	rtc->varWaiting->Add(false, returnVar - 1);
 	return RunTimeError_OK;
 
 }
@@ -1062,7 +939,7 @@ RunTimeError NumGrtConst2Operator(unsigned int returnVar, unsigned char* params,
 
 }
 
-RunTimeError NumGrtConst1Operator(unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int mId, RunTimeCommons* rtc)
+RunTimeError NumGrtFloaOperator(unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int mId, RunTimeCommons* rtc)
 {
 
 	if (paramSize < 8 || returnVar == 0)
@@ -1071,39 +948,20 @@ RunTimeError NumGrtConst1Operator(unsigned int returnVar, unsigned char* params,
 		return RunTimeError_BADPARAMS;
 
 	}
-
 	unsigned int s = 4;
 	unsigned int var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
+	unsigned int var2 = (params[4] | ((int)params[5] << 8) | ((int)params[6] << 16) | ((int)params[7] << 24));
 	rtc->memory->ReadVariable(var - 1, rtc->intLoader, s);
-	int val = (rtc->intLoader[0] | ((int)rtc->intLoader[1] << 8) | ((int)rtc->intLoader[2] << 16) | ((int)rtc->intLoader[3] << 24)) >(params[4] | ((int)params[5] << 8) | ((int)params[6] << 16) | ((int)params[7] << 24)) ? 1 : 0;
-	rtc->intLoader[0] = val >> 0;
-	rtc->intLoader[1] = val >> 8;
-	rtc->intLoader[2] = val >> 16;
-	rtc->intLoader[3] = val >> 24;
-	rtc->memory->AddVariable(returnVar - 1, rtc->intLoader, s);
-	rtc->varWaiting->Add(false, returnVar - 1);
-	return RunTimeError_OK;
-
-}
-
-RunTimeError NumGrt1ConstOperator(unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int mId, RunTimeCommons* rtc)
-{
-
-	if (paramSize < 8 || returnVar == 0)
-	{
-
-		return RunTimeError_BADPARAMS;
-
-	}
-
-	unsigned int s = 4;
-	unsigned int var = (params[4] | ((int)params[5] << 8) | ((int)params[6] << 16) | ((int)params[7] << 24));
-	rtc->memory->ReadVariable(var - 1, rtc->intLoader, s);
-	int val = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24)) >(rtc->intLoader[0] | ((int)rtc->intLoader[1] << 8) | ((int)rtc->intLoader[2] << 16) | ((int)rtc->intLoader[3] << 24)) ? 1 : 0;
-	rtc->intLoader[0] = val >> 0;
-	rtc->intLoader[1] = val >> 8;
-	rtc->intLoader[2] = val >> 16;
-	rtc->intLoader[3] = val >> 24;
+	float val = 0.0f;
+	memcpy(&val, rtc->intLoader, 4);
+	rtc->memory->ReadVariable(var2 - 1, rtc->intLoader, s);
+	float val2 = 0.0f;
+	memcpy(&val2, rtc->intLoader, 4);
+	unsigned int eql = val > val2 ? 1 : 0;
+	rtc->intLoader[0] = eql >> 0;
+	rtc->intLoader[1] = eql >> 8;
+	rtc->intLoader[2] = eql >> 16;
+	rtc->intLoader[3] = eql >> 24;
 	rtc->memory->AddVariable(returnVar - 1, rtc->intLoader, s);
 	rtc->varWaiting->Add(false, returnVar - 1);
 	return RunTimeError_OK;
@@ -1113,7 +971,7 @@ RunTimeError NumGrt1ConstOperator(unsigned int returnVar, unsigned char* params,
 RunTimeError NumGrtVarOperator(unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int mId, RunTimeCommons* rtc)
 {
 
-	if (paramSize < 4 || returnVar == 0)
+	if (paramSize < 8 || returnVar == 0)
 	{
 
 		return RunTimeError_BADPARAMS;
@@ -1390,41 +1248,36 @@ CelScriptRuntimeHandler::CelScriptRuntimeHandler(MessageQueue* mQueue, Celestial
 
 	operators[opcode_POSTSTR] = PostStrOperator;
 	operators[opcode_POSTNMBR] = PostNumOperator;
-	operators[opcode_POSTNMBRCONST] = PostNumConstOperator;
+	operators[opcode_POSTFLOAT] = PostFloatOperator;
 
 	operators[opcode_SUM2CONST] = SumConst2Operator;
-	operators[opcode_SUM1CONST] = Sum1ConstOperator;
-	operators[opcode_SUMCONST1] = SumConst1Operator;
+	operators[opcode_SUMFLOAT] = SumFloatOperator;
 	operators[opcode_SUMVAR] = SumVarOperator;
 
 	operators[opcode_SUB2CONST] = SubConst2Operator;
-	operators[opcode_SUB1CONST] = Sub1ConstOperator;
-	operators[opcode_SUBCONST1] = SubConst1Operator;
+	operators[opcode_SUBFLOAT] = SubFloatOperator;
 	operators[opcode_SUBVAR] = SubVarOperator;
 
 	operators[opcode_MUL2CONST] = MulConst2Operator;
-	operators[opcode_MUL1CONST] = Mul1ConstOperator;
-	operators[opcode_MULCONST1] = MulConst1Operator;
+	operators[opcode_MULFLOAT] = MulFloatOperator;
 	operators[opcode_MULVAR] = MulVarOperator;
 
 	operators[opcode_DIV2CONST] = DivConst2Operator;
-	operators[opcode_DIV1CONST] = Div1ConstOperator;
-	operators[opcode_DIVCONST1] = DivConst1Operator;
+	operators[opcode_DIVFLOAT] = DivFloatOperator;
 	operators[opcode_DIVVAR] = DivVarOperator;
 
+	operators[opcode_CASTFLOAT] = CastFloatOperator;
+
 	operators[opcode_NUMEQUAL2CONST] = NumEqlConst2Operator;
-	operators[opcode_NUMEQUAL1CONST] = NumEql1ConstOperator;
-	operators[opcode_NUMEQUALCONST1] = NumEqlConst1Operator;
+	operators[opcode_NUMEQUALFLOAT] = FloatEqlVarOperator;
 	operators[opcode_NUMEQUALVAR] = NumEqlVarOperator;
 
+
 	operators[opcode_STREQUAL2CONST] = StrEqlConst2Operator;
-	operators[opcode_STREQUAL1CONST] = StrEql1ConstOperator;
-	operators[opcode_STREQUALCONST1] = StrEqlConst1Operator;
 	operators[opcode_STREQUALVAR] = StrEqlVarOperator;
 
 	operators[opcode_NUMGRT2CONST] = NumGrtConst2Operator;
-	operators[opcode_NUMGRT1CONST] = NumGrt1ConstOperator;
-	operators[opcode_NUMGRTCONST1] = NumGrtConst1Operator;
+	operators[opcode_NUMGRTFLOAT] = NumGrtFloaOperator;
 	operators[opcode_NUMGRTVAR] = NumGrtVarOperator;
 
 	operators[opcode_RNSCRPT] = RunScriptOperator;

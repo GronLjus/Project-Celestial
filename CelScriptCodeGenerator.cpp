@@ -265,9 +265,11 @@ CelestialList<CelestialList<unsigned char>*>* CelScriptCodeGenerator::generateCo
 
 		line->AddElement(opCode);
 		unsigned int varAdr = 0;
-		int apuConst1 = 0;
+		float apuConst1 = 0;
+		float apuConst2 = 0;
+		bool apuFloat = false;
+
 		bool apuConst1In = false;
-		int apuConst2 = 0;
 		bool setOpVar = false;
 
 		while (branch != nullptr)
@@ -351,6 +353,40 @@ CelestialList<CelestialList<unsigned char>*>* CelScriptCodeGenerator::generateCo
 
 						addLine->AddElement(constToAdd[i]);
 
+					}
+				}
+				else if (constToAdd[0] == 'f')
+				{
+
+					float value = std::stof(std::string(&(constToAdd.c_str()[1])));
+					unsigned char bytes[sizeof(float)];
+					memcpy(bytes, &value, sizeof(float));
+
+					for (unsigned char i = 0; i < sizeof(float); i++)
+					{
+						
+						addLine->AddElement(bytes[i]);
+
+					}
+					
+					if (apuConstOp)
+					{
+
+						apuFloat = true;
+
+						if (apuConst1In)
+						{
+
+							apuConst2 = value;
+
+						}
+						else
+						{
+
+							apuConst1 = value;
+							apuConst1In = true;
+
+						}
 					}
 				}
 				else
@@ -486,25 +522,29 @@ CelestialList<CelestialList<unsigned char>*>* CelScriptCodeGenerator::generateCo
 		if (opCode == opcode_SUM2CONST)
 		{
 
-			opRetConst = 'n' + std::to_string(apuConst1 + apuConst2);
+			opRetConst = apuFloat ? 'f' + std::to_string(apuConst1 + apuConst2) :
+				'n' + std::to_string((int)(apuConst1 + apuConst2));
 
 		}
 		else if (opCode == opcode_SUB2CONST)
 		{
 
-			opRetConst = 'n' + std::to_string(apuConst1 - apuConst2);
+			opRetConst = apuFloat ? 'f' + std::to_string(apuConst1 - apuConst2) :
+				'n' + std::to_string((int)(apuConst1 - apuConst2));
 
 		}
 		else if (opCode == opcode_MUL2CONST)
 		{
 
-			opRetConst = 'n' + std::to_string(apuConst1 * apuConst2);
+			apuFloat ? 'f' + std::to_string(apuConst1 * apuConst2) :
+				'n' + std::to_string((int)(apuConst1 * apuConst2));
 
 		}
 		else if (opCode == opcode_DIV2CONST)
 		{
 
-			opRetConst = 'n' + std::to_string(apuConst1 / apuConst2);
+			apuFloat ? 'f' + std::to_string(apuConst1 / apuConst2) :
+				'n' + std::to_string((int)(apuConst1 / apuConst2));
 
 		}
 		else if (opCode == opcode_NUMEQUAL2CONST)

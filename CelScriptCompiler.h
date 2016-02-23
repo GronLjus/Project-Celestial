@@ -39,7 +39,7 @@ namespace Logic
 			RuntimeParameter* rParams;
 			
 			unsigned int getParam(std::string param) const;
-
+			void setupArithmeticOps();
 		public:
 			CelScriptCompiler();
 			void Init(CrossHandlers::TextContainer* outText);

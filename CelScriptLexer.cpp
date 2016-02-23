@@ -13,7 +13,7 @@ CelScriptLexer::CelScriptLexer(Keyword* keywords, int keyWordsSize, Operator* op
 	this->keyWordsSize = keyWordsSize;
 	this->operators = operators;
 	this->operatorSize = operatorSize;
-	numbers = new char[10];
+	numbers = new char[12];
 	numbers[0] = '0';
 	numbers[1] = '1';
 	numbers[2] = '2';
@@ -24,6 +24,8 @@ CelScriptLexer::CelScriptLexer(Keyword* keywords, int keyWordsSize, Operator* op
 	numbers[7] = '7';
 	numbers[8] = '8';
 	numbers[9] = '9';
+	numbers[10] = '-';
+	numbers[11] = '.';
 
 }
 
@@ -188,11 +190,13 @@ CelestialDoubleList<Token>* CelScriptLexer::TokenizeLine(string line, int lNumbe
 
 					bool isNumber = true;
 					bool isParam = tempWord[0] == '?';
+					bool isFloat = false;
 
 					for (int k = isParam ? 1 : 0; k < tempWord.length() && isNumber; k++)
 					{
 
 						isNumber = false;
+						isFloat = tempWord[k] == numbers[11] || isFloat;
 
 						if (tempWord[k] == '?')
 						{
@@ -202,7 +206,7 @@ CelestialDoubleList<Token>* CelScriptLexer::TokenizeLine(string line, int lNumbe
 
 						}
 
-						for (int j = 0; j < 10 && !isNumber && !isParam; j++)
+						for (int j = 0; j < (isParam ? 10 : 12) && !isNumber && !isParam; j++)
 						{
 
 							isNumber = tempWord[k] == numbers[j];
@@ -218,7 +222,9 @@ CelestialDoubleList<Token>* CelScriptLexer::TokenizeLine(string line, int lNumbe
 						if (isNumber)
 						{
 
-							val = 'n' + val;
+							val = isFloat ? 
+								'f' + val :
+								'n' + val;
 
 						}
 						else
@@ -401,35 +407,34 @@ CelestialDoubleList<Token>* CelScriptLexer::TokenizeLine(string line, int lNumbe
 						leftBrws = toRep->GetPrev();
 
 					}
-
-					if (op.shortFlipParams[sh])
-					{
-
-						CelestialDoubleListNode<Token>* endRepl = toRep;
-						CelestialDoubleListNode<Token>* brwsr = rightStart;
-
-						while (brwsr != rightEnd)
-						{
-
-							CelestialDoubleListNode<Token>* brwsr2 = brwsr;
-
-							while (brwsr2 != endRepl)
-							{
-
-								Token tokenHere = brwsr2->GetNodeObject();
-								brwsr2->SetNodeObject(brwsr2->GetPrev()->GetNodeObject());
-								brwsr2->GetPrev()->SetNodeObject(tokenHere);
-								brwsr2 = brwsr2->GetPrev();
-
-							}
-
-							endRepl = endRepl->GetNext();
-							brwsr = brwsr->GetNext();
-
-						}
-					}
 				}
 
+				if (op.shortFlipParams[sh])
+				{
+
+					CelestialDoubleListNode<Token>* endRepl = toRep;
+					CelestialDoubleListNode<Token>* brwsr = rightStart;
+
+					while (brwsr != rightEnd)
+					{
+
+						CelestialDoubleListNode<Token>* brwsr2 = brwsr;
+
+						while (brwsr2->GetPrev() != endRepl)
+						{
+
+							Token tokenHere = brwsr2->GetNodeObject();
+							brwsr2->SetNodeObject(brwsr2->GetPrev()->GetNodeObject());
+							brwsr2->GetPrev()->SetNodeObject(tokenHere);
+							brwsr2 = brwsr2->GetPrev();
+
+						}
+
+						endRepl = endRepl->GetNext();
+						brwsr = brwsr->GetNext();
+
+					}
+				}
 				repl = repl->GetNext();
 				repOp = repOp->GetNext();
 
