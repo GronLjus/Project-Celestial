@@ -966,7 +966,7 @@ void CelScriptCompiler::setupArithmeticOps()
 	operators[OperatorTypes_MUL].returns = new VarType[operators[OperatorTypes_MUL].enumAmount]{VarType_NUMBER, VarType_FLOAT, VarType_NUMBER, VarType_FLOAT, VarType_FLOAT, VarType_FLOAT};
 	operators[OperatorTypes_MUL].returnType = new ParamType[operators[OperatorTypes_MUL].enumAmount]{ParamType_CONST, ParamType_CONST, ParamType_VAR, ParamType_VAR, ParamType_VAR, ParamType_VAR};
 	operators[OperatorTypes_MUL].writeParam = new unsigned char[operators[OperatorTypes_MUL].enumAmount]{0, 0, 0, 0, 0, 0};
-	operators[OperatorTypes_MUL].priority = 3;
+	operators[OperatorTypes_MUL].priority = 2;
 	operators[OperatorTypes_MUL].shortHandsAmounts = 1;
 	operators[OperatorTypes_MUL].shortHands = new std::string[operators[OperatorTypes_MUL].shortHandsAmounts]; operators[OperatorTypes_MUL].shortHands[0] = "*";
 	operators[OperatorTypes_MUL].rightParams = new unsigned char[operators[OperatorTypes_MUL].shortHandsAmounts]{1};
@@ -1046,7 +1046,7 @@ void CelScriptCompiler::setupArithmeticOps()
 	operators[OperatorTypes_DIV].returns = new VarType[operators[OperatorTypes_DIV].enumAmount]{VarType_NUMBER, VarType_FLOAT, VarType_NUMBER, VarType_FLOAT, VarType_FLOAT, VarType_FLOAT};
 	operators[OperatorTypes_DIV].returnType = new ParamType[operators[OperatorTypes_DIV].enumAmount]{ParamType_CONST, ParamType_CONST, ParamType_VAR, ParamType_VAR, ParamType_VAR, ParamType_VAR};
 	operators[OperatorTypes_DIV].writeParam = new unsigned char[operators[OperatorTypes_DIV].enumAmount]{0, 0, 0, 0, 0, 0};
-	operators[OperatorTypes_DIV].priority = 3;
+	operators[OperatorTypes_DIV].priority = 2;
 	operators[OperatorTypes_DIV].shortHandsAmounts = 1;
 	operators[OperatorTypes_DIV].shortHands = new std::string[operators[OperatorTypes_DIV].shortHandsAmounts]; operators[OperatorTypes_DIV].shortHands[0] = "/";
 	operators[OperatorTypes_DIV].rightParams = new unsigned char[operators[OperatorTypes_DIV].shortHandsAmounts]{1};
