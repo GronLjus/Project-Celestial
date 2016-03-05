@@ -187,6 +187,7 @@
     <ClInclude Include="CommonParticle.h" />
     <ClInclude Include="CrossHandlerHeader.h" />
     <ClInclude Include="CelscriptHandler.h" />
+    <ClInclude Include="CrossScriptMemoryObject.h" />
     <ClInclude Include="DrawingBoard.h" />
     <ClInclude Include="DXBufferObject.h" />
     <ClInclude Include="CelestialBufferHandler.h" />
@@ -320,6 +321,7 @@
     <ClCompile Include="ColourLoader.cpp" />
     <ClCompile Include="CommonParticle.cpp" />
     <ClCompile Include="CelscriptHandler.cpp" />
+    <ClCompile Include="CrossScriptMemoryObject.cpp" />
     <ClCompile Include="DrawingBoard.cpp" />
     <ClCompile Include="DrawScene.cpp" />
     <ClCompile Include="DXBufferObject.cpp" />

@@ -16,9 +16,11 @@ namespace Resources
 		void Init(Graphics::CardHandler* &card, TextContainer* outText, CelestialMath::Vector2 screen);
 		CrossHandlers::CelestialSlicedList<BaseObject*>* GetObjectContainer() const;
 		void Update(unsigned int time);
+		unsigned int GetCrossScriptObject() const;
 		~ResourceHandler();
 
 	private:
+		unsigned int crossScript;
 		ResourceLoader* loader;
 		CrossHandlers::CelestialSlicedList<BaseObject*>* gameObjects;
 		CelestialMath::Vector2 screen;

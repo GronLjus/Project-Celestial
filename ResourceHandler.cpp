@@ -2,6 +2,7 @@
 #include "ResourceHandler.h"
 #include "GameBoard.h"
 #include "CameraObject.h"
+#include "CrossScriptMemoryObject.h"
 
 using namespace Resources;
 using namespace CrossHandlers;
@@ -12,8 +13,17 @@ ResourceHandler::ResourceHandler(unsigned int bufferFlips) : IHandleMessages(200
 
 	loader = new ResourceLoader();
 	gameObjects = new CelestialSlicedList<BaseObject*>(32, nullptr);
+	
+	crossScript = gameObjects->Add(new CrossScriptMemoryObject());
 	filter = MessageType_RESOURCES;
 	this->bufferFlips = bufferFlips;
+
+}
+
+unsigned int ResourceHandler::GetCrossScriptObject() const
+{
+
+	return crossScript;
 
 }
 

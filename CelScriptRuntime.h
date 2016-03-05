@@ -34,6 +34,7 @@ namespace Logic
 		unsigned char* stringLoader = new unsigned char[stringLoadSize];
 		///<summary>Where the script is in the execution</summary>
 		unsigned int counter = 0;
+		unsigned int crossScriptObject = 0;
 		CrossHandlers::MessageQueue* mQueue = nullptr;
 		CrossHandlers::CelestialSlicedList<bool>* varWaiting = nullptr;
 		bool pause = false;

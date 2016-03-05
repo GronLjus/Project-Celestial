@@ -11,6 +11,10 @@ tile = load mesh 'Tile.obj'
 cam = load camera
 tileObj = load object tile
 
+export 'numTest' cam
+export 'strTest' 'Test1'
+export 'floatTest' 1.0234
+
 run testPar 9 'aoe'
 set gameboard testPar2
 add mesh tile

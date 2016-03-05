@@ -2,6 +2,7 @@
 #include "CelScriptRunTimeHandler.h"
 #include "GUIObject.h"
 #include "CelScriptCompiled.h"
+#include "CrossScriptMemoryObject.h"
 #include <thread>
 
 using namespace Logic;
@@ -36,7 +37,7 @@ unsigned char* loadString(unsigned int var, unsigned int mId, RunTimeCommons* rt
 	length = (rtc->intLoader[0] | ((int)rtc->intLoader[1] << 8) | ((int)rtc->intLoader[2] << 16) | ((int)rtc->intLoader[3] << 24));
 	rtc->currentStringSize = length;
 
-	if (length > rtc->stringLoadSize)
+	while (length > rtc->stringLoadSize)
 	{
 
 		rtc->stringLoadSize += 100;
@@ -495,7 +496,7 @@ RunTimeError PostStrOperator(unsigned int returnVar, unsigned char* params, unsi
 	mess.type = MessageType_GUIENTITIES;
 	mess.mess = GUIMess_POST;
 	///TODO: Remove magic number
-	unsigned char tempBuff[]{1 >> 0, 1 >> 8, 1 >> 16, 1 >> 24};
+	unsigned char tempBuff[]{2 >> 0, 2 >> 8, 2 >> 16, 2 >> 24};
 	mess.SetParams(tempBuff, 0, 4);
 	mess.SetParams(message, 4, length);
 	return sendMessageOut(mess, rtc);
@@ -522,7 +523,7 @@ RunTimeError PostNumOperator(unsigned int returnVar, unsigned char* params, unsi
 	mess.mess = GUIMess_POST;
 	std::string stringParam = std::to_string(val);
 	///TODO: Remove magic number
-	unsigned char tempBuff[]{1 >> 0, 1 >> 8, 1 >> 16, 1 >> 24};
+	unsigned char tempBuff[]{2 >> 0, 2 >> 8, 2 >> 16, 2 >> 24};
 	mess.SetParams(tempBuff, 0, 4);
 	mess.SetParams((unsigned char*)stringParam.c_str(), 4, stringParam.length());
 	return sendMessageOut(mess, rtc);
@@ -551,7 +552,7 @@ RunTimeError PostFloatOperator(unsigned int returnVar, unsigned char* params, un
 	mess.mess = GUIMess_POST;
 	std::string stringParam = std::to_string(val);
 	///TODO: Remove magic number
-	unsigned char tempBuff[]{1 >> 0, 1 >> 8, 1 >> 16, 1 >> 24};
+	unsigned char tempBuff[]{2 >> 0, 2 >> 8, 2 >> 16, 2 >> 24};
 	mess.SetParams(tempBuff, 0, 4);
 	mess.SetParams((unsigned char*)stringParam.c_str(), 4, stringParam.length());
 	return sendMessageOut(mess, rtc);
@@ -1209,6 +1210,91 @@ RunTimeError SetScriptParStrOperator(unsigned int returnVar, unsigned char* para
 
 }
 
+RunTimeError ExportConstOperator(unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int mId, RunTimeCommons* rtc)
+{
+
+	if (paramSize < 5)
+	{
+
+		return RunTimeError_BADPARAMS;
+
+	}
+
+	unsigned int var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
+	unsigned int length;
+	unsigned char* bytes = loadString(var, mId, rtc, length);
+	std::string name = std::string((char*)bytes, length);
+
+	((CrossScriptMemoryObject*)rtc->gameObjects->GetValue(rtc->crossScriptObject))->SetMem(name, &params[4], paramSize - 4);
+	return RunTimeError_OK;
+
+}
+
+RunTimeError ExportVarOperator(unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int mId, RunTimeCommons* rtc)
+{
+
+	if (paramSize < 8)
+	{
+
+		return RunTimeError_BADPARAMS;
+
+	}
+
+	unsigned int var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
+	unsigned int length;
+	unsigned char* bytes = loadString(var, mId, rtc, length);
+	std::string name = std::string((char*)bytes, length);
+	unsigned int var2 = (params[4] | ((int)params[5] << 8) | ((int)params[6] << 16) | ((int)params[7] << 24));
+
+	unsigned int s = rtc->memory->GetVarLength(var2 - 1);
+
+	while (s > rtc->stringLoadSize)
+	{
+
+		rtc->stringLoadSize += 100;
+		delete[] rtc->stringLoader;
+		rtc->stringLoader = new unsigned char[rtc->stringLoadSize];
+
+	}
+
+	rtc->memory->ReadVariable(var2 - 1, rtc->stringLoader, s);
+
+	((CrossScriptMemoryObject*)rtc->gameObjects->GetValue(rtc->crossScriptObject))->SetMem(name, rtc->stringLoader, s);
+	return RunTimeError_OK;
+
+}
+
+RunTimeError ImportOperator(unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int mId, RunTimeCommons* rtc)
+{
+
+	if (paramSize < 4)
+	{
+
+		return RunTimeError_BADPARAMS;
+
+	}
+
+	unsigned int var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
+	unsigned int length;
+	unsigned char* bytes = loadString(var, mId, rtc, length);
+	std::string name = std::string((char*)bytes, length);
+
+	unsigned int byteLength = 0;
+	unsigned char* vals = ((CrossScriptMemoryObject*)rtc->gameObjects->GetValue(rtc->crossScriptObject))->GetMem(name, byteLength);
+
+	if (vals == nullptr)
+	{
+		return RunTimeError_BADPARAMS;
+
+	}
+
+	rtc->memory->AddVariable(returnVar - 1, vals, byteLength);
+	rtc->varWaiting->Add(false, returnVar - 1);
+
+	return RunTimeError_OK;
+
+}
+
 RunTimeError JumpInv(unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int mId, RunTimeCommons* rtc)
 {
 
@@ -1267,9 +1353,10 @@ RunTimeError WaitForVar(unsigned int returnVar, unsigned char* params, unsigned 
 }
 #pragma endregion
 
-CelScriptRuntimeHandler::CelScriptRuntimeHandler(MessageQueue* mQueue, CelestialSlicedList<BaseObject*>* gameObjects)
+CelScriptRuntimeHandler::CelScriptRuntimeHandler(MessageQueue* mQueue, CelestialSlicedList<BaseObject*>* gameObjects, unsigned int crossScriptObject)
 {
 
+	this->crossScriptObject = crossScriptObject;
 	maxOutMessages = 128;
 	abort = false;
 	this->mQueue = mQueue;
@@ -1347,6 +1434,10 @@ CelScriptRuntimeHandler::CelScriptRuntimeHandler(MessageQueue* mQueue, Celestial
 	operators[opcode_STSCRPTPRMNMBR] = SetScriptParNumOperator;
 	operators[opcode_STSCRPTPRMSTR] = SetScriptParStrOperator;
 
+	operators[opcode_EXPRTCNST] = ExportConstOperator;
+	operators[opcode_EXPRTVAR] = ExportVarOperator;
+	operators[opcode_IMPRT] = ImportOperator;
+
 	operators[opcode_JMPINVVAR] = JumpInv;
 	operators[opcode_JMPNOW] = JumpNow;
 
@@ -1381,6 +1472,7 @@ RunTimeError CelScriptRuntimeHandler::initScript(Resources::CelScriptCompiled* s
 		newRtc->outMessageBuffer = new Message[maxOutMessages];
 		newRtc->outMessages = maxOutMessages;
 		newRtc->gameObjects = gameObjects;
+		newRtc->crossScriptObject = crossScriptObject;
 
 		for (int i = 0; i < maxOutMessages; i++)
 		{

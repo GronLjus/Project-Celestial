@@ -19,11 +19,11 @@ CelscriptHandler::CelscriptHandler() : IHandleMessages(20,MessageSource_CELSCRIP
 
 }
 
-void CelscriptHandler::Init(CelestialSlicedList<BaseObject*>* objectContainer)
+void CelscriptHandler::Init(CelestialSlicedList<BaseObject*>* objectContainer, unsigned int crossScriptObject)
 {
 
 	this->objectContainer = objectContainer;
-	runTime = new CelScriptRuntimeHandler(outQueue, objectContainer);
+	runTime = new CelScriptRuntimeHandler(outQueue, objectContainer, crossScriptObject);
 
 }
 

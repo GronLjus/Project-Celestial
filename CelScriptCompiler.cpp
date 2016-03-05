@@ -656,6 +656,89 @@ CelScriptCompiler::CelScriptCompiler()
 	};
 
 
+	operators[OperatorTypes_EXPORT].keyword = "export";
+	operators[OperatorTypes_EXPORT].enumAmount = 2;
+	operators[OperatorTypes_EXPORT].enums = new std::string[operators[OperatorTypes_EXPORT].enumAmount]; operators[OperatorTypes_EXPORT].enums[0] = ""; operators[OperatorTypes_EXPORT].enums[1] = "";
+	operators[OperatorTypes_EXPORT].byteCodes = new unsigned char[operators[OperatorTypes_EXPORT].enumAmount]{opcode_EXPRTCNST, opcode_EXPRTVAR};
+	operators[OperatorTypes_EXPORT].params = new unsigned char[operators[OperatorTypes_EXPORT].enumAmount]{2, 2};
+	operators[OperatorTypes_EXPORT].minParams = new unsigned char[operators[OperatorTypes_EXPORT].enumAmount]{2, 2};
+	operators[OperatorTypes_EXPORT].paramsyntax = new VarType*[operators[OperatorTypes_EXPORT].enumAmount]{
+		new VarType[operators[OperatorTypes_EXPORT].params[0]]{VarType_STRING, VarType_NA},
+		new VarType[operators[OperatorTypes_EXPORT].params[1]]{VarType_STRING, VarType_NA}
+	};
+	operators[OperatorTypes_EXPORT].paramTypes = new ParamType*[operators[OperatorTypes_EXPORT].enumAmount]{
+		new ParamType[operators[OperatorTypes_EXPORT].params[0]]{ParamType_NA, ParamType_CONST},
+		new ParamType[operators[OperatorTypes_EXPORT].params[0]]{ParamType_NA, ParamType_VAR}
+	};
+	operators[OperatorTypes_EXPORT].optionalPar = new bool*[operators[OperatorTypes_EXPORT].enumAmount]{
+		new bool[operators[OperatorTypes_EXPORT].params[0]]{ false, false },
+		new bool[operators[OperatorTypes_EXPORT].params[0]]{ false, false }
+	};
+	operators[OperatorTypes_EXPORT].readParam = new unsigned char[operators[OperatorTypes_EXPORT].enumAmount]{0,0};
+	operators[OperatorTypes_EXPORT].returns = new VarType[operators[OperatorTypes_EXPORT].enumAmount]{VarType_NA, VarType_NA};
+	operators[OperatorTypes_EXPORT].returnType = new ParamType[operators[OperatorTypes_EXPORT].enumAmount]{ParamType_NA, ParamType_NA};
+	operators[OperatorTypes_EXPORT].writeParam = new unsigned char[operators[OperatorTypes_EXPORT].enumAmount]{0, 0};
+	operators[OperatorTypes_EXPORT].priority = 0;
+	operators[OperatorTypes_EXPORT].shortHandsAmounts = 0;
+	operators[OperatorTypes_EXPORT].amountParOperators = new unsigned char[operators[OperatorTypes_EXPORT].enumAmount]{0, 0};
+	operators[OperatorTypes_EXPORT].parRepeatsMin = new unsigned char*[operators[OperatorTypes_EXPORT].enumAmount]{
+		new unsigned char[operators[OperatorTypes_EXPORT].params[0]]{0, 0},
+		new unsigned char[operators[OperatorTypes_EXPORT].params[1]]{0, 0}
+	};
+	operators[OperatorTypes_EXPORT].parRepeatsMax = new unsigned char*[operators[OperatorTypes_EXPORT].enumAmount]{
+		new unsigned char[operators[OperatorTypes_EXPORT].params[0]]{0, 0},
+		new unsigned char[operators[OperatorTypes_EXPORT].params[1]]{0, 0}
+	};
+	operators[OperatorTypes_EXPORT].parOperatorAppend = new bool*[operators[OperatorTypes_EXPORT].enumAmount]{
+		new bool[operators[OperatorTypes_EXPORT].params[0]]{false, false},
+		new bool[operators[OperatorTypes_EXPORT].params[1]]{false, false}
+	};
+
+	operators[OperatorTypes_IMPORT].keyword = "import";
+	operators[OperatorTypes_IMPORT].enumAmount = 3;
+	operators[OperatorTypes_IMPORT].enums = new std::string[operators[OperatorTypes_IMPORT].enumAmount]; operators[OperatorTypes_IMPORT].enums[0] = "num"; operators[OperatorTypes_IMPORT].enums[1] = "float"; operators[OperatorTypes_IMPORT].enums[2] = "string";
+	operators[OperatorTypes_IMPORT].byteCodes = new unsigned char[operators[OperatorTypes_IMPORT].enumAmount]{opcode_IMPRT, opcode_IMPRT, opcode_IMPRT};
+	operators[OperatorTypes_IMPORT].params = new unsigned char[operators[OperatorTypes_IMPORT].enumAmount]{1, 1, 1};
+	operators[OperatorTypes_IMPORT].minParams = new unsigned char[operators[OperatorTypes_IMPORT].enumAmount]{1, 1, 1};
+	operators[OperatorTypes_IMPORT].paramsyntax = new VarType*[operators[OperatorTypes_IMPORT].enumAmount]{
+		new VarType[operators[OperatorTypes_IMPORT].params[0]]{VarType_STRING},
+		new VarType[operators[OperatorTypes_IMPORT].params[1]]{VarType_STRING},
+		new VarType[operators[OperatorTypes_IMPORT].params[2]]{VarType_STRING}
+	};
+	operators[OperatorTypes_IMPORT].paramTypes = new ParamType*[operators[OperatorTypes_IMPORT].enumAmount]{
+		new ParamType[operators[OperatorTypes_IMPORT].params[0]]{ParamType_NA},
+		new ParamType[operators[OperatorTypes_IMPORT].params[1]]{ParamType_NA},
+		new ParamType[operators[OperatorTypes_IMPORT].params[2]]{ParamType_NA}
+	};
+	operators[OperatorTypes_IMPORT].optionalPar = new bool*[operators[OperatorTypes_IMPORT].enumAmount]{
+		new bool[operators[OperatorTypes_IMPORT].params[0]]{ false },
+		new bool[operators[OperatorTypes_IMPORT].params[1]]{ false },
+		new bool[operators[OperatorTypes_IMPORT].params[2]]{ false }
+	};
+	operators[OperatorTypes_IMPORT].readParam = new unsigned char[operators[OperatorTypes_IMPORT].enumAmount]{0,0,0};
+	operators[OperatorTypes_IMPORT].returns = new VarType[operators[OperatorTypes_IMPORT].enumAmount]{VarType_NUMBER, VarType_FLOAT, VarType_STRING};
+	operators[OperatorTypes_IMPORT].returnType = new ParamType[operators[OperatorTypes_IMPORT].enumAmount]{ParamType_VAR, ParamType_VAR, ParamType_VAR};
+	operators[OperatorTypes_IMPORT].writeParam = new unsigned char[operators[OperatorTypes_IMPORT].enumAmount]{0,0,0};
+	operators[OperatorTypes_IMPORT].priority = 0;
+	operators[OperatorTypes_IMPORT].shortHandsAmounts = 0;
+	operators[OperatorTypes_IMPORT].amountParOperators = new unsigned char[operators[OperatorTypes_IMPORT].enumAmount]{0,0,0};
+	operators[OperatorTypes_IMPORT].parRepeatsMin = new unsigned char*[operators[OperatorTypes_IMPORT].enumAmount]{
+		new unsigned char[operators[OperatorTypes_IMPORT].params[0]]{0},
+		new unsigned char[operators[OperatorTypes_IMPORT].params[1]]{0},
+		new unsigned char[operators[OperatorTypes_IMPORT].params[2]]{0}
+	};
+	operators[OperatorTypes_IMPORT].parRepeatsMax = new unsigned char*[operators[OperatorTypes_IMPORT].enumAmount]{
+		new unsigned char[operators[OperatorTypes_IMPORT].params[0]]{0},
+		new unsigned char[operators[OperatorTypes_IMPORT].params[1]]{0},
+		new unsigned char[operators[OperatorTypes_IMPORT].params[2]]{0}
+	};
+	operators[OperatorTypes_IMPORT].parOperatorAppend = new bool*[operators[OperatorTypes_IMPORT].enumAmount]{
+		new bool[operators[OperatorTypes_IMPORT].params[0]]{false},
+		new bool[operators[OperatorTypes_IMPORT].params[1]]{false},
+		new bool[operators[OperatorTypes_IMPORT].params[2]]{false}
+	};
+
+
 	flowOps = new FlowController[FlowOperator_NA];
 
 	flowOps[FlowOperator_IF].keyword = "if";

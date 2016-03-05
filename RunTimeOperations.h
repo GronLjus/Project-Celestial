@@ -31,6 +31,8 @@ namespace Logic
 
 		opcode_RNSCRPT, opcode_STSCRPTPRMNMBR, opcode_STSCRPTPRMSTR,
 
+		opcode_EXPRTCNST, opcode_EXPRTVAR, opcode_IMPRT,
+
 		opcode_JMPINVVAR,opcode_JMPNOW,opCode_WTFRVR,
 
 		opcode_NA

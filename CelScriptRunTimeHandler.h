@@ -35,11 +35,11 @@ namespace Logic
 		CrossHandlers::MessageQueue* mQueue;
 		unsigned int maxOutMessages;
 		unsigned int scriptIds;
+		unsigned int crossScriptObject;
 
 	public:
 
-		///<param val='output'>[in]A pointer to the textbox used as output</param>
-		CelScriptRuntimeHandler(CrossHandlers::MessageQueue* mQueue, CrossHandlers::CelestialSlicedList<Resources::BaseObject*>* gameObjects);
+		CelScriptRuntimeHandler(CrossHandlers::MessageQueue* mQueue, CrossHandlers::CelestialSlicedList<Resources::BaseObject*>* gameObjects, unsigned int crossScriptObject);
 		///<summary>Run a script</summary>
 		///<param val='id'>[in]The id of the script to run</param>
 		///<returns>Any runtime errors</returns>

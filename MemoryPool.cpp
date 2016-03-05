@@ -230,6 +230,13 @@ MemErrorCode MemoryPool::readData(unsigned int var, unsigned int offset, unsigne
 
 }
 
+unsigned int MemoryPool::GetVarLength(unsigned int var) const
+{
+
+	return variables->GetValue(var).length;
+
+}
+
 MemErrorCode MemoryPool::ReadVariable(unsigned int var, unsigned int offset, unsigned int &bytes, unsigned char* &val)
 {
 

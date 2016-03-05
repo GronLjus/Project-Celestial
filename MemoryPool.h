@@ -86,6 +86,8 @@ namespace Logic
 			///<param val='dst'>[in]The source variable</param>
 			///<returns>Any errors</returns>
 			MemErrorCode CopyVariable(unsigned int dst, unsigned int src);
+
+			unsigned int GetVarLength(unsigned int var) const;
 			~MemoryPool();
 
 	};

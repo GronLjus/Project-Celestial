@@ -15,7 +15,7 @@ namespace Logic
 		public:
 			CelscriptHandler();
 			///<summary>Initializes the handler</summary>
-			void Init(CrossHandlers::CelestialSlicedList<Resources::BaseObject*>* objectContainer);
+			void Init(CrossHandlers::CelestialSlicedList<Resources::BaseObject*>* objectContainer, unsigned int crossScriptObject);
 			///<summary>Updates the handler</summary>
 			void Update(unsigned int time);
 			void Kill();
