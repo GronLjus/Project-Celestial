@@ -58,7 +58,7 @@ CelestialList<CelestialList<unsigned char>*>* CelScriptCodeGenerator::generateCo
 	CelestialList<CelestialList<unsigned char>*>* commands = new CelestialList<CelestialList<unsigned char>*>();
 	CelestialListNode<CelestialTreeNode<syntax>*>* branch = node->GetLeafs()->GetFirstNode();
 	unsigned char opCode = std::stoi(node->GetNodeObject().val);
-	bool apuConstOp = opCode == opcode_SUM2CONST || opCode == opcode_SUB2CONST || opCode == opcode_MUL2CONST || opCode == opcode_DIV2CONST || opCode == opcode_NUMEQUAL2CONST || opCode == opcode_NUMGRT2CONST;
+	bool apuConstOp = opCode == opcode_SUM2CONST || opCode == opcode_SUB2CONST || opCode == opcode_MUL2CONST || opCode == opcode_DIV2CONST || opCode == opcode_NUMEQUAL2CONST || opCode == opcode_NUMGRT2CONST || opCode == opcode_NEGATECONST;
 	CelestialList<int>* varClear = new CelestialList<int>();
 
 	line->AddElement(opRetVar >> 0);
@@ -536,14 +536,14 @@ CelestialList<CelestialList<unsigned char>*>* CelScriptCodeGenerator::generateCo
 		else if (opCode == opcode_MUL2CONST)
 		{
 
-			apuFloat ? 'f' + std::to_string(apuConst1 * apuConst2) :
+			opRetConst = apuFloat ? 'f' + std::to_string(apuConst1 * apuConst2) :
 				'n' + std::to_string((int)(apuConst1 * apuConst2));
 
 		}
 		else if (opCode == opcode_DIV2CONST)
 		{
 
-			apuFloat ? 'f' + std::to_string(apuConst1 / apuConst2) :
+			opRetConst = apuFloat ? 'f' + std::to_string(apuConst1 / apuConst2) :
 				'n' + std::to_string((int)(apuConst1 / apuConst2));
 
 		}
@@ -557,6 +557,13 @@ CelestialList<CelestialList<unsigned char>*>* CelScriptCodeGenerator::generateCo
 		{
 
 			opRetConst = 'n' + std::to_string(apuConst1 > apuConst2 ? 1 : 0);
+
+		}
+		else if (opCode == opcode_NEGATECONST)
+		{
+
+			opRetConst = apuFloat ? 'f' + std::to_string(-apuConst1) :
+				'n' + std::to_string((int)(-apuConst1));
 
 		}
 	}

@@ -72,7 +72,6 @@ template <class T>
 void CelestialDoubleListNode<T>::SetNext(CelestialDoubleListNode<T>* next)
 {
 
-	next->SetPrev(this);
 	this->next = next;
 
 }

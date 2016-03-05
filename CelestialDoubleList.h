@@ -18,6 +18,9 @@ namespace CrossHandlers
 		///<summary>Appends a copy last in the list</summary>
 		///<param val='element'>[in]A pointer to the list to copy
 		void AddElement(CelestialDoubleList<T>* element);
+
+		void SetFirst(CelestialDoubleListNode<T>* element);
+		void SetLast(CelestialDoubleListNode<T>* element);
 		///<summary>Gets the last node in the list</summary>
 		///<returns>A pointer the last node</returns>
 		CelestialDoubleListNode<T>* GetLastNode() const;
@@ -26,6 +29,10 @@ namespace CrossHandlers
 		CelestialDoubleListNode<T>* GetFirstNode() const;
 		///<summary>Decreases the amount of elemnts in the list</summary>
 		void DecreaseCount();
+		///<summary>Increases the amount of elemnts in the list</summary>
+		void IncrementCount();
+		///<summary>Increases the amount of elemnts in the list</summary>
+		void IncrementCountBy(unsigned int by);
 		///<summary>Resets the list without deleting the elements and makes it empty</summary>
 		void Reset();
 		///<summary>Resets the list and deletes all the elements</summary>
@@ -135,6 +142,22 @@ void CelestialDoubleList<T>::PushElement(T element)
 }
 
 template <class T>
+void CelestialDoubleList<T>::SetFirst(CelestialDoubleListNode<T>* element)
+{
+	
+	first = element;
+
+}
+
+template <class T>
+void CelestialDoubleList<T>::SetLast(CelestialDoubleListNode<T>* element)
+{
+
+	last = element;
+
+}
+
+template <class T>
 void CelestialDoubleList<T>::AddElement(T element)
 {
 
@@ -149,6 +172,7 @@ void CelestialDoubleList<T>::AddElement(T element)
 	{
 
 		this->last->SetNext(new CelestialDoubleListNode<T>(element));
+		this->last->GetNext()->SetPrev(this->last);
 		this->last = last->GetNext();
 
 	}
@@ -201,6 +225,23 @@ void CelestialDoubleList<T>::DecreaseCount()
 	count--;
 
 }
+
+template <class T>
+void CelestialDoubleList<T>::IncrementCount()
+{
+
+	count++;
+
+}
+
+template <class T>
+void CelestialDoubleList<T>::IncrementCountBy(unsigned int by)
+{
+
+	count += by;
+
+}
+
 template <class T>
 void CelestialDoubleList<T>::Reset()
 {

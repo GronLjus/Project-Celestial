@@ -581,6 +581,65 @@ RunTimeError CastFloatOperator(unsigned int returnVar, unsigned char* params, un
 
 }
 
+RunTimeError NegateConstOperator(unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int mId, RunTimeCommons* rtc)
+{
+
+	return RunTimeError_OK;
+
+}
+
+RunTimeError NegateVarOperator(unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int mId, RunTimeCommons* rtc)
+{
+
+	if (paramSize < 4 || returnVar == 0)
+	{
+
+		return RunTimeError_BADPARAMS;
+
+	}
+
+	unsigned int s = 4;
+	unsigned int var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
+	rtc->memory->ReadVariable(var - 1, rtc->intLoader, s);
+	int val = (rtc->intLoader[0] | ((int)rtc->intLoader[1] << 8) | ((int)rtc->intLoader[2] << 16) | ((int)rtc->intLoader[3] << 24));
+	val *= -1;
+
+	rtc->intLoader[0] = val >> 0;
+	rtc->intLoader[1] = val >> 8;
+	rtc->intLoader[2] = val >> 16;
+	rtc->intLoader[3] = val >> 24;
+	rtc->memory->AddVariable(returnVar - 1, rtc->intLoader, s);
+	rtc->varWaiting->Add(false, returnVar - 1);
+	return RunTimeError_OK;
+
+}
+
+RunTimeError NegateFloatOperator(unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int mId, RunTimeCommons* rtc)
+{
+
+	if (paramSize < 4 || returnVar == 0)
+	{
+
+		return RunTimeError_BADPARAMS;
+
+	}
+
+	unsigned int s = 4;
+	unsigned int var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
+	rtc->memory->ReadVariable(var - 1, rtc->intLoader, s);
+	float val = 0.0f;
+	memcpy(&val, rtc->intLoader, 4);
+	val *= -1;
+
+	unsigned char bytes[sizeof(float)];
+	memcpy(bytes, &val, sizeof(float));
+
+	rtc->memory->AddVariable(returnVar - 1, bytes, s);
+	rtc->varWaiting->Add(false, returnVar - 1);
+	return RunTimeError_OK;
+
+}
+
 RunTimeError SumConst2Operator(unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int mId, RunTimeCommons* rtc)
 {
 
@@ -1249,6 +1308,10 @@ CelScriptRuntimeHandler::CelScriptRuntimeHandler(MessageQueue* mQueue, Celestial
 	operators[opcode_POSTSTR] = PostStrOperator;
 	operators[opcode_POSTNMBR] = PostNumOperator;
 	operators[opcode_POSTFLOAT] = PostFloatOperator;
+
+	operators[opcode_NEGATECONST] = NegateConstOperator;
+	operators[opcode_NEGATEVAR] = NegateVarOperator;
+	operators[opcode_NEGATEFLOAT] = NegateFloatOperator;
 
 	operators[opcode_SUM2CONST] = SumConst2Operator;
 	operators[opcode_SUMFLOAT] = SumFloatOperator;

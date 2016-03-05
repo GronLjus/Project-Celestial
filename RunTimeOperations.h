@@ -17,11 +17,12 @@ namespace Logic
 
 		opcode_POSTSTR, opcode_POSTNMBR, opcode_POSTFLOAT,
 
+		opcode_NEGATECONST, opcode_NEGATEVAR, opcode_NEGATEFLOAT,
 		opcode_SUM2CONST, opcode_SUMFLOAT, opcode_SUMVAR,
 		opcode_SUB2CONST, opcode_SUBFLOAT, opcode_SUBVAR,
 		opcode_MUL2CONST, opcode_MULFLOAT, opcode_MULVAR,
 		opcode_DIV2CONST, opcode_DIVFLOAT, opcode_DIVVAR,
-		opcode_CASTFLOAT,
+		opcode_CASTFLOAT, 
 
 		opcode_NUMEQUAL2CONST, opcode_NUMEQUALFLOAT, opcode_NUMEQUALVAR,
 		opcode_STREQUAL2CONST, opcode_STREQUALVAR,
