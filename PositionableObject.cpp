@@ -41,6 +41,11 @@ void PositionableObject::Update(Message* mess)
 		case ObjectMess_MOVE:
 			position += Vector3(param1, param2, param3);
 			break;
+		case ObjectMess_SCALE:
+			memcpy(&scale.x, mess->params, 4);
+			memcpy(&scale.y, &mess->params[4], 4);
+			memcpy(&scale.z, &mess->params[8], 4);
+			break;
 		case ObjectMess_SETRCSCRPT:
 			rightClickScript = param1+1;
 			break;

@@ -22,6 +22,7 @@ namespace Resources
 	private:
 		unsigned int crossScript;
 		ResourceLoader* loader;
+		GameObject* loadGameObject(unsigned int meshId);
 		CrossHandlers::CelestialSlicedList<BaseObject*>* gameObjects;
 		CelestialMath::Vector2 screen;
 		unsigned int bufferFlips;

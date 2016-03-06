@@ -44,6 +44,31 @@ CelestialSlicedList<BaseObject*>* ResourceHandler::GetObjectContainer() const
 
 }
 
+GameObject* ResourceHandler::loadGameObject(unsigned int param1)
+{
+
+	BaseObject* mesh = gameObjects->GetValue(param1);
+	BoundingBox* baseBox = nullptr;
+	BoundingSphere* baseSphere = nullptr;
+	unsigned int meshId = 0;
+
+	if (mesh != nullptr)
+	{
+
+		meshId = mesh->GetId();
+		MeshObject* meshObj = (MeshObject*)mesh;
+		baseBox = (BoundingBox*)meshObj->GetBoundingObjectCopy(Shape_BOX);
+		baseSphere = (BoundingSphere*)meshObj->GetBoundingObjectCopy(Shape_SPHERE);
+
+	}
+
+	GameObject* obj = new GameObject(baseBox, baseSphere, meshId);
+	obj->SetId(gameObjects->GetFirstEmpty());
+	gameObjects->Add(obj);
+	return obj;
+
+}
+
 void ResourceHandler::Update(unsigned int time)
 {
 
@@ -62,29 +87,19 @@ void ResourceHandler::Update(unsigned int time)
 			bo->SetId(gameObjects->GetFirstEmpty());
 			outId = gameObjects->Add(bo);
 
+			if (currentMessage->params[4] == 1)
+			{
+
+				GameObject* obj = loadGameObject(currentMessage->params[5] | ((int)currentMessage->params[6] << 8) | ((int)currentMessage->params[7] << 16) | ((int)currentMessage->params[8] << 24));
+				bo->SetBoardObject(obj);
+
+			}
 		}
 		else if (currentMessage->mess == ResourceMess_LOADOBJECT)
 		{
 
-			unsigned int param1 = currentMessage->params[0] | ((int)currentMessage->params[1] << 8) | ((int)currentMessage->params[2] << 16) | ((int)currentMessage->params[3] << 24);
-			BaseObject* mesh = gameObjects->GetValue(param1);
-			BoundingBox* baseBox = nullptr;
-			BoundingSphere* baseSphere = nullptr;
-			unsigned int meshId = 0;
-
-			if (mesh != nullptr)
-			{
-
-				meshId = mesh->GetId();
-				MeshObject* meshObj = (MeshObject*)mesh;
-				baseBox = (BoundingBox*)meshObj->GetBoundingObjectCopy(Shape_BOX);
-				baseSphere = (BoundingSphere*)meshObj->GetBoundingObjectCopy(Shape_SPHERE);
-
-			}
-
-			GameObject* obj = new GameObject(baseBox,baseSphere,meshId);
-			obj->SetId(gameObjects->GetFirstEmpty());
-			outId = gameObjects->Add(obj);
+			GameObject* obj = loadGameObject(currentMessage->params[0] | ((int)currentMessage->params[1] << 8) | ((int)currentMessage->params[2] << 16) | ((int)currentMessage->params[3] << 24));
+			outId = obj->GetId();
 
 		}
 		else if (currentMessage->mess == ResourceMess_LOADSCRIPT)

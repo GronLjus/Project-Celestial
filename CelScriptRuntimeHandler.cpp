@@ -97,6 +97,7 @@ RunTimeError LoadGameBoardOperator(unsigned int returnVar, unsigned char* params
 	unsigned int s = 4;
 	unsigned int var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
 	rtc->memory->ReadVariable(var - 1, rtc->intLoader, s);
+	unsigned char hasMore = paramSize == 8 ? 1 : 0;
 
 	Message mess;
 	mess.returnParam = returnVar;
@@ -104,7 +105,18 @@ RunTimeError LoadGameBoardOperator(unsigned int returnVar, unsigned char* params
 	mess.type = MessageType_RESOURCES;
 	mess.mess = ResourceMess_LOADGAMEBOARD;
 	mess.SetParams(rtc->intLoader, 0, 4);
+	mess.SetParams(&hasMore, 4, 1);
 	rtc->varWaiting->Add(true, returnVar-1);
+
+	if (paramSize == 8)
+	{
+
+		unsigned int var2 = (params[4] | ((int)params[5] << 8) | ((int)params[6] << 16) | ((int)params[7] << 24));
+		rtc->memory->ReadVariable(var2 - 1, rtc->intLoader, s);
+		mess.SetParams(rtc->intLoader, 5, 4);
+
+	}
+
 	return sendMessageOut(mess, rtc);
 
 }

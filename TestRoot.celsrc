@@ -4,12 +4,11 @@ $
 	testPar2 = 0
 }
 
+tile = load mesh 'Tile.obj'
 testPar = load script 'TestRoot2.celsrc'
 testClick = load script 'TestClick.celsrc'
-testPar2 = load gameboard 1024
-tile = load mesh 'Tile.obj'
 cam = load camera
-tileObj = load object tile
+testPar2 = load gameboard 1024 tile
 
 export 'numTest' cam
 export 'strTest' 'Test1'
@@ -17,7 +16,4 @@ export 'floatTest' 1.0234
 
 run testPar 9 'aoe'
 set gameboard testPar2
-add mesh tile
-add object tileObj
 set camera cam
-set leftclick tileObj testClick

@@ -120,7 +120,7 @@ void GameBoardHandler::UpdateMessages(unsigned int time)
 		else if (currentMessage->mess == GameBoardMess_SETGAMEBOARD)
 		{
 
-			localGameBoard = (GameBoard*)(gameObjects->GetValue(param1));
+			GameBoard* gB = (GameBoard*)(gameObjects->GetValue(param1));
 
 			messageBuffer[this->currentMessage].timeSent = time;
 			messageBuffer[this->currentMessage].destination = MessageSource_GRAPHICS;
@@ -130,6 +130,22 @@ void GameBoardHandler::UpdateMessages(unsigned int time)
 			messageBuffer[this->currentMessage].SetParams(currentMessage->params, 0, 4);
 			outQueue->PushMessage(&messageBuffer[this->currentMessage]);
 			this->currentMessage = (this->currentMessage + 1) % outMessages;
+
+			if (gB->GetBoardObject() != nullptr)
+			{
+
+				gB->GetDrawingBoard()->AddMesh((MeshObject*)(gameObjects->GetValue(gB->GetBoardObject()->GetMeshId())));
+				messageBuffer[this->currentMessage].timeSent = time;
+				messageBuffer[this->currentMessage].destination = MessageSource_GRAPHICS;
+				messageBuffer[this->currentMessage].type = MessageType_GRAPHICS;
+				messageBuffer[this->currentMessage].mess = GraphicMess_UPDATEGAMEBOARDBUFFERS;
+				messageBuffer[this->currentMessage].read = false;
+				outQueue->PushMessage(&messageBuffer[this->currentMessage]);
+				this->currentMessage = (this->currentMessage + 1) % outMessages;
+
+			}
+
+			localGameBoard = gB;
 
 		}
 

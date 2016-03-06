@@ -88,7 +88,7 @@ CelScriptCompiler::CelScriptCompiler()
 	operators[OperatorTypes_LOAD].enums[8] = "camera";
 	operators[OperatorTypes_LOAD].enums[9] = "object";
 	operators[OperatorTypes_LOAD].byteCodes = new unsigned char[operators[OperatorTypes_LOAD].enumAmount]{opcode_LOADLIGHT, opcode_LOADMESH,opcode_LOADSCRIPT,opcode_LOADTXTBX,opcode_LOADPANEL, opcode_LOADKYTRGR,opcode_LOADCHRKYTRGR,opcode_LOADGMBRD, opcode_LOADCAM,opcode_LOADOBJCT};
-	operators[OperatorTypes_LOAD].params = new unsigned char[operators[OperatorTypes_LOAD].enumAmount]{3, 1,1,0,0,2,2,1,0, 1};
+	operators[OperatorTypes_LOAD].params = new unsigned char[operators[OperatorTypes_LOAD].enumAmount]{3, 1,1,0,0,2,2,2,0, 1};
 	operators[OperatorTypes_LOAD].minParams = new unsigned char[operators[OperatorTypes_LOAD].enumAmount]{ 3, 1,1,0,0,2,2,1, 0, 1};
 	operators[OperatorTypes_LOAD].paramsyntax = new VarType*[operators[OperatorTypes_LOAD].enumAmount]{
 		new VarType[operators[OperatorTypes_LOAD].params[0]]{VarType_NUMBER, VarType_NUMBER, VarType_NUMBER}, 
@@ -97,7 +97,7 @@ CelScriptCompiler::CelScriptCompiler()
 			nullptr,nullptr,
 			new VarType[operators[OperatorTypes_LOAD].params[5]]{VarType_NUMBER, VarType_STRING},
 			new VarType[operators[OperatorTypes_LOAD].params[6]]{VarType_NUMBER, VarType_NUMBER},
-			new VarType[operators[OperatorTypes_LOAD].params[7]]{VarType_NUMBER},
+			new VarType[operators[OperatorTypes_LOAD].params[7]]{VarType_NUMBER, VarType_NUMBER},
 			nullptr,
 			new VarType[operators[OperatorTypes_LOAD].params[9]]{VarType_NUMBER}};
 	operators[OperatorTypes_LOAD].paramTypes = new ParamType*[operators[OperatorTypes_LOAD].enumAmount]{
@@ -108,7 +108,7 @@ CelScriptCompiler::CelScriptCompiler()
 			nullptr,
 			new ParamType[operators[OperatorTypes_LOAD].params[5]]{ParamType_NA, ParamType_NA},
 			new ParamType[operators[OperatorTypes_LOAD].params[6]]{ParamType_NA, ParamType_NA},
-			new ParamType[operators[OperatorTypes_LOAD].params[7]]{ParamType_NA},
+			new ParamType[operators[OperatorTypes_LOAD].params[7]]{ParamType_NA, ParamType_NA},
 			nullptr,
 			new ParamType[operators[OperatorTypes_LOAD].params[9]]{ParamType_NA}};
 	operators[OperatorTypes_LOAD].optionalPar = new bool*[operators[OperatorTypes_LOAD].enumAmount]{
@@ -119,7 +119,7 @@ CelScriptCompiler::CelScriptCompiler()
 		nullptr,
 		new bool[operators[OperatorTypes_LOAD].params[5]]{ false, false },
 		new bool[operators[OperatorTypes_LOAD].params[6]]{ false, false },
-		new bool[operators[OperatorTypes_LOAD].params[7]]{ false },
+		new bool[operators[OperatorTypes_LOAD].params[7]]{ false, true },
 		nullptr,
 		new bool[operators[OperatorTypes_LOAD].params[9]]{ false }
 	};
@@ -138,7 +138,7 @@ CelScriptCompiler::CelScriptCompiler()
 			nullptr,
 			new unsigned char[operators[OperatorTypes_LOAD].params[5]]{0, 0},
 			new unsigned char[operators[OperatorTypes_LOAD].params[6]]{0, 0},
-			new unsigned char[operators[OperatorTypes_LOAD].params[7]]{0},
+			new unsigned char[operators[OperatorTypes_LOAD].params[7]]{0,0},
 			nullptr,
 			new unsigned char[operators[OperatorTypes_LOAD].params[9]]{0}
 	};
@@ -150,7 +150,7 @@ CelScriptCompiler::CelScriptCompiler()
 			nullptr,
 			new unsigned char[operators[OperatorTypes_LOAD].params[5]]{0, 0},
 			new unsigned char[operators[OperatorTypes_LOAD].params[6]]{0, 0},
-			new unsigned char[operators[OperatorTypes_LOAD].params[7]]{0},
+			new unsigned char[operators[OperatorTypes_LOAD].params[7]]{0,0},
 			nullptr,
 			new unsigned char[operators[OperatorTypes_LOAD].params[9]]{0}
 	};
@@ -162,7 +162,7 @@ CelScriptCompiler::CelScriptCompiler()
 			nullptr,
 			new bool[operators[OperatorTypes_LOAD].params[5]]{false, false},
 			new bool[operators[OperatorTypes_LOAD].params[6]]{false, false},
-			new bool[operators[OperatorTypes_LOAD].params[7]]{false},
+			new bool[operators[OperatorTypes_LOAD].params[7]]{false, 0},
 			nullptr,
 			new bool[operators[OperatorTypes_LOAD].params[9]]{false}
 	};
