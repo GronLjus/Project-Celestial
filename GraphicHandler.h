@@ -20,10 +20,10 @@ namespace Graphics
 			///<param name='hwnd'>[in]The handle to the output window</param>
 			///<param val='initQuality'>[in]The initial quality to use/</param>
 			///<param val='dStyle'>[in]The initial style to use</param>
-			HRESULT PreInit(HWND hwnd, GraphicQuality initQuality, DrawingStyle dStyle);
+			HRESULT PreInit(HWND hwnd, GraphicQuality initQuality, DrawingStyle dStyle, CrossHandlers::CelestialSlicedList<Resources::BaseObject*>* gameObjects);
 			///<summary>Initilizes the rest of the graphichandler so we can output complicated drawings</summary>
 			///<param val='errorOut'>[in]A pointer to a textcontainer to use for debugging</param>
-			HRESULT FullInit(CrossHandlers::TextContainer* errorOut, CrossHandlers::CelestialSlicedList<Resources::BaseObject*>* gameObjects);
+			HRESULT FullInit(CrossHandlers::TextContainer* errorOut);
 
 			///<summary>Updates the handler and prepares to draw</summary>
 			void Update(unsigned int time);

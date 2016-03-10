@@ -41,7 +41,7 @@ CardHandler* GraphicHandler::GetCardHandler()
 
 }
 
-HRESULT GraphicHandler::PreInit(HWND hwnd, GraphicQuality gQ, DrawingStyle dStyle)
+HRESULT GraphicHandler::PreInit(HWND hwnd, GraphicQuality gQ, DrawingStyle dStyle, CelestialSlicedList<BaseObject*>* gameObjects)
 {
 	
 	this->quality = gQ;
@@ -49,18 +49,18 @@ HRESULT GraphicHandler::PreInit(HWND hwnd, GraphicQuality gQ, DrawingStyle dStyl
 	isPreInited = true;
 	canDraw = true;
 	wf = false;
+	this->gameObjects = gameObjects;
 	return hr;
 
 }
 
-HRESULT GraphicHandler::FullInit(TextContainer* errorOut, CelestialSlicedList<BaseObject*>* gameObjects)
+HRESULT GraphicHandler::FullInit(TextContainer* errorOut)
 {
 
 	HRESULT hr = cardHandler->InitShader(errorOut);
 	isInited = true;
 	debugCard->ToggleWireFrame(wf);
 	debugCard->ToggleNormalSpikes(false);
-	this->gameObjects = gameObjects;
 	return hr;
 
 }

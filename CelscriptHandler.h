@@ -19,6 +19,7 @@ namespace Logic
 			///<summary>Updates the handler</summary>
 			void Update(unsigned int time);
 			void Kill();
+			bool AllStopped() const;
 			~CelscriptHandler();
 
 		private:

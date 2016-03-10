@@ -71,6 +71,7 @@ namespace Logic
 		
 			bool isDrawingBool;
 			std::mutex isDrawing;
+			bool killdbg;
 			CrossHandlers::TextContainer* dbgOut;
 
 			IHandleMessages** messageHandlers;

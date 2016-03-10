@@ -81,7 +81,7 @@ HRESULT Overlord::Init(HWND hwnd)
 	dS.useParticle = true;
 	dS.useSkybox = true;
 
-	HRESULT res = gH->PreInit(hwnd, gQ, dS);
+	HRESULT res = gH->PreInit(hwnd, gQ, dS, rH->GetObjectContainer());
 
 	if (res != S_OK)
 	{
@@ -92,29 +92,59 @@ HRESULT Overlord::Init(HWND hwnd)
 
 	CardHandler* tempCard = gH->GetCardHandler();
 	rH->Init(tempCard, dbgOut, Vector2(gQ.resolutionX, gQ.resolutionY));
-	guiH->Init(rH->GetObjectContainer());
 	cH->Init(rH->GetObjectContainer(), rH->GetCrossScriptObject());
-	gBH->Init(rH->GetObjectContainer());
-	iH->Init(rH->GetObjectContainer());
-
-	dbgOut->AddTextLine("Initiating CelestialGraphics");
-	res = gH->FullInit(dbgOut, rH->GetObjectContainer());
-	okToDraw = true;
-
-	dbgOut->AddTextLine("Engine Loaded!");
-	dbgOut->AddTextLine("Loading root script");
 
 	Message mess;
 	mess.source = MessageSource_NA;
 	mess.type = MessageType_RESOURCES;
 	mess.destination = MessageSource_RESOURCES;
 	mess.source = MessageSource_CELSCRIPT;
-	mess.SetParams((unsigned char*)"TestRoot.celsrc", 0, 15);
+	mess.SetParams((unsigned char*)"PreLoad.celsrc", 0, 15);
 	mess.mess = ResourceMess_LOADSCRIPT;
 	rH->HandleMessage(&mess);
 	rH->Update(0);
 	Message* retMess = rH->GetMessages()->PopMessage();
 	unsigned int scriptId = retMess->params[8] | ((int)retMess->params[9] << 8) | ((int)retMess->params[10] << 16) | ((int)retMess->params[11] << 24);
+
+	if (scriptId != 0)
+	{
+
+		firstMessage.source = MessageSource_NA;
+		firstMessage.destination = MessageSource_CELSCRIPT;
+		firstMessage.type = MessageType_SCRIPT;
+		firstMessage.mess = ScriptMess_RUN;
+		firstMessage.SetParams(&(retMess->params[8]), 0, 4);
+		cH->HandleMessage(&firstMessage);
+
+		do
+		{
+		
+			cH->Update(0);
+			updateMessages(MessageSource_CELSCRIPT);
+			rH->Update(0);
+			updateMessages(MessageSource_RESOURCES);
+			gH->Update(0);
+			updateMessages(MessageSource_GRAPHICS);
+
+		} while (!cH->AllStopped());
+	}
+
+	okToDraw = true;
+	guiH->Init(rH->GetObjectContainer());
+	gBH->Init(rH->GetObjectContainer());
+	iH->Init(rH->GetObjectContainer());
+
+	dbgOut->AddTextLine("Initiating CelestialGraphics");
+	res = gH->FullInit(dbgOut);
+
+	dbgOut->AddTextLine("Engine Loaded!");
+	dbgOut->AddTextLine("Loading root script");
+
+	mess.SetParams((unsigned char*)"TestRoot.celsrc", 0, 15);
+	rH->HandleMessage(&mess);
+	rH->Update(0);
+	retMess = rH->GetMessages()->PopMessage();
+	scriptId = retMess->params[8] | ((int)retMess->params[9] << 8) | ((int)retMess->params[10] << 16) | ((int)retMess->params[11] << 24);
 
 	if (scriptId != 0)
 	{
@@ -263,7 +293,7 @@ void Overlord::updateMessages(MessageSource handler)
 					unsigned int param1 = currentMessage->params[0] | ((int)currentMessage->params[1] << 8) | ((int)currentMessage->params[2] << 16) | ((int)currentMessage->params[3] << 24);
 					GUITextBox* textBox = (GUITextBox*)rH->GetObjectContainer()->GetValue(param1);
 					textBox->SetText(dbgOut);
-					dbgOut = nullptr;
+					killdbg = false;
 					currentMessage->read = true;
 
 				}
@@ -348,7 +378,7 @@ Overlord::~Overlord()
 	delete guiH;
 	delete rH;
 
-	if (dbgOut != nullptr)
+	if (killdbg)
 	{
 
 		delete dbgOut;

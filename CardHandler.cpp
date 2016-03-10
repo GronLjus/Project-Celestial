@@ -254,22 +254,24 @@ void CardHandler::Draw(Entities::ViewObject* vObj, GraphicalMesh* meshes, unsign
 void CardHandler::Draw(GUIObject* object)
 {
 	
-	if (object != nullptr && basic2DHandler != nullptr && !underInitiated)
-	{
+	basic2DHandler->Begin();
 
-		basic2DHandler->Begin();
+	if (!underInitiated)
+	{
+		
 		basic2DHandler->Clear();
-		basic2DHandler->End();
 
 	}
-	else if (object != nullptr && basic2DHandler != nullptr)
+	
+	if (object != nullptr && basic2DHandler != nullptr)
 	{
 
-		basic2DHandler->Begin();
 		basic2DHandler->DrawGUIObject(object);
-		basic2DHandler->End();
 
 	}
+
+	basic2DHandler->End();
+
 }
 
 void CardHandler::SetBorderBrush(GUIObject* object, Vector3 color)

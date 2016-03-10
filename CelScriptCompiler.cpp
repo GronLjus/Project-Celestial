@@ -712,11 +712,11 @@ CelScriptCompiler::CelScriptCompiler()
 	};
 	operators[OperatorTypes_EXPORT].paramTypes = new ParamType*[operators[OperatorTypes_EXPORT].enumAmount]{
 		new ParamType[operators[OperatorTypes_EXPORT].params[0]]{ParamType_NA, ParamType_CONST},
-		new ParamType[operators[OperatorTypes_EXPORT].params[0]]{ParamType_NA, ParamType_VAR}
+		new ParamType[operators[OperatorTypes_EXPORT].params[1]]{ParamType_NA, ParamType_VAR}
 	};
 	operators[OperatorTypes_EXPORT].optionalPar = new bool*[operators[OperatorTypes_EXPORT].enumAmount]{
 		new bool[operators[OperatorTypes_EXPORT].params[0]]{ false, false },
-		new bool[operators[OperatorTypes_EXPORT].params[0]]{ false, false }
+		new bool[operators[OperatorTypes_EXPORT].params[1]]{ false, false }
 	};
 	operators[OperatorTypes_EXPORT].readParam = new unsigned char[operators[OperatorTypes_EXPORT].enumAmount]{0,0};
 	operators[OperatorTypes_EXPORT].returns = new VarType[operators[OperatorTypes_EXPORT].enumAmount]{VarType_NA, VarType_NA};

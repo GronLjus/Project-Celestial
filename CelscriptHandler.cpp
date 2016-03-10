@@ -27,6 +27,26 @@ void CelscriptHandler::Init(CelestialSlicedList<BaseObject*>* objectContainer, u
 
 }
 
+bool CelscriptHandler::AllStopped() const
+{
+
+	for (unsigned int i = 0; i < scriptStacks->GetFirstEmpty(); i++)
+	{
+
+		ScriptStack* stack = scriptStacks->GetValue(i);
+
+		if (stack->sleep == 0 && stack->status != stackStatus_STOPPED)
+		{
+
+			return false;
+
+		}
+	}
+
+	return true;
+
+}
+
 void CelscriptHandler::Update(unsigned int time)
 {
 

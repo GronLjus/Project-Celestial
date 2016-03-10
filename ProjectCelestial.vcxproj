@@ -399,6 +399,7 @@
     <None Include="dbgHide.celsrc" />
     <None Include="dbgScript.celsrc" />
     <None Include="ErrorTest.celsrc" />
+    <None Include="PreLoad.celsrc" />
     <None Include="rootscript.celsrc" />
     <None Include="Shaders_Registers.hlsli" />
     <None Include="StdTextBox.celsrc" />

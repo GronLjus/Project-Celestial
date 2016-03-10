@@ -10,23 +10,10 @@ testClick = load script 'TestClick.celsrc'
 cam = load camera
 testPar2 = load gameboard 1024 tile
 
-baseLayout = load panel
-outTextBox = load textbox
-
-size baseLayout 1.0 1.0
-pos baseLayout 0.0 0.0
-
-size outTextBox 0.5 0.95
-pos outTextBox 0.0 0.0
-set content outTextBox 0.8 0.8 0.8
-set border outTextBox 0.0 1.0 0.0
-add ui baseLayout outTextBox
-
-set out outTextBox
+outTextBox = import 'dbgout'
 focus outTextBox
 
 post 'test'
 
-set ui baseLayout
 set gameboard testPar2
 set camera cam
