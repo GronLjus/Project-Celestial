@@ -32,16 +32,29 @@ void PositionableObject::Update(Message* mess)
 	{
 
 		unsigned int param1 = mess->params[0] | ((int)mess->params[1] << 8) | ((int)mess->params[2] << 16) | ((int)mess->params[3] << 24);
-		unsigned int param2 = mess->params[4] | ((int)mess->params[5] << 8) | ((int)mess->params[6] << 16) | ((int)mess->params[7] << 24);
-		unsigned int param3 = mess->params[8] | ((int)mess->params[9] << 8) | ((int)mess->params[10] << 16) | ((int)mess->params[11] << 24);
+		Vector3 newVec;
 
 		switch (mess->mess)
 		{
 
 		case ObjectMess_MOVE:
-			position += Vector3(param1, param2, param3);
+			memcpy(&newVec.x, mess->params, 4);
+			memcpy(&newVec.y, &mess->params[4], 4);
+			memcpy(&newVec.z, &mess->params[8], 4);
+			position += newVec;
 			break;
 		case ObjectMess_SCALE:
+			memcpy(&newVec.x, mess->params, 4);
+			memcpy(&newVec.y, &mess->params[4], 4);
+			memcpy(&newVec.z, &mess->params[8], 4);
+			scale += newVec;
+			break;
+		case ObjectMess_POS:
+			memcpy(&position.x, mess->params, 4);
+			memcpy(&position.y, &mess->params[4], 4);
+			memcpy(&position.z, &mess->params[8], 4);
+			break;
+		case ObjectMess_SIZE:
 			memcpy(&scale.x, mess->params, 4);
 			memcpy(&scale.y, &mess->params[4], 4);
 			memcpy(&scale.z, &mess->params[8], 4);

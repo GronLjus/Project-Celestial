@@ -136,7 +136,7 @@ HRESULT CompileShader(LPCWSTR name, string function, ID3DBlob** out, string targ
 	string path;
 	path.resize(pth.size()); //make enough room in copy for the string 
 	copy(pth.begin(), pth.end(), path.begin());
-	errorOut->AddText("Compiling: " + function + " in " + path);
+	errorOut->AddTextLine("Compiling: " + function + " in " + path);
 
 	HRESULT hr = D3DCompileFromFile(
 		name,
@@ -159,7 +159,7 @@ HRESULT CompileShader(LPCWSTR name, string function, ID3DBlob** out, string targ
 		MessageBox(0,wText,TEXT("Error"),0);
 		delete[] wText;
 
-		errorOut->AddText(temp);
+		errorOut->AddTextLine(temp);
 	}
 
 	return hr;
@@ -1027,20 +1027,20 @@ HRESULT CelestialShader::Init(ID3D11Device* card, GraphicQuality gQ, DrawingStyl
 	sMC = new ShadowMapConstants(gQ.shadows);
 
 	HRESULT hr = initBuffers(errorOut);
-	errorOut->AddText("Creating shaders");
+	errorOut->AddTextLine("Creating shaders");
 	hr = initShaders(errorOut);
 	if (FAILED(hr)){ return hr; }
-	errorOut->AddText("Creating states");
+	errorOut->AddTextLine("Creating states");
 	hr = initStates(errorOut);
 	if (FAILED(hr)){ return hr; }
-	errorOut->AddText("Creating in/out-textures");
+	errorOut->AddTextLine("Creating in/out-textures");
 	hr = initTargets(gQ, backBuffer);
 	if (FAILED(hr)){ return hr; }
 	hr = initDepth(gQ);
 	if (FAILED(hr)){ return hr; }
 	hr = initShadowmap(gQ);
 	if (FAILED(hr)){ return hr; }
-	errorOut->AddText("Creating techniques");
+	errorOut->AddTextLine("Creating techniques");
 	initTechniques();
 
 	plc.LightFalloff = 16;

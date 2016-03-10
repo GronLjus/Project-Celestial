@@ -22,7 +22,7 @@ void GUITextBoxLoader::Init(Graphics::CardHandler* &card, TextContainer* outText
 GUIObject* GUITextBoxLoader::Create(GUISnap hor, GUISnap ver)
 {
 
-	GUIObject* newObj = new GUITextBox(true, hor, ver);
+	GUIObject* newObj = new GUITextBox( hor, ver);
 	return newObj;
 
 }

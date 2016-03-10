@@ -1,25 +1,32 @@
-#include "I2DDrawer.h"
+#pragma once
 #include <dwrite.h>
 #include <d2d1.h>
+#include <string>
+#include "TextureResourceObject.h"
+#include "GUIObject.h"
 
 namespace Graphics
 {
 
+	///<summary>The weight of the font</summary>
+	enum FontWeight{ FontWeight_DONTCARE, FontWeight_THIN, FontWeight_EXTRALIGHT, FontWeight_LIGHT, FontWeight_NORMAL, FontWeight_MEDIUM, FontWeight_SEMIBOLD, FontWeight_BOLD, FontWeight_EXTRABOLD, FontWeight_HEAVY };
+
 	///<summary>This class draws 2d objects to a texture</summary>
-	class Celestial2DDrawer : public I2DDrawer
+	class Celestial2DDrawer
 	{
 		public:
 			Celestial2DDrawer();
-			virtual void Begin();
-			virtual bool End();
-			virtual HRESULT Init(CrossHandlers::TextureResourceObject* target, UINT width, UINT height);
-			virtual HRESULT InitFont(int height,UINT width,FontWeight weight,UINT mipLevels,bool italic,LPCWSTR faceName,int &index);
-			virtual HRESULT InitSolidBrush(float r, float g, float b, int &index);
-			virtual bool DrawTextToTarget(std::wstring, float x, float y, int font, int brush);
-			virtual void DrawGUIObject(Resources::GUIObject* object, CelestialMath::Vector2 parentalAbsPos, CelestialMath::Vector2 parentalAbsSize);
-			virtual void DrawGUIObject(Resources::GUIObject* object);
-			virtual void Clear();
-			virtual void Release();
+			void Begin();
+			bool End();
+			HRESULT Init(CrossHandlers::TextureResourceObject* target, UINT width, UINT height);
+			HRESULT InitFont(int height,UINT width,FontWeight weight,UINT mipLevels,bool italic,LPCWSTR faceName,int &index);
+			HRESULT InitSolidBrush(float r, float g, float b, int &index);
+			void DrawGUIObject(Resources::GUIObject* object, CelestialMath::Vector2 parentalAbsPos, CelestialMath::Vector2 parentalAbsSize);
+			void DrawGUIObject(Resources::GUIObject* object);
+			void Clear();
+			void Release();
+			void SetBorderBrush(Resources::GUIObject* object, CelestialMath::Vector3 color);
+			void SetContentBrush(Resources::GUIObject* object, CelestialMath::Vector3 color);
 			~Celestial2DDrawer();
 
 		private:

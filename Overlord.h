@@ -44,9 +44,6 @@ namespace Logic
 			///<summary>The style to use for graphics</summary>
 			Graphics::DrawingStyle dS;
 
-			///<summary>The pointer to the camera to use</summary>
-			CrossHandlers::Camera* cam;
-			
 			///<summary>The pointer to the GraphicHandler being used by this overlord</summary>
 			Graphics::GraphicHandler* gH;
 			///<summary>The pointer to the resourceHandler being used by this</summary>
@@ -74,9 +71,7 @@ namespace Logic
 		
 			bool isDrawingBool;
 			std::mutex isDrawing;
-			Resources::GUITextBox* dbgIn;
-			Resources::GUITextBox* dbgOut;
-			Resources::GUITextBox* dbgPnl;
+			CrossHandlers::TextContainer* dbgOut;
 
 			IHandleMessages** messageHandlers;
 	};

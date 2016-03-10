@@ -51,10 +51,7 @@ Overlord::Overlord(void)
 	messageHandlers[MessageSource_MASTER] = nullptr;
 	messageHandlers[MessageSource_OBJECT] = nullptr;
 
-	dbgIn = nullptr;
-	dbgOut = nullptr;
-	dbgPnl = nullptr;
-
+	dbgOut = new TextContainer();
 	inQueue = new MessageQueue();
 
 }
@@ -62,6 +59,7 @@ Overlord::Overlord(void)
 HRESULT Overlord::Init(HWND hwnd)
 {
 
+	dbgOut->AddTextLine("Initiating CelestialEngine");
 	CoInitialize(nullptr);
 	this->hWnd = hwnd;
 	gQ = GraphicQuality();
@@ -92,104 +90,30 @@ HRESULT Overlord::Init(HWND hwnd)
 
 	}
 
-	Message mess;
-	mess.source = MessageSource_NA;
-	mess.destination = MessageSource_RESOURCES;
-	mess.type = MessageType_RESOURCES;
-	mess.mess = ResourceMess_LOADGUI;
-	unsigned char tempBuff[]{GUIObjects_TEXTBOX >> 0, GUIObjects_TEXTBOX >> 8, GUIObjects_TEXTBOX >> 16, GUIObjects_TEXTBOX >> 24,
-		GUISnap_LEFT >> 0, GUISnap_LEFT >> 8, GUISnap_LEFT >> 16, GUISnap_LEFT >> 24,
-		GUISnap_TOP >> 0, GUISnap_TOP >> 8, GUISnap_TOP >> 16, GUISnap_TOP >> 24
-	};
-	mess.SetParams(tempBuff, 0, 12);
-	Message mess2 = mess;
-	Message mess3 = mess;
-	Message mess4 = mess;
-	rH->HandleMessage(&mess);
-	rH->HandleMessage(&mess2);
-	rH->HandleMessage(&mess3);
-	tempBuff[0] = GUIObjects_LAYOUT >> 0;
-	tempBuff[1] = GUIObjects_LAYOUT >> 8;
-	tempBuff[2] = GUIObjects_LAYOUT >> 16;
-	tempBuff[3] = GUIObjects_LAYOUT >> 24;
-	mess4.SetParams(tempBuff, 0, 12);
-	rH->HandleMessage(&mess4);
-	rH->Update(0);
-
-	Message* retMess = rH->GetMessages()->PopMessage();
-	unsigned int param1 = retMess->params[0] | ((int)retMess->params[1] << 8) | ((int)retMess->params[2] << 16) | ((int)retMess->params[3] << 24);
-	dbgIn = (GUITextBox*)(rH->GetObjectContainer()->GetValue(param1));
-	dbgIn->SetPosition(Vector2(0, 0));
-	dbgIn->SetSize(Vector2(1, 1));
-	dbgIn->Toggle(true);
-
-	retMess = rH->GetMessages()->PopMessage();
-	param1 = retMess->params[0] | ((int)retMess->params[1] << 8) | ((int)retMess->params[2] << 16) | ((int)retMess->params[3] << 24);
-	int dbgOutId = param1;
-	dbgOut = (GUITextBox*)(rH->GetObjectContainer()->GetValue(dbgOutId));
-	dbgOut->SetPosition(Vector2(0.0f, 0.0f));
-	dbgOut->SetSize(Vector2(0.5f, 1.0f));
-	dbgOut->Toggle(true);
-
-	retMess = rH->GetMessages()->PopMessage();
-	param1 = retMess->params[0] | ((int)retMess->params[1] << 8) | ((int)retMess->params[2] << 16) | ((int)retMess->params[3] << 24);
-	dbgPnl = (GUITextBox*)(rH->GetObjectContainer()->GetValue(param1));
-	dbgPnl->SetPosition(Vector2(0.75, 0.0f));
-	dbgPnl->SetSize(Vector2(0.25f, 0.25f));
-	dbgPnl->Toggle(true);
-
-	Vector3* temp = new Vector3[3];
-	temp[0] = Vector3(0.0f, 5.0f, -10.5f);
-	temp[1] = Vector3(0.0f, 5.0f, 0.0f);
-	temp[2] = Vector3(0.0f, 1.0f, 0.0f);
-	cam = new Camera(temp[0], temp[1], temp[2], (float)(CELESTIAL_PI*0.25f), gQ.resolutionX, gQ.resolutionY, 500.0f);
-
 	CardHandler* tempCard = gH->GetCardHandler();
-	rH->Init(tempCard, dbgOut,Vector2(gQ.resolutionX,gQ.resolutionY));
+	rH->Init(tempCard, dbgOut, Vector2(gQ.resolutionX, gQ.resolutionY));
 	guiH->Init(rH->GetObjectContainer());
 	cH->Init(rH->GetObjectContainer(), rH->GetCrossScriptObject());
 	gBH->Init(rH->GetObjectContainer());
 	iH->Init(rH->GetObjectContainer());
-	pH->Init(nullptr, cam, iH);
 
-	retMess = rH->GetMessages()->PopMessage();
-	param1 = retMess->params[0] | ((int)retMess->params[1] << 8) | ((int)retMess->params[2] << 16) | ((int)retMess->params[3] << 24);
-	GUILayout* tempLayout = (GUILayout*)(rH->GetObjectContainer()->GetValue(param1));
-	tempLayout->SetPosition(Vector2(0, 0));
-	tempLayout->SetSize(Vector2(1, 1));
-
-	tempLayout->AddChild(dbgIn);
-	tempLayout->AddChild(dbgOut);
-	tempLayout->AddChild(dbgPnl);
-	tempLayout->Toggle(true);
-	gH->AddLayout(tempLayout);
-	okToDraw = true;
-
-	dbgIn->Toggle(false);
-	dbgOut->Toggle(true);
-	dbgPnl->Toggle(true);
-	tempLayout->Toggle(true);
-
-	dbgOut->AddText("Initiating CelestialEngine");
-
-	dbgPnl->AddText("DFPS");
-	dbgPnl->AddText("LFPS");
-
-	dbgOut->AddText("Initiating CelestialGraphics");
+	dbgOut->AddTextLine("Initiating CelestialGraphics");
 	res = gH->FullInit(dbgOut, rH->GetObjectContainer());
 	okToDraw = true;
 
-	delete[] temp;
+	dbgOut->AddTextLine("Engine Loaded!");
+	dbgOut->AddTextLine("Loading root script");
 
-	dbgOut->AddText("Engine Loaded!");
-	dbgOut->AddText("Loading root script");
-	Message mess5 = mess;
-	mess5.source = MessageSource_CELSCRIPT;
-	mess5.SetParams((unsigned char*)"TestRoot.celsrc", 0, 15);
-	mess5.mess = ResourceMess_LOADSCRIPT;
-	rH->HandleMessage(&mess5);
+	Message mess;
+	mess.source = MessageSource_NA;
+	mess.type = MessageType_RESOURCES;
+	mess.destination = MessageSource_RESOURCES;
+	mess.source = MessageSource_CELSCRIPT;
+	mess.SetParams((unsigned char*)"TestRoot.celsrc", 0, 15);
+	mess.mess = ResourceMess_LOADSCRIPT;
+	rH->HandleMessage(&mess);
 	rH->Update(0);
-	retMess = rH->GetMessages()->PopMessage();
+	Message* retMess = rH->GetMessages()->PopMessage();
 	unsigned int scriptId = retMess->params[8] | ((int)retMess->params[9] << 8) | ((int)retMess->params[10] << 16) | ((int)retMess->params[11] << 24);
 
 	if (scriptId != 0)
@@ -333,6 +257,16 @@ void Overlord::updateMessages(MessageSource handler)
 
 				inQueue->PushMessage(currentMessage);
 
+				if (currentMessage->mess == EventMess_LNKDBG)
+				{
+
+					unsigned int param1 = currentMessage->params[0] | ((int)currentMessage->params[1] << 8) | ((int)currentMessage->params[2] << 16) | ((int)currentMessage->params[3] << 24);
+					GUITextBox* textBox = (GUITextBox*)rH->GetObjectContainer()->GetValue(param1);
+					textBox->SetText(dbgOut);
+					dbgOut = nullptr;
+					currentMessage->read = true;
+
+				}
 			}
 
 			currentMessage = messageHandlers[handler]->GetMessages()->PopMessage();
@@ -360,12 +294,12 @@ void Overlord::Update(unsigned int time)
 	lFPS2++;
 
 
-	std::stringstream out;
+	/*std::stringstream out;
 	out << gFPS;
 	dbgPnl->SetText(0, "DFPS: " + out.str());
 	out.str("");
 	out << lFPS;
-	dbgPnl->SetText(1, "LFPS: " + out.str());
+	dbgPnl->SetText(1, "LFPS: " + out.str());*/
 
 	if(gH->GetIsInited())
 	{
@@ -408,12 +342,19 @@ Overlord::~Overlord()
 	delete[] messageHandlers;
 	delete gBH;
 	delete iH;
-	delete cam;
 	delete gH;
 	delete pH;
 	delete cH;
 	delete guiH;
 	delete rH;
+
+	if (dbgOut != nullptr)
+	{
+
+		delete dbgOut;
+
+	}
+
 	isDrawing.unlock();
 	
 }

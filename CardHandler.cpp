@@ -168,7 +168,7 @@ HRESULT CardHandler::Init(HWND hwnd, GraphicQuality gQ, DrawingStyle dS)
 HRESULT CardHandler::InitShader(TextContainer* errorOut)
 {
 
-	errorOut->AddText("Creating shaders");
+	errorOut->AddTextLine("Creating shaders");
 	HRESULT hr = shader->Init(card, quality, dStyle, backBuffer, errorOut);
 	if (FAILED(hr)){ return hr; }
 	bH = (CelestialBufferHandler*)(shader->GetBufferHandler());
@@ -251,43 +251,45 @@ void CardHandler::Draw(Entities::ViewObject* vObj, GraphicalMesh* meshes, unsign
 	}
 }
 
-void CardHandler::Draw(CelestialList<GUIObject*>* objects)
+void CardHandler::Draw(GUIObject* object)
 {
 	
-	if (basic2DHandler != nullptr)
+	if (object != nullptr && basic2DHandler != nullptr && !underInitiated)
 	{
 
 		basic2DHandler->Begin();
+		basic2DHandler->Clear();
+		basic2DHandler->End();
 
-		if (!underInitiated)
-		{
+	}
+	else if (object != nullptr && basic2DHandler != nullptr)
+	{
 
-			basic2DHandler->Clear();
-
-		}
-
-		CelestialListNode<GUIObject*>* object = objects->GetFirstNode();
-
-		while (object != nullptr)
-		{
-
-			basic2DHandler->DrawGUIObject(object->GetNodeObject());
-			object = object->GetNext();
-
-		}
-
+		basic2DHandler->Begin();
+		basic2DHandler->DrawGUIObject(object);
 		basic2DHandler->End();
 
 	}
 }
 
-void CardHandler::DrawTextOnScreen(std::string text,float x,float y)
+void CardHandler::SetBorderBrush(GUIObject* object, Vector3 color)
 {
-	
-	if (basic2DHandler != nullptr && debugText >= 0 && debugBrush >= 0)
+
+	if (basic2DHandler != nullptr)
 	{
 
-		bool hr = basic2DHandler->DrawTextToTarget(s2ws(text).c_str(), x, y, debugText, debugBrush);
+		basic2DHandler->SetBorderBrush(object, color);
+
+	}
+}
+
+void CardHandler::SetContentBrush(Resources::GUIObject* object, CelestialMath::Vector3 color)
+{
+
+	if (basic2DHandler != nullptr)
+	{
+
+		basic2DHandler->SetContentBrush(object, color);
 
 	}
 }
@@ -297,7 +299,6 @@ void CardHandler::Present()
 
 	//Flip buffer
 	HRESULT hr = swapChain->Present(0,0);
-	std::string debug = "";
 	
 }
 

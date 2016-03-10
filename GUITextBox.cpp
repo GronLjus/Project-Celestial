@@ -5,28 +5,58 @@
 using namespace std;
 using namespace Resources;
 
-GUITextBox::GUITextBox(bool multi, GUISnap h, GUISnap v) : TextContainer(!multi ? 1 : 100) , GUIObject()
+GUITextBox::GUITextBox(GUISnap h, GUISnap v) : GUIObject()
 {
 
 	enabled = false;
-	isMulti = multi;
 	hSnap = h;
 	vSnap = v;
 	type = GUIObjects_TEXTBOX;
+	textContainer = new TextContainer();
 
 }
 
-bool GUITextBox::IsMultiLine()
+void GUITextBox::Update(Message* mess)
 {
 
-	return isMulti;
+	if (mess->type == MessageType_OBJECT)
+	{
+
+		std::string stringParam;
+		switch (mess->mess)
+		{
+
+		case ObjectMess_SETTEXT:
+			stringParam = string((char*)mess->params);
+			textContainer->SetText(stringParam);
+			break;
+		case ObjectMess_APPENDTEXT:
+			stringParam = string((char*)mess->params);
+			textContainer->AppendText(stringParam);
+			break;
+		case ObjectMess_APPENDTEXTLINE:
+			stringParam = string((char*)mess->params);
+			textContainer->AddTextLine(stringParam);
+			break;
+		default:
+			PositionableObject::Update(mess);
+
+		}
+	}
+}
+
+TextContainer* GUITextBox::GetText() const
+{
+
+	return textContainer;
 
 }
 
-int GUITextBox::GetTextLines()
+void GUITextBox::SetText(TextContainer* textCont)
 {
-	
-	return lines;
+
+	delete textContainer;
+	textContainer = textCont;
 
 }
 
@@ -37,18 +67,9 @@ float GUITextBox::GetAngle()
 
 }
 
-void GUITextBox::SetText(int line, string text)
-{
-
-	if (line < lines)
-	{
-
-		textLines[line] = text;
-
-	}
-}
-
 GUITextBox::~GUITextBox()
 {
+
+	delete textContainer;
 
 }

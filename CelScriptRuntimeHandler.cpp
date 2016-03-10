@@ -3,6 +3,7 @@
 #include "GUIObject.h"
 #include "CelScriptCompiled.h"
 #include "CrossScriptMemoryObject.h"
+#include "GUILayout.h"
 #include <thread>
 
 using namespace Logic;
@@ -293,9 +294,11 @@ RunTimeError LoadTextBoxOperator(unsigned int returnVar, unsigned char* params, 
 	mess.destination = MessageSource_RESOURCES;
 	mess.type = MessageType_RESOURCES;
 	mess.mess = ResourceMess_LOADGUI;
+	mess.returnParam = returnVar;
 	int enu = GUIObjects_TEXTBOX;
 	unsigned unsigned char tempBuff[]{enu >> 0, enu >> 8, enu >> 16, enu >>24};
 	mess.SetParams(tempBuff, 0, 4);
+	rtc->varWaiting->Add(true, returnVar - 1);
 	return sendMessageOut(mess, rtc);
 
 }
@@ -308,8 +311,10 @@ RunTimeError LoadPanelOperator(unsigned int returnVar, unsigned char* params, un
 	mess.type = MessageType_RESOURCES;
 	mess.mess = ResourceMess_LOADGUI;
 	int enu = GUIObjects_LAYOUT;
+	mess.returnParam = returnVar;
 	unsigned char tempBuff[]{enu >> 0, enu >> 8, enu >> 16, enu >> 24};
 	mess.SetParams(tempBuff, 0, 4);
+	rtc->varWaiting->Add(true, returnVar - 1);
 	return sendMessageOut(mess, rtc);
 
 }
@@ -333,6 +338,78 @@ RunTimeError AddObjectOperator(unsigned int returnVar, unsigned char* params, un
 	mess.type = MessageType_ENTITIES;
 	mess.mess = GameBoardMess_ADDOBJECT;
 	mess.SetParams(rtc->intLoader, 0, 4);
+	return sendMessageOut(mess, rtc);
+
+}
+
+RunTimeError SetBorderOperator(unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int mId, RunTimeCommons* rtc)
+{
+
+	if (paramSize < 16)
+	{
+
+		return RunTimeError_BADPARAMS;
+
+	}
+
+	Message mess;
+	mess.destination = MessageSource_GRAPHICS;
+	mess.type = MessageType_GRAPHICS;
+	mess.mess = GraphicMess_SETBORDERBRUSH;
+
+	unsigned int s = 4;
+	unsigned int obj = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
+	rtc->memory->ReadVariable(obj - 1, rtc->intLoader, s);
+	mess.SetParams(rtc->intLoader, 0, 4);
+
+	unsigned int xVar = (params[4] | ((int)params[5] << 8) | ((int)params[6] << 16) | ((int)params[7] << 24));
+	rtc->memory->ReadVariable(xVar - 1, rtc->intLoader, s);
+	mess.SetParams(rtc->intLoader, 4, 8);
+
+	unsigned int yVar = (params[8] | ((int)params[9] << 8) | ((int)params[10] << 16) | ((int)params[11] << 24));
+	rtc->memory->ReadVariable(yVar - 1, rtc->intLoader, s);
+	mess.SetParams(rtc->intLoader, 8, 12);
+
+	unsigned int zVar = (params[12] | ((int)params[13] << 8) | ((int)params[14] << 16) | ((int)params[15] << 24));
+	rtc->memory->ReadVariable(zVar - 1, rtc->intLoader, s);
+	mess.SetParams(rtc->intLoader, 12, 16);
+
+	return sendMessageOut(mess, rtc);
+
+}
+
+RunTimeError SetContentOperator(unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int mId, RunTimeCommons* rtc)
+{
+
+	if (paramSize < 16)
+	{
+
+		return RunTimeError_BADPARAMS;
+
+	}
+
+	Message mess;
+	mess.destination = MessageSource_GRAPHICS;
+	mess.type = MessageType_GRAPHICS;
+	mess.mess = GraphicMess_SETCONTENTBRUSH;
+
+	unsigned int s = 4;
+	unsigned int obj = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
+	rtc->memory->ReadVariable(obj - 1, rtc->intLoader, s);
+	mess.SetParams(rtc->intLoader, 0, 4);
+
+	unsigned int xVar = (params[4] | ((int)params[5] << 8) | ((int)params[6] << 16) | ((int)params[7] << 24));
+	rtc->memory->ReadVariable(xVar - 1, rtc->intLoader, s);
+	mess.SetParams(rtc->intLoader, 4, 8);
+
+	unsigned int yVar = (params[8] | ((int)params[9] << 8) | ((int)params[10] << 16) | ((int)params[11] << 24));
+	rtc->memory->ReadVariable(yVar - 1, rtc->intLoader, s);
+	mess.SetParams(rtc->intLoader, 8, 12);
+
+	unsigned int zVar = (params[12] | ((int)params[13] << 8) | ((int)params[14] << 16) | ((int)params[15] << 24));
+	rtc->memory->ReadVariable(zVar - 1, rtc->intLoader, s);
+	mess.SetParams(rtc->intLoader, 12, 16);
+
 	return sendMessageOut(mess, rtc);
 
 }
@@ -400,17 +477,28 @@ RunTimeError ReSnapOperator(unsigned int returnVar, unsigned char* params, unsig
 
 	}
 
-	Message mess;
-	mess.destination = MessageSource_RESOURCES;
-	mess.type = MessageType_RESOURCES;
-	mess.mess = ResourceMess_RESNAPGUI;
-	mess.SetParams(params, 0, 12);
+	unsigned int s = 4;
+	unsigned int var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
+	rtc->memory->ReadVariable(var - 1, rtc->intLoader, s);
+	unsigned int objectToMod = (rtc->intLoader[0] | ((int)rtc->intLoader[1] << 8) | ((int)rtc->intLoader[2] << 16) | ((int)rtc->intLoader[3] << 24));
+	BaseObject* object = rtc->gameObjects->GetValue(objectToMod);
 
-	return sendMessageOut(mess, rtc);
+	unsigned int hV = (params[4] | ((int)params[5] << 8) | ((int)params[6] << 16) | ((int)params[7] << 24));
+	unsigned int snapEnum = (params[8] | ((int)params[9] << 8) | ((int)params[10] << 16) | ((int)params[11] << 24));
+
+	unsigned char tempBuff[]{(unsigned char)hV, (unsigned char)snapEnum};
+	Message mess;
+	mess.destination = MessageSource_OBJECT;
+	mess.type = MessageType_OBJECT;
+	mess.mess = ObjectMess_SETSNAP;
+	mess.SetParams(params, 0, 2);
+	object->Update(&mess);
+
+	return RunTimeError_OK;
 
 }
 
-RunTimeError Pos2DOperator(unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int mId, RunTimeCommons* rtc)
+RunTimeError PosOperator(unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int mId, RunTimeCommons* rtc)
 {
 
 	if (paramSize < 12)
@@ -420,16 +508,41 @@ RunTimeError Pos2DOperator(unsigned int returnVar, unsigned char* params, unsign
 
 	}
 
+	unsigned int s = 4;
+	unsigned int var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
+	rtc->memory->ReadVariable(var - 1, rtc->intLoader, s);
+	unsigned int objectToMod = (rtc->intLoader[0] | ((int)rtc->intLoader[1] << 8) | ((int)rtc->intLoader[2] << 16) | ((int)rtc->intLoader[3] << 24));
+	BaseObject* object = rtc->gameObjects->GetValue(objectToMod);
+
 	Message mess;
-	mess.destination = MessageSource_RESOURCES;
-	mess.type = MessageType_RESOURCES;
-	mess.mess = ResourceMess_POSGUI;
-	mess.SetParams(params, 0, 12);
-	return sendMessageOut(mess, rtc);
+	mess.destination = MessageSource_OBJECT;
+	mess.type = MessageType_OBJECT;
+	mess.mess = ObjectMess_POS;
+
+	unsigned int xVar = (params[4] | ((int)params[5] << 8) | ((int)params[6] << 16) | ((int)params[7] << 24));
+	rtc->memory->ReadVariable(xVar - 1, rtc->intLoader, s);
+	mess.SetParams(rtc->intLoader, 0, 4);
+
+	unsigned int yVar = (params[8] | ((int)params[9] << 8) | ((int)params[10] << 16) | ((int)params[11] << 24));
+	rtc->memory->ReadVariable(yVar - 1, rtc->intLoader, s);
+	mess.SetParams(rtc->intLoader, 4, 4);
+
+	if (paramSize == 16)
+	{
+
+		unsigned int zVar = (params[12] | ((int)params[13] << 8) | ((int)params[14] << 16) | ((int)params[15] << 24));
+		rtc->memory->ReadVariable(zVar - 1, rtc->intLoader, s);
+		mess.SetParams(rtc->intLoader, 8, 4);
+
+	}
+
+	object->Update(&mess);
+
+	return RunTimeError_OK;
 
 }
 
-RunTimeError Size2DOperator(unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int mId, RunTimeCommons* rtc)
+RunTimeError SizeOperator(unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int mId, RunTimeCommons* rtc)
 {
 
 	if (paramSize < 12)
@@ -439,12 +552,37 @@ RunTimeError Size2DOperator(unsigned int returnVar, unsigned char* params, unsig
 
 	}
 
+	unsigned int s = 4;
+	unsigned int var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
+	rtc->memory->ReadVariable(var - 1, rtc->intLoader, s);
+	unsigned int objectToMod = (rtc->intLoader[0] | ((int)rtc->intLoader[1] << 8) | ((int)rtc->intLoader[2] << 16) | ((int)rtc->intLoader[3] << 24));
+	BaseObject* object = rtc->gameObjects->GetValue(objectToMod);
+
 	Message mess;
-	mess.destination = MessageSource_RESOURCES;
-	mess.type = MessageType_RESOURCES;
-	mess.mess = ResourceMess_SIZEGUI;
-	mess.SetParams(params, 0, 12);
-	return sendMessageOut(mess, rtc);
+	mess.destination = MessageSource_OBJECT;
+	mess.type = MessageType_OBJECT;
+	mess.mess = ObjectMess_SIZE;
+
+	unsigned int xVar = (params[4] | ((int)params[5] << 8) | ((int)params[6] << 16) | ((int)params[7] << 24));
+	rtc->memory->ReadVariable(xVar - 1, rtc->intLoader, s);
+	mess.SetParams(rtc->intLoader, 0, 4);
+
+	unsigned int yVar = (params[8] | ((int)params[9] << 8) | ((int)params[10] << 16) | ((int)params[11] << 24));
+	rtc->memory->ReadVariable(yVar - 1, rtc->intLoader, s);
+	mess.SetParams(rtc->intLoader, 4, 4);
+
+	if (paramSize == 16)
+	{
+
+		unsigned int zVar = (params[12] | ((int)params[13] << 8) | ((int)params[14] << 16) | ((int)params[15] << 24));
+		rtc->memory->ReadVariable(zVar - 1, rtc->intLoader, s);
+		mess.SetParams(rtc->intLoader, 8, 4);
+
+	}
+
+	object->Update(&mess);
+
+	return RunTimeError_OK;
 
 }
 
@@ -457,17 +595,29 @@ RunTimeError Add2DOperator(unsigned int returnVar, unsigned char* params, unsign
 		return RunTimeError_BADPARAMS;
 
 	}
+	unsigned int s = 4;
+	unsigned int var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
+	rtc->memory->ReadVariable(var - 1, rtc->intLoader, s);
+	unsigned int objectToMod = (rtc->intLoader[0] | ((int)rtc->intLoader[1] << 8) | ((int)rtc->intLoader[2] << 16) | ((int)rtc->intLoader[3] << 24));
+	GUIObject* object = (GUIObject*)rtc->gameObjects->GetValue(objectToMod);
 
-	Message mess;
-	mess.destination = MessageSource_RESOURCES;
-	mess.type = MessageType_RESOURCES;
-	mess.mess = ResourceMess_ADDGUITOGUI;
-	mess.SetParams(params, 0, 8);
-	return sendMessageOut(mess, rtc);
+	unsigned int var2 = (params[4] | ((int)params[5] << 8) | ((int)params[6] << 16) | ((int)params[7] << 24));
+	rtc->memory->ReadVariable(var2 - 1, rtc->intLoader, s);
+	objectToMod = (rtc->intLoader[0] | ((int)rtc->intLoader[1] << 8) | ((int)rtc->intLoader[2] << 16) | ((int)rtc->intLoader[3] << 24));
+	GUIObject* child = (GUIObject*)rtc->gameObjects->GetValue(objectToMod);
+
+	if (object->GetType() == GUIObjects_LAYOUT)
+	{
+
+		((GUILayout*)object)->AddChild(child);
+		
+	}
+
+	return RunTimeError_OK;
 
 }
 
-RunTimeError AddKeyTriggerOperator(unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int mId, RunTimeCommons* rtc)
+RunTimeError SetTextOperator(unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int mId, RunTimeCommons* rtc)
 {
 
 	if (paramSize < 8)
@@ -477,15 +627,80 @@ RunTimeError AddKeyTriggerOperator(unsigned int returnVar, unsigned char* params
 
 	}
 
+	unsigned int s = 4;
+	unsigned int var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
+	rtc->memory->ReadVariable(var - 1, rtc->intLoader, s);
+	unsigned int objectToMod = (rtc->intLoader[0] | ((int)rtc->intLoader[1] << 8) | ((int)rtc->intLoader[2] << 16) | ((int)rtc->intLoader[3] << 24));
+	BaseObject* object = rtc->gameObjects->GetValue(objectToMod);
+	unsigned int var2 = (params[4] | ((int)params[5] << 8) | ((int)params[6] << 16) | ((int)params[7] << 24));
+	unsigned int length;
+	unsigned char* message = loadString(var2, mId, rtc, length);
+
 	Message mess;
-	mess.destination = MessageSource_RESOURCES;
-	mess.type = MessageType_RESOURCES;
-	mess.mess = ResourceMess_ADDGUITRIGGER;
-	mess.mess = GraphicMess_GETSCREEN;
-	unsigned char tempBuff[]{0 >> 0, 0 >> 8, 0 >> 16, 0 >> 24};
-	mess.SetParams(tempBuff, 0, 4);
-	mess.SetParams(params, 4, 8);
-	return sendMessageOut(mess, rtc);
+	mess.destination = MessageSource_OBJECT;
+	mess.type = MessageType_OBJECT;
+	mess.mess = ObjectMess_SETTEXT;
+	mess.SetParams(message, 0, length);
+	object->Update(&mess);
+	return RunTimeError_OK;
+
+}
+
+RunTimeError AppendTextOperator(unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int mId, RunTimeCommons* rtc)
+{
+
+	if (paramSize < 8)
+	{
+
+		return RunTimeError_BADPARAMS;
+
+	}
+
+	unsigned int s = 4;
+	unsigned int var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
+	rtc->memory->ReadVariable(var - 1, rtc->intLoader, s);
+	unsigned int objectToMod = (rtc->intLoader[0] | ((int)rtc->intLoader[1] << 8) | ((int)rtc->intLoader[2] << 16) | ((int)rtc->intLoader[3] << 24));
+	BaseObject* object = rtc->gameObjects->GetValue(objectToMod);
+	unsigned int var2 = (params[4] | ((int)params[5] << 8) | ((int)params[6] << 16) | ((int)params[7] << 24));
+	unsigned int length;
+	unsigned char* message = loadString(var2, mId, rtc, length);
+
+	Message mess;
+	mess.destination = MessageSource_OBJECT;
+	mess.type = MessageType_OBJECT;
+	mess.mess = ObjectMess_APPENDTEXT;
+	mess.SetParams(message, 0, length);
+	object->Update(&mess);
+	return RunTimeError_OK;
+
+}
+
+RunTimeError AddTextLineOperator(unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int mId, RunTimeCommons* rtc)
+{
+
+	if (paramSize < 8)
+	{
+
+		return RunTimeError_BADPARAMS;
+
+	}
+
+	unsigned int s = 4;
+	unsigned int var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
+	rtc->memory->ReadVariable(var - 1, rtc->intLoader, s);
+	unsigned int objectToMod = (rtc->intLoader[0] | ((int)rtc->intLoader[1] << 8) | ((int)rtc->intLoader[2] << 16) | ((int)rtc->intLoader[3] << 24));
+	BaseObject* object = rtc->gameObjects->GetValue(objectToMod);
+	unsigned int var2 = (params[4] | ((int)params[5] << 8) | ((int)params[6] << 16) | ((int)params[7] << 24));
+	unsigned int length;
+	unsigned char* message = loadString(var2, mId, rtc, length);
+
+	Message mess;
+	mess.destination = MessageSource_OBJECT;
+	mess.type = MessageType_OBJECT;
+	mess.mess = ObjectMess_APPENDTEXTLINE;
+	mess.SetParams(message, 0, length);
+	object->Update(&mess);
+	return RunTimeError_OK;
 
 }
 
@@ -507,10 +722,7 @@ RunTimeError PostStrOperator(unsigned int returnVar, unsigned char* params, unsi
 	mess.destination = MessageSource_GUIENTITIES;
 	mess.type = MessageType_GUIENTITIES;
 	mess.mess = GUIMess_POST;
-	///TODO: Remove magic number
-	unsigned char tempBuff[]{2 >> 0, 2 >> 8, 2 >> 16, 2 >> 24};
-	mess.SetParams(tempBuff, 0, 4);
-	mess.SetParams(message, 4, length);
+	mess.SetParams(message, 0, length);
 	return sendMessageOut(mess, rtc);
 
 }
@@ -535,9 +747,7 @@ RunTimeError PostNumOperator(unsigned int returnVar, unsigned char* params, unsi
 	mess.mess = GUIMess_POST;
 	std::string stringParam = std::to_string(val);
 	///TODO: Remove magic number
-	unsigned char tempBuff[]{2 >> 0, 2 >> 8, 2 >> 16, 2 >> 24};
-	mess.SetParams(tempBuff, 0, 4);
-	mess.SetParams((unsigned char*)stringParam.c_str(), 4, stringParam.length());
+	mess.SetParams((unsigned char*)stringParam.c_str(), 0, stringParam.length());
 	return sendMessageOut(mess, rtc);
 
 }
@@ -563,10 +773,7 @@ RunTimeError PostFloatOperator(unsigned int returnVar, unsigned char* params, un
 	mess.type = MessageType_GUIENTITIES;
 	mess.mess = GUIMess_POST;
 	std::string stringParam = std::to_string(val);
-	///TODO: Remove magic number
-	unsigned char tempBuff[]{2 >> 0, 2 >> 8, 2 >> 16, 2 >> 24};
-	mess.SetParams(tempBuff, 0, 4);
-	mess.SetParams((unsigned char*)stringParam.c_str(), 4, stringParam.length());
+	mess.SetParams((unsigned char*)stringParam.c_str(), 0, stringParam.length());
 	return sendMessageOut(mess, rtc);
 
 }
@@ -1222,6 +1429,52 @@ RunTimeError SetScriptParStrOperator(unsigned int returnVar, unsigned char* para
 
 }
 
+RunTimeError SetUIOperator(unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int mId, RunTimeCommons* rtc)
+{
+
+	if (paramSize < 4)
+	{
+
+		return RunTimeError_BADPARAMS;
+
+	}
+
+	unsigned int s = 4;
+	unsigned int var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
+	rtc->memory->ReadVariable(var - 1, rtc->intLoader, s);
+
+	Message mess;
+	mess.destination = MessageSource_GRAPHICS;
+	mess.type = MessageType_GRAPHICS;
+	mess.mess = GraphicMess_SETUI;
+	mess.SetParams(rtc->intLoader, 0, 4);
+	return sendMessageOut(mess, rtc);
+
+}
+
+RunTimeError FocusUIOperator(unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int mId, RunTimeCommons* rtc)
+{
+
+	if (paramSize < 4)
+	{
+
+		return RunTimeError_BADPARAMS;
+
+	}
+
+	unsigned int s = 4;
+	unsigned int var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
+	rtc->memory->ReadVariable(var - 1, rtc->intLoader, s);
+
+	Message mess;
+	mess.destination = MessageSource_GUIENTITIES;
+	mess.type = MessageType_GUIENTITIES;
+	mess.mess = GUIMess_FOCUS;
+	mess.SetParams(rtc->intLoader, 0, 4);
+	return sendMessageOut(mess, rtc);
+
+}
+
 RunTimeError ExportConstOperator(unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int mId, RunTimeCommons* rtc)
 {
 
@@ -1273,6 +1526,29 @@ RunTimeError ExportVarOperator(unsigned int returnVar, unsigned char* params, un
 
 	((CrossScriptMemoryObject*)rtc->gameObjects->GetValue(rtc->crossScriptObject))->SetMem(name, rtc->stringLoader, s);
 	return RunTimeError_OK;
+
+}
+
+RunTimeError LinkDBGOperator(unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int mId, RunTimeCommons* rtc)
+{
+
+	if (paramSize < 4)
+	{
+
+		return RunTimeError_BADPARAMS;
+
+	}
+
+	unsigned int s = 4;
+	unsigned int var1 = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
+	rtc->memory->ReadVariable(var1 - 1, rtc->intLoader, s);
+
+	Message mess;
+	mess.destination = MessageSource_MASTER;
+	mess.type = MessageType_SYSTEM;
+	mess.mess = EventMess_LNKDBG;
+	mess.SetParams(rtc->intLoader, 0, 4);
+	return sendMessageOut(mess, rtc);
 
 }
 
@@ -1381,8 +1657,6 @@ CelScriptRuntimeHandler::CelScriptRuntimeHandler(MessageQueue* mQueue, Celestial
 	operators[opcode_LOADLIGHT] = LoadLightOperator;
 	operators[opcode_LOADMESH] = LoadMeshOperator;
 	operators[opcode_LOADSCRIPT] = LoadScriptOperator;
-	operators[opcode_LOADKYTRGR] = LoadKeyTriggerOperator;
-	operators[opcode_LOADCHRKYTRGR] = LoadKeyTriggerOperatorChar;
 	operators[opcode_LOADTXTBX] = LoadTextBoxOperator;
 	operators[opcode_LOADPANEL] = LoadPanelOperator;
 	operators[opcode_LOADGMBRD] = LoadGameBoardOperator;
@@ -1394,15 +1668,16 @@ CelScriptRuntimeHandler::CelScriptRuntimeHandler(MessageQueue* mQueue, Celestial
 	operators[opcode_SETGMEBRD] = SetGameBoardOperator;
 	operators[opcode_SETCMRA] = SetCameraOperator;
 	operators[opcode_SETLCLK] = SetLeftClickOperator;
+	operators[opcode_SETUI] = SetUIOperator;
+	operators[opcode_FCSUI] = FocusUIOperator;
 
 	operators[opcode_GETSCRNX] = GetScreenWidthOperator;
 	operators[opcode_GETSCRNY] = GetScreenHeightOperator;
 
 	operators[opcode_RESNAP] = ReSnapOperator;
-	operators[opcode_2DPOS] = Pos2DOperator;
-	operators[opcode_2DSIZE] = Size2DOperator;
-	operators[opcode_2DADDASNODE] = Add2DOperator;
-	operators[opcode_2DADDKYTRGR] = AddKeyTriggerOperator;
+	operators[opcode_POS] = PosOperator;
+	operators[opcode_SIZE] = SizeOperator;
+	operators[opcode_2DADDCHLD] = Add2DOperator;
 
 	operators[opcode_POSTSTR] = PostStrOperator;
 	operators[opcode_POSTNMBR] = PostNumOperator;
@@ -1449,6 +1724,13 @@ CelScriptRuntimeHandler::CelScriptRuntimeHandler(MessageQueue* mQueue, Celestial
 	operators[opcode_EXPRTCNST] = ExportConstOperator;
 	operators[opcode_EXPRTVAR] = ExportVarOperator;
 	operators[opcode_IMPRT] = ImportOperator;
+
+	operators[opcode_LNKDBG] = LinkDBGOperator;
+	operators[opcode_STXT] = SetTextOperator;
+	operators[opcode_ADDTXT] = AppendTextOperator;
+	operators[opcode_ADDLNE] = AddTextLineOperator;
+	operators[opcode_STCNTNT] = SetContentOperator;
+	operators[opcode_STBRDR] = SetBorderOperator;
 
 	operators[opcode_JMPINVVAR] = JumpInv;
 	operators[opcode_JMPNOW] = JumpNow;

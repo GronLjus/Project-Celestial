@@ -1,7 +1,7 @@
 #pragma once
 #include "ResourceObject.h"
 #include "CelestialShader.h"
-#include "I2DDrawer.h"
+#include "Celestial2DDrawer.h"
 #include "ICardDebug.h"
 #include "Intermediator.h"
 #include "CelestialBufferHandler.h"
@@ -39,16 +39,13 @@ namespace Graphics
 			void Draw(Entities::ViewObject* vObj, GraphicalMesh* meshes, unsigned int flip);
 			void JustClear();
 			void Kill();
+			void SetBorderBrush(Resources::GUIObject* object, CelestialMath::Vector3 color);
+			void SetContentBrush(Resources::GUIObject* object, CelestialMath::Vector3 color);
 
 			///<summary>Draws a ui</summary>
 			///<param val='ui'>[in]A pointer to the objects to draw</param>
-			void Draw(CrossHandlers::CelestialList< Resources::GUIObject*>* objects);
+			void Draw(Resources::GUIObject* object);
 
-			///<summary>Draws text on screen</summary>
-			///<param name='text'>[in]The text to draw</param>
-			///<param name='x'>[in]The coordinate of the upper left corner[0,1]</param>
-			///<param name='y'>[in]The coordinate of the upper left corner[0,1]</param>
-			void DrawTextOnScreen(std::string text,float x,float y);
 			///<summary>Presents everything the card has drawn</summary>
 			void Present();
 
@@ -142,7 +139,7 @@ namespace Graphics
 			ID3D11ShaderResourceView* currentFramwView;
 
 			///<summary>The internal texthandler</summary>
-			I2DDrawer* basic2DHandler;
+			Celestial2DDrawer* basic2DHandler;
 			///<summary>The index of the font used for debugtext</summary>
 			int debugText;
 			///<summary>The index of the brush used for debugtext</summary>

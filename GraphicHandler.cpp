@@ -23,7 +23,7 @@ GraphicHandler::GraphicHandler(unsigned int flips) : IHandleMessages(200,Message
 	canDraw = false;
 	isDrawing = false;
 	debug = true;
-	guiLayouts = new CelestialList<Resources::GUILayout*>();
+	guiLayout = nullptr;
 	cardHandler = new CardHandler(flips, true);
 	debugCard = cardHandler;
 	renderFlip = 0;
@@ -47,6 +47,7 @@ HRESULT GraphicHandler::PreInit(HWND hwnd, GraphicQuality gQ, DrawingStyle dStyl
 	this->quality = gQ;
 	HRESULT hr = cardHandler->Init(hwnd, gQ, dStyle);
 	isPreInited = true;
+	canDraw = true;
 	wf = false;
 	return hr;
 
@@ -61,26 +62,6 @@ HRESULT GraphicHandler::FullInit(TextContainer* errorOut, CelestialSlicedList<Ba
 	debugCard->ToggleNormalSpikes(false);
 	this->gameObjects = gameObjects;
 	return hr;
-
-}
-
-void  GraphicHandler::AddLayout(Resources::GUILayout* layout)
-{
-
-	canDraw = false;//Pause rendering
-	while (isDrawing){ Sleep(0); }//Wait till objects aren't being read
-	guiLayouts->AddElement(layout);
-	canDraw = true;
-
-}
-
-void GraphicHandler::ClearLayouts()
-{
-
-	canDraw = false;//Pause rendering
-	while (isDrawing){ Sleep(0); }//Wait till objects aren't being read
-	guiLayouts->Reset();
-	canDraw = true;
 
 }
 
@@ -180,6 +161,40 @@ void GraphicHandler::Update(unsigned int time)
 			canDraw = true;
 
 		}
+		else if (currentMessage->mess == GraphicMess_SETUI)
+		{
+
+			unsigned int param1 = currentMessage->params[0] | ((int)currentMessage->params[1] << 8) | ((int)currentMessage->params[2] << 16) | ((int)currentMessage->params[3] << 24);
+			canDraw = false;//Pause rendering
+			while (isDrawing){ this_thread::yield(); }//Wait until we aren't rendering
+			this->guiLayout = (GUILayout*)gameObjects->GetValue(param1);
+			canDraw = true;
+
+		}
+		else if (currentMessage->mess == GraphicMess_SETBORDERBRUSH)
+		{
+
+			unsigned int param1 = currentMessage->params[0] | ((int)currentMessage->params[1] << 8) | ((int)currentMessage->params[2] << 16) | ((int)currentMessage->params[3] << 24);
+			GUIObject* object = (GUIObject*)gameObjects->GetValue(param1);
+			Vector3 color;
+			memcpy(&color.x, &currentMessage->params[4], 4);
+			memcpy(&color.y, &currentMessage->params[8], 4);
+			memcpy(&color.z, &currentMessage->params[12], 4);
+			cardHandler->SetBorderBrush(object, color);
+
+		}
+		else if (currentMessage->mess == GraphicMess_SETCONTENTBRUSH)
+		{
+
+			unsigned int param1 = currentMessage->params[0] | ((int)currentMessage->params[1] << 8) | ((int)currentMessage->params[2] << 16) | ((int)currentMessage->params[3] << 24);
+			GUIObject* object = (GUIObject*)gameObjects->GetValue(param1);
+			Vector3 color;
+			memcpy(&color.x, &currentMessage->params[4], 4);
+			memcpy(&color.y, &currentMessage->params[8], 4);
+			memcpy(&color.z, &currentMessage->params[12], 4);
+			cardHandler->SetContentBrush(object, color);
+
+		}
 		
 		currentMessage->read = true;
 		currentMessage = inQueue->PopMessage();
@@ -259,7 +274,7 @@ void GraphicHandler::Draw()
 	{
 
 		//Draw uis
-		cardHandler->Draw(((CelestialList<Resources::GUIObject*>*)guiLayouts));
+		cardHandler->Draw(guiLayout);
 
 	}
 
@@ -352,7 +367,6 @@ GraphicHandler::~GraphicHandler(void)
 	isInited = false;
 	while(isReadingObjects > 0 || isDrawing){Sleep(0);}//Wait until objects aren't being read and we aren't rendering
 	
-	delete guiLayouts;
 	delete cardHandler;
 
 }

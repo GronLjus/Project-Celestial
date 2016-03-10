@@ -22,9 +22,7 @@ void GUILayoutLoader::Init(Graphics::CardHandler* &card, TextContainer* outText)
 GUIObject* GUILayoutLoader::Create(GUISnap hor, GUISnap ver)
 {
 
-	GUIObject* newObj = new GUILayout();
-	newObj->SetHorizontalSnap(hor);
-	newObj->SetVerticalSnap( ver);
+	GUIObject* newObj = new GUILayout(hor,ver);
 	return newObj;
 
 }

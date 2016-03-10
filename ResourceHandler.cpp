@@ -167,19 +167,9 @@ void ResourceHandler::Update(unsigned int time)
 
 			unsigned int param1 = currentMessage->params[0] | ((int)currentMessage->params[1] << 8) | ((int)currentMessage->params[2] << 16) | ((int)currentMessage->params[3] << 24);
 			GUIObject* obj = loader->LoadGUIObject(GUIObjects(param1), GUISnap_LEFT, GUISnap_TOP);
-			obj->Toggle(true);
+			obj->ToggleVisibility(true);
 			obj->SetId(gameObjects->GetFirstEmpty());
 			outId = gameObjects->Add(obj);
-
-			messageBuffer[this->currentMessage].timeSent = time;
-			messageBuffer[this->currentMessage].destination = MessageSource_CELSCRIPT;
-			messageBuffer[this->currentMessage].type = MessageType_SCRIPT;
-			messageBuffer[this->currentMessage].mess = EventMess_GUIOBJECTADDED;
-			unsigned char tempBuff[]{outId >> 0, outId >> 8, outId >> 16, outId >> 24};
-			messageBuffer[this->currentMessage].SetParams(tempBuff, 0, 4);
-			messageBuffer[this->currentMessage].read = false;
-			outQueue->PushMessage(&messageBuffer[this->currentMessage]);
-			this->currentMessage = (this->currentMessage + 1) % outMessages;
 
 		}
 		else if (currentMessage->mess == ResourceMess_LOADKEYTRIGGER)
@@ -209,97 +199,6 @@ void ResourceHandler::Update(unsigned int time)
 			kT->SetId(gameObjects->GetFirstEmpty());
 			outId = gameObjects->Add(kT);
 
-		}
-		else if (currentMessage->mess == ResourceMess_ADDGUITRIGGER)
-		{
-
-			unsigned int param1 = currentMessage->params[0] | ((int)currentMessage->params[1] << 8) | ((int)currentMessage->params[2] << 16) | ((int)currentMessage->params[3] << 24);
-			unsigned int param2 = currentMessage->params[4] | ((int)currentMessage->params[5] << 8) | ((int)currentMessage->params[6] << 16) | ((int)currentMessage->params[7] << 24);
-			unsigned int param3 = currentMessage->params[8] | ((int)currentMessage->params[9] << 8) | ((int)currentMessage->params[10] << 16) | ((int)currentMessage->params[11] << 24);
-
-			GUIObject* obj = (GUIObject*)gameObjects->GetValue(param3);
-			obj->SetTrigger(TriggerType(param1), param2+1);
-
-		}
-		else if (currentMessage->mess == ResourceMess_SIZEGUI)
-		{
-
-			unsigned int param1 = currentMessage->params[0] | ((int)currentMessage->params[1] << 8) | ((int)currentMessage->params[2] << 16) | ((int)currentMessage->params[3] << 24);
-			unsigned int param2 = currentMessage->params[4] | ((int)currentMessage->params[5] << 8) | ((int)currentMessage->params[6] << 16) | ((int)currentMessage->params[7] << 24);
-			unsigned int param3 = currentMessage->params[8] | ((int)currentMessage->params[9] << 8) | ((int)currentMessage->params[10] << 16) | ((int)currentMessage->params[11] << 24);
-
-			GUIObject* obj = (GUIObject*)gameObjects->GetValue(param1);
-			unsigned int pId = obj->GetParentID();
-			Vector2 size = Vector2((float)param2, (float)param3);
-			Vector2 parentAbSize = screen;
-			Vector2 parentSize = Vector2(1.0f, 1.0f);
-
-			while (pId > 0)
-			{
-
-				pId--;
-				parentSize *= ((GUIObject*)gameObjects->GetValue(pId))->GetSize();
-				pId = ((GUIObject*)gameObjects->GetValue(pId))->GetParentID();
-
-			}
-
-			parentAbSize = parentSize*screen;
-			obj->SetSize(size / parentAbSize);
-
-		}
-		else if (currentMessage->mess == ResourceMess_RESNAPGUI)
-		{
-
-			unsigned int param1 = currentMessage->params[0] | ((int)currentMessage->params[1] << 8) | ((int)currentMessage->params[2] << 16) | ((int)currentMessage->params[3] << 24);
-			unsigned int param2 = currentMessage->params[4] | ((int)currentMessage->params[5] << 8) | ((int)currentMessage->params[6] << 16) | ((int)currentMessage->params[7] << 24);
-			unsigned int param3 = currentMessage->params[8] | ((int)currentMessage->params[9] << 8) | ((int)currentMessage->params[10] << 16) | ((int)currentMessage->params[11] << 24);
-
-			GUIObject* obj = (GUIObject*)gameObjects->GetValue(param1);
-			obj->SetHorizontalSnap(GUISnap(param2));
-			obj->SetHorizontalSnap(GUISnap(param3));
-
-		}
-		else if (currentMessage->mess == ResourceMess_POSGUI)
-		{
-
-			unsigned int param1 = currentMessage->params[0] | ((int)currentMessage->params[1] << 8) | ((int)currentMessage->params[2] << 16) | ((int)currentMessage->params[3] << 24);
-			unsigned int param2 = currentMessage->params[4] | ((int)currentMessage->params[5] << 8) | ((int)currentMessage->params[6] << 16) | ((int)currentMessage->params[7] << 24);
-			unsigned int param3 = currentMessage->params[8] | ((int)currentMessage->params[9] << 8) | ((int)currentMessage->params[10] << 16) | ((int)currentMessage->params[11] << 24);
-
-			GUIObject* obj = (GUIObject*)gameObjects->GetValue(param1);
-			unsigned int pId = obj->GetParentID();
-			Vector2 pos = Vector2((float)param2, (float)param3);
-			Vector2 parentAbSize = screen;
-			Vector2 parentSize = Vector2(1.0f, 1.0f);
-
-			while (pId > 0)
-			{
-
-				pId--;
-				parentSize *= ((GUIObject*)gameObjects->GetValue(pId))->GetSize();
-				pId = ((GUIObject*)gameObjects->GetValue(pId))->GetParentID();
-
-			}
-
-			parentAbSize = parentSize*screen;
-			obj->SetPosition(pos / parentAbSize);
-
-		}
-		else if (currentMessage->mess == ResourceMess_ADDGUITOGUI)
-		{
-
-			unsigned int param1 = currentMessage->params[0] | ((int)currentMessage->params[1] << 8) | ((int)currentMessage->params[2] << 16) | ((int)currentMessage->params[3] << 24);
-			unsigned int param2 = currentMessage->params[4] | ((int)currentMessage->params[5] << 8) | ((int)currentMessage->params[6] << 16) | ((int)currentMessage->params[7] << 24);
-			GUIObject* obj1 = (GUIObject*)gameObjects->GetValue(param1);
-			GUIObject* obj2 = (GUIObject*)gameObjects->GetValue(param2);
-			obj2->AddChild(obj1);
-
-			if (obj1->IsEnabled() && obj2->IsOnScreen())
-			{
-
-				obj1->ToggleOnScreen(true);
-
-			}
 		}
 
 		if (currentMessage->source == MessageSource_CELSCRIPT)

@@ -4,106 +4,74 @@
 using namespace Resources;
 using namespace CelestialMath;
 
-GUIObject::GUIObject()
+GUIObject::GUIObject() : PositionableObject()
 { 
 
-	triggers = new unsigned int[TriggerType_NA]; 
-	children = new CelestialSlicedList<GUIObject*>(32, nullptr); 
-	childAmount = 0;
 	parentGUI = 0;
+	borderBrush = 0;
+	contentBrush = 0;
 
 }
 
-GUISnap GUIObject::GetHorizontalSnap()
+void GUIObject::Update(Message* mess)
+{
+
+	if (mess->type == MessageType_OBJECT)
+	{
+
+		unsigned char hor;
+		GUISnap snap;
+
+		switch (mess->mess)
+		{
+
+		case ObjectMess_SETSNAP:
+			hor = mess->params[0];
+			snap = GUISnap(mess->params[1]);
+
+			if (hor == 0)
+			{
+
+				hSnap = snap;
+
+			}
+			else
+			{
+
+				vSnap = snap;
+
+			}
+
+			break;
+		default:
+			PositionableObject::Update(mess);
+
+		}
+	}
+}
+
+GUISnap GUIObject::GetHorizontalSnap() const
 { 
 
 	return hSnap; 
 
 }
 
-GUISnap GUIObject::GetVerticalSnap()
+GUISnap GUIObject::GetVerticalSnap() const
 { 
 	
 	return vSnap; 
 
 }
 
-void GUIObject::SetHorizontalSnap(GUISnap snap)
-{
-	
-	hSnap = snap; 
-
-}
-
-void GUIObject::SetVerticalSnap(GUISnap snap)
-{ 
-	
-	vSnap = snap; 
-
-}
-
-Vector2 GUIObject::GetPosition()
-{
-	
-	return position; 
-
-}
-
-void GUIObject::SetPosition(Vector2 pos)
-{
-	
-	position = pos; 
-
-}
-
-Vector2 GUIObject::GetSize()
-{
-	
-	return size; 
-
-}
-
-void GUIObject::SetSize(Vector2 size)
-{
-	
-	this->size = size;
-
-}
-
-void GUIObject::Toggle(bool val)
-{
-	 
-	enabled = val; 
- 
-}
-
-bool GUIObject::IsEnabled() 
-{ 
-	
-	return enabled; 
-
-}
-
-GUIObjects GUIObject::GetType()
+GUIObjects GUIObject::GetType() const
 {
 	
 	return type; 
 
 }
 
-unsigned int GUIObject::GetTrigger(TriggerType type)
-{
-	
-	return triggers[type]; 
-}
-
-void GUIObject::SetTrigger(TriggerType type, unsigned int trigger)
-{ 
-	
-	triggers[type] = trigger; 
-}
-
-unsigned int GUIObject::GetParentID()
+unsigned int GUIObject::GetParentID() const
 { 
 	
 	return parentGUI; 
@@ -118,60 +86,50 @@ void GUIObject::SetParentID(unsigned int parent, unsigned int childId)
 
 }
 
-unsigned int GUIObject::GetChildren()
-{ 
-	
-	return childAmount; 
-
-}
-
-GUIObject* GUIObject::GetChild(unsigned int child)
-{ 
-	
-	return children->GetValue(child); 
-
-}
-
-void GUIObject::AddChild(GUIObject* gui)
+void GUIObject::ToggleVisibility(bool visible)
 {
 
-	int childId = children->Add(gui);
-	gui->SetParentID(id, childId);
-	childAmount++;
+	isVisible = visible;
 
 }
 
-void GUIObject::ToggleOnScreen(bool isOnScreen)
+bool GUIObject::IsVisible()
 {
 
-	this->isOnScreen = isOnScreen;
+	return isVisible;
 
 }
 
-bool GUIObject::IsOnScreen()
+unsigned int GUIObject::GetContentBrush() const
 {
 
-	return isOnScreen;
+	return contentBrush;
 
 }
 
-int GUIObject::GetId() const 
-{ 
-	
-	return id; 
+void GUIObject::SetContentBrush(unsigned int brush)
+{
+
+	contentBrush = brush;
 
 }
 
-void GUIObject::SetId(int id) 
-{ 
-	
-	this->id = id; 
+unsigned int GUIObject::GetBorderBrush() const
+{
+
+	return borderBrush;
+
+}
+
+void GUIObject::SetBorderBrush(unsigned int brush)
+{
+
+	borderBrush = brush;
 
 }
 
 GUIObject::~GUIObject()
 { 
-	
-	delete[] triggers; 
-	delete children; 
+
+
 }

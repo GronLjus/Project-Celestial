@@ -138,29 +138,44 @@ HRESULT Celestial2DDrawer::InitSolidBrush(float r, float g, float b, int &index)
 
 }
 
-bool Celestial2DDrawer::DrawTextToTarget(std::wstring text, float x, float y, int font, int brush)
+void Celestial2DDrawer::SetBorderBrush(GUIObject* object, Vector3 color)
 {
 
-	if (fonts[font] != nullptr && brushes[brush] != nullptr)
+	int borderBrush = object->GetBorderBrush();
+
+	if (borderBrush > 0)
 	{
 
-		RECT rect = RECT();
-		BOOL val = SetRect(&rect,x*width,y*height,width+1,height+1);
-
-		D2D1_RECT_F layoutRect = D2D1::RectF(
-			x*width,
-			y*height,
-			width + 1,
-			height + 1
-			);
-
-		rT->DrawText(text.c_str(), text.length(), fonts[font], layoutRect, brushes[brush]);
-		return true;
+		((ID2D1SolidColorBrush*)brushes[borderBrush - 1])->SetColor(D2D1::ColorF(color.x, color.y, color.z));
 
 	}
+	else
+	{
 
-	return false;
+		InitSolidBrush(color.x, color.y, color.z, borderBrush);
+		object->SetBorderBrush(borderBrush+1);
 
+	}
+}
+
+void Celestial2DDrawer::SetContentBrush(GUIObject* object, Vector3 color)
+{
+	
+	int contentBrush = object->GetContentBrush();
+
+	if (contentBrush > 0)
+	{
+
+		((ID2D1SolidColorBrush*)brushes[contentBrush - 1])->SetColor(D2D1::ColorF(color.x, color.y, color.z));
+
+	}
+	else
+	{
+
+		InitSolidBrush(color.x, color.y, color.z, contentBrush);
+		object->SetContentBrush(contentBrush+1);
+
+	}
 }
 
 void Celestial2DDrawer::DrawGUIObject(Resources::GUIObject* object)
@@ -174,15 +189,16 @@ void Celestial2DDrawer::DrawGUIObject(Resources::GUIObject* object)
 void Celestial2DDrawer::DrawGUIObject(Resources::GUIObject* object, Vector2 parentalAbsPos, Vector2 parentalAbsSize)
 {
 
-	if (object->IsEnabled())
+	if (object->IsVisible())
 	{
 
+		Vector2 objSize = Vector2(object->GetScale().x, object->GetScale().y);
 		Vector2 topLeft = Vector2(
-			object->GetHorizontalSnap() == GUISnap_LEFT ? object->GetPosition().x : object->GetHorizontalSnap() == GUISnap_MIDDLE ? 0.5f - object->GetSize().x*0.5f : object->GetSize().x - object->GetPosition().x,
-			object->GetVerticalSnap() == GUISnap_TOP ? object->GetPosition().y : object->GetVerticalSnap() == GUISnap_MIDDLE ? 0.5f - object->GetSize().y*0.5f : object->GetSize().y - object->GetPosition().y);
+			object->GetHorizontalSnap() == GUISnap_LEFT ? object->GetPosition().x : object->GetHorizontalSnap() == GUISnap_MIDDLE ? 0.5f - objSize.x*0.5f : objSize.x - object->GetPosition().x,
+			object->GetVerticalSnap() == GUISnap_TOP ? object->GetPosition().y : object->GetVerticalSnap() == GUISnap_MIDDLE ? 0.5f - objSize.y*0.5f : objSize.y - object->GetPosition().y);
 
 		Vector2 topLeftAbs = parentalAbsPos + topLeft * parentalAbsSize;
-		Vector2 abSize = object->GetSize() * parentalAbsSize;
+		Vector2 abSize = objSize * parentalAbsSize;
 
 		D2D1_RECT_F layoutRect = D2D1::RectF(
 			topLeftAbs.x,
@@ -202,19 +218,21 @@ void Celestial2DDrawer::DrawGUIObject(Resources::GUIObject* object, Vector2 pare
 			D2D1_ANTIALIAS_MODE_ALIASED
 			);
 
-		if (object->GetType() == GUIObjects_TEXTBOX)
+		ID2D1Brush* contentBrush = object->GetContentBrush() > 0 ? brushes[object->GetContentBrush() - 1] : nullptr;
+		ID2D1Brush* borderBrush = object->GetBorderBrush() > 0 ? brushes[object->GetBorderBrush() - 1] : nullptr;
+
+		if (borderBrush != nullptr)
+		{
+
+			rT->DrawRectangle(layoutRect, borderBrush);
+
+		}
+
+		if (object->GetType() == GUIObjects_TEXTBOX && contentBrush != nullptr)
 		{
 
 			GUITextBox* tB = (GUITextBox*)object;
-			std::string superString = "";
-
-			for (int i = 0; i < tB->GetTextLines(); i++)
-			{
-
-				superString += tB->GetText(i);
-				superString += "\n";
-
-			}
+			std::string superString = tB->GetText()->GetText();
 
 			IDWriteTextLayout* boxLayout = nullptr;
 			
@@ -227,19 +245,32 @@ void Celestial2DDrawer::DrawGUIObject(Resources::GUIObject* object, Vector2 pare
 			textTop.x = layoutRect.left;
 			textTop.y = layoutRect.top - max(0, metrics.height - metrics.layoutHeight);
 
-			rT->DrawTextLayout(textTop, boxLayout,brushes[0]);
+			rT->DrawTextLayout(textTop, boxLayout, contentBrush);
 			boxLayout->Release();
 
 		}
-
-		for (int i = 0; i < object->GetChildren(); i++)
+		else if (object->GetType() == GUIObjects_LAYOUT)
 		{
 
-			if (object->GetChild(i) != nullptr)
+			GUILayout* layout = (GUILayout*)object;
+
+
+			if (contentBrush != nullptr)
 			{
 
-				DrawGUIObject(object->GetChild(i),topLeftAbs,abSize);
+				rT->FillRectangle(layoutRect, contentBrush);
 
+			}
+
+			for (int i = 0; i < layout->GetChildren(); i++)
+			{
+
+				if (layout->GetChild(i) != nullptr)
+				{
+
+					DrawGUIObject(layout->GetChild(i), topLeftAbs, abSize);
+
+				}
 			}
 		}
 

@@ -12,16 +12,22 @@ namespace CrossHandlers
 	enum ResourceMess{
 		ResourceMess_LOADCAMERA, ResourceMess_LOADOBJECT,
 		ResourceMess_LOADGAMEBOARD, ResourceMess_LOADMESH, ResourceMess_LOADLIGHT, ResourceMess_LOADCHARKEYTRIGGER, ResourceMess_LOADKEYTRIGGER, ResourceMess_LOADSCRIPT,
-		ResourceMess_LOADGUI, ResourceMess_ADDGUITRIGGER, ResourceMess_SIZEGUI, ResourceMess_RESNAPGUI, ResourceMess_POSGUI, ResourceMess_ADDGUITOGUI, ResourceMess_NA
+		ResourceMess_LOADGUI, ResourceMess_NA
 	};
-	enum EventMess{ EventMess_OBJECTADDED, EventMess_SCRIPTADDED, EventMess_GUIOBJECTADDED, EventMess_WAITFORFRAME, EventMess_NA };
-	enum GUIMess{ GUIMess_POST, GUIMess_APPEND, GUIMess_CLEAR, GUIMess_ERASE, GUIMess_NA };
-	enum GraphicMess{ GraphicMess_GETSCREEN, GraphicMess_SETGAMEBOARD, GraphicMess_SETCAMERA, GraphicMess_UPDATEGAMEBOARDBUFFERS, GraphicMess_NA };
+	enum EventMess{ EventMess_OBJECTADDED, EventMess_SCRIPTADDED, EventMess_GUIOBJECTADDED, EventMess_LNKDBG, EventMess_WAITFORFRAME, EventMess_NA };
+	enum GUIMess{ GUIMess_POST, GUIMess_APPEND, GUIMess_CLEAR, GUIMess_ERASE, GUIMess_FOCUS, GUIMess_NA };
+	enum GraphicMess{ GraphicMess_GETSCREEN, GraphicMess_SETGAMEBOARD, GraphicMess_SETUI, GraphicMess_SETCAMERA, GraphicMess_UPDATEGAMEBOARDBUFFERS,
+		GraphicMess_SETCONTENTBRUSH, GraphicMess_SETBORDERBRUSH, GraphicMess_NA
+	};
 
 	enum GameBoardMess{ GameBoardMess_ADDMESH, GameBoardMess_SETBOARDOBJECT, GameBoardMess_SETCAM, GameBoardMess_ADDOBJECT, GameBoardMess_SETGAMEBOARD, GameBoardMess_SELECTOBJECT, GameBoardMess_NA };
 	enum SystemMess{SystemMess_GETSCREENRES,SystemMesss_NA};
 
-	enum ObjectMess{ ObjectMess_MOVE, ObjectMess_SCALE, ObjectMess_SETHVRSCRPT, ObjectMess_SETENTRSCRPT, ObjectMess_SETEXTSCRPT, ObjectMess_SETLCSCRPT, ObjectMess_SETRCSCRPT, ObjectMess_NA };
+	enum ObjectMess{
+		ObjectMess_MOVE, ObjectMess_SCALE, ObjectMess_POS, ObjectMess_SIZE,
+		ObjectMess_SETHVRSCRPT, ObjectMess_SETENTRSCRPT, ObjectMess_SETEXTSCRPT, ObjectMess_SETLCSCRPT, ObjectMess_SETRCSCRPT,
+		ObjectMess_SETSNAP, ObjectMess_SETTEXT, ObjectMess_APPENDTEXT, ObjectMess_APPENDTEXTLINE, ObjectMess_NA
+	};
 
 	struct Message
 	{

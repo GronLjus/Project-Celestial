@@ -29,11 +29,6 @@ namespace Graphics
 			void Update(unsigned int time);
 			///<summary>Draws out the scene</summary>
 			void Draw();
-			///<summary>Adds a layout to draw</summary>
-			///<param val='layout'>[in]A pointer to the layout to draw</param>
-			void AddLayout(Resources::GUILayout* layout);
-			///<summary>Clears the layouts</summary>
-			void ClearLayouts();
 
 			///<summary>Check if the handler is initilized</summary>
 			///<returns>If the handler is initilized</returns>
@@ -95,8 +90,7 @@ namespace Graphics
 			///<summary>How the handler is reading objects</summary>
 			int isReadingObjects;
 
-			///<summary>A list with the guis to draw</summary>
-			CrossHandlers::CelestialList<Resources::GUILayout*>* guiLayouts;
+			Resources::GUILayout* guiLayout;
 
 			///<summary>The number of renders</summary>
 			int renderCount;

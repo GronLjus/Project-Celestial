@@ -12,66 +12,103 @@ CelScriptCompiler::CelScriptCompiler()
 	operators = new Operator[OperatorTypes_NA];
 
 	operators[OperatorTypes_SET].keyword = "set";
-	operators[OperatorTypes_SET].enumAmount = 5;
+	operators[OperatorTypes_SET].enumAmount = 10;
 	operators[OperatorTypes_SET].enums = new std::string[operators[OperatorTypes_SET].enumAmount]; 
 	operators[OperatorTypes_SET].enums[0] = ""; 
 	operators[OperatorTypes_SET].enums[1] = ""; 
 	operators[OperatorTypes_SET].enums[2] = "gameboard";
 	operators[OperatorTypes_SET].enums[3] = "camera";
 	operators[OperatorTypes_SET].enums[4] = "leftclick";
-	operators[OperatorTypes_SET].byteCodes = new unsigned char[operators[OperatorTypes_SET].enumAmount]{opcode_SETCONST, opcode_SETVAR, opcode_SETGMEBRD, opcode_SETCMRA, opcode_SETLCLK};
-	operators[OperatorTypes_SET].params = new unsigned char[operators[OperatorTypes_SET].enumAmount]{2, 2, 1, 1, 2};
-	operators[OperatorTypes_SET].minParams = new unsigned char[operators[OperatorTypes_SET].enumAmount]{ 2, 2, 1, 1, 2};
+	operators[OperatorTypes_SET].enums[5] = "out";
+	operators[OperatorTypes_SET].enums[6] = "text";
+	operators[OperatorTypes_SET].enums[7] = "ui";
+	operators[OperatorTypes_SET].enums[8] = "content";
+	operators[OperatorTypes_SET].enums[9] = "border";
+	operators[OperatorTypes_SET].byteCodes = new unsigned char[operators[OperatorTypes_SET].enumAmount]{opcode_SETCONST, opcode_SETVAR, opcode_SETGMEBRD, opcode_SETCMRA, opcode_SETLCLK, opcode_LNKDBG, opcode_STXT, opcode_SETUI, opcode_STCNTNT, opcode_STBRDR};
+	operators[OperatorTypes_SET].params = new unsigned char[operators[OperatorTypes_SET].enumAmount]{2, 2, 1, 1, 2, 1, 2, 1, 4, 4};
+	operators[OperatorTypes_SET].minParams = new unsigned char[operators[OperatorTypes_SET].enumAmount]{ 2, 2, 1, 1, 2, 1, 2, 1, 4, 4};
 	operators[OperatorTypes_SET].paramsyntax = new VarType*[operators[OperatorTypes_SET].enumAmount]{
-		new VarType[operators[OperatorTypes_SET].params[0]]{VarType_NA, VarType_NA}, 
+		new VarType[operators[OperatorTypes_SET].params[0]]{VarType_NA, VarType_NA},
 			new VarType[operators[OperatorTypes_SET].params[1]]{VarType_NA, VarType_NA},
 			new VarType[operators[OperatorTypes_SET].params[2]]{VarType_NUMBER},
 			new VarType[operators[OperatorTypes_SET].params[3]]{ VarType_NUMBER },
-			new VarType[operators[OperatorTypes_SET].params[4]]{ VarType_NUMBER, VarType_NUMBER} };
+			new VarType[operators[OperatorTypes_SET].params[4]]{ VarType_NUMBER, VarType_NUMBER},
+			new VarType[operators[OperatorTypes_SET].params[5]]{ VarType_NUMBER},
+			new VarType[operators[OperatorTypes_SET].params[6]]{ VarType_NUMBER, VarType_STRING },
+			new VarType[operators[OperatorTypes_SET].params[7]]{ VarType_NUMBER },
+			new VarType[operators[OperatorTypes_SET].params[8]]{ VarType_NUMBER, VarType_FLOAT, VarType_FLOAT, VarType_FLOAT },
+			new VarType[operators[OperatorTypes_SET].params[9]]{ VarType_NUMBER, VarType_FLOAT, VarType_FLOAT, VarType_FLOAT }
+	};
 	operators[OperatorTypes_SET].paramTypes = new ParamType*[operators[OperatorTypes_SET].enumAmount]{
 		new ParamType[operators[OperatorTypes_SET].params[0]]{ParamType_VAR, ParamType_CONST}, 
 			new ParamType[operators[OperatorTypes_SET].params[1]]{ParamType_VAR, ParamType_VAR},
 			new ParamType[operators[OperatorTypes_SET].params[2]]{ParamType_VAR},
 			new ParamType[operators[OperatorTypes_SET].params[3]]{ ParamType_VAR },
-			new ParamType[operators[OperatorTypes_SET].params[4]]{ ParamType_VAR, ParamType_VAR} };
+			new ParamType[operators[OperatorTypes_SET].params[4]]{ ParamType_VAR, ParamType_VAR},
+			new ParamType[operators[OperatorTypes_SET].params[5]]{ ParamType_VAR},
+			new ParamType[operators[OperatorTypes_SET].params[6]]{ ParamType_VAR, ParamType_VAR},
+			new ParamType[operators[OperatorTypes_SET].params[7]]{ ParamType_VAR},
+			new ParamType[operators[OperatorTypes_SET].params[8]]{ ParamType_NA, ParamType_NA, ParamType_NA, ParamType_NA},
+			new ParamType[operators[OperatorTypes_SET].params[9]]{ ParamType_NA, ParamType_NA, ParamType_NA, ParamType_NA}
+	};
 	operators[OperatorTypes_SET].optionalPar = new bool*[operators[OperatorTypes_SET].enumAmount]{
 	new bool[operators[OperatorTypes_SET].params[0]]{ false, false },
 	new bool[operators[OperatorTypes_SET].params[1]]{ false, false },
 	new bool[operators[OperatorTypes_SET].params[2]]{ false },
 	new bool[operators[OperatorTypes_SET].params[3]]{ false },
-	new bool[operators[OperatorTypes_SET].params[4]]{ false, false}
+	new bool[operators[OperatorTypes_SET].params[4]]{ false, false},
+	new bool[operators[OperatorTypes_SET].params[5]]{ false},
+	new bool[operators[OperatorTypes_SET].params[6]]{ false, false},
+	new bool[operators[OperatorTypes_SET].params[7]]{ false},
+	new bool[operators[OperatorTypes_SET].params[8]]{ false, false, false, false},
+	new bool[operators[OperatorTypes_SET].params[9]]{ false, false, false, false}
 	};
-	operators[OperatorTypes_SET].readParam = new unsigned char[operators[OperatorTypes_SET].enumAmount]{2,2,0,0,0};
-	operators[OperatorTypes_SET].returns = new VarType[operators[OperatorTypes_SET].enumAmount]{VarType_NA, VarType_NA, VarType_NA, VarType_NA, VarType_NA};
-	operators[OperatorTypes_SET].returnType = new ParamType[operators[OperatorTypes_SET].enumAmount]{ParamType_NA, ParamType_NA, ParamType_NA, ParamType_NA, ParamType_NA};
-	operators[OperatorTypes_SET].writeParam = new unsigned char[operators[OperatorTypes_SET].enumAmount]{1,1,0,0,0};
+	operators[OperatorTypes_SET].readParam = new unsigned char[operators[OperatorTypes_SET].enumAmount]{2,2,0,0,0,0,0,0,0,0};
+	operators[OperatorTypes_SET].returns = new VarType[operators[OperatorTypes_SET].enumAmount]{VarType_NA, VarType_NA, VarType_NA, VarType_NA, VarType_NA, VarType_NA, VarType_NA, VarType_NA, VarType_NA, VarType_NA};
+	operators[OperatorTypes_SET].returnType = new ParamType[operators[OperatorTypes_SET].enumAmount]{ParamType_NA, ParamType_NA, ParamType_NA, ParamType_NA, ParamType_NA, ParamType_NA, ParamType_NA, ParamType_NA, ParamType_NA, ParamType_NA};
+	operators[OperatorTypes_SET].writeParam = new unsigned char[operators[OperatorTypes_SET].enumAmount]{1,1,0,0,0,0,0,0,0,0};
 	operators[OperatorTypes_SET].priority = 0;
 	operators[OperatorTypes_SET].shortHandsAmounts = 1;
 	operators[OperatorTypes_SET].shortHands = new std::string[operators[OperatorTypes_SET].shortHandsAmounts]; operators[OperatorTypes_SET].shortHands[0] = "=" ;
 	operators[OperatorTypes_SET].rightParams = new unsigned char[operators[OperatorTypes_SET].shortHandsAmounts]{1};
 	operators[OperatorTypes_SET].leftParams = new unsigned char[operators[OperatorTypes_SET].shortHandsAmounts]{1};
 	operators[OperatorTypes_SET].shortFlipParams = new bool[operators[OperatorTypes_SET].shortHandsAmounts]{false};
-	operators[OperatorTypes_SET].amountParOperators = new unsigned char[operators[OperatorTypes_SET].enumAmount]{0, 0,0,0,0};
+	operators[OperatorTypes_SET].amountParOperators = new unsigned char[operators[OperatorTypes_SET].enumAmount]{0, 0,0,0,0,0,0,0,0,0};
 	operators[OperatorTypes_SET].parRepeatsMin = new unsigned char*[operators[OperatorTypes_SET].enumAmount]{
 		new unsigned char[operators[OperatorTypes_SET].params[0]]{0, 0}, 
 			new unsigned char[operators[OperatorTypes_SET].params[1]]{0, 0},
 			new unsigned char[operators[OperatorTypes_SET].params[2]]{0},
 			new unsigned char[operators[OperatorTypes_SET].params[3]]{ 0 },
-			new unsigned char[operators[OperatorTypes_SET].params[4]]{ 0, 0}
+			new unsigned char[operators[OperatorTypes_SET].params[4]]{ 0, 0},
+			new unsigned char[operators[OperatorTypes_SET].params[5]]{ 0},
+			new unsigned char[operators[OperatorTypes_SET].params[6]]{ 0, 0},
+			new unsigned char[operators[OperatorTypes_SET].params[7]]{ 0},
+			new unsigned char[operators[OperatorTypes_SET].params[8]]{ 0, 0, 0, 0},
+			new unsigned char[operators[OperatorTypes_SET].params[9]]{ 0, 0, 0, 0, }
 	};
 	operators[OperatorTypes_SET].parRepeatsMax = new unsigned char*[operators[OperatorTypes_SET].enumAmount]{
 		new unsigned char[operators[OperatorTypes_SET].params[0]]{0, 0}, 
 			new unsigned char[operators[OperatorTypes_SET].params[1]]{0, 0},
 			new unsigned char[operators[OperatorTypes_SET].params[2]]{0},
 			new unsigned char[operators[OperatorTypes_SET].params[3]]{ 0 },
-			new unsigned char[operators[OperatorTypes_SET].params[4]]{ 0, 1}
+			new unsigned char[operators[OperatorTypes_SET].params[4]]{ 0, 1},
+			new unsigned char[operators[OperatorTypes_SET].params[5]]{ 0},
+			new unsigned char[operators[OperatorTypes_SET].params[6]]{ 0, 0},
+			new unsigned char[operators[OperatorTypes_SET].params[7]]{ 0},
+			new unsigned char[operators[OperatorTypes_SET].params[8]]{ 0, 0, 0, 0},
+			new unsigned char[operators[OperatorTypes_SET].params[9]]{ 0, 0, 0, 0, }
 	};
 	operators[OperatorTypes_SET].parOperatorAppend = new bool*[operators[OperatorTypes_SET].enumAmount]{
 		new bool[operators[OperatorTypes_SET].params[0]]{false, false},
 			new bool[operators[OperatorTypes_SET].params[1]]{false, false},
 			new bool[operators[OperatorTypes_SET].params[2]]{false},
 			new bool[operators[OperatorTypes_SET].params[3]]{ false },
-			new bool[operators[OperatorTypes_SET].params[4]]{ false, false}
+			new bool[operators[OperatorTypes_SET].params[4]]{ false, false},
+			new bool[operators[OperatorTypes_SET].params[5]]{ false},
+			new bool[operators[OperatorTypes_SET].params[6]]{ false, false},
+			new bool[operators[OperatorTypes_SET].params[7]]{ false},
+			new bool[operators[OperatorTypes_SET].params[8]]{ false, false, false, false},
+			new bool[operators[OperatorTypes_SET].params[9]]{ false, false, false, false}
 	};
 
 	operators[OperatorTypes_LOAD].keyword = "load";
@@ -87,7 +124,7 @@ CelScriptCompiler::CelScriptCompiler()
 	operators[OperatorTypes_LOAD].enums[7] = "gameboard";
 	operators[OperatorTypes_LOAD].enums[8] = "camera";
 	operators[OperatorTypes_LOAD].enums[9] = "object";
-	operators[OperatorTypes_LOAD].byteCodes = new unsigned char[operators[OperatorTypes_LOAD].enumAmount]{opcode_LOADLIGHT, opcode_LOADMESH,opcode_LOADSCRIPT,opcode_LOADTXTBX,opcode_LOADPANEL, opcode_LOADKYTRGR,opcode_LOADCHRKYTRGR,opcode_LOADGMBRD, opcode_LOADCAM,opcode_LOADOBJCT};
+	operators[OperatorTypes_LOAD].byteCodes = new unsigned char[operators[OperatorTypes_LOAD].enumAmount]{opcode_LOADLIGHT, opcode_LOADMESH,opcode_LOADSCRIPT,opcode_LOADTXTBX,opcode_LOADPANEL, 0,0,opcode_LOADGMBRD, opcode_LOADCAM,opcode_LOADOBJCT};
 	operators[OperatorTypes_LOAD].params = new unsigned char[operators[OperatorTypes_LOAD].enumAmount]{3, 1,1,0,0,2,2,2,0, 1};
 	operators[OperatorTypes_LOAD].minParams = new unsigned char[operators[OperatorTypes_LOAD].enumAmount]{ 3, 1,1,0,0,2,2,1, 0, 1};
 	operators[OperatorTypes_LOAD].paramsyntax = new VarType*[operators[OperatorTypes_LOAD].enumAmount]{
@@ -168,69 +205,76 @@ CelScriptCompiler::CelScriptCompiler()
 	};
 
 	operators[OperatorTypes_ADD].keyword = "add";
-	operators[OperatorTypes_ADD].enumAmount = 4;
+	operators[OperatorTypes_ADD].enumAmount = 5;
 	operators[OperatorTypes_ADD].enums = new std::string[operators[OperatorTypes_ADD].enumAmount]; 
 	operators[OperatorTypes_ADD].enums[0] = "object"; 
-	operators[OperatorTypes_ADD].enums[1] = "2dto"; 
-	operators[OperatorTypes_ADD].enums[2] = "keytrgr";
-	operators[OperatorTypes_ADD].enums[3] = "mesh";
-	operators[OperatorTypes_ADD].byteCodes = new unsigned char[operators[OperatorTypes_ADD].enumAmount]{opcode_ADDOBJECT,opcode_2DADDASNODE,opcode_2DADDKYTRGR,opcode_ADDMESH};
-	operators[OperatorTypes_ADD].params = new unsigned char[operators[OperatorTypes_ADD].enumAmount]{1,2,2,1};
-	operators[OperatorTypes_ADD].minParams = new unsigned char[operators[OperatorTypes_ADD].enumAmount]{ 1,2,2,1 };
+	operators[OperatorTypes_ADD].enums[1] = "ui"; 
+	operators[OperatorTypes_ADD].enums[2] = "mesh";
+	operators[OperatorTypes_ADD].enums[3] = "text";
+	operators[OperatorTypes_ADD].enums[4] = "line";
+	operators[OperatorTypes_ADD].byteCodes = new unsigned char[operators[OperatorTypes_ADD].enumAmount]{opcode_ADDOBJECT,opcode_2DADDCHLD,opcode_ADDMESH, opcode_ADDTXT, opcode_ADDLNE};
+	operators[OperatorTypes_ADD].params = new unsigned char[operators[OperatorTypes_ADD].enumAmount]{1, 2, 1, 2, 2};
+	operators[OperatorTypes_ADD].minParams = new unsigned char[operators[OperatorTypes_ADD].enumAmount]{1, 2, 1, 2, 2 };
 	operators[OperatorTypes_ADD].paramsyntax = new VarType*[operators[OperatorTypes_ADD].enumAmount]{
 		new VarType[operators[OperatorTypes_ADD].params[0]]{VarType_NUMBER}, 
 			new VarType[operators[OperatorTypes_ADD].params[1]]{VarType_NUMBER, VarType_NUMBER}, 
-			new VarType[operators[OperatorTypes_ADD].params[2]]{VarType_NUMBER, VarType_NUMBER},
-			new VarType[operators[OperatorTypes_ADD].params[3]]{VarType_NUMBER}};
+			new VarType[operators[OperatorTypes_ADD].params[2]]{VarType_NUMBER},
+			new VarType[operators[OperatorTypes_ADD].params[3]]{VarType_NUMBER, VarType_STRING},
+			new VarType[operators[OperatorTypes_ADD].params[4]]{VarType_NUMBER, VarType_STRING}};
 	operators[OperatorTypes_ADD].paramTypes = new ParamType*[operators[OperatorTypes_ADD].enumAmount]{
 		new ParamType[operators[OperatorTypes_ADD].params[0]]{ParamType_NA}, 
 			new ParamType[operators[OperatorTypes_ADD].params[1]]{ParamType_NA, ParamType_NA}, 
-			new ParamType[operators[OperatorTypes_ADD].params[2]]{ParamType_NA, ParamType_NA},
-			new ParamType[operators[OperatorTypes_ADD].params[3]]{ParamType_NA}};
+			new ParamType[operators[OperatorTypes_ADD].params[2]]{ParamType_NA},
+			new ParamType[operators[OperatorTypes_ADD].params[3]]{ParamType_NA, ParamType_NA},
+			new ParamType[operators[OperatorTypes_ADD].params[4]]{ParamType_NA, ParamType_NA}};
 	operators[OperatorTypes_ADD].optionalPar = new bool*[operators[OperatorTypes_ADD].enumAmount]{
 		new bool[operators[OperatorTypes_ADD].params[0]]{ false,},
 		new bool[operators[OperatorTypes_ADD].params[1]]{ false, false },
-		new bool[operators[OperatorTypes_ADD].params[2]]{ false, false },
-		new bool[operators[OperatorTypes_ADD].params[3]]{ false}
+		new bool[operators[OperatorTypes_ADD].params[2]]{ false},
+		new bool[operators[OperatorTypes_ADD].params[3]]{ false, false },
+		new bool[operators[OperatorTypes_ADD].params[4]]{ false, false }
 	};
-	operators[OperatorTypes_ADD].readParam = new unsigned char[operators[OperatorTypes_ADD].enumAmount]{0,0,0,0};
+	operators[OperatorTypes_ADD].readParam = new unsigned char[operators[OperatorTypes_ADD].enumAmount]{0,0,0,0,0};
 	operators[OperatorTypes_ADD].priority = 0;
-	operators[OperatorTypes_ADD].returns = new VarType[operators[OperatorTypes_ADD].enumAmount]{VarType_NA, VarType_NUMBER, VarType_NUMBER, VarType_NA};
-	operators[OperatorTypes_ADD].returnType = new ParamType[operators[OperatorTypes_ADD].enumAmount]{ParamType_NA, ParamType_VAR, ParamType_VAR, ParamType_NA};
-	operators[OperatorTypes_ADD].writeParam = new unsigned char[operators[OperatorTypes_ADD].enumAmount]{0,0,0,0};
+	operators[OperatorTypes_ADD].returns = new VarType[operators[OperatorTypes_ADD].enumAmount]{VarType_NA, VarType_NUMBER, VarType_NA, VarType_NA, VarType_NA};
+	operators[OperatorTypes_ADD].returnType = new ParamType[operators[OperatorTypes_ADD].enumAmount]{ParamType_NA, ParamType_VAR, ParamType_NA, ParamType_NA, ParamType_NA};
+	operators[OperatorTypes_ADD].writeParam = new unsigned char[operators[OperatorTypes_ADD].enumAmount]{0,0,0,0,0};
 	operators[OperatorTypes_ADD].shortHandsAmounts = 0;
-	operators[OperatorTypes_ADD].amountParOperators = new unsigned char[operators[OperatorTypes_ADD].enumAmount]{0, 0, 0,0};
+	operators[OperatorTypes_ADD].amountParOperators = new unsigned char[operators[OperatorTypes_ADD].enumAmount]{0, 0, 0,0,0};
 	operators[OperatorTypes_ADD].parRepeatsMin = new unsigned char*[operators[OperatorTypes_ADD].enumAmount]{
 		new unsigned char[operators[OperatorTypes_ADD].params[0]]{0},
 			new unsigned char[operators[OperatorTypes_ADD].params[1]]{0, 0},
-			new unsigned char[operators[OperatorTypes_ADD].params[2]]{0, 0},
-			new unsigned char[operators[OperatorTypes_ADD].params[3]]{0}
+			new unsigned char[operators[OperatorTypes_ADD].params[2]]{0},
+			new unsigned char[operators[OperatorTypes_ADD].params[3]]{0, 0},
+			new unsigned char[operators[OperatorTypes_ADD].params[4]]{0, 0}
 	};
 	operators[OperatorTypes_ADD].parRepeatsMax = new unsigned char*[operators[OperatorTypes_ADD].enumAmount]{
 		new unsigned char[operators[OperatorTypes_ADD].params[0]]{0},
 			new unsigned char[operators[OperatorTypes_ADD].params[1]]{0, 0},
-			new unsigned char[operators[OperatorTypes_ADD].params[2]]{0, 0},
-			new unsigned char[operators[OperatorTypes_ADD].params[3]]{0}
+			new unsigned char[operators[OperatorTypes_ADD].params[2]]{0},
+			new unsigned char[operators[OperatorTypes_ADD].params[3]]{0, 0},
+			new unsigned char[operators[OperatorTypes_ADD].params[4]]{0, 0}
 	};
 	operators[OperatorTypes_ADD].parOperatorAppend = new bool*[operators[OperatorTypes_ADD].enumAmount]{
 		new bool[operators[OperatorTypes_ADD].params[0]]{false},
 			new bool[operators[OperatorTypes_ADD].params[1]]{false, false},
-			new bool[operators[OperatorTypes_ADD].params[2]]{false, false},
-			new bool[operators[OperatorTypes_ADD].params[3]]{false}
+			new bool[operators[OperatorTypes_ADD].params[2]]{false},
+			new bool[operators[OperatorTypes_ADD].params[3]]{false, false},
+			new bool[operators[OperatorTypes_ADD].params[4]]{false, false}
 	};
 
 	operators[OperatorTypes_POST].keyword = "post";
 	operators[OperatorTypes_POST].enumAmount = 3;
 	operators[OperatorTypes_POST].enums = new std::string[operators[OperatorTypes_POST].enumAmount]; operators[OperatorTypes_POST].enums[0] = ""; operators[OperatorTypes_POST].enums[1] = ""; operators[OperatorTypes_POST].enums[2] = "";
 	operators[OperatorTypes_POST].byteCodes = new unsigned char[operators[OperatorTypes_POST].enumAmount]{opcode_POSTSTR, opcode_POSTFLOAT, opcode_POSTNMBR};
-	operators[OperatorTypes_POST].params = new unsigned char[operators[OperatorTypes_POST].enumAmount]{1, 1,1};
-	operators[OperatorTypes_POST].minParams = new unsigned char[operators[OperatorTypes_POST].enumAmount]{ 1, 1,1 };
+	operators[OperatorTypes_POST].params = new unsigned char[operators[OperatorTypes_POST].enumAmount]{1, 1, 1};
+	operators[OperatorTypes_POST].minParams = new unsigned char[operators[OperatorTypes_POST].enumAmount]{ 1, 1, 1};
 	operators[OperatorTypes_POST].paramsyntax = new VarType*[operators[OperatorTypes_POST].enumAmount]{
-		new VarType[operators[OperatorTypes_POST].params[0]]{VarType_STRING}, 
-		new VarType[operators[OperatorTypes_POST].params[1]]{VarType_FLOAT}, 
+		new VarType[operators[OperatorTypes_POST].params[0]]{VarType_STRING},
+		new VarType[operators[OperatorTypes_POST].params[1]]{VarType_FLOAT},
 		new VarType[operators[OperatorTypes_POST].params[2]]{VarType_NUMBER}};
 	operators[OperatorTypes_POST].paramTypes = new ParamType*[operators[OperatorTypes_POST].enumAmount]{
-		new ParamType[operators[OperatorTypes_POST].params[0]]{ParamType_NA}, 
+		new ParamType[operators[OperatorTypes_POST].params[0]]{ParamType_NA},
 		new ParamType[operators[OperatorTypes_POST].params[1]]{ParamType_NA},
 		new ParamType[operators[OperatorTypes_POST].params[2]]{ParamType_NA}};
 	operators[OperatorTypes_POST].optionalPar = new bool*[operators[OperatorTypes_POST].enumAmount]{
@@ -523,16 +567,16 @@ CelScriptCompiler::CelScriptCompiler()
 
 	operators[OperatorTypes_POS].keyword = "pos";
 	operators[OperatorTypes_POS].enumAmount = 1;
-	operators[OperatorTypes_POS].enums = new std::string[operators[OperatorTypes_POS].enumAmount]; operators[OperatorTypes_POS].enums[0] = "2d";
-	operators[OperatorTypes_POS].byteCodes = new unsigned char[operators[OperatorTypes_POS].enumAmount]{opcode_RESNAP};
-	operators[OperatorTypes_POS].params = new unsigned char[operators[OperatorTypes_POS].enumAmount]{3};
+	operators[OperatorTypes_POS].enums = new std::string[operators[OperatorTypes_POS].enumAmount]; operators[OperatorTypes_POS].enums[0] = "";
+	operators[OperatorTypes_POS].byteCodes = new unsigned char[operators[OperatorTypes_POS].enumAmount]{opcode_POS};
+	operators[OperatorTypes_POS].params = new unsigned char[operators[OperatorTypes_POS].enumAmount]{4};
 	operators[OperatorTypes_POS].minParams = new unsigned char[operators[OperatorTypes_POS].enumAmount]{ 3 };
 	operators[OperatorTypes_POS].paramsyntax = new VarType*[operators[OperatorTypes_POS].enumAmount]{
-		new VarType[operators[OperatorTypes_POS].params[0]]{VarType_NUMBER, VarType_NUMBER, VarType_NUMBER}};
+		new VarType[operators[OperatorTypes_POS].params[0]]{VarType_NUMBER, VarType_FLOAT, VarType_FLOAT, VarType_FLOAT}};
 	operators[OperatorTypes_POS].paramTypes = new ParamType*[operators[OperatorTypes_POS].enumAmount]{
-		new ParamType[operators[OperatorTypes_POS].params[0]]{ParamType_NA, ParamType_NA, ParamType_NA}};
+		new ParamType[operators[OperatorTypes_POS].params[0]]{ParamType_NA, ParamType_NA, ParamType_NA, ParamType_NA}};
 	operators[OperatorTypes_POS].optionalPar = new bool*[operators[OperatorTypes_POS].enumAmount]{
-		new bool[operators[OperatorTypes_POS].params[0]]{ false, false, false }
+		new bool[operators[OperatorTypes_POS].params[0]]{ false, false, false, true }
 	};
 	operators[OperatorTypes_POS].readParam = new unsigned char[operators[OperatorTypes_POS].enumAmount]{0};
 	operators[OperatorTypes_POS].returns = new VarType[operators[OperatorTypes_POS].enumAmount]{VarType_NA};
@@ -542,27 +586,27 @@ CelScriptCompiler::CelScriptCompiler()
 	operators[OperatorTypes_POS].shortHandsAmounts = 0;
 	operators[OperatorTypes_POS].amountParOperators = new unsigned char[operators[OperatorTypes_POS].enumAmount]{0};
 	operators[OperatorTypes_POS].parRepeatsMin = new unsigned char*[operators[OperatorTypes_POS].enumAmount]{
-		new unsigned char[operators[OperatorTypes_POS].params[0]]{0, 0, 0}
+		new unsigned char[operators[OperatorTypes_POS].params[0]]{0, 0, 0, 0}
 	};
 	operators[OperatorTypes_POS].parRepeatsMax = new unsigned char*[operators[OperatorTypes_POS].enumAmount]{
-		new unsigned char[operators[OperatorTypes_POS].params[0]]{0, 0, 0}
+		new unsigned char[operators[OperatorTypes_POS].params[0]]{0, 0, 0, 0}
 	};
 	operators[OperatorTypes_POS].parOperatorAppend = new bool*[operators[OperatorTypes_POS].enumAmount]{
-		new bool[operators[OperatorTypes_POS].params[0]]{false, false, false}
+		new bool[operators[OperatorTypes_POS].params[0]]{false, false, false, false}
 	};
 
 	operators[OperatorTypes_SIZE].keyword = "size";
 	operators[OperatorTypes_SIZE].enumAmount = 1;
-	operators[OperatorTypes_SIZE].enums = new std::string[operators[OperatorTypes_SIZE].enumAmount]; operators[OperatorTypes_SIZE].enums[0] = "2d";
-	operators[OperatorTypes_SIZE].byteCodes = new unsigned char[operators[OperatorTypes_SIZE].enumAmount]{opcode_RESNAP};
-	operators[OperatorTypes_SIZE].params = new unsigned char[operators[OperatorTypes_SIZE].enumAmount]{3};
+	operators[OperatorTypes_SIZE].enums = new std::string[operators[OperatorTypes_SIZE].enumAmount]; operators[OperatorTypes_SIZE].enums[0] = "";
+	operators[OperatorTypes_SIZE].byteCodes = new unsigned char[operators[OperatorTypes_SIZE].enumAmount]{opcode_SIZE};
+	operators[OperatorTypes_SIZE].params = new unsigned char[operators[OperatorTypes_SIZE].enumAmount]{4};
 	operators[OperatorTypes_SIZE].minParams = new unsigned char[operators[OperatorTypes_SIZE].enumAmount]{ 3 };
 	operators[OperatorTypes_SIZE].paramsyntax = new VarType*[operators[OperatorTypes_SIZE].enumAmount]{
-		new VarType[operators[OperatorTypes_SIZE].params[0]]{VarType_NUMBER, VarType_NUMBER, VarType_NUMBER}};
+		new VarType[operators[OperatorTypes_SIZE].params[0]]{VarType_NUMBER, VarType_FLOAT, VarType_FLOAT, VarType_FLOAT}};
 	operators[OperatorTypes_SIZE].paramTypes = new ParamType*[operators[OperatorTypes_SIZE].enumAmount]{
-		new ParamType[operators[OperatorTypes_SIZE].params[0]]{ParamType_NA, ParamType_NA, ParamType_NA}};
+		new ParamType[operators[OperatorTypes_SIZE].params[0]]{ParamType_NA, ParamType_NA, ParamType_NA, ParamType_NA}};
 	operators[OperatorTypes_SIZE].optionalPar = new bool*[operators[OperatorTypes_SIZE].enumAmount]{
-		new bool[operators[OperatorTypes_SIZE].params[0]]{ false, false, false }
+		new bool[operators[OperatorTypes_SIZE].params[0]]{ false, false, false, true }
 	};
 	operators[OperatorTypes_SIZE].readParam = new unsigned char[operators[OperatorTypes_SIZE].enumAmount]{0};
 	operators[OperatorTypes_SIZE].returns = new VarType[operators[OperatorTypes_SIZE].enumAmount]{VarType_NA};
@@ -572,13 +616,13 @@ CelScriptCompiler::CelScriptCompiler()
 	operators[OperatorTypes_SIZE].shortHandsAmounts = 0;
 	operators[OperatorTypes_SIZE].amountParOperators = new unsigned char[operators[OperatorTypes_SIZE].enumAmount]{0};
 	operators[OperatorTypes_SIZE].parRepeatsMin = new unsigned char*[operators[OperatorTypes_SIZE].enumAmount]{
-		new unsigned char[operators[OperatorTypes_SIZE].params[0]]{0, 0, 0}
+		new unsigned char[operators[OperatorTypes_SIZE].params[0]]{0, 0, 0, 0}
 	};
 	operators[OperatorTypes_SIZE].parRepeatsMax = new unsigned char*[operators[OperatorTypes_SIZE].enumAmount]{
-		new unsigned char[operators[OperatorTypes_SIZE].params[0]]{0, 0, 0}
+		new unsigned char[operators[OperatorTypes_SIZE].params[0]]{0, 0, 0, 0}
 	};
 	operators[OperatorTypes_SIZE].parOperatorAppend = new bool*[operators[OperatorTypes_SIZE].enumAmount]{
-		new bool[operators[OperatorTypes_SIZE].params[0]]{false, false, false}
+		new bool[operators[OperatorTypes_SIZE].params[0]]{false, false, false, false}
 	};
 
 	operators[OperatorTypes_RUN].keyword = "run";
@@ -738,6 +782,37 @@ CelScriptCompiler::CelScriptCompiler()
 		new bool[operators[OperatorTypes_IMPORT].params[2]]{false}
 	};
 
+	operators[OperatorTypes_FOCUS].keyword = "focus";
+	operators[OperatorTypes_FOCUS].enumAmount = 1;
+	operators[OperatorTypes_FOCUS].enums = new std::string[operators[OperatorTypes_FOCUS].enumAmount]; operators[OperatorTypes_FOCUS].enums[0] = "ui";
+	operators[OperatorTypes_FOCUS].byteCodes = new unsigned char[operators[OperatorTypes_FOCUS].enumAmount]{opcode_FCSUI };
+	operators[OperatorTypes_FOCUS].params = new unsigned char[operators[OperatorTypes_FOCUS].enumAmount]{1};
+	operators[OperatorTypes_FOCUS].minParams = new unsigned char[operators[OperatorTypes_FOCUS].enumAmount]{1};
+	operators[OperatorTypes_FOCUS].paramsyntax = new VarType*[operators[OperatorTypes_FOCUS].enumAmount]{
+		new VarType[operators[OperatorTypes_FOCUS].params[0]]{VarType_NUMBER}
+	};
+	operators[OperatorTypes_FOCUS].paramTypes = new ParamType*[operators[OperatorTypes_FOCUS].enumAmount]{
+		new ParamType[operators[OperatorTypes_FOCUS].params[0]]{ParamType_NA}
+	};
+	operators[OperatorTypes_FOCUS].optionalPar = new bool*[operators[OperatorTypes_FOCUS].enumAmount]{
+		new bool[operators[OperatorTypes_FOCUS].params[0]]{ false }
+	};
+	operators[OperatorTypes_FOCUS].readParam = new unsigned char[operators[OperatorTypes_FOCUS].enumAmount]{0};
+	operators[OperatorTypes_FOCUS].returns = new VarType[operators[OperatorTypes_FOCUS].enumAmount]{VarType_NA};
+	operators[OperatorTypes_FOCUS].returnType = new ParamType[operators[OperatorTypes_FOCUS].enumAmount]{ParamType_NA};
+	operators[OperatorTypes_FOCUS].writeParam = new unsigned char[operators[OperatorTypes_FOCUS].enumAmount]{0};
+	operators[OperatorTypes_FOCUS].priority = 0;
+	operators[OperatorTypes_FOCUS].shortHandsAmounts = 0;
+	operators[OperatorTypes_FOCUS].amountParOperators = new unsigned char[operators[OperatorTypes_FOCUS].enumAmount]{0};
+	operators[OperatorTypes_FOCUS].parRepeatsMin = new unsigned char*[operators[OperatorTypes_FOCUS].enumAmount]{
+		new unsigned char[operators[OperatorTypes_FOCUS].params[0]]{0}
+	};
+	operators[OperatorTypes_FOCUS].parRepeatsMax = new unsigned char*[operators[OperatorTypes_FOCUS].enumAmount]{
+		new unsigned char[operators[OperatorTypes_FOCUS].params[0]]{0}
+	};
+	operators[OperatorTypes_FOCUS].parOperatorAppend = new bool*[operators[OperatorTypes_FOCUS].enumAmount]{
+		new bool[operators[OperatorTypes_FOCUS].params[0]]{false}
+	};
 
 	flowOps = new FlowController[FlowOperator_NA];
 
@@ -1408,121 +1483,121 @@ CelScriptCompiled* CelScriptCompiler::CompileSource(CelScriptSource* source, Com
 	if (error.errorType != Logic::ScriptError_OK)
 	{
 
-		outText->AddText("Error compiling celscript at line: " + std::to_string(error.line + 1)+ " in file: "+source->GetFile(error.line+1));
+		outText->AddTextLine("Error compiling celscript at line: " + std::to_string(error.line + 1)+ " in file: "+source->GetFile(error.line+1));
 
 		if (error.errorType == Logic::ScriptError_BADSIG)
 		{
 
-			outText->AddText("Incompatible parameters");
+			outText->AddTextLine("Incompatible parameters");
 
 		}
 		else if (error.errorType == Logic::ScriptError_CONDITION)
 		{
 
-			outText->AddText("Need condition");
+			outText->AddTextLine("Need condition");
 
 		}
 		else if (error.errorType == Logic::ScriptError_ENUMMISPLACE)
 		{
 
-			outText->AddText("Misplaced Enumeration");
+			outText->AddTextLine("Misplaced Enumeration");
 
 		}
 		else if (error.errorType == Logic::ScriptError_HUH)
 		{
 
-			outText->AddText("Beats the fuck out of me...");
+			outText->AddTextLine("Beats the fuck out of me...");
 
 		}
 		else if (error.errorType == Logic::ScriptError_INCOMPATIBLE)
 		{
 
-			outText->AddText("Type error");
+			outText->AddTextLine("Type error");
 
 		}
 		else if (error.errorType == Logic::ScriptError_INCOMPATIBLEENUM)
 		{
 
-			outText->AddText("I have no idea..");
+			outText->AddTextLine("I have no idea..");
 
 		}
 		else if (error.errorType == Logic::ScriptError_INCOMPATIBLERETURN)
 		{
 
-			outText->AddText("Wrong return type");
+			outText->AddTextLine("Wrong return type");
 
 		}
 		else if (error.errorType == Logic::ScriptError_NESTEDFLOW)
 		{
 
-			outText->AddText("Flow operators cannot nest on the same lline");
+			outText->AddTextLine("Flow operators cannot nest on the same lline");
 
 		}
 		else if (error.errorType == Logic::ScriptError_NOBODY)
 		{
 
-			outText->AddText("Lacking body");
+			outText->AddTextLine("Lacking body");
 
 		}
 		else if (error.errorType == Logic::ScriptError_TOFEWPARAM)
 		{
 
-			outText->AddText("Not enough parameters");
+			outText->AddTextLine("Not enough parameters");
 
 		}
 		else if (error.errorType == Logic::ScriptError_TOMANYPARAM)
 		{
 
-			outText->AddText("Too many parameters");
+			outText->AddTextLine("Too many parameters");
 
 		}
 		else if (error.errorType == Logic::ScriptError_UNCLOSED)
 		{
 
-			outText->AddText("Unclosed string");
+			outText->AddTextLine("Unclosed string");
 
 		}
 		else if (error.errorType == Logic::ScriptError_UNCLOSEDBODY)
 		{
 
-			outText->AddText("Unclosed Body");
+			outText->AddTextLine("Unclosed Body");
 
 		}
 		else if (error.errorType == Logic::ScriptError_UNKNOWNKEYWORD)
 		{
 
-			outText->AddText("Expected valid Keyword");
+			outText->AddTextLine("Expected valid Keyword");
 
 		}
 		else if (error.errorType == Logic::ScriptError_VARUNIN)
 		{
 
-			outText->AddText("Variable needs a value");
+			outText->AddTextLine("Variable needs a value");
 
 		}
 		else if (error.errorType == Logic::ScriptError_PARAMWRONGPLACE)
 		{
 
-			outText->AddText("Runtime Parameter marker in the wrong place");
+			outText->AddTextLine("Runtime Parameter marker in the wrong place");
 
 		}
 		else if (error.errorType == Logic::ScriptError_UNKNOWNSYSTEMPARAM)
 		{
 
-			outText->AddText("Unknown System parameter");
+			outText->AddTextLine("Unknown System parameter");
 
 		}
 		else
 		{
 
-			outText->AddText("Unknown error, sucks to be you");
+			outText->AddTextLine("Unknown error, sucks to be you");
 
 		}
 	}
 	else
 	{
 		
-		outText->AddText("Script compiled ok!");
+		outText->AddTextLine("Script compiled ok!");
 		
 	}
 

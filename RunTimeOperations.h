@@ -6,14 +6,15 @@ namespace Logic
 	enum opcode : unsigned char {
 		opcode_SETCONST, opcode_SETVAR,
 
-		opcode_LOADLIGHT, opcode_LOADMESH, opcode_LOADSCRIPT, opcode_LOADKYTRGR, opcode_LOADCHRKYTRGR, opcode_LOADTXTBX, opcode_LOADPANEL, opcode_LOADGMBRD, opcode_LOADCAM, opcode_LOADOBJCT,
+		opcode_LOADLIGHT, opcode_LOADMESH, opcode_LOADSCRIPT, opcode_LOADTXTBX, opcode_LOADPANEL, opcode_LOADGMBRD, opcode_LOADCAM, opcode_LOADOBJCT,
 
 		opcode_ADDOBJECT, opcode_ADDMESH, 
-		opcode_SETGMEBRD, opcode_SETCMRA, opcode_SETLCLK,
+		opcode_SETGMEBRD, opcode_SETCMRA, opcode_SETLCLK, opcode_SETUI,
+		opcode_FCSUI,
 
 		opcode_GETSCRNX, opcode_GETSCRNY,
 
-		opcode_RESNAP, opcode_2DPOS, opcode_2DSIZE, opcode_2DADDASNODE, opcode_2DADDKYTRGR,
+		opcode_RESNAP, opcode_POS, opcode_SIZE, opcode_2DADDCHLD,
 
 		opcode_POSTSTR, opcode_POSTNMBR, opcode_POSTFLOAT,
 
@@ -32,6 +33,10 @@ namespace Logic
 		opcode_RNSCRPT, opcode_STSCRPTPRMNMBR, opcode_STSCRPTPRMSTR,
 
 		opcode_EXPRTCNST, opcode_EXPRTVAR, opcode_IMPRT,
+
+		opcode_LNKDBG, 
+		opcode_STXT, opcode_ADDTXT, opcode_ADDLNE,
+		opcode_STCNTNT, opcode_STBRDR,
 
 		opcode_JMPINVVAR,opcode_JMPNOW,opCode_WTFRVR,
 

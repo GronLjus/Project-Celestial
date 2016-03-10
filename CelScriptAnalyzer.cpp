@@ -560,9 +560,9 @@ CelScriptAnalyzer::operatorParams CelScriptAnalyzer::getOperatorVariation(Compil
 		{
 
 			unsigned char tempCount = 0;
-			foundSig = true;
+			foundSig = ops.param >= operators[op].minParams[ops.opVar] && ops.param <= operators[op].params[ops.opVar];
 
-			for (unsigned int i = 0; i < operators[op].params[ops.opVar] && foundSig; i++)
+			for (unsigned int i = 0; i < ops.param && foundSig; i++)
 			{
 
 				if (operators[op].amountParOperators[ops.opVar] > 0 && 

@@ -25,10 +25,12 @@ CameraObject::CameraObject(unsigned int width, unsigned int height, float depth,
 	Message mess = Message();
 	mess.type = MessageType_OBJECT;
 	mess.mess = ObjectMess_MOVE;
-	unsigned char tempBuff[]{0 >> 0, 0 >> 8, 5 >> 16, 5 >> 24,
-		0 >> 0, 0 >> 8, 0 >> 16, 0 >> 24,
-		5 >> 0, 5 >> 8, 5 >> 16, 5 >> 24
-	};
+	Vector3 moveVal(0.0f,0.0f,5.0f);
+	unsigned char tempBuff[12];
+	memcpy(tempBuff, &moveVal.x, 4);
+	memcpy(&tempBuff[4], &moveVal.y, 4);
+	memcpy(&tempBuff[8], &moveVal.z, 4);
+
 	mess.SetParams(tempBuff, 0, 12);
 	PositionableObject::Update(&mess);
 
