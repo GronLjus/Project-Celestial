@@ -4,6 +4,9 @@ $
 	testPar2 = 0
 }
 
+splashImage = import 'splashImage'
+debugLayout = import 'debugLayer'
+
 tile = load mesh 'Tile.obj'
 testPar = load script 'TestRoot2.celsrc'
 testClick = load script 'TestClick.celsrc'
@@ -17,3 +20,5 @@ post 'test'
 
 set gameboard testPar2
 set camera cam
+hide splashImage
+show debugLayout

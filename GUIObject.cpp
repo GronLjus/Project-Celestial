@@ -43,6 +43,12 @@ void GUIObject::Update(Message* mess)
 			}
 
 			break;
+		case ObjectMess_HIDE:
+			isVisible = false;
+			break;
+		case ObjectMess_SHOW:
+			isVisible = true;
+			break;
 		default:
 			PositionableObject::Update(mess);
 

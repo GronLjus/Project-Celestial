@@ -1033,19 +1033,7 @@
     <None Include="testBin.celbin">
       <Filter>Source Files</Filter>
     </None>
-    <None Include="StdTextBox.celsrc">
-      <Filter>Source Files\Scripts</Filter>
-    </None>
-    <None Include="StdVars.celsrc">
-      <Filter>Source Files\Scripts</Filter>
-    </None>
     <None Include="rootscript.celsrc">
-      <Filter>Source Files\Scripts</Filter>
-    </None>
-    <None Include="dbgScript.celsrc">
-      <Filter>Source Files\Scripts</Filter>
-    </None>
-    <None Include="dbgHide.celsrc">
       <Filter>Source Files\Scripts</Filter>
     </None>
     <None Include="TestRoot.celsrc">

@@ -24,7 +24,7 @@ namespace CrossHandlers
 	enum SystemMess{SystemMess_GETSCREENRES,SystemMesss_NA};
 
 	enum ObjectMess{
-		ObjectMess_MOVE, ObjectMess_SCALE, ObjectMess_POS, ObjectMess_SIZE,
+		ObjectMess_MOVE, ObjectMess_SCALE, ObjectMess_POS, ObjectMess_SIZE, ObjectMess_HIDE, ObjectMess_SHOW,
 		ObjectMess_SETHVRSCRPT, ObjectMess_SETENTRSCRPT, ObjectMess_SETEXTSCRPT, ObjectMess_SETLCSCRPT, ObjectMess_SETRCSCRPT,
 		ObjectMess_SETSNAP, ObjectMess_SETTEXT, ObjectMess_APPENDTEXT, ObjectMess_APPENDTEXTLINE,
 		ObjectMess_STEPFRAME, ObjectMess_NA

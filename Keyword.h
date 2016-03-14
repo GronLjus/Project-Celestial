@@ -47,7 +47,7 @@ namespace Logic
 		OperatorTypes_POS, OperatorTypes_SIZE,
 		OperatorTypes_RUN, OperatorTypes_SETPARAM,
 		OperatorTypes_IMPORT, OperatorTypes_EXPORT,
-		OperatorTypes_FOCUS,
+		OperatorTypes_FOCUS, OperatorTypes_HIDE, OperatorTypes_SHOW,
 		OperatorTypes_NA
 	};
 
