@@ -251,7 +251,7 @@ void CardHandler::Draw(Entities::ViewObject* vObj, GraphicalMesh* meshes, unsign
 	}
 }
 
-void CardHandler::Draw(GUIObject* object)
+void CardHandler::Draw(GUIObject* object, unsigned int time)
 {
 	
 	basic2DHandler->Begin();
@@ -266,7 +266,7 @@ void CardHandler::Draw(GUIObject* object)
 	if (object != nullptr && basic2DHandler != nullptr)
 	{
 
-		basic2DHandler->DrawGUIObject(object);
+		basic2DHandler->DrawGUIObject(object, time);
 
 	}
 
@@ -302,6 +302,12 @@ void CardHandler::Present()
 	//Flip buffer
 	HRESULT hr = swapChain->Present(0,0);
 	
+}
+ImageResourceObject* CardHandler::Load2DImage(unsigned char* values, UINT bPC, UINT channels, UINT width, UINT height)
+{
+
+	return basic2DHandler->Load2DImage(values, bPC, channels, width, height);
+
 }
 
 TextureResourceObject* CardHandler::LoadTexture(byte* values, UINT bPC, UINT channels, char* channelOrder, UINT width, UINT height)

@@ -73,9 +73,6 @@
     <Filter Include="Source Files\CrossHandler-Tools\Bounding\Shapes">
       <UniqueIdentifier>{60e75b11-59cc-45e8-affc-7b95c261f3df}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Graphics\Text">
-      <UniqueIdentifier>{5eb61203-de7e-4e9a-aaa1-70c45a259c6b}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\CrossHandler-Tools\Buffer">
       <UniqueIdentifier>{3c42079f-bf86-4971-a6d4-a628fc7a78f6}</UniqueIdentifier>
     </Filter>
@@ -255,6 +252,15 @@
     </Filter>
     <Filter Include="Source Files\Entities\Handlers">
       <UniqueIdentifier>{2fd99628-013b-4609-b285-fccb4611fce0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Graphics\2D">
+      <UniqueIdentifier>{5eb61203-de7e-4e9a-aaa1-70c45a259c6b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\CrossHandler-Tools\Image">
+      <UniqueIdentifier>{3e69226d-90d9-427d-b9c3-16efc7a74c95}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\CrossHandler-Tools\Image">
+      <UniqueIdentifier>{50de7c1d-2efc-436b-a4f3-1f64e1b9a025}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -669,6 +675,15 @@
     <ClInclude Include="CrossScriptMemoryObject.h">
       <Filter>Header Files\Resources\Objects</Filter>
     </ClInclude>
+    <ClInclude Include="ImageResourceObject.h">
+      <Filter>Header Files\CrossHandler-Tools\Image</Filter>
+    </ClInclude>
+    <ClInclude Include="GUIImage.h">
+      <Filter>Header Files\Resources\Objects\GUIObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="GUIImageLoader.h">
+      <Filter>Header Files\Resources\Loaders\UILoaders</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Camera.cpp">
@@ -822,7 +837,7 @@
       <Filter>Source Files\CrossHandler-Tools</Filter>
     </ClCompile>
     <ClCompile Include="Celestial2DDrawer.cpp">
-      <Filter>Source Files\Graphics\Text</Filter>
+      <Filter>Source Files\Graphics\2D</Filter>
     </ClCompile>
     <ClCompile Include="MemoryPool.cpp">
       <Filter>Source Files\Logic\CelScript</Filter>
@@ -916,6 +931,15 @@
     </ClCompile>
     <ClCompile Include="CrossScriptMemoryObject.cpp">
       <Filter>Source Files\Resources\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="ImageResourceObject.cpp">
+      <Filter>Source Files\CrossHandler-Tools\Image</Filter>
+    </ClCompile>
+    <ClCompile Include="GUIImage.cpp">
+      <Filter>Source Files\Resources\Objects\GUIObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="GUIImageLoader.cpp">
+      <Filter>Source Files\Resources\Loaders\UILoaders</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

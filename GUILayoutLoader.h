@@ -11,7 +11,7 @@ namespace Resources
 	public:
 
 		GUILayoutLoader();
-		virtual GUIObject* Create(GUISnap hor, GUISnap ver);
+		virtual GUIObject* Create(GUISnap hor, GUISnap ver, std::string file);
 		virtual GUIObject* Load(std::string text);
 		virtual std::string* Extension() const;
 		virtual int GetNrExtensions() const;

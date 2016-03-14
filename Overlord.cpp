@@ -241,7 +241,7 @@ void Overlord::HandleDrawing(unsigned int time)
 	{
 
 		isDrawing.lock();
-		gH->Draw(); 
+		gH->Draw(time); 
 		isDrawing.unlock();
 
 		unsigned int time2 = clock();

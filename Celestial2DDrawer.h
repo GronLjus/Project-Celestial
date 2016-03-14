@@ -3,6 +3,7 @@
 #include <d2d1.h>
 #include <string>
 #include "TextureResourceObject.h"
+#include "ImageResourceObject.h"
 #include "GUIObject.h"
 
 namespace Graphics
@@ -21,8 +22,9 @@ namespace Graphics
 			HRESULT Init(CrossHandlers::TextureResourceObject* target, UINT width, UINT height);
 			HRESULT InitFont(int height,UINT width,FontWeight weight,UINT mipLevels,bool italic,LPCWSTR faceName,int &index);
 			HRESULT InitSolidBrush(float r, float g, float b, int &index);
-			void DrawGUIObject(Resources::GUIObject* object, CelestialMath::Vector2 parentalAbsPos, CelestialMath::Vector2 parentalAbsSize);
-			void DrawGUIObject(Resources::GUIObject* object);
+			ImageResourceObject* Load2DImage(unsigned char* values, UINT bPC, UINT channels, UINT width, UINT height);
+			void DrawGUIObject(Resources::GUIObject* object, CelestialMath::Vector2 parentalAbsPos, CelestialMath::Vector2 parentalAbsSize, unsigned int time);
+			void DrawGUIObject(Resources::GUIObject* object, unsigned int time);
 			void Clear();
 			void Release();
 			void SetBorderBrush(Resources::GUIObject* object, CelestialMath::Vector3 color);
@@ -66,5 +68,6 @@ namespace Graphics
 			UINT width;
 			///<summary>The height of the rendertarget</summary>
 			UINT height;
+
 	};
 }

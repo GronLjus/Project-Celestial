@@ -11,6 +11,7 @@
 #include "PointLight.h"
 #include "CelScriptBinLoader.h"
 #include "CelScriptSourceLoader.h"
+#include "GUIImageLoader.h"
 
 using namespace std;
 using namespace Resources;
@@ -96,6 +97,7 @@ ResourceLoader::ResourceLoader()
 	gUILoads = new IGUILoader*[gUILoaders];
 	gUILoads[GUIObjects_TEXTBOX] = new GUITextBoxLoader();
 	gUILoads[GUIObjects_LAYOUT] = new GUILayoutLoader();
+	gUILoads[GUIObjects_IMAGE] = new GUIImageLoader(this);
 
 	scriptFileLoaders = new IFileCLLoader*[fileScriptLoaders];
 	scriptFileLoaders[0] = new CelScriptBinLoader();
@@ -168,6 +170,37 @@ MeshObject* ResourceLoader::LoadMeshFromFile(string file)
 		MeshObject* obj = objectFileLoaders[i - 1]->Load(file);
 		obj->OptimizeLevels(true);
 		return obj;
+
+	}
+
+	return nullptr;
+
+}
+
+ImageResourceObject** ResourceLoader::LoadBitMapesFromFile(std::string file, unsigned int &size)
+{
+
+	bool found = false;
+	string extension = getExtension(file);
+	int i = 0;
+
+	for (i = 0; i<meshLoaders && !found; i++)
+	{
+
+		const string* extensions = texFileLoaders[i]->Extension();
+
+		for (int k = 0; k<texFileLoaders[i]->GetNrExtensions() && !found; k++)
+		{
+
+			found = extensions[k] == extension;
+
+		}
+	}
+
+	if (found)
+	{
+
+		return texFileLoaders[i - 1]->LoadBitMaps(file, size);
 
 	}
 
@@ -253,13 +286,13 @@ IParticleEmitter* ResourceLoader::LoadParticleEffect(ParticleSystem system, Base
 
 }
 
-GUIObject* ResourceLoader::LoadGUIObject(GUIObjects type, GUISnap hor, GUISnap ver)
+GUIObject* ResourceLoader::LoadGUIObject(GUIObjects type, GUISnap hor, GUISnap ver, std::string file)
 {
 
 	if (type != GUIObjects_NA)
 	{
 
-		return gUILoads[type]->Create(hor, ver);
+		return gUILoads[type]->Create(hor, ver, file);
 
 	}
 

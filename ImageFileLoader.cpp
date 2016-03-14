@@ -5,13 +5,9 @@ using namespace Resources;
 using namespace CrossHandlers;
 using namespace std;
 
-MeshObject::Material** ImageFileLoader::LoadMaterial(std::string file, int &size)
+unsigned char* ImageFileLoader::getImage(std::string file, unsigned int &width, unsigned int &height) const
 {
 
-	size = 1;
-
-	MeshObject::Material** retVal = new MeshObject::Material*[size];
-	retVal[0] = new MeshObject::Material(file);
 	int len;
 	int slength = (int)file.length() + 1;
 	len = MultiByteToWideChar(CP_ACP, 0, file.c_str(), slength, 0, 0);
@@ -20,8 +16,6 @@ MeshObject::Material** ImageFileLoader::LoadMaterial(std::string file, int &size
 	std::wstring r(buf);
 	delete[] buf;
 
-	UINT height = 0;
-	UINT width = 0;
 	IWICBitmapDecoder* imDecoder;
 	IWICBitmapFrameDecode* frameDecoder;
 	IWICBitmap* imageBitmap;
@@ -38,22 +32,48 @@ MeshObject::Material** ImageFileLoader::LoadMaterial(std::string file, int &size
 	UINT imageSize = height*imageStride;
 	byte* imageBuffer = new byte[imageSize];
 	imConverter->CopyPixels(nullptr, imageStride, imageSize, imageBuffer);
-
-	retVal[0]->SetDiffuse(card->LoadTexture(imageBuffer,8,4,"rgba", width, height));
-	retVal[0]->SetAmbient(card->LoadTexture(imageBuffer, 8, 4, "rgba", width, height));
-
-
-	delete[] imageBuffer;
 	imConverter->Release();
 	imageBitmap->Release();
 	frameDecoder->Release();
 	imDecoder->Release();
+	return imageBuffer;
 
+}
+
+MeshObject::Material** ImageFileLoader::LoadMaterial(std::string file, int &size)
+{
+
+	size = 1;
+	UINT height = 0;
+	UINT width = 0;
+	unsigned char* imageBuffer = getImage(file, width, height);
+
+	MeshObject::Material** retVal = new MeshObject::Material*[size];
+	retVal[0] = new MeshObject::Material(file);
+
+	retVal[0]->SetDiffuse(card->LoadTexture(imageBuffer,8,4,"rgba", width, height));
+	retVal[0]->SetAmbient(card->LoadTexture(imageBuffer, 8, 4, "rgba", width, height));
+
+	delete[] imageBuffer;
 	return retVal;
 
 }
 
 TextureResourceObject* ImageFileLoader::LoadTexture(std::string file)
+{
+
+	UINT height = 0;
+	UINT width = 0;
+	unsigned char* imageBuffer = getImage(file, width, height);
+
+	TextureResourceObject* retVal = card->LoadTexture(imageBuffer, 8, 4, "rgba", width, height);
+
+	delete[] imageBuffer;
+	return retVal;
+
+}
+
+ImageResourceObject** ImageFileLoader::LoadBitMaps(std::string file, unsigned int &size)
 {
 
 	int len;
@@ -64,33 +84,60 @@ TextureResourceObject* ImageFileLoader::LoadTexture(std::string file)
 	std::wstring r(buf);
 	delete[] buf;
 
-	UINT height = 0;
-	UINT width = 0;
 	IWICBitmapDecoder* imDecoder;
 	IWICBitmapFrameDecode* frameDecoder;
-	IWICBitmap* imageBitmap;
-	IWICFormatConverter* imConverter;
+	UINT height = 0;
+	UINT width = 0;
 
-	imFac->CreateFormatConverter(&imConverter);
 	imFac->CreateDecoderFromFilename(r.c_str(), nullptr, GENERIC_READ, WICDecodeMetadataCacheOnDemand, &imDecoder);
-	imDecoder->GetFrame(0, &frameDecoder);
-	frameDecoder->GetSize(&width, &height);
-	imFac->CreateBitmapFromSource(frameDecoder, WICBitmapCacheOnDemand, &imageBitmap);
-	imConverter->Initialize(imageBitmap, GUID_WICPixelFormat32bppRGBA, WICBitmapDitherTypeNone, nullptr, 0.0f, WICBitmapPaletteTypeMedianCut);
-	UINT imageStride = width * 4;
-	UINT imageSize = height*imageStride;
-	byte* imageBuffer = new byte[imageSize];
-	imConverter->CopyPixels(nullptr, imageStride, imageSize, imageBuffer);
 
-	TextureResourceObject* retVal = card->LoadTexture(imageBuffer, 8, 4, "rgba", width, height);
+	imDecoder->GetFrameCount(&size);
+	ImageResourceObject** retVal = new ImageResourceObject*[size];
 
-	delete[] imageBuffer;
-	imConverter->Release();
-	imageBitmap->Release();
-	frameDecoder->Release();
+	for (unsigned int i = 0; i < size; i++)
+	{
+
+		IWICFormatConverter* imConverter;
+		imFac->CreateFormatConverter(&imConverter);
+		imDecoder->GetFrame(i, &frameDecoder);
+		frameDecoder->GetSize(&width, &height);
+
+		imConverter->Initialize(frameDecoder, GUID_WICPixelFormat32bppPBGRA, WICBitmapDitherTypeNone, nullptr, 0.0f, WICBitmapPaletteTypeCustom);
+
+		UINT imageStride = width * 4;
+		UINT imageSize = height*imageStride;
+		unsigned char* imageBuffer = new unsigned char[imageSize];
+		imConverter->CopyPixels(nullptr, imageStride, imageSize, imageBuffer);
+		retVal[i] = card->Load2DImage(imageBuffer, 1, 4, width, height);
+
+		vectorUI2 pos;
+		IWICMetadataQueryReader* metaDataReader = nullptr;
+		frameDecoder->GetMetadataQueryReader(&metaDataReader);
+		PROPVARIANT propValue;
+		PropVariantInit(&propValue);
+		metaDataReader->GetMetadataByName(L"/imgdesc/Left", &propValue);
+		pos.x = propValue.uiVal;
+		PropVariantClear(&propValue);
+		metaDataReader->GetMetadataByName(L"/imgdesc/Top", &propValue);
+		pos.y = propValue.uiVal;
+
+		PropVariantClear(&propValue);
+		metaDataReader->GetMetadataByName(L"/grctlext/Delay", &propValue);
+		retVal[i]->SetDelay(propValue.uiVal * 10);
+		PropVariantClear(&propValue);
+
+		retVal[i]->SetPos(pos);
+		delete[] imageBuffer;
+		 
+		metaDataReader->Release();
+		frameDecoder->Release();
+		imConverter->Release();
+		
+	}
+
 	imDecoder->Release();
-
 	return retVal;
+
 
 }
 

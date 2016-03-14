@@ -13,6 +13,7 @@ namespace Resources
 		///<param name='text'>[in]The name of the file containing the texture</param>
 		///<returns>A pointer to the loaded texture</returns>
 		virtual CrossHandlers::TextureResourceObject* LoadTexture(std::string file) = 0;
+		virtual CrossHandlers::ImageResourceObject** LoadBitMaps(std::string file, unsigned int &size) = 0;
 
 		virtual ~IFileTextureLoader(){}
 	};

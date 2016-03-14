@@ -298,6 +298,7 @@ RunTimeError LoadTextBoxOperator(unsigned int returnVar, unsigned char* params, 
 	int enu = GUIObjects_TEXTBOX;
 	unsigned unsigned char tempBuff[]{enu >> 0, enu >> 8, enu >> 16, enu >>24};
 	mess.SetParams(tempBuff, 0, 4);
+	mess.SetParams((unsigned char*)"", 4, 1);
 	rtc->varWaiting->Add(true, returnVar - 1);
 	return sendMessageOut(mess, rtc);
 
@@ -314,6 +315,26 @@ RunTimeError LoadPanelOperator(unsigned int returnVar, unsigned char* params, un
 	mess.returnParam = returnVar;
 	unsigned char tempBuff[]{enu >> 0, enu >> 8, enu >> 16, enu >> 24};
 	mess.SetParams(tempBuff, 0, 4);
+	mess.SetParams((unsigned char*)"", 4, 1);
+	rtc->varWaiting->Add(true, returnVar - 1);
+	return sendMessageOut(mess, rtc);
+
+}
+
+RunTimeError LoadImageOperator(unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int mId, RunTimeCommons* rtc)
+{
+
+	Message mess;
+	mess.destination = MessageSource_RESOURCES;
+	mess.type = MessageType_RESOURCES;
+	mess.mess = ResourceMess_LOADGUI;
+	int enu = GUIObjects_IMAGE;
+	mess.returnParam = returnVar;
+	unsigned char tempBuff[]{enu >> 0, enu >> 8, enu >> 16, enu >> 24};
+	mess.SetParams(tempBuff, 0, 4);
+	unsigned int length;
+	unsigned char* tempString = loadString((params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24)), mId, rtc, length);
+	mess.SetParams(tempString, 4, length);
 	rtc->varWaiting->Add(true, returnVar - 1);
 	return sendMessageOut(mess, rtc);
 
@@ -1659,6 +1680,7 @@ CelScriptRuntimeHandler::CelScriptRuntimeHandler(MessageQueue* mQueue, Celestial
 	operators[opcode_LOADSCRIPT] = LoadScriptOperator;
 	operators[opcode_LOADTXTBX] = LoadTextBoxOperator;
 	operators[opcode_LOADPANEL] = LoadPanelOperator;
+	operators[opcode_LOADIMAGE] = LoadImageOperator;
 	operators[opcode_LOADGMBRD] = LoadGameBoardOperator;
 	operators[opcode_LOADCAM] = LoadCameraOperator;
 	operators[opcode_LOADOBJCT] = LoadObjectOperator;

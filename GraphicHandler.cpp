@@ -231,7 +231,7 @@ unsigned int GraphicHandler::GetRenderFlip() const
 
 }
 
-void GraphicHandler::Draw()
+void GraphicHandler::Draw(unsigned int time)
 {
 
 	if (!canDraw)
@@ -274,7 +274,7 @@ void GraphicHandler::Draw()
 	{
 
 		//Draw uis
-		cardHandler->Draw(guiLayout);
+		cardHandler->Draw(guiLayout, time);
 
 	}
 

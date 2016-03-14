@@ -19,7 +19,7 @@ void GUITextBoxLoader::Init(Graphics::CardHandler* &card, TextContainer* outText
 {
 }
 
-GUIObject* GUITextBoxLoader::Create(GUISnap hor, GUISnap ver)
+GUIObject* GUITextBoxLoader::Create(GUISnap hor, GUISnap ver, std::string file)
 {
 
 	GUIObject* newObj = new GUITextBox( hor, ver);

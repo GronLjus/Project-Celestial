@@ -28,7 +28,7 @@ namespace Graphics
 			///<summary>Updates the handler and prepares to draw</summary>
 			void Update(unsigned int time);
 			///<summary>Draws out the scene</summary>
-			void Draw();
+			void Draw(unsigned int time);
 
 			///<summary>Check if the handler is initilized</summary>
 			///<returns>If the handler is initilized</returns>

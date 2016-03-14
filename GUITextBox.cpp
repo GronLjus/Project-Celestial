@@ -39,7 +39,7 @@ void GUITextBox::Update(Message* mess)
 			textContainer->AddTextLine(stringParam);
 			break;
 		default:
-			PositionableObject::Update(mess);
+			GUIObject::Update(mess);
 
 		}
 	}

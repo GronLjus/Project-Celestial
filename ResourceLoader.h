@@ -93,7 +93,7 @@ namespace Resources
 			///<param val='hor'>[in]How the object should snap horizontally</param>
 			///<param val='size'>[in]The size of the object</param>
 			///<returns>The id for the object</returns>
-			GUIObject* LoadGUIObject(GUIObjects type, GUISnap hor, GUISnap ver);
+			GUIObject* LoadGUIObject(GUIObjects type, GUISnap hor, GUISnap ver, std::string file);
 
 			///<summary>Loads celscript from a file</summary>
 			///<param val='path'>[in]The path of the file to load</param>
@@ -111,6 +111,7 @@ namespace Resources
 
 			MeshObject::Material** LoadMaterialsFromFile(std::string file,int &size);
 			MeshObject::Material* LoadMaterialsFromColour(int* colours,std::string name,float df,float af);
+			CrossHandlers::ImageResourceObject** LoadBitMapesFromFile(std::string file, unsigned int &size);
 
 			///<summary>Initializes The handler and its underobjects</summary>
 			///<param name='card'>[in]The device to load from</param>

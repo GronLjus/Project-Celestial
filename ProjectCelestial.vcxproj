@@ -203,8 +203,11 @@
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="GraphicalMesh.h" />
     <ClInclude Include="GUIEntityHandler.h" />
+    <ClInclude Include="GUIImage.h" />
+    <ClInclude Include="GUIImageLoader.h" />
     <ClInclude Include="IFileCLLoader.h" />
     <ClInclude Include="IHandleMessages.h" />
+    <ClInclude Include="ImageResourceObject.h" />
     <ClInclude Include="Keyword.h" />
     <ClInclude Include="Frustum.h" />
     <ClInclude Include="GraphicCodes.h" />
@@ -334,12 +337,15 @@
     <ClCompile Include="GUIEntityHandler.cpp" />
     <ClCompile Include="Frustum.cpp" />
     <ClCompile Include="GraphicHandler.cpp" />
+    <ClCompile Include="GUIImage.cpp" />
+    <ClCompile Include="GUIImageLoader.cpp" />
     <ClCompile Include="GUILayout.cpp" />
     <ClCompile Include="GUILayoutLoader.cpp" />
     <ClCompile Include="GUIObject.cpp" />
     <ClCompile Include="GUITextBox.cpp" />
     <ClCompile Include="GUITextBoxLoader.cpp" />
     <ClCompile Include="IHandleMessages.cpp" />
+    <ClCompile Include="ImageResourceObject.cpp" />
     <ClCompile Include="InputHandler.cpp" />
     <ClCompile Include="Intermediator.cpp" />
     <ClCompile Include="MemoryPool.cpp" />

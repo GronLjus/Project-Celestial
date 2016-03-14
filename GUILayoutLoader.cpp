@@ -19,7 +19,7 @@ void GUILayoutLoader::Init(Graphics::CardHandler* &card, TextContainer* outText)
 {
 }
 
-GUIObject* GUILayoutLoader::Create(GUISnap hor, GUISnap ver)
+GUIObject* GUILayoutLoader::Create(GUISnap hor, GUISnap ver, std::string file)
 {
 
 	GUIObject* newObj = new GUILayout(hor,ver);

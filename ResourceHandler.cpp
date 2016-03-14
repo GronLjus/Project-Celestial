@@ -166,7 +166,8 @@ void ResourceHandler::Update(unsigned int time)
 		{
 
 			unsigned int param1 = currentMessage->params[0] | ((int)currentMessage->params[1] << 8) | ((int)currentMessage->params[2] << 16) | ((int)currentMessage->params[3] << 24);
-			GUIObject* obj = loader->LoadGUIObject(GUIObjects(param1), GUISnap_LEFT, GUISnap_TOP);
+			std::string stringParam((char*)(&currentMessage->params[4]));
+			GUIObject* obj = loader->LoadGUIObject(GUIObjects(param1), GUISnap_LEFT, GUISnap_TOP, stringParam);
 			obj->ToggleVisibility(true);
 			obj->SetId(gameObjects->GetFirstEmpty());
 			outId = gameObjects->Add(obj);

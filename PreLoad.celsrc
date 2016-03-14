@@ -1,6 +1,7 @@
 
 debugLayout = load panel
 outTextBox = load textbox
+splashImage = load image 'content\Splash.gif'
 
 size debugLayout 1.0 1.0
 pos debugLayout 0.0 0.0
@@ -9,6 +10,7 @@ size outTextBox 0.5 0.90
 pos outTextBox 0.005 0.005
 set content outTextBox 0.8 0.8 0.8
 set border outTextBox 0.0 1.0 0.0
+add ui debugLayout splashImage
 add ui debugLayout outTextBox
 
 set out outTextBox

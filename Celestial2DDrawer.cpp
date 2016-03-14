@@ -3,6 +3,7 @@
 #include "CelestialMath.h"
 #include "GUITextBox.h"
 #include "GUILayout.h"
+#include "GUIImage.h"
 
 using namespace Graphics;
 using namespace CelestialMath;
@@ -138,6 +139,22 @@ HRESULT Celestial2DDrawer::InitSolidBrush(float r, float g, float b, int &index)
 
 }
 
+ImageResourceObject* Celestial2DDrawer::Load2DImage(unsigned char* values, UINT bPC, UINT channels, UINT width, UINT height)
+{
+
+	ID2D1Bitmap* out;
+	D2D1_SIZE_U imageSize;
+	D2D1_BITMAP_PROPERTIES bitProps;
+	imageSize.height = height;
+	imageSize.width = width;
+	rT->GetDpi(&bitProps.dpiX, &bitProps.dpiY);
+	bitProps.pixelFormat = rT->GetPixelFormat();
+
+	rT->CreateBitmap(imageSize, values, bPC*channels*width, &bitProps, &out);
+	return new ImageResourceObject(out);
+
+}
+
 void Celestial2DDrawer::SetBorderBrush(GUIObject* object, Vector3 color)
 {
 
@@ -178,15 +195,14 @@ void Celestial2DDrawer::SetContentBrush(GUIObject* object, Vector3 color)
 	}
 }
 
-void Celestial2DDrawer::DrawGUIObject(Resources::GUIObject* object)
+void Celestial2DDrawer::DrawGUIObject(Resources::GUIObject* object, unsigned int time)
 {
 
-	DrawGUIObject(object, Vector2(0, 0), Vector2(width, height));
+	DrawGUIObject(object, Vector2(0, 0), Vector2(width, height), time);
 
 }
 
-
-void Celestial2DDrawer::DrawGUIObject(Resources::GUIObject* object, Vector2 parentalAbsPos, Vector2 parentalAbsSize)
+void Celestial2DDrawer::DrawGUIObject(Resources::GUIObject* object, Vector2 parentalAbsPos, Vector2 parentalAbsSize, unsigned int time)
 {
 
 	if (object->IsVisible())
@@ -249,6 +265,54 @@ void Celestial2DDrawer::DrawGUIObject(Resources::GUIObject* object, Vector2 pare
 			boxLayout->Release();
 
 		}
+		else if (object->GetType() == GUIObjects_IMAGE)
+		{
+
+			GUIImage* image = (GUIImage*)object;
+
+			ImageResourceObject* drawArea = image->GetDrawFrame();
+
+			if (drawArea == nullptr)
+			{
+
+				drawArea = new ImageResourceObject();
+				drawArea->SetSize(vectorUI2(image->GetCurrentFrame()->GetSize().x, image->GetCurrentFrame()->GetSize().y));
+				ID2D1BitmapRenderTarget* renderTarget;
+				rT->CreateCompatibleRenderTarget(&renderTarget);
+
+				drawArea->SetRenderImage(renderTarget);
+				image->SetDrawFrame(drawArea);
+				
+			}
+
+			vectorUI2 subPos = image->GetCurrentFrame()->GetPos();
+			vectorUI2 subSize = image->GetCurrentFrame()->GetSize();
+
+			D2D1_RECT_F subImageRect = D2D1::RectF(
+				subPos.x,
+				subPos.y,
+				subPos.x + subSize.x,
+				subPos.y + subSize.y
+				);
+
+			drawArea->GetRenderImage()->BeginDraw();
+			drawArea->GetRenderImage()->DrawBitmap(image->GetCurrentFrame()->GetImage(), subImageRect);
+			drawArea->GetRenderImage()->EndDraw();
+
+			ID2D1Bitmap* composite;
+			drawArea->GetRenderImage()->GetBitmap(&composite);
+			rT->DrawBitmap(composite, layoutRect);
+			composite->Release();
+
+			Message mess;
+			mess.destination = MessageSource_OBJECT;
+			mess.mess = ObjectMess_STEPFRAME;
+			mess.read = false;
+			mess.timeSent = time;
+			mess.type = MessageType_OBJECT;
+			image->Update(&mess);
+
+		}
 		else if (object->GetType() == GUIObjects_LAYOUT)
 		{
 
@@ -268,7 +332,7 @@ void Celestial2DDrawer::DrawGUIObject(Resources::GUIObject* object, Vector2 pare
 				if (layout->GetChild(i) != nullptr)
 				{
 
-					DrawGUIObject(layout->GetChild(i), topLeftAbs, abSize);
+					DrawGUIObject(layout->GetChild(i), topLeftAbs, abSize, time);
 
 				}
 			}
@@ -376,5 +440,4 @@ Celestial2DDrawer::~Celestial2DDrawer()
 	
 	delete[] fonts;
 	delete[] brushes;
-
 }

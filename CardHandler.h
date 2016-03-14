@@ -32,6 +32,7 @@ namespace Graphics
 			///<returns>A pointer to the intermediato this cardhandler uses</returns>
 			Intermediator* GetIntermediator();
 
+			ImageResourceObject* Load2DImage(unsigned char* values, UINT bPC, UINT channels, UINT width, UINT height);
 			void UpdateMeshBuffers(Entities::DrawingBoard* db);
 			void UpdateInstanceBuffers(Entities::DrawingBoard* db,unsigned int flip);
 			void SetInstanceBuffers(unsigned int flip);
@@ -44,7 +45,7 @@ namespace Graphics
 
 			///<summary>Draws a ui</summary>
 			///<param val='ui'>[in]A pointer to the objects to draw</param>
-			void Draw(Resources::GUIObject* object);
+			void Draw(Resources::GUIObject* object, unsigned int time);
 
 			///<summary>Presents everything the card has drawn</summary>
 			void Present();
