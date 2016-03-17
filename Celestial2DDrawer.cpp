@@ -205,6 +205,13 @@ void Celestial2DDrawer::DrawGUIObject(Resources::GUIObject* object, unsigned int
 void Celestial2DDrawer::DrawGUIObject(Resources::GUIObject* object, Vector2 parentalAbsPos, Vector2 parentalAbsSize, unsigned int time)
 {
 
+	if (object == nullptr)
+	{
+
+		return;
+
+	}
+
 	if (object->IsVisible())
 	{
 
@@ -325,6 +332,8 @@ void Celestial2DDrawer::DrawGUIObject(Resources::GUIObject* object, Vector2 pare
 				rT->FillRectangle(layoutRect, contentBrush);
 
 			}
+
+			layout->ShouldPause();
 
 			for (int i = 0; i < layout->GetChildren(); i++)
 			{

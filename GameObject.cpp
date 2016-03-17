@@ -12,14 +12,45 @@ GameObject::GameObject(BoundingBox* box, BoundingSphere* baseSphere, unsigned in
 	this->sphere = baseSphere;
 	this->mesh = meshId;
 	flipInit = false;
+	parent = nullptr;
+
+}
+
+void GameObject::SetParent(BaseObject* parent)
+{
+
+	this->parent = parent;
 
 }
 
 void GameObject::Update(Message* mess)
 {
 
-	PositionableObject::Update(mess);
+	if (mess->type == MessageType_OBJECT)
+	{
 
+		unsigned char tempBuff[]{GetId() >> 0, GetId() >> 8, GetId() >> 16, GetId() >> 24};
+
+		switch (mess->mess)
+		{
+
+		case ObjectMess_REMOVE:
+
+			if (parent != nullptr)
+			{
+
+				mess->mess = ObjectMess_REMOVECHILD;
+				mess->SetParams(tempBuff, 0, 4);
+				parent->Update(mess);
+
+			}
+
+			break;
+		default:
+			PositionableObject::Update(mess);
+
+		}
+	}
 }
 
 bool GameObject::IsFlipBuffered(unsigned char flip)

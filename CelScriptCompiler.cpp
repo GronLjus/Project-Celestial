@@ -814,6 +814,72 @@ CelScriptCompiler::CelScriptCompiler()
 		new bool[operators[OperatorTypes_FOCUS].params[0]]{false}
 	};
 
+
+	operators[OperatorTypes_UNLOAD].keyword = "unload";
+	operators[OperatorTypes_UNLOAD].enumAmount = 1;
+	operators[OperatorTypes_UNLOAD].enums = new std::string[operators[OperatorTypes_UNLOAD].enumAmount]; operators[OperatorTypes_UNLOAD].enums[0] = "";
+	operators[OperatorTypes_UNLOAD].byteCodes = new unsigned char[operators[OperatorTypes_UNLOAD].enumAmount]{opcode_UNLOAD };
+	operators[OperatorTypes_UNLOAD].params = new unsigned char[operators[OperatorTypes_UNLOAD].enumAmount]{1};
+	operators[OperatorTypes_UNLOAD].minParams = new unsigned char[operators[OperatorTypes_UNLOAD].enumAmount]{1};
+	operators[OperatorTypes_UNLOAD].paramsyntax = new VarType*[operators[OperatorTypes_UNLOAD].enumAmount]{
+		new VarType[operators[OperatorTypes_UNLOAD].params[0]]{VarType_NUMBER}
+	};
+	operators[OperatorTypes_UNLOAD].paramTypes = new ParamType*[operators[OperatorTypes_UNLOAD].enumAmount]{
+		new ParamType[operators[OperatorTypes_UNLOAD].params[0]]{ParamType_NA}
+	};
+	operators[OperatorTypes_UNLOAD].optionalPar = new bool*[operators[OperatorTypes_UNLOAD].enumAmount]{
+		new bool[operators[OperatorTypes_UNLOAD].params[0]]{ false }
+	};
+	operators[OperatorTypes_UNLOAD].readParam = new unsigned char[operators[OperatorTypes_UNLOAD].enumAmount]{0};
+	operators[OperatorTypes_UNLOAD].returns = new VarType[operators[OperatorTypes_UNLOAD].enumAmount]{VarType_NA};
+	operators[OperatorTypes_UNLOAD].returnType = new ParamType[operators[OperatorTypes_UNLOAD].enumAmount]{ParamType_NA};
+	operators[OperatorTypes_UNLOAD].writeParam = new unsigned char[operators[OperatorTypes_UNLOAD].enumAmount]{0};
+	operators[OperatorTypes_UNLOAD].priority = 0;
+	operators[OperatorTypes_UNLOAD].shortHandsAmounts = 0;
+	operators[OperatorTypes_UNLOAD].amountParOperators = new unsigned char[operators[OperatorTypes_UNLOAD].enumAmount]{0};
+	operators[OperatorTypes_UNLOAD].parRepeatsMin = new unsigned char*[operators[OperatorTypes_UNLOAD].enumAmount]{
+		new unsigned char[operators[OperatorTypes_UNLOAD].params[0]]{0}
+	};
+	operators[OperatorTypes_UNLOAD].parRepeatsMax = new unsigned char*[operators[OperatorTypes_UNLOAD].enumAmount]{
+		new unsigned char[operators[OperatorTypes_UNLOAD].params[0]]{0}
+	};
+	operators[OperatorTypes_UNLOAD].parOperatorAppend = new bool*[operators[OperatorTypes_UNLOAD].enumAmount]{
+		new bool[operators[OperatorTypes_UNLOAD].params[0]]{false}
+	};
+
+	operators[OperatorTypes_REMOVE].keyword = "remove";
+	operators[OperatorTypes_REMOVE].enumAmount = 1;
+	operators[OperatorTypes_REMOVE].enums = new std::string[operators[OperatorTypes_REMOVE].enumAmount]; operators[OperatorTypes_REMOVE].enums[0] = "";
+	operators[OperatorTypes_REMOVE].byteCodes = new unsigned char[operators[OperatorTypes_REMOVE].enumAmount]{opcode_RMVE };
+	operators[OperatorTypes_REMOVE].params = new unsigned char[operators[OperatorTypes_REMOVE].enumAmount]{1};
+	operators[OperatorTypes_REMOVE].minParams = new unsigned char[operators[OperatorTypes_REMOVE].enumAmount]{1};
+	operators[OperatorTypes_REMOVE].paramsyntax = new VarType*[operators[OperatorTypes_REMOVE].enumAmount]{
+		new VarType[operators[OperatorTypes_REMOVE].params[0]]{VarType_NUMBER}
+	};
+	operators[OperatorTypes_REMOVE].paramTypes = new ParamType*[operators[OperatorTypes_REMOVE].enumAmount]{
+		new ParamType[operators[OperatorTypes_REMOVE].params[0]]{ParamType_NA}
+	};
+	operators[OperatorTypes_REMOVE].optionalPar = new bool*[operators[OperatorTypes_REMOVE].enumAmount]{
+		new bool[operators[OperatorTypes_REMOVE].params[0]]{ false }
+	};
+	operators[OperatorTypes_REMOVE].readParam = new unsigned char[operators[OperatorTypes_REMOVE].enumAmount]{0};
+	operators[OperatorTypes_REMOVE].returns = new VarType[operators[OperatorTypes_REMOVE].enumAmount]{VarType_NA};
+	operators[OperatorTypes_REMOVE].returnType = new ParamType[operators[OperatorTypes_REMOVE].enumAmount]{ParamType_NA};
+	operators[OperatorTypes_REMOVE].writeParam = new unsigned char[operators[OperatorTypes_REMOVE].enumAmount]{0};
+	operators[OperatorTypes_REMOVE].priority = 0;
+	operators[OperatorTypes_REMOVE].shortHandsAmounts = 0;
+	operators[OperatorTypes_REMOVE].amountParOperators = new unsigned char[operators[OperatorTypes_REMOVE].enumAmount]{0};
+	operators[OperatorTypes_REMOVE].parRepeatsMin = new unsigned char*[operators[OperatorTypes_REMOVE].enumAmount]{
+		new unsigned char[operators[OperatorTypes_REMOVE].params[0]]{0}
+	};
+	operators[OperatorTypes_REMOVE].parRepeatsMax = new unsigned char*[operators[OperatorTypes_REMOVE].enumAmount]{
+		new unsigned char[operators[OperatorTypes_REMOVE].params[0]]{0}
+	};
+	operators[OperatorTypes_REMOVE].parOperatorAppend = new bool*[operators[OperatorTypes_REMOVE].enumAmount]{
+		new bool[operators[OperatorTypes_REMOVE].params[0]]{false}
+	};
+
+
 	operators[OperatorTypes_HIDE].keyword = "hide";
 	operators[OperatorTypes_HIDE].enumAmount = 1;
 	operators[OperatorTypes_HIDE].enums = new std::string[operators[OperatorTypes_HIDE].enumAmount]; operators[OperatorTypes_HIDE].enums[0] = "";

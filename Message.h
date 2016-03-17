@@ -12,7 +12,7 @@ namespace CrossHandlers
 	enum ResourceMess{
 		ResourceMess_LOADCAMERA, ResourceMess_LOADOBJECT,
 		ResourceMess_LOADGAMEBOARD, ResourceMess_LOADMESH, ResourceMess_LOADLIGHT, ResourceMess_LOADCHARKEYTRIGGER, ResourceMess_LOADKEYTRIGGER, ResourceMess_LOADSCRIPT,
-		ResourceMess_LOADGUI, ResourceMess_NA
+		ResourceMess_LOADGUI, ResourceMess_UNLOADOBJECT, ResourceMess_NA
 	};
 	enum EventMess{ EventMess_OBJECTADDED, EventMess_SCRIPTADDED, EventMess_GUIOBJECTADDED, EventMess_LNKDBG, EventMess_WAITFORFRAME, EventMess_NA };
 	enum GUIMess{ GUIMess_POST, GUIMess_APPEND, GUIMess_CLEAR, GUIMess_ERASE, GUIMess_FOCUS, GUIMess_NA };
@@ -27,7 +27,7 @@ namespace CrossHandlers
 		ObjectMess_MOVE, ObjectMess_SCALE, ObjectMess_POS, ObjectMess_SIZE, ObjectMess_HIDE, ObjectMess_SHOW,
 		ObjectMess_SETHVRSCRPT, ObjectMess_SETENTRSCRPT, ObjectMess_SETEXTSCRPT, ObjectMess_SETLCSCRPT, ObjectMess_SETRCSCRPT,
 		ObjectMess_SETSNAP, ObjectMess_SETTEXT, ObjectMess_APPENDTEXT, ObjectMess_APPENDTEXTLINE,
-		ObjectMess_STEPFRAME, ObjectMess_NA
+		ObjectMess_STEPFRAME, ObjectMess_REMOVECHILD, ObjectMess_REMOVE, ObjectMess_NA
 	};
 
 	struct Message

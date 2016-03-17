@@ -23,7 +23,7 @@ GraphicHandler::GraphicHandler(unsigned int flips) : IHandleMessages(200,Message
 	canDraw = false;
 	isDrawing = false;
 	debug = true;
-	guiLayout = nullptr;
+	guiLayout = 0;
 	cardHandler = new CardHandler(flips, true);
 	debugCard = cardHandler;
 	renderFlip = 0;
@@ -167,7 +167,17 @@ void GraphicHandler::Update(unsigned int time)
 			unsigned int param1 = currentMessage->params[0] | ((int)currentMessage->params[1] << 8) | ((int)currentMessage->params[2] << 16) | ((int)currentMessage->params[3] << 24);
 			canDraw = false;//Pause rendering
 			while (isDrawing){ this_thread::yield(); }//Wait until we aren't rendering
-			this->guiLayout = (GUILayout*)gameObjects->GetValue(param1);
+			GUILayout* temp = (GUILayout*)gameObjects->GetValue(param1);
+			temp->Enable();
+
+			if (guiLayout != nullptr)
+			{
+				guiLayout->Disable();
+
+			}
+
+			this->guiLayout = temp;
+			guiLayout->Enable();
 			canDraw = true;
 
 		}

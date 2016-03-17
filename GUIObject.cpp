@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "GUIObject.h"
+#include <thread>
 
 using namespace Resources;
 using namespace CelestialMath;
@@ -7,9 +8,60 @@ using namespace CelestialMath;
 GUIObject::GUIObject() : PositionableObject()
 { 
 
-	parentGUI = 0;
+	parentGUI = nullptr;
 	borderBrush = 0;
 	contentBrush = 0;
+	enabled = false;
+	pause = false;
+	paused = false;
+	isVisible = true;
+
+}
+
+void GUIObject::ShouldPause()
+{
+
+	while (pause)
+	{
+
+		std::this_thread::yield();
+		paused = true;
+
+	}
+}
+
+void GUIObject::pauseRendering()
+{
+
+	paused = false;
+	pause = true;
+
+	while (!paused)
+	{
+		
+		std::this_thread::yield();
+
+	}
+}
+
+void GUIObject::resumeRendering()
+{
+
+	pause = false;
+
+}
+
+void GUIObject::Enable()
+{
+
+	enabled = true;
+
+}
+
+void GUIObject::Disable()
+{
+
+	enabled = true;
 
 }
 
@@ -21,6 +73,7 @@ void GUIObject::Update(Message* mess)
 
 		unsigned char hor;
 		GUISnap snap;
+		unsigned char tempBuff[]{childId >> 0, childId >> 8, childId >> 16, childId >> 24};
 
 		switch (mess->mess)
 		{
@@ -48,6 +101,18 @@ void GUIObject::Update(Message* mess)
 			break;
 		case ObjectMess_SHOW:
 			isVisible = true;
+			break;
+		case ObjectMess_REMOVE:
+			
+			if (parentGUI != nullptr)
+			{
+
+				mess->mess = ObjectMess_REMOVECHILD;
+				mess->SetParams(tempBuff, 0, 4);
+				parentGUI->Update(mess);
+
+			}
+
 			break;
 		default:
 			PositionableObject::Update(mess);
@@ -80,14 +145,14 @@ GUIObjects GUIObject::GetType() const
 unsigned int GUIObject::GetParentID() const
 { 
 	
-	return parentGUI; 
+	return parentGUI->GetId();
 
 }
 
-void GUIObject::SetParentID(unsigned int parent, unsigned int childId)
+void GUIObject::SetParent(GUIObject* parent, unsigned int childId)
 { 
 	
-	parentGUI = parent; 
+	this->parentGUI = parent;
 	this->childId = childId; 
 
 }
@@ -103,6 +168,13 @@ bool GUIObject::IsVisible()
 {
 
 	return isVisible;
+
+}
+
+bool GUIObject::IsEnabled()
+{
+
+	return enabled;
 
 }
 

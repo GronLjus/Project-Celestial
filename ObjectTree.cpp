@@ -40,6 +40,42 @@ ObjectTree::ObjectTree(unsigned int cells, unsigned int minCells, Vector2 positi
 
 }
 
+bool ObjectTree::RemoveObject(unsigned int id)
+{
+
+	bool found = false;
+
+	if (objects != nullptr)
+	{
+
+		for (unsigned int i = 0; i < objects->GetFirstEmpty() && !found; i++)
+		{
+
+			GameObject* object = objects->GetValue(i);
+			found = object->GetId() == id;
+
+			if (found)
+			{
+
+				objects->Remove(i);
+
+			}
+		}
+	}
+	else
+	{
+		for (unsigned int i = 0; i < 4 && !found; i++)
+		{
+
+			found = subTrees[i]->RemoveObject(id);
+
+		}
+	}
+
+	return found;
+
+}
+
 unsigned int ObjectTree::GetClosestObject(Vector3 origin, Vector3 unitDirection, float& smallestDistance) const
 {
 

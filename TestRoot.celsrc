@@ -6,6 +6,7 @@ $
 
 splashImage = import 'splashImage'
 debugLayout = import 'debugLayer'
+screenLayout = import 'screenLayout'
 
 tile = load mesh 'Tile.obj'
 testPar = load script 'TestRoot2.celsrc'
@@ -21,4 +22,15 @@ post 'test'
 set gameboard testPar2
 set camera cam
 hide splashImage
+remove splashImage
+unload splashImage
 show debugLayout
+
+testBox = load textbox
+set text testBox 'Test 1'
+pos testBox 0.6 0.25
+size testBox 0.3 0.2
+set content testBox 0.8 0.8 0.8
+set border testBox 0.0 1.0 0.0
+
+add ui screenLayout testBox

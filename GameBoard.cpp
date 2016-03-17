@@ -15,6 +15,28 @@ GameBoard::GameBoard(unsigned int cells)
 
 }
 
+void GameBoard::Update(CrossHandlers::Message* mess)
+{
+
+	if (mess->type == MessageType_OBJECT)
+	{
+
+		unsigned int param1;
+		bool found = false;
+		unsigned int i;
+
+		switch (mess->mess)
+		{
+
+		case ObjectMess_REMOVECHILD:
+			param1 = mess->params[0] | ((int)mess->params[1] << 8) | ((int)mess->params[2] << 16) | ((int)mess->params[3] << 24);
+			objectRoot->RemoveObject(param1);
+			break;
+
+		}
+	}
+}
+
 void GameBoard::FillInstanceBuffer()
 {
 
@@ -41,6 +63,7 @@ void GameBoard::AddObject(GameObject* object)
 {
 
 	objectRoot->AddObject(object);
+	object->SetParent(this);
 
 }
 

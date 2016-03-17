@@ -29,18 +29,26 @@ namespace Resources
 			GUIObjects GetType() const;
 			unsigned int GetParentID() const;
 
-			void SetParentID(unsigned int parent, unsigned int childId);
+			void SetParent(GUIObject* parent, unsigned int childId);
 			void ToggleVisibility(bool isOnScreen);
 			bool IsVisible();
+			bool IsEnabled();
 
 			unsigned int GetContentBrush() const;
 			void SetContentBrush(unsigned int brush);
 			unsigned int GetBorderBrush() const;
 			void SetBorderBrush(unsigned int brush);
 
+			virtual void Enable();
+			virtual void Disable();
+
+			void ShouldPause();
+
 			virtual ~GUIObject();
 
 		protected:
+			void pauseRendering();
+			void resumeRendering();
 			bool isVisible;
 			///<summary>If the object is enabled</summary>
 			bool enabled;
@@ -49,11 +57,14 @@ namespace Resources
 			///<summary>The vertical snapping</summary>
 			GUISnap vSnap;
 
-			unsigned int parentGUI;
+			GUIObject* parentGUI;
 			unsigned int childId;
 			unsigned int contentBrush;
 			unsigned int borderBrush;
 			GUIObjects type;
+
+			bool pause;
+			bool paused;
 			
 	};
 }

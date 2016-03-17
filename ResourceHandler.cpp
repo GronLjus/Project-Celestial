@@ -201,8 +201,17 @@ void ResourceHandler::Update(unsigned int time)
 			outId = gameObjects->Add(kT);
 
 		}
+		else if (currentMessage->mess == ResourceMess_UNLOADOBJECT)
+		{
 
-		if (currentMessage->source == MessageSource_CELSCRIPT)
+			unsigned int param1 = currentMessage->params[0] | ((int)currentMessage->params[1] << 8) | ((int)currentMessage->params[2] << 16) | ((int)currentMessage->params[3] << 24);
+			BaseObject* object = gameObjects->GetValue(param1);
+			gameObjects->Remove(param1);
+			delete object;
+
+		}
+
+		if (currentMessage->source == MessageSource_CELSCRIPT && outId > 0)
 		{
 
 			messageBuffer[this->currentMessage].timeSent = time;			

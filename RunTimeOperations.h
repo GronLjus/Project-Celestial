@@ -10,7 +10,10 @@ namespace Logic
 		opcode_LOADTXTBX, opcode_LOADPANEL, opcode_LOADIMAGE,
 		opcode_LOADGMBRD, opcode_LOADCAM, opcode_LOADOBJCT,
 
+		opcode_UNLOAD,
+
 		opcode_ADDOBJECT, opcode_ADDMESH, 
+		opcode_RMVE,
 		opcode_SETGMEBRD, opcode_SETCMRA, opcode_SETLCLK, opcode_SETUI,
 		opcode_FCSUI,
 

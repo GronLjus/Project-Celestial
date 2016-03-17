@@ -9,12 +9,16 @@ namespace Resources
 		public:
 			GUILayout(GUISnap h, GUISnap v);
 			void AddChild(GUIObject* gui);
+			virtual void Update(CrossHandlers::Message* mess);
 			GUIObject* GetChild(unsigned int child) const;
 			unsigned int GetChildren() const;
+
+			virtual void Enable();
+			virtual void Disable();
+
 			~GUILayout();
 
 		private:
-			unsigned int childAmount;
 			CelestialSlicedList<GUIObject*>* children;
 	};
 }

@@ -13,6 +13,7 @@ namespace Resources
 			unsigned int GetMeshId() const;
 			unsigned int GetScriptId() const;
 			bool IsFlipBuffered(unsigned char flip);
+			void SetParent(BaseObject* parent);
 
 			///<summary>Gets the inverse transformation matrix of the object</summary>
 			///<returns>A matrix that describes the inverse of the objects transformation</returns>
@@ -36,6 +37,7 @@ namespace Resources
 			unsigned char flipBuffered;
 			bool flipInit;
 			CelestialMath::Matrix lastMatrix;
+			BaseObject* parent;
 
 	};
 }

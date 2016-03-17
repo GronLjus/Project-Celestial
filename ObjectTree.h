@@ -15,6 +15,7 @@ namespace CrossHandlers
 			void AddObject(Resources::GameObject* obj);
 			unsigned int AddInstance(Entities::ViewObject* view, Entities::DrawingBoard* board);
 			unsigned int GetClosestObject(CelestialMath::Vector3 origin, CelestialMath::Vector3 unitDirection,float &smallestDistance) const;
+			bool RemoveObject(unsigned int id);
 			BoundingBox* GetBox() const;
 			unsigned int GetObjects() const;
 			~ObjectTree();

@@ -122,6 +122,31 @@ RunTimeError LoadGameBoardOperator(unsigned int returnVar, unsigned char* params
 
 }
 
+RunTimeError UnLoadOperator(unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int mId, RunTimeCommons* rtc)
+{
+
+	if (paramSize < 4)
+	{
+
+		return RunTimeError_BADPARAMS;
+
+	}
+
+	unsigned int s = 4;
+	unsigned int var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
+	rtc->memory->ReadVariable(var - 1, rtc->intLoader, s);
+
+	Message mess;
+	mess.returnParam = returnVar;
+	mess.destination = MessageSource_RESOURCES;
+	mess.type = MessageType_RESOURCES;
+	mess.mess = ResourceMess_UNLOADOBJECT;
+	mess.SetParams(rtc->intLoader, 0, 4);
+
+	return sendMessageOut(mess, rtc);
+
+}
+
 RunTimeError LoadCameraOperator(unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int mId, RunTimeCommons* rtc)
 {
 
@@ -634,6 +659,32 @@ RunTimeError Add2DOperator(unsigned int returnVar, unsigned char* params, unsign
 		
 	}
 
+	return RunTimeError_OK;
+
+}
+
+RunTimeError RemoveOperator(unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int mId, RunTimeCommons* rtc)
+{
+
+	if (paramSize < 4)
+	{
+
+		return RunTimeError_BADPARAMS;
+
+	}
+
+	unsigned int s = 4;
+	unsigned int var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
+	rtc->memory->ReadVariable(var - 1, rtc->intLoader, s);
+	unsigned int objectToMod = (rtc->intLoader[0] | ((int)rtc->intLoader[1] << 8) | ((int)rtc->intLoader[2] << 16) | ((int)rtc->intLoader[3] << 24));
+	BaseObject* object = rtc->gameObjects->GetValue(objectToMod);
+
+
+	Message mess;
+	mess.destination = MessageSource_OBJECT;
+	mess.type = MessageType_OBJECT;
+	mess.mess = ObjectMess_REMOVE;
+	object->Update(&mess);
 	return RunTimeError_OK;
 
 }
@@ -1735,8 +1786,13 @@ CelScriptRuntimeHandler::CelScriptRuntimeHandler(MessageQueue* mQueue, Celestial
 	operators[opcode_LOADCAM] = LoadCameraOperator;
 	operators[opcode_LOADOBJCT] = LoadObjectOperator;
 
+	operators[opcode_UNLOAD] = UnLoadOperator;
+
 	operators[opcode_ADDOBJECT] = AddObjectOperator;
 	operators[opcode_ADDMESH] = AddMeshOperator;
+
+	operators[opcode_RMVE] = RemoveOperator;
+
 	operators[opcode_SETGMEBRD] = SetGameBoardOperator;
 	operators[opcode_SETCMRA] = SetCameraOperator;
 	operators[opcode_SETLCLK] = SetLeftClickOperator;

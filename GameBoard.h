@@ -10,7 +10,7 @@ namespace Resources
 
 		public:
 			GameBoard(unsigned int cells); 
-			virtual void Update(CrossHandlers::Message* mess){}
+			virtual void Update(CrossHandlers::Message* mess);
 			void AddObject(GameObject* object);
 			void SetBoardObject(GameObject* object);
 			GameObject* GetBoardObject() const;

@@ -1,5 +1,6 @@
 #pragma once
 #include "Message.h"
+#include <mutex>
 
 namespace Resources
 {
@@ -11,7 +12,9 @@ namespace Resources
 			void SetId(unsigned int id);
 			unsigned int GetId() const;
 			virtual void Update(CrossHandlers::Message* mess) = 0;
-			virtual ~BaseObject(){}
+			virtual ~BaseObject()
+			{
+			}
 
 		private:
 			unsigned int id;

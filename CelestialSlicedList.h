@@ -294,8 +294,19 @@ void CelestialSlicedList<T>::Remove(unsigned int id)
 
 	unsigned int slice = id / maxSliceSize;
 	list[slice][TransformId(id)] = nullptr;
-	holes->PushElement(id);
 
+	if (id == GetFirstEmpty())
+	{
+
+		sliceSize[slice]--;
+
+	}
+	else
+	{
+
+		holes->PushElement(id);
+
+	}
 }
 
 template <class T>
@@ -303,13 +314,26 @@ void CelestialSlicedList<T>::Kill(unsigned int id)
 {
 
 	unsigned int slice = id / maxSliceSize;
+	unsigned int localId = TransformId(id);
 
-	if (list[slice][TransformId(id)] != nullptr)
+	if (list[slice][localId] != nullptr)
 	{
 
-		delete list[slice][TransformId(id)];
-		list[slice][TransformId(id)] = nullptr;
-		holes->PushElement(id);
+		delete list[slice][localId];
+		list[slice][localId] = nullptr;
+
+		if (id == GetFirstEmpty())
+		{
+
+			sliceSize[slice]--;
+
+		}
+		else
+		{
+
+			holes->PushElement(id);
+
+		}
 
 	}
 }
