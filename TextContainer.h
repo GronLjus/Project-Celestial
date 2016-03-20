@@ -14,8 +14,11 @@ namespace CrossHandlers
 		///<param val='text'>[in]The text to add</param>
 		void AddTextLine(std::string text);
 		void AppendText(std::string text);
+		void AppendText(char text);
 		void SetText(std::string text);
 		void EraseText(unsigned int by);
+		void MoveCaret(int rows, int columns);
+		unsigned int GetCaretPos() const;
 		std::string GetText() const;
 		///<summary>Clear all text</summary>
 		virtual void Clear();
@@ -26,6 +29,11 @@ namespace CrossHandlers
 		std::string text;
 		///<summary>The number of lines</summary>
 		int lines;
+		unsigned int caretPos;
+		unsigned int caretLine;
+		unsigned int caretChar;
+		unsigned int maxLines;
+		unsigned int* chars;
 
 	};
 }

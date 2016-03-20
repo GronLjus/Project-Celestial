@@ -684,6 +684,9 @@
     <ClInclude Include="GUIImageLoader.h">
       <Filter>Header Files\Resources\Loaders\UILoaders</Filter>
     </ClInclude>
+    <ClInclude Include="KeyCodes.h">
+      <Filter>Header Files\Input</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Camera.cpp">

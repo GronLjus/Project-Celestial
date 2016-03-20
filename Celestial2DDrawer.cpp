@@ -44,6 +44,11 @@ Celestial2DDrawer::Celestial2DDrawer()
 		brushes[i] = nullptr;
 
 	}
+
+	caretBlinkInterVal = 500;
+	caretBlinkShow = 500;
+	caretBlink = false;
+	caretTime = 0;
 }
 
 void Celestial2DDrawer::Begin()
@@ -261,7 +266,7 @@ void Celestial2DDrawer::DrawGUIObject(Resources::GUIObject* object, Vector2 pare
 			
 			DWRITE_TEXT_METRICS metrics;
 			writeFactory->CreateTextLayout(s2ws2(superString).c_str(), superString.length(), fonts[0], layoutRect.right - layoutRect.left, layoutRect.bottom - layoutRect.top, &boxLayout);
-			boxLayout->SetWordWrapping(DWRITE_WORD_WRAPPING_CHARACTER);
+			boxLayout->SetWordWrapping(DWRITE_WORD_WRAPPING_NO_WRAP);
 			boxLayout->GetMetrics(&metrics);
 			D2D1_POINT_2F textTop = D2D1_POINT_2F();
 
@@ -269,6 +274,37 @@ void Celestial2DDrawer::DrawGUIObject(Resources::GUIObject* object, Vector2 pare
 			textTop.y = layoutRect.top - max(0, metrics.height - metrics.layoutHeight);
 
 			rT->DrawTextLayout(textTop, boxLayout, contentBrush);
+
+			if (tB->GetFocus())
+			{
+
+				caretTime += time - caretLastTime;
+				caretLastTime = time;
+
+				if (caretBlink && caretTime < caretBlinkShow)
+				{
+
+					D2D1_POINT_2F caretTop;
+					DWRITE_HIT_TEST_METRICS metr;
+					boxLayout->HitTestTextPosition(tB->GetCaretPosition(), false, &(caretTop.x), &(caretTop.y), &metr);
+					caretTop.x += textTop.x;
+					caretTop.y += textTop.y;
+
+					D2D1_POINT_2F caretBottom = caretTop;
+					caretBottom.y += metr.height;
+
+					rT->DrawLine(caretTop, caretBottom, contentBrush, 1.5f);
+
+				}
+				else if (caretBlink && caretTime >= caretBlinkShow || (!caretBlink && caretTime >= caretBlinkInterVal))
+				{
+
+					caretBlink = !caretBlink;
+					caretTime = 0;
+
+				}
+			}
+
 			boxLayout->Release();
 
 		}

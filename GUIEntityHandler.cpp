@@ -69,7 +69,24 @@ void GUIEntityHandler::Update(unsigned int time)
 		{
 
 			unsigned int param1 = currentMessage->params[0] | ((int)currentMessage->params[1] << 8) | ((int)currentMessage->params[2] << 16) | ((int)currentMessage->params[3] << 24);
+			
+			if (focusedObject != nullptr)
+			{
+
+				focusedObject->SetFocus(false);
+
+			}
+
 			focusedObject = (GUIObject*)gameObjects->GetValue(param1);
+			focusedObject->SetFocus(true);
+
+		}
+		else if (currentMessage->mess == GUIMess_HANDLECHAR && focusedObject != nullptr)
+		{
+
+			currentMessage->type = MessageType_OBJECT;
+			currentMessage->mess = ObjectMess_HANDLECHAR;
+			focusedObject->Update(currentMessage);
 
 		}
 

@@ -341,6 +341,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	bool charDown = false; 
 	short xPar = GET_X_LPARAM(lParam);
 	short yPar = GET_Y_LPARAM(lParam);
+	Message* messag;
 
 	switch (message)
 	{
@@ -379,6 +380,42 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 		break;
 	case WM_CHAR:
+		messag = getNextMessage();
+		messag->mess = InputMess_CHAR;
+		switch (wParam)
+		{
+		case 0x08:
+			// Process a backspace. 
+			tempBuff[0] = '\b';
+			break;
+
+		case 0x0A:
+			// Process a linefeed. 
+			tempBuff[0] = '\n';
+			break;
+
+		case 0x1B:
+			// Process an escape. 
+			break;
+
+		case 0x09:
+			// Process a tab. 
+			tempBuff[0] = '\t';
+			break;
+
+		case 0x0D:
+			// Process a carriage return. 
+			tempBuff[0] = '\n';
+			break;
+
+		default:
+			// Process displayable characters. 
+			tempBuff[0] = wParam;
+			break;
+		}
+
+		messag->SetParams(tempBuff, 0, 4);
+		overlord->SendMsg(messag);
 		break;
 	case WM_RBUTTONUP:
 		up = true;
@@ -394,7 +431,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		{
 
 			Input::InputHandler::keyCode translatedKey = right ? Input::InputHandler::keyCodeMouseR : Input::InputHandler::keyCodeMouseL;
-			Message* messag = getNextMessage();
+			messag = getNextMessage();
 			messag->mess = up ? InputMess_KEYUP : InputMess_KEYDWN;
 			tempBuff[0] = translatedKey >> 0;
 			tempBuff[1] = translatedKey >> 8;
@@ -409,7 +446,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		if (xPar >= 0 && yPar >= 0)
 		{
 
-			Message* messag = getNextMessage();
+			messag = getNextMessage();
 			messag->mess = InputMess_MOUSEMOVE;
 			tempBuff[0] = xPar >> 0;
 			tempBuff[1] = xPar >> 8;

@@ -69,5 +69,11 @@ namespace Graphics
 			///<summary>The height of the rendertarget</summary>
 			UINT height;
 
+			unsigned int caretBlinkInterVal;
+			unsigned int caretBlinkShow;
+			bool caretBlink;
+			unsigned int caretTime;
+			unsigned int caretLastTime;
+
 	};
 }

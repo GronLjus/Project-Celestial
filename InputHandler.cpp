@@ -205,6 +205,19 @@ void InputHandler::Update(unsigned int time)
 			keyStates[param1].thisTime = time;
 
 		}
+		else if (currentMessage->mess == InputMess_CHAR)
+		{
+
+			messageBuffer[this->currentMessage].SetParams(currentMessage->params, 0, 1);
+			messageBuffer[this->currentMessage].timeSent = time;
+			messageBuffer[this->currentMessage].destination = MessageSource_GUIENTITIES;
+			messageBuffer[this->currentMessage].type = MessageType_GUIENTITIES;
+			messageBuffer[this->currentMessage].mess = GUIMess_HANDLECHAR;
+			messageBuffer[this->currentMessage].read = false;
+			outQueue->PushMessage(&messageBuffer[this->currentMessage]);
+			this->currentMessage = (this->currentMessage + 1) % outMessages;
+
+		}
 
 		currentMessage->read = true;
 		currentMessage = inQueue->PopMessage();

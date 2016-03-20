@@ -33,6 +33,8 @@ namespace Resources
 			void ToggleVisibility(bool isOnScreen);
 			bool IsVisible();
 			bool IsEnabled();
+			void SetFocus(bool focus);
+			bool GetFocus() const;
 
 			unsigned int GetContentBrush() const;
 			void SetContentBrush(unsigned int brush);
@@ -65,6 +67,8 @@ namespace Resources
 
 			bool pause;
 			bool paused;
+		private:
+			bool focused;
 			
 	};
 }

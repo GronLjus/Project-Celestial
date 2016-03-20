@@ -15,6 +15,7 @@ GUIObject::GUIObject() : PositionableObject()
 	pause = false;
 	paused = false;
 	isVisible = true;
+	focused = false;
 
 }
 
@@ -42,6 +43,20 @@ void GUIObject::pauseRendering()
 		std::this_thread::yield();
 
 	}
+}
+
+void GUIObject::SetFocus(bool focus)
+{
+	
+	this->focused = focus;
+
+}
+
+bool GUIObject::GetFocus() const
+{
+
+	return focused;
+
 }
 
 void GUIObject::resumeRendering()

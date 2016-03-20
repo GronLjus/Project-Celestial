@@ -57,7 +57,7 @@ RunTimeError sendMessageOut(Message& mess, RunTimeCommons* rtc)
 	rtc->outMessageBuffer[rtc->outCurrentMessage].destination = mess.destination;
 	rtc->outMessageBuffer[rtc->outCurrentMessage].mess = mess.mess;
 	rtc->outMessageBuffer[rtc->outCurrentMessage].returnParam = mess.returnParam;
-	rtc->outMessageBuffer[rtc->outCurrentMessage].SetParams(mess.params, 0, mess.numParams);
+	rtc->outMessageBuffer[rtc->outCurrentMessage].SetParams(mess.params, 0, mess.numParams-1);
 	rtc->outMessageBuffer[rtc->outCurrentMessage].timeSent = mess.timeSent;
 	rtc->outMessageBuffer[rtc->outCurrentMessage].type = mess.type;
 	rtc->outMessageBuffer[rtc->outCurrentMessage].read = false;

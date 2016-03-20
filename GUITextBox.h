@@ -16,9 +16,12 @@ namespace Resources
 			virtual float GetAngle();
 			CrossHandlers::TextContainer* GetText() const;
 			void SetText(CrossHandlers::TextContainer* textCont);
+			unsigned int GetCaretPosition() const;
 			~GUITextBox();
 
 		private:
 			CrossHandlers::TextContainer* textContainer;
+			unsigned int caretRow;
+			unsigned int caretCol;
 	};
 }

@@ -10,7 +10,7 @@ IHandleMessages::IHandleMessages(unsigned int outMessages, MessageSource ms)
 	filter = MessageType_NA;
 
 	currentMessage = 0;
-	outMessages = 200;
+	this->outMessages = outMessages;
 	messageBuffer = new Message[outMessages];
 
 	for (int i = 0; i < outMessages; i++)
