@@ -3,6 +3,7 @@
 #include "CelestialSlicedList.h"
 #include "ScreenTarget.h"
 #include "CelestialMath.h"
+#include "KeyCodes.h"
 
 namespace Input
 {
@@ -39,12 +40,24 @@ namespace Input
 
 			};
 
+			struct key{
+
+				key(){}
+				key(CelestialKeyCategories cat, unsigned char key) : cat(cat), keyVal(key){}
+				CelestialKeyCategories cat;
+				unsigned char keyVal;
+
+			};
+
 			void triggerScript(unsigned int script, unsigned int time);
+			bool** keyStatus;
+			CrossHandlers::CelestialStack<key>* pressedKeys;
 			keyState* keyStates;
 			CrossHandlers::CelestialSlicedList<Resources::BaseObject*>* gameObjects;
 			CrossHandlers::CelestialSlicedList<Resources::ScreenTarget*>* screenTargets;
 			unsigned int maxScreenTargets;
 			CelestialMath::vectorUI2 mouse;
 			void handleMouse(unsigned int time);
+			void handleKeys(unsigned int time);
 	};
 }

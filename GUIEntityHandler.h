@@ -19,6 +19,7 @@ namespace Entities
 	private:
 		CrossHandlers::CelestialSlicedList<Resources::BaseObject*>* gameObjects;
 		Resources::GUIObject* focusedObject;
+		Message keyMessage;
 		
 	};
 }

@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "InputHandler.h"
-#include <windowsx.h>
+#include "KeyCodes.h"
 
 using namespace Input;
 using namespace CrossHandlers;
@@ -16,7 +16,33 @@ InputHandler::InputHandler() : IHandleMessages(300,MessageSource_INPUT)
 	maxScreenTargets = 0;
 	mouse = vectorUI2(0, 0);
 	keyStates = new keyState[keyCodeNA];
+	pressedKeys = new CelestialStack<key>(false);
 
+	keyStatus = new bool*[CelestialKeyCategories_NA];
+	keyStatus[CelestialKeyCategories_CHAR] = new bool[CelestialCharKeyCodes_NA];
+	keyStatus[CelestialKeyCategories_MOD] = new bool[CelestialModKeyCodes_NA];
+	keyStatus[CelestialKeyCategories_SPEC] = new bool[CelestialSpecKeyCodes_NA];
+
+	for (unsigned char i = 0; i < CelestialCharKeyCodes_NA; i++)
+	{
+
+		keyStatus[CelestialKeyCategories_CHAR][i] = false;
+
+	}
+
+	for (unsigned char i = 0; i < CelestialModKeyCodes_NA; i++)
+	{
+
+		keyStatus[CelestialKeyCategories_MOD][i] = false;
+
+	}
+
+	for (unsigned char i = 0; i < CelestialSpecKeyCodes_NA; i++)
+	{
+
+		keyStatus[CelestialKeyCategories_SPEC][i] = false;
+
+	}
 }
 
 void InputHandler::Init(CelestialSlicedList<BaseObject*>* gameObjects)
@@ -39,6 +65,42 @@ void InputHandler::triggerScript(unsigned int script, unsigned int time)
 	messageBuffer[this->currentMessage].read = false;
 	outQueue->PushMessage(&messageBuffer[this->currentMessage]);
 	this->currentMessage = (this->currentMessage + 1) % outMessages;
+}
+
+void InputHandler::handleKeys(unsigned int time)
+{
+
+
+	while (pressedKeys->GetCount() > 0)
+	{
+
+		key pressedKey = pressedKeys->PeekElement();
+
+		if (keyStatus[pressedKey.cat][pressedKey.keyVal])
+		{
+
+			messageBuffer[this->currentMessage].params[0] = pressedKey.cat;
+			messageBuffer[this->currentMessage].params[1] = pressedKey.keyVal;
+			messageBuffer[this->currentMessage].timeSent = time;
+			messageBuffer[this->currentMessage].destination = MessageSource_GUIENTITIES;
+			messageBuffer[this->currentMessage].type = MessageType_GUIENTITIES;
+			messageBuffer[this->currentMessage].mess = GUIMess_HANDLEKEY;
+			messageBuffer[this->currentMessage].read = false;
+			outQueue->PushMessage(&messageBuffer[this->currentMessage]);
+			this->currentMessage = (this->currentMessage + 1) % outMessages;
+			pressedKeys->PopElement();
+
+		}
+		else
+		{
+			
+			pressedKeys->Remove();
+
+		}
+	}
+
+	pressedKeys->Rewind();
+
 }
 
 void InputHandler::handleMouse(unsigned int time)
@@ -196,14 +258,31 @@ void InputHandler::Update(unsigned int time)
 			mouse.y = currentMessage->params[2] | ((int)currentMessage->params[3] << 8);
 
 		}
-		else if ((currentMessage->mess == InputMess_KEYUP && !keyStates[param1].state) || (currentMessage->mess == InputMess_KEYDWN && keyStates[param1].state))
+		else if ((currentMessage->mess == InputMess_MOUSEUP && !keyStates[param1].state) || (currentMessage->mess == InputMess_MOUSEDWN && keyStates[param1].state))
 		{
 
 			keyStates[param1].lastState = keyStates[param1].state;
-			keyStates[param1].state = currentMessage->mess == InputMess_KEYUP;
+			keyStates[param1].state = currentMessage->mess == InputMess_MOUSEUP;
 			keyStates[param1].lastTime = keyStates[param1].thisTime;
 			keyStates[param1].thisTime = time;
 
+		}
+		else if (currentMessage->mess == InputMess_KEYDWN || currentMessage->mess == InputMess_KEYUP)
+		{
+
+			keyStatus[currentMessage->params[0]][currentMessage->params[1]] = currentMessage->mess == InputMess_KEYDWN;
+
+			if (currentMessage->mess == InputMess_KEYDWN)
+			{
+
+				pressedKeys->PushElement(key(CelestialKeyCategories(currentMessage->params[0]), currentMessage->params[1]));
+
+			}
+			else
+			{
+
+				int dbg = 0;
+			}
 		}
 		else if (currentMessage->mess == InputMess_CHAR)
 		{
@@ -225,6 +304,7 @@ void InputHandler::Update(unsigned int time)
 	}
 
 	handleMouse(time);
+	handleKeys(time);
 
 }
 
@@ -233,5 +313,11 @@ InputHandler::~InputHandler()
 
 	delete[] keyStates;
 	delete screenTargets;
+	delete pressedKeys;
+
+	delete[] keyStatus[CelestialKeyCategories_CHAR];
+	delete[] keyStatus[CelestialKeyCategories_MOD];
+	delete[] keyStatus[CelestialKeyCategories_SPEC];
+	delete[] keyStatus;
 
 }

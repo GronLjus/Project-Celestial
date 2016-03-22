@@ -6,26 +6,23 @@ namespace CrossHandlers
 
 	template <class T>
 
-	class CelestialStack
+	class CelestialSortableStack
 	{
 	public:
-		CelestialStack(bool delOnPop);
+		CelestialSortableStack(bool delOnPop);
 		void PushElement(T element);
 		T PopElement();
 		T PeekElement();
-		void Remove();
 		unsigned int GetCount();
 		void Reset();
 		void Rewind();
-		~CelestialStack();
+		~CelestialSortableStack();
 
 	private:
 		///<summary>The first node in the list</summary>
 		CelestialDoubleListNode<T>* first;
 		CelestialDoubleListNode<T>* root;
-		CelestialDoubleListNode<T>* leftOvers;
-		CelestialDoubleListNode<T>* last;
-		unsigned int count;
+		int count;
 		unsigned int maxCount;
 		bool del;
 	};
@@ -34,13 +31,11 @@ namespace CrossHandlers
 using namespace CrossHandlers;
 
 template <class T>
-CelestialStack<T>::CelestialStack(bool delOnPop)
+CelestialSortableStack<T>::CelestialSortableStack(bool delOnPop)
 {
 
 	first = nullptr;
-	leftOvers = nullptr;
 	root = nullptr;
-	last = nullptr;
 	count = 0;
 	maxCount = 0;
 	del = delOnPop;
@@ -48,65 +43,7 @@ CelestialStack<T>::CelestialStack(bool delOnPop)
 }
 
 template <class T>
-void CelestialStack<T>::Remove()
-{
-
-	if (first != nullptr || count == 0)
-	{
-
-		if (first->GetNext() != nullptr)
-		{
-
-			first->GetNext()->SetPrev(first->GetPrev());
-
-		}
-
-		if (first->GetPrev() != nullptr)
-		{
-
-			first->GetPrev()->SetNext(first->GetNext());
-
-		}
-
-		CelestialDoubleListNode<T>* removed = first;
-		first = first->GetNext();
-
-		if (removed == root)
-		{
-
-			root = first;
-
-		}
-
-		if (removed == last)
-		{
-
-			last = nullptr;
-
-		}
-
-
-		removed->SetNext(nullptr);
-		removed->SetPrev(nullptr);
-
-		if (leftOvers != nullptr)
-		{
-
-			leftOvers->SetNext(removed);
-			removed->SetPrev(leftOvers);
-
-
-		}
-
-		leftOvers = removed;
-		count--;
-		maxCount--;
-		
-	}
-}
-
-template <class T>
-T CelestialStack<T>::PeekElement()
+T CelestialSortableStack<T>::PeekElement()
 {
 
 	if (first == nullptr || count == 0)
@@ -124,7 +61,7 @@ T CelestialStack<T>::PeekElement()
 }
 
 template <class T>
-T CelestialStack<T>::PopElement()
+T CelestialSortableStack<T>::PopElement()
 {
 
 	if (first == nullptr || count == 0)
@@ -150,8 +87,13 @@ T CelestialStack<T>::PopElement()
 				newFirst->SetPrev(nullptr);
 
 			}
+			else
+			{
 
-			root = newFirst;
+				root = nullptr;
+
+			}
+
 			maxCount--;
 
 		}
@@ -164,7 +106,7 @@ T CelestialStack<T>::PopElement()
 }
 
 template <class T>
-unsigned int CelestialStack<T>::GetCount()
+unsigned int CelestialSortableStack<T>::GetCount()
 {
 
 	return count;
@@ -172,44 +114,26 @@ unsigned int CelestialStack<T>::GetCount()
 }
 
 template <class T>
-void CelestialStack<T>::PushElement(T element)
+void CelestialSortableStack<T>::PushElement(T element)
 {
 
 	if (first == nullptr)
 	{
 
-		if (last == nullptr)
+		if (root == nullptr)
 		{
 
-			if (leftOvers == nullptr)
-			{
+			root = new CelestialDoubleListNode<T>(element);
 
-				first = new CelestialDoubleListNode<T>(element);
+		}
+		else
+		{
 
-			}
-			else
-			{
+			root->SetNodeObject(element);
 
-				first = leftOvers;
-				leftOvers = leftOvers->GetPrev();
-
-				if (leftOvers != nullptr)
-				{
-
-					leftOvers->SetNext(nullptr);
-
-				}
-
-				first->SetPrev(nullptr);
-				first->SetNext(nullptr);
-
-			}
-
-			last = first;
 		}
 
-		first = last;
-		first->SetNodeObject(element);
+		first = root;
 
 	}
 	else
@@ -219,30 +143,7 @@ void CelestialStack<T>::PushElement(T element)
 		if (newFirst == nullptr)
 		{
 
-			if (leftOvers == nullptr)
-			{
-
-				newFirst = new CelestialDoubleListNode<T>(element);
-
-			}
-			else
-			{
-
-				newFirst = leftOvers;
-				leftOvers = leftOvers->GetPrev();
-
-				if (leftOvers != nullptr)
-				{
-
-					leftOvers->SetNext(nullptr);
-
-				}
-
-				newFirst->SetPrev(nullptr);
-				newFirst->SetNodeObject(element);
-
-			}
-
+			newFirst = new CelestialDoubleListNode<T>(element);
 			newFirst->SetNext(first);
 			first->SetPrev(newFirst);
 
@@ -256,10 +157,20 @@ void CelestialStack<T>::PushElement(T element)
 
 		first = newFirst;
 
+		while (newFirst->GetNext() != nullptr &&
+			newFirst->GetNodeObject() < newFirst->GetNext()->GetNodeObject())
+		{
+
+			CelestialDoubleListNode<T>* temp = newFirst->GetNext();
+			temp->SetPrev(newFirst->GetPrev());
+			newFirst->SetPrev(temp);
+			newFirst->SetNext(temp->GetNext());
+			temp->SetNext(newFirst);
+
+		}
 	}
 
 	count++;
-	root = first;
 
 	if (count > maxCount)
 	{
@@ -271,7 +182,7 @@ void CelestialStack<T>::PushElement(T element)
 }
 
 template <class T>
-void CelestialStack<T>::Reset()
+void CelestialSortableStack<T>::Reset()
 {
 
 	if (del)
@@ -316,7 +227,7 @@ void CelestialStack<T>::Reset()
 }
 
 template <class T>
-void CelestialStack<T>::Rewind()
+void CelestialSortableStack<T>::Rewind()
 {
 
 	if (!del)
@@ -329,15 +240,15 @@ void CelestialStack<T>::Rewind()
 }
 
 template <class T>
-CelestialStack<T>::~CelestialStack()
+CelestialSortableStack<T>::~CelestialSortableStack()
 {
 
-	if (last != nullptr)
+	if (root != nullptr)
 	{
 
-		CelestialDoubleListNode<T>* next = last->GetNext();
-		CelestialDoubleListNode<T>* prev = last->GetPrev();
-		delete last;
+		CelestialDoubleListNode<T>* next = root->GetNext();
+		CelestialDoubleListNode<T>* prev = root->GetPrev();
+		delete root;
 
 		while (next != nullptr)
 		{
@@ -356,14 +267,5 @@ CelestialStack<T>::~CelestialStack()
 			prev = prevPrev;
 
 		}
-	}
-
-	while (leftOvers != nullptr)
-	{
-
-		CelestialDoubleListNode<T>* next = leftOvers->GetPrev();
-		delete leftOvers;
-		leftOvers = next;
-
 	}
 }

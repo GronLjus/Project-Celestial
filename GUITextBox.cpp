@@ -17,6 +17,7 @@ GUITextBox::GUITextBox(GUISnap h, GUISnap v) : GUIObject()
 	textContainer = new TextContainer();
 	caretCol = 0;
 	caretRow = 0;
+	lastTime = 0;
 
 }
 
@@ -41,18 +42,22 @@ void GUITextBox::Update(Message* mess)
 		{
 
 		case ObjectMess_SETTEXT:
+			setLastUpdated(mess->timeSent);
 			stringParam = string((char*)mess->params);
 			textContainer->SetText(stringParam);
 			break;
 		case ObjectMess_APPENDTEXT:
+			setLastUpdated(mess->timeSent);
 			stringParam = string((char*)mess->params);
 			textContainer->AppendText(stringParam);
 			break;
 		case ObjectMess_APPENDTEXTLINE:
+			setLastUpdated(mess->timeSent);
 			stringParam = string((char*)mess->params);
 			textContainer->AddTextLine(stringParam);
 			break;
 		case ObjectMess_HANDLECHAR:
+			setLastUpdated(mess->timeSent);
 			switch (mess->params[0])
 			{
 
@@ -69,33 +74,40 @@ void GUITextBox::Update(Message* mess)
 			}
 		case ObjectMess_HANDLEKEY:
 
-			for (unsigned char i = 0; i < keys; i+=2)
+			if (mess->timeSent - lastTime >= 100)
 			{
 
-				if (mess->params[i + 1] == CelestialKeyCategories_SPEC)
+				setLastUpdated(mess->timeSent);
+				lastTime = mess->timeSent;
+
+				for (unsigned char i = 0; i < keys; i += 2)
 				{
 
-					if (mess->params[i + 2] == CelestialSpecKeyCodes_RGHT)
+					if (mess->params[i + 1] == CelestialKeyCategories_SPEC)
 					{
-						textContainer->MoveCaret(0, 1);
+
+						if (mess->params[i + 2] == CelestialSpecKeyCodes_RGHT)
+						{
+							textContainer->MoveCaret(0, 1);
+						}
+
+						if (mess->params[i + 2] == CelestialSpecKeyCodes_LFT)
+						{
+							textContainer->MoveCaret(0, -1);
+						}
+
+						if (mess->params[i + 2] == CelestialSpecKeyCodes_UP)
+						{
+							textContainer->MoveCaret(-1, 0);
+						}
+
+						if (mess->params[i + 2] == CelestialSpecKeyCodes_DWN)
+						{
+							textContainer->MoveCaret(1, 0);
+						}
 					}
 
-					if (mess->params[i + 2] == CelestialSpecKeyCodes_LFT)
-					{
-						textContainer->MoveCaret(0, -1);
-					}
-
-					if (mess->params[i + 2] == CelestialSpecKeyCodes_UP)
-					{
-						textContainer->MoveCaret(-1, 0);
-					}
-
-					if (mess->params[i + 2] == CelestialSpecKeyCodes_DWN)
-					{
-						textContainer->MoveCaret(1, 0);
-					}
 				}
-
 			}
 		default:
 			GUIObject::Update(mess);

@@ -209,6 +209,7 @@
     <ClInclude Include="IHandleMessages.h" />
     <ClInclude Include="ImageResourceObject.h" />
     <ClInclude Include="KeyCodes.h" />
+    <ClInclude Include="KeyTranslation.h" />
     <ClInclude Include="Keyword.h" />
     <ClInclude Include="Frustum.h" />
     <ClInclude Include="GraphicCodes.h" />

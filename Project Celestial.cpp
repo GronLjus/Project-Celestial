@@ -4,6 +4,7 @@
 #include "stdafx.h"
 #include "Project Celestial.h"
 #include "Overlord.h"
+#include "KeyTranslation.h"
 #include <windowsx.h>
 #include <thread>
 #include <time.h>
@@ -19,7 +20,7 @@ TCHAR szWindowClass[MAX_LOADSTRING];			// the main window class name
 Overlord* overlord;
 CrossHandlers::Message* messageBuffer;
 int currentMsg;
-int maxBuffer = 100;
+int maxBuffer = 1000;
 
 bool gStop = false;
 bool lStop = false;
@@ -283,13 +284,35 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 
 }
 
-Input::InputHandler::keyCode translateKey(WPARAM keyParam)
+Input::CelestialKeyCategories translateKeyCategory(WPARAM keyParam)
 {
 
-	Input::InputHandler::keyCode retVal = 
-		keyParam == VK_LBUTTON ? Input::InputHandler::keyCodeMouseL :
-		keyParam == VK_RBUTTON ? Input::InputHandler::keyCodeMouseR :
-		Input::InputHandler::keyCodeNA;
+	Input::CelestialKeyCategories retVal =
+		keyParam == VK_SHIFT || 
+		keyParam == VK_CONTROL ||
+		keyParam == VK_CAPITAL ||
+		keyParam == VK_MENU
+		? Input::CelestialKeyCategories_MOD :
+
+		keyParam == VK_ESCAPE || 
+		(keyParam >= VK_F1 && keyParam <= VK_F12) || 
+		(keyParam >= VK_PRIOR && keyParam <= VK_DOWN) ||
+		keyParam == VK_INSERT ||
+		keyParam == VK_DELETE ||
+		keyParam == VK_CANCEL ||
+		keyParam == VK_SCROLL ||
+		keyParam == VK_SNAPSHOT
+		? Input::CelestialKeyCategories_SPEC :
+
+		(keyParam >= 0x30 && keyParam <= 0x39) ||
+		(keyParam >= 0x41 && keyParam <= 0x5a) ||
+		(keyParam >= VK_OEM_1 && keyParam <= VK_OEM_3) ||
+		(keyParam >= VK_OEM_4 && keyParam <= VK_OEM_8) ||
+		keyParam == VK_SPACE || 
+		keyParam == VK_TAB ||
+		keyParam == VK_OEM_102
+		? Input::CelestialKeyCategories_CHAR : 
+		Input::CelestialKeyCategories_NA;
 
 	return retVal;
 
@@ -339,6 +362,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	bool right = false;
 	bool mouse = false;
 	bool charDown = false; 
+	bool down = false;
 	short xPar = GET_X_LPARAM(lParam);
 	short yPar = GET_Y_LPARAM(lParam);
 	Message* messag;
@@ -421,18 +445,41 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		up = true;
 	case WM_RBUTTONDOWN:
 		right = true;
-		break;
+		down = !up;
 	case WM_LBUTTONUP:
-		up = true;
+		up = !down;
 	case WM_LBUTTONDOWN:
+		down = !up;
 		mouse = true;
+	case WM_SYSKEYUP:
+	case WM_KEYUP:
+		up = !down;
+	case WM_SYSKEYDOWN:
 	case WM_KEYDOWN:
+		if ((lParam >> 30 == 0 || up) && !mouse)
+		{
+			
+			Input::CelestialKeyCategories keyCat = translatedCategories[wParam];
+			
+			if (keyCat != Input::CelestialKeyCategories_NA)
+			{
+
+				messag = getNextMessage();
+				messag->mess = up ? InputMess_KEYUP : InputMess_KEYDWN;
+				tempBuff[0] = keyCat;
+				tempBuff[1] = translatedKeys[wParam];
+				messag->SetParams(tempBuff, 0, 4);
+				overlord->SendMsg(messag);
+
+			}
+		}
+
 		if (mouse)
 		{
 
 			Input::InputHandler::keyCode translatedKey = right ? Input::InputHandler::keyCodeMouseR : Input::InputHandler::keyCodeMouseL;
 			messag = getNextMessage();
-			messag->mess = up ? InputMess_KEYUP : InputMess_KEYDWN;
+			messag->mess = up ? InputMess_MOUSEUP : InputMess_MOUSEDWN;
 			tempBuff[0] = translatedKey >> 0;
 			tempBuff[1] = translatedKey >> 8;
 			tempBuff[2] = translatedKey >> 16;

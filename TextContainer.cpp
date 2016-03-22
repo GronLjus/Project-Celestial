@@ -61,7 +61,7 @@ void TextContainer::AddTextLine(std::string text)
 
 			}
 
-			memcpy(newChars, chars, lines);
+			memcpy(newChars, chars, lines*sizeof(unsigned int));
 			delete[] chars;
 			chars = newChars;
 
@@ -69,7 +69,7 @@ void TextContainer::AddTextLine(std::string text)
 	}
 
 	caretLine++;
-	caretChar = 0;
+	caretChar = text.length();
 	chars[caretLine] += text.length();
 
 }
@@ -147,7 +147,7 @@ void TextContainer::MoveCaret(int rows, int columns)
 	if (rows != 0)
 	{
 
-		if (rows > 0 && caretLine+1 < lines)
+		if (rows > 0 && caretLine < lines)
 		{
 
 			caretPos += chars[caretLine] - caretChar;
@@ -161,7 +161,7 @@ void TextContainer::MoveCaret(int rows, int columns)
 			}
 
 			caretLine++;
-			caretChar = chars[caretLine] >= caretChar ? caretChar : chars[caretLine];
+			caretChar = chars[caretLine] >= caretChar ? caretChar : caretLine == lines ? chars[caretLine] :chars[caretLine] - 1;
 			caretPos += caretChar;
 
 		}
@@ -170,7 +170,7 @@ void TextContainer::MoveCaret(int rows, int columns)
 
 			caretPos -= caretChar;
 
-			for (int i = 1; i < columns - 1 && caretLine - i > 0; i++)
+			for (int i = 1; i < abs(rows) - 1 && caretLine - i > 0; i++)
 			{
 
 				caretPos -= chars[caretLine - i];
@@ -179,8 +179,8 @@ void TextContainer::MoveCaret(int rows, int columns)
 			}
 
 			caretLine--;
-			caretChar = chars[caretLine] >= caretChar ? caretChar : chars[caretLine];
-			caretPos -= chars[caretLine]-caretChar;
+			caretChar = chars[caretLine] >= caretChar ? caretChar : chars[caretLine]-1;
+			caretPos -= chars[caretLine] - caretChar;
 
 		}
 
@@ -210,8 +210,8 @@ void TextContainer::MoveCaret(int rows, int columns)
 		else
 		{
 
-			caretPos = caretPos - columns < 0 ? 0 : caretPos - columns;
-			unsigned int toRemove = columns;
+			caretPos = caretPos + columns < 0 ? 0 : caretPos + columns;
+			int toRemove = abs(columns);
 
 			while (caretChar < toRemove && caretLine > 0)
 			{

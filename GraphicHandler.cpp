@@ -244,15 +244,16 @@ unsigned int GraphicHandler::GetRenderFlip() const
 void GraphicHandler::Draw(unsigned int time)
 {
 
+	isDrawing = true;
+
 	if (!canDraw)
 	{
 
+		isDrawing = false;
 		this_thread::yield();
 		return;
 
 	}
-
-	isDrawing = true;
 	
 	int sTime = clock();
 

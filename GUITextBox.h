@@ -23,5 +23,6 @@ namespace Resources
 			CrossHandlers::TextContainer* textContainer;
 			unsigned int caretRow;
 			unsigned int caretCol;
+			unsigned int lastTime;
 	};
 }

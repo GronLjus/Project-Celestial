@@ -278,7 +278,22 @@ void Celestial2DDrawer::DrawGUIObject(Resources::GUIObject* object, Vector2 pare
 			if (tB->GetFocus())
 			{
 
-				caretTime += time - caretLastTime;
+				unsigned int objectLastUpdated = tB->LastUpdated();
+
+				if (time - objectLastUpdated > 100)
+				{
+
+					caretTime += time - caretLastTime;
+
+				}
+				else
+				{
+
+					caretBlink = true;
+					caretTime = 0;
+
+				}
+
 				caretLastTime = time;
 
 				if (caretBlink && caretTime < caretBlinkShow)

@@ -11,6 +11,8 @@ GUIEntityHandler::GUIEntityHandler() : IHandleMessages(20,MessageSource_GUIENTIT
 
 	filter = MessageType_GUIENTITIES;
 	focusedObject = nullptr;
+	keyMessage.type = MessageType_OBJECT;
+	keyMessage.mess = ObjectMess_HANDLEKEY;
 	
 }
 
@@ -23,6 +25,10 @@ void GUIEntityHandler::Init(CelestialSlicedList<BaseObject*>* gameObjects)
 
 void GUIEntityHandler::Update(unsigned int time)
 {
+
+	keyMessage.params[0] = 0;
+	keyMessage.read = true;
+	keyMessage.timeSent = time;
 
 	Message* currentMessage = inQueue->PopMessage();
 
@@ -86,12 +92,29 @@ void GUIEntityHandler::Update(unsigned int time)
 
 			currentMessage->type = MessageType_OBJECT;
 			currentMessage->mess = ObjectMess_HANDLECHAR;
+			currentMessage->timeSent = time;
 			focusedObject->Update(currentMessage);
+
+		}
+		else if (currentMessage->mess == GUIMess_HANDLEKEY && focusedObject != nullptr)
+		{
+
+			keyMessage.read = false;
+			keyMessage.params[keyMessage.params[0] * 2 + 1] = currentMessage->params[0];
+			keyMessage.params[keyMessage.params[0] * 2 + 2] = currentMessage->params[1];
+			keyMessage.params[0] += 1;
 
 		}
 
 		currentMessage->read = true;
 		currentMessage = inQueue->PopMessage();
+
+	}
+
+	if (!keyMessage.read)
+	{
+
+		focusedObject->Update(&keyMessage);
 
 	}
 
