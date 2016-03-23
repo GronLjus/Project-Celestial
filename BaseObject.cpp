@@ -31,3 +31,10 @@ unsigned int BaseObject::GetId() const
 	return id;
 
 }
+
+unsigned int BaseObject::GetTargetId() const
+{
+
+	return id;
+
+}

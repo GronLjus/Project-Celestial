@@ -16,6 +16,8 @@ namespace Resources
 			virtual void Enable();
 			virtual void Disable();
 
+			virtual void SetParent(GUIObject* parent, unsigned int childId);
+
 			~GUILayout();
 
 		private:

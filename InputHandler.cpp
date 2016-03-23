@@ -52,11 +52,22 @@ void InputHandler::Init(CelestialSlicedList<BaseObject*>* gameObjects)
 
 }
 
-void InputHandler::triggerScript(unsigned int script, unsigned int time)
+void InputHandler::triggerScript(unsigned int script, unsigned int time, unsigned int targetId)
 {
 
-	unsigned char tempBuff[]{script >> 0, script >> 8, script >> 16, script >> 24
+	unsigned char tempBuff[]{script >> 0, script >> 8, script >> 16, script >> 24, 
+		targetId >> 0, targetId >> 8, targetId >> 16, targetId >> 24
 	};
+
+	messageBuffer[this->currentMessage].timeSent = time;
+	messageBuffer[this->currentMessage].destination = MessageSource_CELSCRIPT;
+	messageBuffer[this->currentMessage].type = MessageType_SCRIPT;
+	messageBuffer[this->currentMessage].mess = ScriptMess_ADDPARNUM;
+	messageBuffer[this->currentMessage].read = false;
+	messageBuffer[this->currentMessage].SetParams(tempBuff, 0, 8);
+	outQueue->PushMessage(&messageBuffer[this->currentMessage]);
+	this->currentMessage = (this->currentMessage + 1) % outMessages;
+
 	messageBuffer[this->currentMessage].SetParams(tempBuff, 0, 4);
 	messageBuffer[this->currentMessage].timeSent = time;
 	messageBuffer[this->currentMessage].destination = MessageSource_CELSCRIPT;
@@ -106,61 +117,57 @@ void InputHandler::handleKeys(unsigned int time)
 void InputHandler::handleMouse(unsigned int time)
 {
 
-	bool isOverST = false;
+	ScreenTarget* firstTarget = nullptr;
+	unsigned char topLayer = 1;
 
 	for (unsigned int i = 0; i < maxScreenTargets; i++)
 	{
+
 
 		ScreenTarget* st = screenTargets->GetValue(i);
 
 		if (st != nullptr)
 		{
 
-			if (st->GetPosition().x <= mouse.x && st->GetPosition().x + st->GetScale().x >= mouse.x &&
-				st->GetPosition().y <= mouse.y && st->GetPosition().y + st->GetScale().y >= mouse.y)
+			if (st->IsVisible() && !st->ShouldRemove() &&
+				(st->GetPosition().x <= mouse.x && st->GetPosition().x + st->GetScale().x >= mouse.x &&
+				st->GetPosition().y <= mouse.y && st->GetPosition().y + st->GetScale().y >= mouse.y) &&
+				(st->GetLayer() > topLayer))
 			{
 
-				isOverST = true;
-
-				if (!st->IsHovering() && st->GetEnterScript() != 0)
+				if (firstTarget != nullptr && firstTarget->IsHovering())
 				{
 
-					unsigned int script = st->GetEnterScript() - 1;
-					triggerScript(script, time);
+					firstTarget->SetHovering(false);
 
+					if (firstTarget->GetExitScript() != 0)
+					{
+
+						unsigned int script = firstTarget->GetExitScript() - 1;
+						triggerScript(script, time, firstTarget->GetTargetId());
+
+					}
 				}
 
-				st->SetHovering(true);
+				topLayer = st->GetLayer();
+				firstTarget = st;
 
-				if (st->GetHoverScript() != 0)
-				{
+			}
+			else if (st->ShouldRemove())
+			{
 
-					unsigned int hoverScript = st->GetHoverScript() - 1;
-					triggerScript(hoverScript, time);
+				unsigned char tempBuff[]{st->GetId() >> 0, st->GetId() >> 8, st->GetId() >> 16, st->GetId() >> 24};
+				messageBuffer[this->currentMessage].SetParams(tempBuff, 0, 4);
+				messageBuffer[this->currentMessage].timeSent = time;
+				messageBuffer[this->currentMessage].destination = MessageSource_RESOURCES;
+				messageBuffer[this->currentMessage].type = MessageType_RESOURCES;
+				messageBuffer[this->currentMessage].mess = ResourceMess_UNLOADOBJECT;
+				messageBuffer[this->currentMessage].read = false;
+				outQueue->PushMessage(&messageBuffer[this->currentMessage]);
+				this->currentMessage = (this->currentMessage + 1) % outMessages;
 
-				}
+				screenTargets->Add(nullptr, i);
 
-				if (st->GetLeftClickScript() != 0 && 
-					keyStates[keyCodeMouseL].thisTime == time && 
-					keyStates[keyCodeMouseL].state && 
-					keyStates[keyCodeMouseL].thisTime - keyStates[keyCodeMouseL].lastTime <= 250)
-				{
-
-					unsigned int lcScript = st->GetLeftClickScript() - 1;
-					triggerScript(lcScript, time);
-
-				}
-
-				if (st->GetRightClickScript() != 0 &&
-					keyStates[keyCodeMouseR].thisTime == time &&
-					keyStates[keyCodeMouseR].state &&
-					keyStates[keyCodeMouseR].thisTime - keyStates[keyCodeMouseR].lastTime <= 250)
-				{
-
-					unsigned int rcScript = st->GetRightClickScript() - 1;
-					triggerScript(rcScript, time);
-
-				}
 			}
 			else if (st->IsHovering())
 			{
@@ -171,14 +178,57 @@ void InputHandler::handleMouse(unsigned int time)
 				{
 
 					unsigned int script = st->GetExitScript() - 1;
-					triggerScript(script, time);
+					triggerScript(script, time, st->GetTargetId());
 
 				}
 			}
 		}
 	}
 
-	if (!isOverST)
+	if (firstTarget != nullptr)
+	{
+
+		if (!firstTarget->IsHovering() && firstTarget->GetEnterScript() != 0)
+		{
+
+			unsigned int script = firstTarget->GetEnterScript() - 1;
+			triggerScript(script, time, firstTarget->GetTargetId());
+
+		}
+
+		firstTarget->SetHovering(true);
+
+		if (firstTarget->GetHoverScript() != 0)
+		{
+
+			unsigned int hoverScript = firstTarget->GetHoverScript() - 1;
+			triggerScript(hoverScript, time, firstTarget->GetTargetId());
+
+		}
+
+		if (firstTarget->GetLeftClickScript() != 0 &&
+			keyStates[keyCodeMouseL].thisTime == time &&
+			keyStates[keyCodeMouseL].state &&
+			keyStates[keyCodeMouseL].thisTime - keyStates[keyCodeMouseL].lastTime <= 250)
+		{
+
+			unsigned int lcScript = firstTarget->GetLeftClickScript() - 1;
+			triggerScript(lcScript, time, firstTarget->GetTargetId());
+
+		}
+
+		if (firstTarget->GetRightClickScript() != 0 &&
+			keyStates[keyCodeMouseR].thisTime == time &&
+			keyStates[keyCodeMouseR].state &&
+			keyStates[keyCodeMouseR].thisTime - keyStates[keyCodeMouseR].lastTime <= 250)
+		{
+
+			unsigned int rcScript = firstTarget->GetRightClickScript() - 1;
+			triggerScript(rcScript, time, firstTarget->GetTargetId());
+
+		}
+	}
+	else
 	{
 
 		if (keyStates[keyCodeMouseR].thisTime == time &&
@@ -244,7 +294,7 @@ void InputHandler::Update(unsigned int time)
 				
 			unsigned int stId = screenTargets->Add((ScreenTarget*)gameObjects->GetValue(param1));
 
-			if (stId > maxScreenTargets)
+			if (stId >= maxScreenTargets)
 			{
 
 				maxScreenTargets = stId;

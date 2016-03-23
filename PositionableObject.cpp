@@ -14,10 +14,24 @@ PositionableObject::PositionableObject()
 
 	rightClickScript = 0;
 	leftClickScript = 0;
+	layer = 0;
 
 }
 
 PositionableObject::PositionableObject(Vector3 position, Vector3 scale)
+{
+
+	this->position = position;
+	this->scale = scale;
+	rotation = Vector3(0.0f, 0.0f, 0.0f);
+
+	rightClickScript = 0;
+	leftClickScript = 0;
+	layer = 0;
+
+}
+
+void PositionableObject::refresh(Vector3 position, Vector3 scale)
 {
 
 	this->position = position;
@@ -65,10 +79,44 @@ void PositionableObject::Update(Message* mess)
 		case ObjectMess_SETLCSCRPT:
 			leftClickScript = param1+1;
 			break;
+		case ObjectMess_INCREMENTLAYER:
+			if (layer < 255)
+			{
+
+				layer++;
+
+			}
+			break;
+		case ObjectMess_DECREMENTLAYER:
+			if (layer > 0)
+			{
+
+				layer--;
+
+			}
+			break;
+		case ObjectMess_SETLAYER:
+			layer = mess->params[0];
+			break;
 
 		}
 	}
 }
+
+void PositionableObject::setLayer(unsigned char layer)
+{
+
+	this->layer = layer;
+
+}
+
+unsigned char PositionableObject::GetLayer() const
+{
+
+	return layer;
+
+}
+
 
 unsigned int PositionableObject::GetRightClickScript() const
 {

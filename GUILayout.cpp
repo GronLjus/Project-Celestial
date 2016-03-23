@@ -66,7 +66,7 @@ void GUILayout::Enable()
 		}
 	}
 
-	enabled = true;
+	GUIObject::Enable();
 
 }
 
@@ -87,7 +87,7 @@ void GUILayout::Disable()
 
 	}
 
-	enabled = false;
+	GUIObject::Disable();
 
 }
 
@@ -103,6 +103,25 @@ GUIObject* GUILayout::GetChild(unsigned int child) const
 
 	return children->GetValue(child);
 
+}
+
+void GUILayout::SetParent(GUIObject* parent, unsigned int childId)
+{
+
+	GUIObject::SetParent(parent, childId); 
+	
+	for (unsigned int i = 0; i < GetChildren(); i++)
+	{
+
+		GUIObject* obj = children->GetValue(i);
+
+		if (obj != nullptr)
+		{
+
+			obj->SetLayer(GetLayer()+1+i);
+
+		}
+	}
 }
 
 void GUILayout::AddChild(GUIObject* gui)

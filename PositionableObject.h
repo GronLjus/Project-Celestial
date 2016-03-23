@@ -18,6 +18,11 @@ namespace Resources
 			CelestialMath::Matrix GetMatrix() const;
 			unsigned int GetRightClickScript() const;
 			unsigned int GetLeftClickScript() const;
+			unsigned char GetLayer() const;
+
+		protected:
+			void refresh(CelestialMath::Vector3 position, CelestialMath::Vector3 scale);
+			void setLayer(unsigned char layer);
 
 		private:
 			unsigned int rightClickScript;
@@ -26,5 +31,6 @@ namespace Resources
 			CelestialMath::Vector3 rotation;
 			CelestialMath::Vector3 scale;
 			CelestialMath::Matrix transformMatrix;
+			unsigned char layer;
 	};
 }

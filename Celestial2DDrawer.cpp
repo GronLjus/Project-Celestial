@@ -203,13 +203,6 @@ void Celestial2DDrawer::SetContentBrush(GUIObject* object, Vector3 color)
 void Celestial2DDrawer::DrawGUIObject(Resources::GUIObject* object, unsigned int time)
 {
 
-	DrawGUIObject(object, Vector2(0, 0), Vector2(width, height), time);
-
-}
-
-void Celestial2DDrawer::DrawGUIObject(Resources::GUIObject* object, Vector2 parentalAbsPos, Vector2 parentalAbsSize, unsigned int time)
-{
-
 	if (object == nullptr)
 	{
 
@@ -221,18 +214,13 @@ void Celestial2DDrawer::DrawGUIObject(Resources::GUIObject* object, Vector2 pare
 	{
 
 		Vector2 objSize = Vector2(object->GetScale().x, object->GetScale().y);
-		Vector2 topLeft = Vector2(
-			object->GetHorizontalSnap() == GUISnap_LEFT ? object->GetPosition().x : object->GetHorizontalSnap() == GUISnap_MIDDLE ? 0.5f - objSize.x*0.5f : objSize.x - object->GetPosition().x,
-			object->GetVerticalSnap() == GUISnap_TOP ? object->GetPosition().y : object->GetVerticalSnap() == GUISnap_MIDDLE ? 0.5f - objSize.y*0.5f : objSize.y - object->GetPosition().y);
-
-		Vector2 topLeftAbs = parentalAbsPos + topLeft * parentalAbsSize;
-		Vector2 abSize = objSize * parentalAbsSize;
+		Vector2 topLeft = object->GetTopLeft();
 
 		D2D1_RECT_F layoutRect = D2D1::RectF(
-			topLeftAbs.x,
-			topLeftAbs.y,
-			topLeftAbs.x + abSize.x,
-			topLeftAbs.y + abSize.y
+			topLeft.x,
+			topLeft.y,
+			topLeft.x + objSize.x,
+			topLeft.y + objSize.y
 			);
 
 
@@ -392,7 +380,7 @@ void Celestial2DDrawer::DrawGUIObject(Resources::GUIObject* object, Vector2 pare
 				if (layout->GetChild(i) != nullptr)
 				{
 
-					DrawGUIObject(layout->GetChild(i), topLeftAbs, abSize, time);
+					DrawGUIObject(layout->GetChild(i), time);
 
 				}
 			}

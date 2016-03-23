@@ -84,6 +84,7 @@ void GUIEntityHandler::Update(unsigned int time)
 			}
 
 			focusedObject = (GUIObject*)gameObjects->GetValue(param1);
+
 			focusedObject->SetFocus(true);
 
 		}

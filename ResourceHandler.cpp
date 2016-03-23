@@ -29,7 +29,7 @@ unsigned int ResourceHandler::GetCrossScriptObject() const
 
 ///<summary>Initializes The handler and its underobjects</summary>
 ///<param name='card'>[in]The device to load from</param>
-void ResourceHandler::Init(Graphics::CardHandler* &card, TextContainer* outText, Vector2 screen)
+void ResourceHandler::Init(Graphics::CardHandler* &card, TextContainer* outText, vectorUI2 screen)
 {
 
 	loader->Init(card,outText);
@@ -169,8 +169,22 @@ void ResourceHandler::Update(unsigned int time)
 			std::string stringParam((char*)(&currentMessage->params[4]));
 			GUIObject* obj = loader->LoadGUIObject(GUIObjects(param1), GUISnap_LEFT, GUISnap_TOP, stringParam);
 			obj->ToggleVisibility(true);
+
 			obj->SetId(gameObjects->GetFirstEmpty());
 			outId = gameObjects->Add(obj);
+
+			ScreenTarget* target = obj->GetScreenTarget();
+			target->SetId(gameObjects->GetFirstEmpty());
+			gameObjects->Add(target); 
+			messageBuffer[this->currentMessage].timeSent = time;
+			messageBuffer[this->currentMessage].destination = MessageSource_INPUT;
+			messageBuffer[this->currentMessage].type = MessageType_INPUT;
+			messageBuffer[this->currentMessage].mess = InputMess_ADDSCREENTARGET;
+			unsigned char tempBuff[]{target->GetId() >> 0, target->GetId() >> 8, target->GetId() >> 16, target->GetId() >> 24};
+			messageBuffer[this->currentMessage].SetParams(tempBuff, 0, 4);
+			messageBuffer[this->currentMessage].read = false;
+			outQueue->PushMessage(&messageBuffer[this->currentMessage]);
+			this->currentMessage = (this->currentMessage + 1) % outMessages;
 
 		}
 		else if (currentMessage->mess == ResourceMess_LOADKEYTRIGGER)

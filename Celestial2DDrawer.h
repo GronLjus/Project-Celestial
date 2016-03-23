@@ -23,7 +23,6 @@ namespace Graphics
 			HRESULT InitFont(int height,UINT width,FontWeight weight,UINT mipLevels,bool italic,LPCWSTR faceName,int &index);
 			HRESULT InitSolidBrush(float r, float g, float b, int &index);
 			ImageResourceObject* Load2DImage(unsigned char* values, UINT bPC, UINT channels, UINT width, UINT height);
-			void DrawGUIObject(Resources::GUIObject* object, CelestialMath::Vector2 parentalAbsPos, CelestialMath::Vector2 parentalAbsSize, unsigned int time);
 			void DrawGUIObject(Resources::GUIObject* object, unsigned int time);
 			void Clear();
 			void Release();

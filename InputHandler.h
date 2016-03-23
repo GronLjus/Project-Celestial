@@ -49,7 +49,7 @@ namespace Input
 
 			};
 
-			void triggerScript(unsigned int script, unsigned int time);
+			void triggerScript(unsigned int script, unsigned int time, unsigned int targetId);
 			bool** keyStatus;
 			CrossHandlers::CelestialStack<key>* pressedKeys;
 			keyState* keyStates;

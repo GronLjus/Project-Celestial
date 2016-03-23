@@ -3,6 +3,7 @@
 #include "PositionableObject.h" 
 #include "Triggers.h"
 #include "CelestialSlicedList.h"
+#include "ScreenTarget.h"
 
 namespace Resources
 {
@@ -16,6 +17,7 @@ namespace Resources
 		public:
 			GUIObject();
 
+			virtual void SetId(unsigned int id);
 			virtual void Update(CrossHandlers::Message* mess);
 			///<summary>Gets how the object should snap horizontally</summary>
 			///<returns>How the object should snap</returns>
@@ -29,7 +31,7 @@ namespace Resources
 			GUIObjects GetType() const;
 			unsigned int GetParentID() const;
 
-			void SetParent(GUIObject* parent, unsigned int childId);
+			virtual void SetParent(GUIObject* parent, unsigned int childId);
 			void ToggleVisibility(bool isOnScreen);
 			bool IsVisible();
 			bool IsEnabled();
@@ -40,6 +42,9 @@ namespace Resources
 			void SetContentBrush(unsigned int brush);
 			unsigned int GetBorderBrush() const;
 			void SetBorderBrush(unsigned int brush);
+			ScreenTarget* GetScreenTarget() const;
+			CelestialMath::Vector2 GetTopLeft() const;
+			void SetLayer(unsigned char layer);
 
 			virtual void Enable();
 			virtual void Disable();
@@ -51,6 +56,7 @@ namespace Resources
 		protected:
 			void pauseRendering();
 			void resumeRendering();
+			void toggleScreenTarget(bool enabled);
 			bool isVisible;
 			///<summary>If the object is enabled</summary>
 			bool enabled;
@@ -67,8 +73,10 @@ namespace Resources
 
 			bool pause;
 			bool paused;
+
 		private:
 			bool focused;
+			ScreenTarget* target;
 			
 	};
 }

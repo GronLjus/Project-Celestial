@@ -12,6 +12,10 @@ ScreenTarget::ScreenTarget(Vector4 target) : PositionableObject(Vector3(target.x
 	enterScript = 0;
 	exitScript = 0;
 	isHovering = true;
+	isVisible = true;
+	locked = false;
+	remove = false;
+	targetId = 0;
 
 }
 
@@ -36,6 +40,76 @@ void ScreenTarget::Update(Message* mess)
 			PositionableObject::Update(mess);
 		}
 	}
+}
+
+void ScreenTarget::SetLayer(unsigned char layer)
+{
+
+	setLayer(layer);
+
+}
+
+unsigned int ScreenTarget::GetTargetId() const
+{
+
+	return targetId;
+
+}
+
+void ScreenTarget::SetTargetId(unsigned int id)
+{
+
+	targetId = id;
+
+}
+
+void ScreenTarget::Lock()
+{
+
+	locked = true;
+
+}
+
+void ScreenTarget::Unlock()
+{
+
+	locked = false;
+
+}
+
+bool ScreenTarget::ShouldRemove() const
+{
+
+	return remove;
+
+}
+
+void ScreenTarget::Remove()
+{
+
+	remove = true;
+
+}
+
+bool ScreenTarget::IsVisible() const
+{
+
+	return isVisible && !locked;
+
+}
+
+void ScreenTarget::SetVisible(bool vis)
+{
+
+	isVisible = vis;
+
+}
+
+void ScreenTarget::Refresh(CelestialMath::Vector4 target)
+{
+
+	refresh(Vector3(target.x, target.y, 0), Vector3(target.z, target.w, 0));
+	
 }
 
 unsigned int ScreenTarget::GetHoverScript() const

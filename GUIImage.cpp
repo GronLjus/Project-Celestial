@@ -28,6 +28,24 @@ GUIImage::GUIImage(ImageResourceObject** frames, unsigned int totalFrames, GUISn
 	hSnap = h;
 	vSnap = v;
 
+	if (totalFrames > 0)
+	{
+
+		CelestialMath::vectorUI2 imageSize = frames[0]->GetSize();
+		float sizeX = (float)imageSize.x;
+		float sizeY = (float)imageSize.y;
+		unsigned char tempBuff[]{0,0,0,0,
+		0,0,0,0};
+		memcpy(tempBuff, &sizeX, 4);
+		memcpy(&tempBuff[4], &sizeY, 4);
+		Message mess;
+		mess.destination = MessageSource_OBJECT;
+		mess.type = MessageType_OBJECT;
+		mess.mess = ObjectMess_SIZE;
+		mess.SetParams(tempBuff, 0, 8);
+		Update(&mess);
+
+	}
 }
 
 void GUIImage::Update(CrossHandlers::Message* mess)

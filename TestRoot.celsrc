@@ -28,9 +28,11 @@ show debugLayout
 
 testBox = load textbox
 set text testBox 'Test 1'
-pos testBox 0.6 0.25
-size testBox 0.3 0.2
+pos testBox 600.0 200.0
+size testBox 400.0 200.0
 set content testBox 0.8 0.8 0.8
 set border testBox 0.0 1.0 0.0
+set leftclick testBox testClick
+set leftclick outTextBox testClick
 
 add ui screenLayout testBox
