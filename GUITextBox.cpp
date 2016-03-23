@@ -18,6 +18,7 @@ GUITextBox::GUITextBox(GUISnap h, GUISnap v) : GUIObject()
 	caretCol = 0;
 	caretRow = 0;
 	lastTime = 0;
+	acceptKeys = true;
 
 }
 
@@ -25,6 +26,13 @@ unsigned int GUITextBox::GetCaretPosition() const
 {
 
 	return textContainer->GetCaretPos();
+
+}
+
+bool GUITextBox::HasCaret() const
+{
+
+	return acceptKeys;
 
 }
 
@@ -56,25 +64,34 @@ void GUITextBox::Update(Message* mess)
 			stringParam = string((char*)mess->params);
 			textContainer->AddTextLine(stringParam);
 			break;
+		case ObjectMess_LOCKINPUT:
+			PositionableObject::Update(mess);
+		case ObjectMess_LOCKKEYS:
+			acceptKeys = false;
+			break;
 		case ObjectMess_HANDLECHAR:
-			setLastUpdated(mess->timeSent);
-			switch (mess->params[0])
+			if (acceptKeys)
 			{
 
-			case '\b':
-				textContainer->EraseText(1);
-				break;
-			case '\n':
-				textContainer->AddTextLine("");
-				break;
-			default:
-				textContainer->AppendText(mess->params[0]);
-				break;
+				setLastUpdated(mess->timeSent);
+				switch (mess->params[0])
+				{
 
+				case '\b':
+					textContainer->EraseText(1);
+					break;
+				case '\n':
+					textContainer->AddTextLine("");
+					break;
+				default:
+					textContainer->AppendText(mess->params[0]);
+					break;
+
+				}
 			}
 		case ObjectMess_HANDLEKEY:
 
-			if (mess->timeSent - lastTime >= 100)
+			if (mess->timeSent - lastTime >= 100 && acceptKeys)
 			{
 
 				setLastUpdated(mess->timeSent);

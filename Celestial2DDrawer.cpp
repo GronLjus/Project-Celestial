@@ -263,7 +263,7 @@ void Celestial2DDrawer::DrawGUIObject(Resources::GUIObject* object, unsigned int
 
 			rT->DrawTextLayout(textTop, boxLayout, contentBrush);
 
-			if (tB->GetFocus())
+			if (tB->GetFocus() && tB->HasCaret())
 			{
 
 				unsigned int objectLastUpdated = tB->LastUpdated();

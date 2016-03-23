@@ -37,3 +37,4 @@ set leftclick outTextBox testClick
 
 add ui screenLayout testBox
 increment layer testBox
+ignore keys testBox

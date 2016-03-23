@@ -633,7 +633,7 @@ RunTimeError IgnoreKeyboardOperator(unsigned int returnVar, unsigned char* param
 	Message mess;
 	mess.destination = MessageSource_OBJECT;
 	mess.type = MessageType_OBJECT;
-	mess.mess = ObjectMess_LOCKMOUSE;
+	mess.mess = ObjectMess_LOCKKEYS;
 	object->Update(&mess);
 
 	return RunTimeError_OK;

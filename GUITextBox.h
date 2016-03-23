@@ -17,6 +17,7 @@ namespace Resources
 			CrossHandlers::TextContainer* GetText() const;
 			void SetText(CrossHandlers::TextContainer* textCont);
 			unsigned int GetCaretPosition() const;
+			bool HasCaret() const;
 			~GUITextBox();
 
 		private:
@@ -24,5 +25,7 @@ namespace Resources
 			unsigned int caretRow;
 			unsigned int caretCol;
 			unsigned int lastTime;
+			bool acceptKeys;
+
 	};
 }
