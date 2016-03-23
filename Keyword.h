@@ -52,7 +52,7 @@ namespace Logic
 		OperatorTypes_IMPORT, OperatorTypes_EXPORT,
 		OperatorTypes_FOCUS, OperatorTypes_HIDE, OperatorTypes_SHOW,
 		OperatorTypes_INCREMENT, OperatorTypes_DECREMENT, 
-		OperatorTypes_IGNORE,
+		OperatorTypes_IGNORE, OperatorTypes_ACCEPT,
 		OperatorTypes_NA
 	};
 

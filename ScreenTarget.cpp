@@ -13,7 +13,7 @@ ScreenTarget::ScreenTarget(Vector4 target) : PositionableObject(Vector3(target.x
 	exitScript = 0;
 	isHovering = true;
 	isVisible = true;
-	locked = false;
+	locked = true;
 	remove = false;
 	targetId = 0;
 

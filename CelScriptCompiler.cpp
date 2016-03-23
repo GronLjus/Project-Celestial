@@ -1059,6 +1059,49 @@ CelScriptCompiler::CelScriptCompiler()
 			new bool[operators[OperatorTypes_IGNORE].params[2]]{false}
 	};
 
+	operators[OperatorTypes_ACCEPT].keyword = "accept";
+	operators[OperatorTypes_ACCEPT].enumAmount = 3;
+	operators[OperatorTypes_ACCEPT].enums = new std::string[operators[OperatorTypes_ACCEPT].enumAmount]; operators[OperatorTypes_ACCEPT].enums[0] = "mouse"; operators[OperatorTypes_ACCEPT].enums[1] = "keys"; operators[OperatorTypes_ACCEPT].enums[2] = "input";
+	operators[OperatorTypes_ACCEPT].byteCodes = new unsigned char[operators[OperatorTypes_ACCEPT].enumAmount]{opcode_ACPTMS, opcode_ACPTKY, opcode_ACPTIN};
+	operators[OperatorTypes_ACCEPT].params = new unsigned char[operators[OperatorTypes_ACCEPT].enumAmount]{1, 1, 1};
+	operators[OperatorTypes_ACCEPT].minParams = new unsigned char[operators[OperatorTypes_ACCEPT].enumAmount]{1, 1, 1};
+	operators[OperatorTypes_ACCEPT].paramsyntax = new VarType*[operators[OperatorTypes_ACCEPT].enumAmount]{
+		new VarType[operators[OperatorTypes_ACCEPT].params[0]]{VarType_NUMBER},
+			new VarType[operators[OperatorTypes_ACCEPT].params[1]]{VarType_NUMBER},
+			new VarType[operators[OperatorTypes_ACCEPT].params[2]]{VarType_NUMBER}
+	};
+	operators[OperatorTypes_ACCEPT].paramTypes = new ParamType*[operators[OperatorTypes_ACCEPT].enumAmount]{
+		new ParamType[operators[OperatorTypes_ACCEPT].params[0]]{ParamType_NA},
+			new ParamType[operators[OperatorTypes_ACCEPT].params[1]]{ParamType_NA},
+			new ParamType[operators[OperatorTypes_ACCEPT].params[2]]{ParamType_NA}
+	};
+	operators[OperatorTypes_ACCEPT].optionalPar = new bool*[operators[OperatorTypes_ACCEPT].enumAmount]{
+		new bool[operators[OperatorTypes_ACCEPT].params[0]]{ false },
+			new bool[operators[OperatorTypes_ACCEPT].params[1]]{ false },
+			new bool[operators[OperatorTypes_ACCEPT].params[1]]{ false }
+	};
+	operators[OperatorTypes_ACCEPT].readParam = new unsigned char[operators[OperatorTypes_ACCEPT].enumAmount]{0, 0, 0};
+	operators[OperatorTypes_ACCEPT].returns = new VarType[operators[OperatorTypes_ACCEPT].enumAmount]{VarType_NA, VarType_NA, VarType_NA};
+	operators[OperatorTypes_ACCEPT].returnType = new ParamType[operators[OperatorTypes_ACCEPT].enumAmount]{ParamType_NA, ParamType_NA, ParamType_NA};
+	operators[OperatorTypes_ACCEPT].writeParam = new unsigned char[operators[OperatorTypes_ACCEPT].enumAmount]{0, 0, 0};
+	operators[OperatorTypes_ACCEPT].priority = 0;
+	operators[OperatorTypes_ACCEPT].shortHandsAmounts = 0;
+	operators[OperatorTypes_ACCEPT].amountParOperators = new unsigned char[operators[OperatorTypes_ACCEPT].enumAmount]{0, 0, 0};
+	operators[OperatorTypes_ACCEPT].parRepeatsMin = new unsigned char*[operators[OperatorTypes_ACCEPT].enumAmount]{
+		new unsigned char[operators[OperatorTypes_ACCEPT].params[0]]{0},
+			new unsigned char[operators[OperatorTypes_ACCEPT].params[1]]{0},
+			new unsigned char[operators[OperatorTypes_ACCEPT].params[2]]{0}
+	};
+	operators[OperatorTypes_ACCEPT].parRepeatsMax = new unsigned char*[operators[OperatorTypes_ACCEPT].enumAmount]{
+		new unsigned char[operators[OperatorTypes_ACCEPT].params[0]]{0},
+			new unsigned char[operators[OperatorTypes_ACCEPT].params[1]]{0},
+			new unsigned char[operators[OperatorTypes_ACCEPT].params[2]]{0}
+	};
+	operators[OperatorTypes_ACCEPT].parOperatorAppend = new bool*[operators[OperatorTypes_ACCEPT].enumAmount]{
+		new bool[operators[OperatorTypes_ACCEPT].params[0]]{false},
+			new bool[operators[OperatorTypes_ACCEPT].params[1]]{false},
+			new bool[operators[OperatorTypes_ACCEPT].params[2]]{false}
+	};
 
 	flowOps = new FlowController[FlowOperator_NA];
 

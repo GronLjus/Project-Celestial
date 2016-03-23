@@ -608,6 +608,7 @@ RunTimeError IgnoreMouseOperator(unsigned int returnVar, unsigned char* params, 
 	mess.destination = MessageSource_OBJECT;
 	mess.type = MessageType_OBJECT;
 	mess.mess = ObjectMess_LOCKMOUSE;
+	mess.params[0] = 0;
 	object->Update(&mess);
 
 	return RunTimeError_OK;
@@ -634,6 +635,7 @@ RunTimeError IgnoreKeyboardOperator(unsigned int returnVar, unsigned char* param
 	mess.destination = MessageSource_OBJECT;
 	mess.type = MessageType_OBJECT;
 	mess.mess = ObjectMess_LOCKKEYS;
+	mess.params[0] = 0;
 	object->Update(&mess);
 
 	return RunTimeError_OK;
@@ -660,12 +662,93 @@ RunTimeError IgnoreInputOperator(unsigned int returnVar, unsigned char* params, 
 	mess.destination = MessageSource_OBJECT;
 	mess.type = MessageType_OBJECT;
 	mess.mess = ObjectMess_LOCKINPUT;
+	mess.params[0] = 0;
 	object->Update(&mess);
 
 	return RunTimeError_OK;
 
 }
 
+RunTimeError AcceptMouseOperator(unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int mId, RunTimeCommons* rtc)
+{
+
+	if (paramSize < 4)
+	{
+
+		return RunTimeError_BADPARAMS;
+
+	}
+
+	unsigned int s = 4;
+	unsigned int var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
+	rtc->memory->ReadVariable(var - 1, rtc->intLoader, s);
+	unsigned int objectToMod = (rtc->intLoader[0] | ((int)rtc->intLoader[1] << 8) | ((int)rtc->intLoader[2] << 16) | ((int)rtc->intLoader[3] << 24));
+	BaseObject* object = rtc->gameObjects->GetValue(objectToMod);
+
+	Message mess;
+	mess.destination = MessageSource_OBJECT;
+	mess.type = MessageType_OBJECT;
+	mess.mess = ObjectMess_LOCKMOUSE;
+	mess.params[0] = 1;
+	object->Update(&mess);
+
+	return RunTimeError_OK;
+
+}
+
+RunTimeError AcceptKeyboardOperator(unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int mId, RunTimeCommons* rtc)
+{
+
+	if (paramSize < 4)
+	{
+
+		return RunTimeError_BADPARAMS;
+
+	}
+
+	unsigned int s = 4;
+	unsigned int var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
+	rtc->memory->ReadVariable(var - 1, rtc->intLoader, s);
+	unsigned int objectToMod = (rtc->intLoader[0] | ((int)rtc->intLoader[1] << 8) | ((int)rtc->intLoader[2] << 16) | ((int)rtc->intLoader[3] << 24));
+	BaseObject* object = rtc->gameObjects->GetValue(objectToMod);
+
+	Message mess;
+	mess.destination = MessageSource_OBJECT;
+	mess.type = MessageType_OBJECT;
+	mess.mess = ObjectMess_LOCKKEYS;
+	mess.params[0] = 1;
+	object->Update(&mess);
+
+	return RunTimeError_OK;
+
+}
+
+RunTimeError AcceptInputOperator(unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int mId, RunTimeCommons* rtc)
+{
+
+	if (paramSize < 4)
+	{
+
+		return RunTimeError_BADPARAMS;
+
+	}
+
+	unsigned int s = 4;
+	unsigned int var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
+	rtc->memory->ReadVariable(var - 1, rtc->intLoader, s);
+	unsigned int objectToMod = (rtc->intLoader[0] | ((int)rtc->intLoader[1] << 8) | ((int)rtc->intLoader[2] << 16) | ((int)rtc->intLoader[3] << 24));
+	BaseObject* object = rtc->gameObjects->GetValue(objectToMod);
+
+	Message mess;
+	mess.destination = MessageSource_OBJECT;
+	mess.type = MessageType_OBJECT;
+	mess.mess = ObjectMess_LOCKINPUT;
+	mess.params[0] = 1;
+	object->Update(&mess);
+
+	return RunTimeError_OK;
+
+}
 RunTimeError IncrementLayerOperator(unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int mId, RunTimeCommons* rtc)
 {
 
@@ -1969,9 +2052,15 @@ CelScriptRuntimeHandler::CelScriptRuntimeHandler(MessageQueue* mQueue, Celestial
 	operators[opcode_POSTSTR] = PostStrOperator;
 	operators[opcode_POSTNMBR] = PostNumOperator;
 	operators[opcode_POSTFLOAT] = PostFloatOperator;
+
 	operators[opcode_IGNRMS] = IgnoreMouseOperator; 
 	operators[opcode_IGNRKY] = IgnoreKeyboardOperator; 
 	operators[opcode_IGNRIN] = IgnoreInputOperator;
+
+	operators[opcode_ACPTMS] = AcceptMouseOperator;
+	operators[opcode_ACPTKY] = AcceptKeyboardOperator;
+	operators[opcode_ACPTIN] = AcceptInputOperator;
+
 	operators[opcode_INCRMNTLYR] = IncrementLayerOperator;
 	operators[opcode_DCRMNLYR] = DecrementLayerOperator;
 	operators[opcode_STLYR] = SetLayerOperator;

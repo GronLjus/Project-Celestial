@@ -18,7 +18,7 @@ GUITextBox::GUITextBox(GUISnap h, GUISnap v) : GUIObject()
 	caretCol = 0;
 	caretRow = 0;
 	lastTime = 0;
-	acceptKeys = true;
+	acceptKeys = false;
 
 }
 
@@ -67,7 +67,7 @@ void GUITextBox::Update(Message* mess)
 		case ObjectMess_LOCKINPUT:
 			PositionableObject::Update(mess);
 		case ObjectMess_LOCKKEYS:
-			acceptKeys = false;
+			acceptKeys = mess->params[0] == 1;
 			break;
 		case ObjectMess_HANDLECHAR:
 			if (acceptKeys)

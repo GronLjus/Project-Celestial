@@ -139,7 +139,19 @@ void GUIObject::Update(Message* mess)
 			break;
 		case ObjectMess_LOCKMOUSE:
 		case ObjectMess_LOCKINPUT:
-			target->Lock();
+
+			if (mess->params[0] == 0)
+			{
+
+				target->Lock();
+			}
+			else
+			{
+
+				target->Unlock();
+
+			}
+
 			break;
 		case ObjectMess_MOVE:
 		case ObjectMess_SCALE:
