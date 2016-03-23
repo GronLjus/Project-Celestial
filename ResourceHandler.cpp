@@ -84,8 +84,8 @@ void ResourceHandler::Update(unsigned int time)
 
 			unsigned int param1 = currentMessage->params[0] | ((int)currentMessage->params[1] << 8) | ((int)currentMessage->params[2] << 16) | ((int)currentMessage->params[3] << 24);
 			GameBoard* bo = new GameBoard(param1);
-			bo->SetId(gameObjects->GetFirstEmpty());
-			outId = gameObjects->Add(bo);
+			bo->SetId(gameObjects->Add(bo));
+			outId = bo->GetId();
 
 			if (currentMessage->params[4] == 1)
 			{
@@ -111,8 +111,8 @@ void ResourceHandler::Update(unsigned int time)
 			if (bo != nullptr)
 			{
 
-				bo->SetId(gameObjects->GetFirstEmpty());
-				outId = gameObjects->Add(bo);
+				bo->SetId(gameObjects->Add(bo));
+				outId = bo->GetId();
 
 			}
 		}
@@ -124,8 +124,8 @@ void ResourceHandler::Update(unsigned int time)
 			if (cam != nullptr)
 			{
 
-				cam->SetId(gameObjects->GetFirstEmpty());
-				outId = gameObjects->Add(cam);
+				cam->SetId(gameObjects->Add(cam));
+				outId = cam->GetId();
 
 			}
 		}
@@ -139,8 +139,8 @@ void ResourceHandler::Update(unsigned int time)
 			bld.intensity = (float)param2;
 			bld.size = (float)param3;
 			ILight* light = loader->LoadLight(LightType_POINT, bld);
-			light->SetId(gameObjects->GetFirstEmpty());
-			outId = gameObjects->Add(light);
+			light->SetId(gameObjects->Add(light));
+			outId = light->GetId();
 
 		}
 		else if (currentMessage->mess == ResourceMess_LOADMESH)
@@ -148,8 +148,8 @@ void ResourceHandler::Update(unsigned int time)
 
 			std::string stringParam((char*)(&currentMessage->params[0]));
 			BaseObject* bo = loader->LoadMeshFromFile(stringParam);
-			bo->SetId(gameObjects->GetFirstEmpty());
-			outId = gameObjects->Add(bo);
+			bo->SetId(gameObjects->Add(bo));
+			outId = bo->GetId();
 
 			messageBuffer[this->currentMessage].timeSent = time;
 			messageBuffer[this->currentMessage].destination = MessageSource_ENTITIES;
@@ -170,12 +170,11 @@ void ResourceHandler::Update(unsigned int time)
 			GUIObject* obj = loader->LoadGUIObject(GUIObjects(param1), GUISnap_LEFT, GUISnap_TOP, stringParam);
 			obj->ToggleVisibility(true);
 
-			obj->SetId(gameObjects->GetFirstEmpty());
-			outId = gameObjects->Add(obj);
+			obj->SetId(gameObjects->Add(obj));
+			outId = obj->GetId();
 
 			ScreenTarget* target = obj->GetScreenTarget();
-			target->SetId(gameObjects->GetFirstEmpty());
-			gameObjects->Add(target); 
+			target->SetId(gameObjects->Add(target));
 			messageBuffer[this->currentMessage].timeSent = time;
 			messageBuffer[this->currentMessage].destination = MessageSource_INPUT;
 			messageBuffer[this->currentMessage].type = MessageType_INPUT;
@@ -197,8 +196,8 @@ void ResourceHandler::Update(unsigned int time)
 			kT->keyCode = param2;
 			kT->scriptToRun = param1;
 			kT->charTrigg = false;
-			kT->SetId(gameObjects->GetFirstEmpty());
-			outId = gameObjects->Add(kT);
+			kT->SetId(gameObjects->Add(kT));
+			outId = kT->GetId();
 
 		}
 		else if (currentMessage->mess == ResourceMess_LOADCHARKEYTRIGGER)
@@ -211,8 +210,8 @@ void ResourceHandler::Update(unsigned int time)
 			kT->keyCode = param2;
 			kT->scriptToRun = param1;
 			kT->charTrigg = true;
-			kT->SetId(gameObjects->GetFirstEmpty());
-			outId = gameObjects->Add(kT);
+			kT->SetId(gameObjects->Add(kT));
+			outId = kT->GetId();
 
 		}
 		else if (currentMessage->mess == ResourceMess_UNLOADOBJECT)

@@ -23,6 +23,9 @@ namespace Logic
 
 		opcode_POSTSTR, opcode_POSTNMBR, opcode_POSTFLOAT,
 
+		opcode_IGNRMS, opcode_IGNRKY, opcode_IGNRIN,
+		opcode_INCRMNTLYR, opcode_DCRMNLYR, opcode_STLYR,
+
 		opcode_NEGATECONST, opcode_NEGATEVAR, opcode_NEGATEFLOAT,
 		opcode_SUM2CONST, opcode_SUMFLOAT, opcode_SUMVAR,
 		opcode_SUB2CONST, opcode_SUBFLOAT, opcode_SUBVAR,

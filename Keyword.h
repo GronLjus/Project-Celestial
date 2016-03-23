@@ -51,6 +51,8 @@ namespace Logic
 		OperatorTypes_RUN, OperatorTypes_SETPARAM,
 		OperatorTypes_IMPORT, OperatorTypes_EXPORT,
 		OperatorTypes_FOCUS, OperatorTypes_HIDE, OperatorTypes_SHOW,
+		OperatorTypes_INCREMENT, OperatorTypes_DECREMENT, 
+		OperatorTypes_IGNORE,
 		OperatorTypes_NA
 	};
 

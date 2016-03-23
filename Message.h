@@ -28,7 +28,8 @@ namespace CrossHandlers
 		ObjectMess_SETHVRSCRPT, ObjectMess_SETENTRSCRPT, ObjectMess_SETEXTSCRPT, ObjectMess_SETLCSCRPT, ObjectMess_SETRCSCRPT,
 		ObjectMess_SETSNAP, ObjectMess_SETTEXT, ObjectMess_APPENDTEXT, ObjectMess_APPENDTEXTLINE,
 		ObjectMess_HANDLECHAR, ObjectMess_HANDLEKEY,
-		ObjectMess_STEPFRAME, ObjectMess_REMOVECHILD, ObjectMess_REMOVE, 
+		ObjectMess_STEPFRAME, ObjectMess_REMOVECHILD, ObjectMess_REMOVE,
+		ObjectMess_LOCKMOUSE, ObjectMess_LOCKKEYS, ObjectMess_LOCKINPUT,
 		ObjectMess_INCREMENTLAYER, ObjectMess_DECREMENTLAYER, ObjectMess_SETLAYER, ObjectMess_NA
 	};
 

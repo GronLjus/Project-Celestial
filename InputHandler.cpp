@@ -297,7 +297,7 @@ void InputHandler::Update(unsigned int time)
 			if (stId >= maxScreenTargets)
 			{
 
-				maxScreenTargets = stId;
+				maxScreenTargets = stId+1;
 
 			}
 		}
