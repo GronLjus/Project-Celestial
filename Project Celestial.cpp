@@ -70,6 +70,9 @@ int runLogic(Overlord* lordie)
 		}
 	}
 
+	overlord->Kill();
+	gStop = true;
+
 	while (!gHasStopped)
 	{
 
@@ -172,12 +175,9 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 	}
 
 	//Deletes the overlord when the window is closed
-	gStop = true;
-	overlord->Kill();
+	lStop = true;
 
 	delete[] messageBuffer;
-
-	lStop = true;
 
 	while (!lHasStopped)
 	{

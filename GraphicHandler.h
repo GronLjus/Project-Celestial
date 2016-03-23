@@ -66,6 +66,12 @@ namespace Graphics
 			virtual ~GraphicHandler(void);
 
 		private:
+			void pauseRendering();
+			void resumeRendering();
+
+			bool stoppedDrawing;
+			bool stopDrawing;
+
 			Resources::GameBoard* gameBoard;
 			CrossHandlers::CelestialSlicedList<Resources::BaseObject*>* gameObjects;
 			Resources::CameraObject* cameraObject;
@@ -87,8 +93,6 @@ namespace Graphics
 			bool isPreInited;
 			///<summary>If the handler is inited</summary>
 			bool isInited;
-			///<summary>How the handler is reading objects</summary>
-			int isReadingObjects;
 
 			Resources::GUILayout* guiLayout;
 

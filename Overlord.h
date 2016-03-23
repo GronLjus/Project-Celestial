@@ -69,8 +69,6 @@ namespace Logic
 			///<summary>The handle of the logicthread</summary>
 			HANDLE handleOfLogic;
 		
-			bool isDrawingBool;
-			std::mutex isDrawing;
 			bool killdbg;
 			CrossHandlers::TextContainer* dbgOut;
 

@@ -21,7 +21,7 @@ GraphicHandler::GraphicHandler(unsigned int flips) : IHandleMessages(200,Message
 	isPreInited = false;
 	isInited = false;
 	canDraw = false;
-	isDrawing = false;
+	isDrawing = true;
 	debug = true;
 	guiLayout = 0;
 	cardHandler = new CardHandler(flips, true);
@@ -31,6 +31,28 @@ GraphicHandler::GraphicHandler(unsigned int flips) : IHandleMessages(200,Message
 	gameBoard = nullptr;
 	cameraObject = nullptr;
 	filter = MessageType_GRAPHICS;
+	stoppedDrawing = false;
+	stopDrawing = false;
+
+}
+
+void GraphicHandler::pauseRendering()
+{
+
+	stopDrawing = true;
+
+	while (!stoppedDrawing && isDrawing && isInited)
+	{
+
+		this_thread::yield();
+
+	}
+}
+
+void GraphicHandler::resumeRendering()
+{
+
+	stopDrawing = false;
 
 }
 
@@ -68,21 +90,19 @@ HRESULT GraphicHandler::FullInit(TextContainer* errorOut)
 void GraphicHandler::UpdateQuality(GraphicQuality gQ)
 {
 
-	canDraw = false;//Pause rendering
-	while (isDrawing){ Sleep(0); }//Wait till objects aren't being read
+	pauseRendering();
 	quality = gQ;
 	cardHandler->UpdateQuality(gQ);
-	canDraw = true;
+	resumeRendering();
 }
 
 void GraphicHandler::UpdateStyle(DrawingStyle dS)
 {
 
-	canDraw = false;//Pause rendering
-	while (isDrawing){ Sleep(0); }//Wait till objects aren't being read
+	pauseRendering();
 	dStyle = dS;
 	cardHandler->UpdateStyle(dS);
-	canDraw = true;
+	resumeRendering();
 
 }
 
@@ -106,6 +126,9 @@ void GraphicHandler::Kill()
 	isInited = false;//Stop all operations
 	canDraw = false;//Stop rendering
 	cardHandler->Kill();
+	while (isDrawing){
+		this_thread::yield();;
+	}//Wait until objects aren't being read and we aren't rendering
 
 }
 
@@ -132,41 +155,40 @@ void GraphicHandler::Update(unsigned int time)
 		else if (currentMessage->mess == GraphicMess_UPDATEGAMEBOARDBUFFERS && gameBoard != nullptr)
 		{
 
-			canDraw = false;//Pause rendering
-			while (isDrawing){ this_thread::yield(); }//Wait until we aren't rendering
+			pauseRendering();
 			cardHandler->UpdateMeshBuffers(gameBoard->GetDrawingBoard());
-			canDraw = true;
+			resumeRendering();
 
 		}
 		else if (currentMessage->mess == GraphicMess_SETGAMEBOARD)
 		{
 
 			unsigned int param1 = currentMessage->params[0] | ((int)currentMessage->params[1] << 8) | ((int)currentMessage->params[2] << 16) | ((int)currentMessage->params[3] << 24);
-			canDraw = false;//Pause rendering
-			while (isDrawing){ this_thread::yield(); }//Wait until we aren't rendering
+
+			pauseRendering();
 			this->gameBoard = (GameBoard*)gameObjects->GetValue(param1);
 			cardHandler->UpdateMeshBuffers(gameBoard->GetDrawingBoard());
-			canDraw = true;
+			resumeRendering();
 
 		}
 		else if (currentMessage->mess == GraphicMess_SETCAMERA)
 		{
 
 			unsigned int param1 = currentMessage->params[0] | ((int)currentMessage->params[1] << 8) | ((int)currentMessage->params[2] << 16) | ((int)currentMessage->params[3] << 24);
-			canDraw = false;//Pause rendering
-			while (isDrawing){ this_thread::yield(); }//Wait until we aren't rendering
+
+			pauseRendering();
 			this->cameraObject = (CameraObject*)gameObjects->GetValue(param1);
 			nextFlip = cameraObject->PeekNextFlip();
 			renderFlip = cameraObject->PeekNextFlip();
-			canDraw = true;
+			resumeRendering();
 
 		}
 		else if (currentMessage->mess == GraphicMess_SETUI)
 		{
 
 			unsigned int param1 = currentMessage->params[0] | ((int)currentMessage->params[1] << 8) | ((int)currentMessage->params[2] << 16) | ((int)currentMessage->params[3] << 24);
-			canDraw = false;//Pause rendering
-			while (isDrawing){ this_thread::yield(); }//Wait until we aren't rendering
+
+			pauseRendering();
 			GUILayout* temp = (GUILayout*)gameObjects->GetValue(param1);
 			temp->Enable();
 
@@ -178,7 +200,7 @@ void GraphicHandler::Update(unsigned int time)
 
 			this->guiLayout = temp;
 			guiLayout->Enable();
-			canDraw = true;
+			resumeRendering();
 
 		}
 		else if (currentMessage->mess == GraphicMess_SETBORDERBRUSH)
@@ -244,7 +266,15 @@ unsigned int GraphicHandler::GetRenderFlip() const
 void GraphicHandler::Draw(unsigned int time)
 {
 
-	isDrawing = true;
+	while (stopDrawing && canDraw)
+	{
+
+		stoppedDrawing = true;
+		this_thread::yield();
+
+	}
+
+	stoppedDrawing = false;
 
 	if (!canDraw)
 	{
@@ -255,6 +285,7 @@ void GraphicHandler::Draw(unsigned int time)
 
 	}
 	
+	isDrawing = true;
 	int sTime = clock();
 
 	if (canDraw && isInited && !(cameraObject == nullptr || gameBoard == nullptr))
@@ -296,7 +327,6 @@ void GraphicHandler::Draw(unsigned int time)
 	int cTime = dTime - sTime;
 
 	cardHandler->Present();//Show what we have drawn
-	isDrawing = false;
 
 }
 
@@ -310,41 +340,37 @@ bool GraphicHandler::GetIsInited() const
 void GraphicHandler::ToggleWireFrame(bool enabled)
 {
 	
-	canDraw = false;
 	wf = enabled;
-	while(isDrawing){Sleep(0);}//Wait until we aren't rendering
+	pauseRendering();
 	debugCard->ToggleWireFrame(wf);
-	canDraw = true;
+	resumeRendering();
 
 }
 
 void GraphicHandler::ToggleGrid(bool enabled)
 {
 
-	canDraw = false;//Pause rendering
-	while(isDrawing){Sleep(0);}//Wait until we aren't rendering
+	pauseRendering();
 	debugCard->ToggleGridding(enabled);
-	canDraw = true;
+	resumeRendering();
 
 }
  
 void GraphicHandler::ToggleNSpikes(bool enabled)
 {
 
-	canDraw = false;//Pause rendering
-	while(isDrawing){Sleep(0);}//Wait until we aren't rendering
+	pauseRendering();
 	debugCard->ToggleNormalSpikes(enabled);
-	canDraw = true;
+	resumeRendering();
 
 }
 
 void GraphicHandler::ToggleGlobalBorders(bool val)
 {
-	
-	canDraw = false;//Pause rendering
-	while(isDrawing){Sleep(0);}//Wait until we aren't rendering
+
+	pauseRendering();
 	debugCard->ToggleGlobalBorders(val);
-	canDraw = true;
+	resumeRendering();
 
 }
 
@@ -367,7 +393,9 @@ void GraphicHandler::Release()
 	
 	isInited = false;
 	canDraw = false;
-	while(isReadingObjects > 0 || isDrawing){Sleep(0);}//Wait until objects aren't being read and we aren't rendering
+	while (isDrawing){
+		this_thread::yield();;
+	}//Wait until objects aren't being read and we aren't rendering
 	cardHandler->Release();
 
 }
@@ -376,8 +404,10 @@ GraphicHandler::~GraphicHandler(void)
 {
 
 	isInited = false;
-	while(isReadingObjects > 0 || isDrawing){Sleep(0);}//Wait until objects aren't being read and we aren't rendering
-	
+	canDraw = false;
+	while (isDrawing){
+		this_thread::yield();;
+	}//Wait until objects aren't being read and we aren't rendering
 	delete cardHandler;
 
 }

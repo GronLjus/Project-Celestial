@@ -31,7 +31,6 @@ Overlord::Overlord(void)
 
 	unsigned int flip = 2;
 	die = false;
-	isDrawingBool = false;
 	okToDraw = false;
 	gBH = new GameBoardHandler();
 	gH = new GraphicHandler(flip);
@@ -180,7 +179,6 @@ void Overlord::Kill()
 	gH->Kill();
 	cH->Kill();
 	die = true;
-	okToDraw = false;
 
 }
 
@@ -235,14 +233,10 @@ void Overlord::processCommand(std::string* command, int nrParam)
 void Overlord::HandleDrawing(unsigned int time)
 {
 
-	isDrawingBool = true;
-
 	if (okToDraw)
 	{
 
-		isDrawing.lock();
 		gH->Draw(time); 
-		isDrawing.unlock();
 
 		unsigned int time2 = clock();
 		gTime += time2 - gTimeLast;
@@ -260,9 +254,6 @@ void Overlord::HandleDrawing(unsigned int time)
 		gFPS2++;
 
 	}
-	
-	isDrawingBool = false;
-
 }
 
 void Overlord::updateMessages(MessageSource handler)
@@ -365,8 +356,8 @@ void Overlord::Update(unsigned int time)
 Overlord::~Overlord()
 {
 	
-	isDrawing.lock();
 	gH->Release();
+	okToDraw = false;
 
 	delete inQueue;
 	delete[] messageHandlers;
@@ -384,7 +375,4 @@ Overlord::~Overlord()
 		delete dbgOut;
 
 	}
-
-	isDrawing.unlock();
-	
 }
