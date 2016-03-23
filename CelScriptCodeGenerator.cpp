@@ -8,7 +8,19 @@ int CelScriptCodeGenerator::handleVariable(CelestialSlicedList<symbol>* symbolTa
 {
 
 	symbol sym = symbolTable->GetValue(varAdr);
-	sym.address = sym.address != 0 ? sym.address : holes->GetFirstNode() != nullptr ? holes->PopElement() : var;
+	
+	if (sym.name[0] == '?' && sym.address == 0)
+	{
+
+		sym.address = var;
+
+	}
+	else
+	{
+
+		sym.address = sym.address != 0 ? sym.address : holes->GetFirstNode() != nullptr ? holes->PopElement() : var;
+
+	}
 
 	if (var == sym.address)
 	{
