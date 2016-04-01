@@ -20,12 +20,12 @@ namespace CrossHandlers
 		GraphicMess_SETCONTENTBRUSH, GraphicMess_SETBORDERBRUSH, GraphicMess_NA
 	};
 
-	enum GameBoardMess{ GameBoardMess_ADDMESH, GameBoardMess_SETBOARDOBJECT, GameBoardMess_SETCAM, GameBoardMess_ADDOBJECT, GameBoardMess_SETGAMEBOARD, GameBoardMess_SELECTOBJECT, GameBoardMess_NA };
+	enum GameBoardMess{ GameBoardMess_ADDMESH, GameBoardMess_SETBOARDOBJECT, GameBoardMess_SETCAM, GameBoardMess_ADDOBJECT, GameBoardMess_SETGAMEBOARD, GameBoardMess_CLICKOBJECT, GameBoardMess_NA };
 	enum SystemMess{SystemMess_GETSCREENRES,SystemMesss_NA};
 
 	enum ObjectMess{
 		ObjectMess_MOVE, ObjectMess_SCALE, ObjectMess_POS, ObjectMess_SIZE, ObjectMess_HIDE, ObjectMess_SHOW,
-		ObjectMess_SETHVRSCRPT, ObjectMess_SETENTRSCRPT, ObjectMess_SETEXTSCRPT, ObjectMess_SETLCSCRPT, ObjectMess_SETRCSCRPT,
+		ObjectMess_SETHVRSCRPT, ObjectMess_SETENTRSCRPT, ObjectMess_SETEXTSCRPT, ObjectMess_SETLCSCRPT, ObjectMess_SETRCSCRPT, ObjectMess_SETMCSCRPT,
 		ObjectMess_SETSNAP, ObjectMess_SETTEXT, ObjectMess_APPENDTEXT, ObjectMess_APPENDTEXTLINE,
 		ObjectMess_HANDLECHAR, ObjectMess_HANDLEKEY,
 		ObjectMess_STEPFRAME, ObjectMess_REMOVECHILD, ObjectMess_REMOVE,

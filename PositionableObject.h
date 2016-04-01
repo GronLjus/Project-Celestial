@@ -18,6 +18,7 @@ namespace Resources
 			CelestialMath::Matrix GetMatrix() const;
 			unsigned int GetRightClickScript() const;
 			unsigned int GetLeftClickScript() const;
+			unsigned int GetMiddleClickScript() const;
 			unsigned char GetLayer() const;
 
 		protected:
@@ -27,6 +28,7 @@ namespace Resources
 		private:
 			unsigned int rightClickScript;
 			unsigned int leftClickScript;
+			unsigned int middleClickScript;
 			CelestialMath::Vector3 position;
 			CelestialMath::Vector3 rotation;
 			CelestialMath::Vector3 scale;

@@ -363,6 +363,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	bool mouse = false;
 	bool charDown = false; 
 	bool down = false;
+	bool middle = false;
 	short xPar = GET_X_LPARAM(lParam);
 	short yPar = GET_Y_LPARAM(lParam);
 	Message* messag;
@@ -441,10 +442,15 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		messag->SetParams(tempBuff, 0, 4);
 		overlord->SendMsg(messag);
 		break;
-	case WM_RBUTTONUP:
+	case WM_MBUTTONUP:
 		up = true;
+	case WM_MBUTTONDOWN:
+		middle = true;
+		down = !up;
+	case WM_RBUTTONUP:
+		up = !down;
 	case WM_RBUTTONDOWN:
-		right = true;
+		right = !middle;
 		down = !up;
 	case WM_LBUTTONUP:
 		up = !down;
@@ -477,7 +483,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		if (mouse)
 		{
 
-			Input::InputHandler::keyCode translatedKey = right ? Input::InputHandler::keyCodeMouseR : Input::InputHandler::keyCodeMouseL;
+			Input::InputHandler::keyCode translatedKey = 
+				right ? Input::InputHandler::keyCodeMouseR : 
+				middle ? Input::InputHandler::keyCodeMouseM : 
+				Input::InputHandler::keyCodeMouseL;
+
 			messag = getNextMessage();
 			messag->mess = up ? InputMess_MOUSEUP : InputMess_MOUSEDWN;
 			tempBuff[0] = translatedKey >> 0;

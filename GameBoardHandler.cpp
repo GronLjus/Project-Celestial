@@ -50,7 +50,8 @@ void GameBoardHandler::UpdateMessages(unsigned int time)
 			localGameBoard->AddObject((GameObject*)(gameObjects->GetValue(param1)));
 
 		}
-		else if (currentMessage->mess == GameBoardMess_SELECTOBJECT && localGameBoard != nullptr && localGameBoard->GetCam() != nullptr)
+		else if (currentMessage->mess == GameBoardMess_CLICKOBJECT && 
+			localGameBoard != nullptr && localGameBoard->GetCam() != nullptr)
 		{
 
 			CameraObject* cam = localGameBoard->GetCam();
@@ -72,7 +73,10 @@ void GameBoardHandler::UpdateMessages(unsigned int time)
 			{
 
 				PositionableObject* obj = (PositionableObject*)gameObjects->GetValue(selectedObject);
-				unsigned int script = param1 == 0 ? obj->GetLeftClickScript() : obj->GetRightClickScript();
+
+				unsigned int script = param1 == 0 ? obj->GetLeftClickScript() : 
+					param1 == 1 ? obj->GetMiddleClickScript() :
+					obj->GetRightClickScript();
 
 				if (script != 0)
 				{

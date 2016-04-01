@@ -1740,6 +1740,61 @@ RunTimeError SetLeftClickOperator(unsigned int returnVar, unsigned char* params,
 
 }
 
+RunTimeError SetMiddleClickOperator(unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int mId, RunTimeCommons* rtc)
+{
+
+	if (paramSize < 8)
+	{
+
+		return RunTimeError_BADPARAMS;
+
+	}
+
+	unsigned int s = 4;
+	unsigned int var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
+	rtc->memory->ReadVariable(var - 1, rtc->intLoader, s);
+	unsigned int objectToMod = (rtc->intLoader[0] | ((int)rtc->intLoader[1] << 8) | ((int)rtc->intLoader[2] << 16) | ((int)rtc->intLoader[3] << 24));
+	BaseObject* object = rtc->gameObjects->GetValue(objectToMod);
+
+	Message mess;
+	unsigned int var2 = (params[4] | ((int)params[5] << 8) | ((int)params[6] << 16) | ((int)params[7] << 24));
+	rtc->memory->ReadVariable(var2 - 1, rtc->intLoader, s);
+	mess.destination = MessageSource_OBJECT;
+	mess.type = MessageType_OBJECT;
+	mess.mess = ObjectMess_SETMCSCRPT;
+	mess.SetParams(rtc->intLoader, 0, 4);
+	object->Update(&mess);
+	return RunTimeError_OK;
+
+}
+
+RunTimeError SetRightClickOperator(unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int mId, RunTimeCommons* rtc)
+{
+
+	if (paramSize < 8)
+	{
+
+		return RunTimeError_BADPARAMS;
+
+	}
+
+	unsigned int s = 4;
+	unsigned int var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
+	rtc->memory->ReadVariable(var - 1, rtc->intLoader, s);
+	unsigned int objectToMod = (rtc->intLoader[0] | ((int)rtc->intLoader[1] << 8) | ((int)rtc->intLoader[2] << 16) | ((int)rtc->intLoader[3] << 24));
+	BaseObject* object = rtc->gameObjects->GetValue(objectToMod);
+
+	Message mess;
+	unsigned int var2 = (params[4] | ((int)params[5] << 8) | ((int)params[6] << 16) | ((int)params[7] << 24));
+	rtc->memory->ReadVariable(var2 - 1, rtc->intLoader, s);
+	mess.destination = MessageSource_OBJECT;
+	mess.type = MessageType_OBJECT;
+	mess.mess = ObjectMess_SETRCSCRPT;
+	mess.SetParams(rtc->intLoader, 0, 4);
+	object->Update(&mess);
+	return RunTimeError_OK;
+
+}
 RunTimeError SetScriptParNumOperator(unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int mId, RunTimeCommons* rtc)
 {
 
@@ -2038,6 +2093,8 @@ CelScriptRuntimeHandler::CelScriptRuntimeHandler(MessageQueue* mQueue, Celestial
 	operators[opcode_SETGMEBRD] = SetGameBoardOperator;
 	operators[opcode_SETCMRA] = SetCameraOperator;
 	operators[opcode_SETLCLK] = SetLeftClickOperator;
+	operators[opcode_SETMCLK] = SetMiddleClickOperator;
+	operators[opcode_SETRCLK] = SetRightClickOperator;
 	operators[opcode_SETUI] = SetUIOperator;
 	operators[opcode_FCSUI] = FocusUIOperator;
 

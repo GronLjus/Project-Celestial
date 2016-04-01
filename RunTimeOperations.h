@@ -14,7 +14,9 @@ namespace Logic
 
 		opcode_ADDOBJECT, opcode_ADDMESH, 
 		opcode_RMVE,
-		opcode_SETGMEBRD, opcode_SETCMRA, opcode_SETLCLK, opcode_SETUI,
+		opcode_SETGMEBRD, opcode_SETCMRA, 
+		opcode_SETLCLK, opcode_SETMCLK, opcode_SETRCLK,
+		opcode_SETUI,
 		opcode_FCSUI,
 
 		opcode_GETSCRNX, opcode_GETSCRNY,

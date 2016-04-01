@@ -216,6 +216,17 @@ void InputHandler::handleMouse(unsigned int time)
 			triggerScript(lcScript, time, firstTarget->GetTargetId());
 
 		}
+		
+		if (firstTarget->GetMiddleClickScript() != 0 &&
+			keyStates[keyCodeMouseM].thisTime == time &&
+			keyStates[keyCodeMouseM].state &&
+			keyStates[keyCodeMouseM].thisTime - keyStates[keyCodeMouseM].lastTime <= 250)
+		{
+
+			unsigned int mcScript = firstTarget->GetMiddleClickScript() - 1;
+			triggerScript(mcScript, time, firstTarget->GetTargetId());
+
+		}
 
 		if (firstTarget->GetRightClickScript() != 0 &&
 			keyStates[keyCodeMouseR].thisTime == time &&
@@ -236,7 +247,7 @@ void InputHandler::handleMouse(unsigned int time)
 			keyStates[keyCodeMouseR].thisTime - keyStates[keyCodeMouseR].lastTime <= 250)
 		{
 
-			unsigned char tempBuff[]{1 >> 0, 1 >> 8, 1 >> 16, 1 >> 24,
+			unsigned char tempBuff[]{2 >> 0, 2 >> 8, 2 >> 16, 2 >> 24,
 				mouse.x >> 0, mouse.x >> 8, mouse.x >> 16, mouse.x >> 24,
 				mouse.y >> 0, mouse.y >> 8, mouse.y >> 16, mouse.y >> 24
 			};
@@ -244,7 +255,26 @@ void InputHandler::handleMouse(unsigned int time)
 			messageBuffer[this->currentMessage].timeSent = time;
 			messageBuffer[this->currentMessage].destination = MessageSource_ENTITIES;
 			messageBuffer[this->currentMessage].type = MessageType_ENTITIES;
-			messageBuffer[this->currentMessage].mess = GameBoardMess_SELECTOBJECT;
+			messageBuffer[this->currentMessage].mess = GameBoardMess_CLICKOBJECT;
+			messageBuffer[this->currentMessage].read = false;
+			outQueue->PushMessage(&messageBuffer[this->currentMessage]);
+			this->currentMessage = (this->currentMessage + 1) % outMessages;
+		}
+
+		if (keyStates[keyCodeMouseM].thisTime == time &&
+			keyStates[keyCodeMouseM].state &&
+			keyStates[keyCodeMouseM].thisTime - keyStates[keyCodeMouseM].lastTime <= 250)
+		{
+
+			unsigned char tempBuff[]{ 1 >> 0, 1 >> 8, 1 >> 16, 1 >> 24,
+				mouse.x >> 0, mouse.x >> 8, mouse.x >> 16, mouse.x >> 24,
+				mouse.y >> 0, mouse.y >> 8, mouse.y >> 16, mouse.y >> 24
+			};
+			messageBuffer[this->currentMessage].SetParams(tempBuff, 0, 12);
+			messageBuffer[this->currentMessage].timeSent = time;
+			messageBuffer[this->currentMessage].destination = MessageSource_ENTITIES;
+			messageBuffer[this->currentMessage].type = MessageType_ENTITIES;
+			messageBuffer[this->currentMessage].mess = GameBoardMess_CLICKOBJECT;
 			messageBuffer[this->currentMessage].read = false;
 			outQueue->PushMessage(&messageBuffer[this->currentMessage]);
 			this->currentMessage = (this->currentMessage + 1) % outMessages;
@@ -264,7 +294,7 @@ void InputHandler::handleMouse(unsigned int time)
 			messageBuffer[this->currentMessage].timeSent = time;
 			messageBuffer[this->currentMessage].destination = MessageSource_ENTITIES;
 			messageBuffer[this->currentMessage].type = MessageType_ENTITIES;
-			messageBuffer[this->currentMessage].mess = GameBoardMess_SELECTOBJECT;
+			messageBuffer[this->currentMessage].mess = GameBoardMess_CLICKOBJECT;
 			messageBuffer[this->currentMessage].read = false;
 			outQueue->PushMessage(&messageBuffer[this->currentMessage]);
 			this->currentMessage = (this->currentMessage + 1) % outMessages;

@@ -24,6 +24,7 @@ namespace Input
 
 			enum keyCode{
 				keyCodeMouseL,
+				keyCodeMouseM,
 				keyCodeMouseR,
 				keyCodeNA
 			};

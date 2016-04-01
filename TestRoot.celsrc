@@ -39,4 +39,5 @@ add ui screenLayout testBox
 increment layer testBox
 accept mouse testBox
 accept mouse outTextBox
+accept keys outTextBox
 accept keys testBox

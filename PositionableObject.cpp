@@ -14,6 +14,7 @@ PositionableObject::PositionableObject()
 
 	rightClickScript = 0;
 	leftClickScript = 0;
+	middleClickScript = 0;
 	layer = 0;
 
 }
@@ -27,6 +28,7 @@ PositionableObject::PositionableObject(Vector3 position, Vector3 scale)
 
 	rightClickScript = 0;
 	leftClickScript = 0;
+	middleClickScript = 0;
 	layer = 0;
 
 }
@@ -76,6 +78,9 @@ void PositionableObject::Update(Message* mess)
 		case ObjectMess_SETRCSCRPT:
 			rightClickScript = param1+1;
 			break;
+		case ObjectMess_SETMCSCRPT:
+			middleClickScript = param1 + 1;
+			break;
 		case ObjectMess_SETLCSCRPT:
 			leftClickScript = param1+1;
 			break;
@@ -117,11 +122,17 @@ unsigned char PositionableObject::GetLayer() const
 
 }
 
-
 unsigned int PositionableObject::GetRightClickScript() const
 {
 
 	return rightClickScript;
+
+}
+
+unsigned int PositionableObject::GetMiddleClickScript() const
+{
+
+	return middleClickScript;
 
 }
 

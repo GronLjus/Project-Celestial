@@ -115,7 +115,7 @@ HRESULT CardHandler::Init(HWND hwnd, GraphicQuality gQ, DrawingStyle dS)
 	sd.Windowed = true;
 	bool stop = false;
 
-	hr = D3D11CreateDeviceAndSwapChain(nullptr, D3D_DRIVER_TYPE_HARDWARE, nullptr, D3D11_CREATE_DEVICE_DEBUG | D3D11_CREATE_DEVICE_BGRA_SUPPORT, nullptr, 0, 
+	hr = D3D11CreateDeviceAndSwapChain(nullptr, D3D_DRIVER_TYPE_HARDWARE, nullptr,  D3D11_CREATE_DEVICE_BGRA_SUPPORT, nullptr, 0, 
 		D3D11_SDK_VERSION, &sd, &swapChain, &card, nullptr, &context1);
 
 	if( FAILED(hr) )
