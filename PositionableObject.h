@@ -1,11 +1,11 @@
 #pragma once
-#include "BaseObject.h"
+#include "ScriptableObject.h"
 #include "CelestialMath.h"
 
 namespace Resources
 {
 
-	class PositionableObject : public BaseObject
+	class PositionableObject : public ScriptableObject
 	{
 
 		public:
@@ -16,9 +16,6 @@ namespace Resources
 			CelestialMath::Vector3 GetRotation() const;
 			CelestialMath::Vector3 GetScale() const;
 			CelestialMath::Matrix GetMatrix() const;
-			unsigned int GetRightClickScript() const;
-			unsigned int GetLeftClickScript() const;
-			unsigned int GetMiddleClickScript() const;
 			unsigned char GetLayer() const;
 
 		protected:
@@ -26,9 +23,6 @@ namespace Resources
 			void setLayer(unsigned char layer);
 
 		private:
-			unsigned int rightClickScript;
-			unsigned int leftClickScript;
-			unsigned int middleClickScript;
 			CelestialMath::Vector3 position;
 			CelestialMath::Vector3 rotation;
 			CelestialMath::Vector3 scale;

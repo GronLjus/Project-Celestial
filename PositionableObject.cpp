@@ -5,30 +5,22 @@ using namespace Resources;
 using namespace CelestialMath;
 using namespace CrossHandlers;
 
-PositionableObject::PositionableObject()
+PositionableObject::PositionableObject() : ScriptableObject()
 {
 
 	scale = Vector3(1.0f, 1.0f, 1.0f);
 	position = Vector3(0.0f, 0.0f, 0.0f);
 	rotation = Vector3(0.0f, 0.0f, 0.0f);
-
-	rightClickScript = 0;
-	leftClickScript = 0;
-	middleClickScript = 0;
 	layer = 0;
 
 }
 
-PositionableObject::PositionableObject(Vector3 position, Vector3 scale)
+PositionableObject::PositionableObject(Vector3 position, Vector3 scale) : ScriptableObject()
 {
 
 	this->position = position;
 	this->scale = scale;
 	rotation = Vector3(0.0f, 0.0f, 0.0f);
-
-	rightClickScript = 0;
-	leftClickScript = 0;
-	middleClickScript = 0;
 	layer = 0;
 
 }
@@ -75,15 +67,6 @@ void PositionableObject::Update(Message* mess)
 			memcpy(&scale.y, &mess->params[4], 4);
 			memcpy(&scale.z, &mess->params[8], 4);
 			break;
-		case ObjectMess_SETRCSCRPT:
-			rightClickScript = param1+1;
-			break;
-		case ObjectMess_SETMCSCRPT:
-			middleClickScript = param1 + 1;
-			break;
-		case ObjectMess_SETLCSCRPT:
-			leftClickScript = param1+1;
-			break;
 		case ObjectMess_INCREMENTLAYER:
 			if (layer < 255)
 			{
@@ -103,6 +86,8 @@ void PositionableObject::Update(Message* mess)
 		case ObjectMess_SETLAYER:
 			layer = mess->params[0];
 			break;
+		default:
+			ScriptableObject::Update(mess);
 
 		}
 	}
@@ -119,27 +104,6 @@ unsigned char PositionableObject::GetLayer() const
 {
 
 	return layer;
-
-}
-
-unsigned int PositionableObject::GetRightClickScript() const
-{
-
-	return rightClickScript;
-
-}
-
-unsigned int PositionableObject::GetMiddleClickScript() const
-{
-
-	return middleClickScript;
-
-}
-
-unsigned int PositionableObject::GetLeftClickScript() const
-{
-
-	return leftClickScript;
 
 }
 

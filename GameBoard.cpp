@@ -4,7 +4,7 @@
 using namespace Resources;
 using namespace Entities;
 
-GameBoard::GameBoard(unsigned int cells)
+GameBoard::GameBoard(unsigned int cells) : ScriptableObject()
 {
 
 	this->cells = cells;

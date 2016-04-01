@@ -5,7 +5,7 @@
 namespace Resources
 {
 
-	class GameBoard : public BaseObject
+	class GameBoard : public ScriptableObject
 	{
 
 		public:

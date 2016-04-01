@@ -690,6 +690,9 @@
     <ClInclude Include="KeyTranslation.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ScriptableObject.h">
+      <Filter>Header Files\Resources\Objects</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Camera.cpp">
@@ -946,6 +949,9 @@
     </ClCompile>
     <ClCompile Include="GUIImageLoader.cpp">
       <Filter>Source Files\Resources\Loaders\UILoaders</Filter>
+    </ClCompile>
+    <ClCompile Include="ScriptableObject.cpp">
+      <Filter>Source Files\Resources\Objects</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
