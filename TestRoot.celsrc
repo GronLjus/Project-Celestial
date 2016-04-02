@@ -12,21 +12,23 @@ tile = load mesh 'Tile.obj'
 testPar = load script 'TestRoot2.celsrc'
 testClick = load script 'TestClick.celsrc'
 cam = load camera
-testPar2 = load gameboard 1024 tile
+localGameboard = load gameboard 1024 tile
+testBox = load textbox
+cameraPanScript = load script 'CameraPanning.celsrc'
 
 outTextBox = import 'dbgout'
 focus outTextBox
 
 post 'test'
 
-set gameboard testPar2
+set rightclick localGameboard cameraPanScript
+set gameboard localGameboard
 set camera cam
 hide splashImage
 remove splashImage
 unload splashImage
 show debugLayout
 
-testBox = load textbox
 set text testBox 'Test 1'
 pos testBox 600.0 200.0
 size testBox 400.0 200.0

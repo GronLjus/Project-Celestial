@@ -406,6 +406,7 @@
     <None Include="..\d3dcompiler_46.dll">
       <FileType>Document</FileType>
     </None>
+    <None Include="CameraPanning.celsrc" />
     <None Include="ErrorTest.celsrc" />
     <None Include="PreLoad.celsrc" />
     <None Include="rootscript.celsrc" />

@@ -20,6 +20,32 @@ void GameBoardHandler::Init(CelestialSlicedList<BaseObject*>* gameObjects)
 
 }
 
+void GameBoardHandler::triggerClickScript(unsigned int script, unsigned int objectId, unsigned int time, int mouseX, int mouseY)
+{
+
+	unsigned char tempBuff[]{ script >> 0, script >> 8, script >> 16, script >> 24,
+		objectId >> 0, objectId >> 8, objectId >> 16, objectId >> 24 };
+
+	messageBuffer[this->currentMessage].timeSent = time;
+	messageBuffer[this->currentMessage].destination = MessageSource_CELSCRIPT;
+	messageBuffer[this->currentMessage].type = MessageType_SCRIPT;
+	messageBuffer[this->currentMessage].mess = ScriptMess_ADDPARNUM;
+	messageBuffer[this->currentMessage].read = false;
+	messageBuffer[this->currentMessage].SetParams(tempBuff, 0, 8);
+	outQueue->PushMessage(&messageBuffer[this->currentMessage]);
+	this->currentMessage = (this->currentMessage + 1) % outMessages;
+
+	messageBuffer[this->currentMessage].timeSent = time;
+	messageBuffer[this->currentMessage].destination = MessageSource_CELSCRIPT;
+	messageBuffer[this->currentMessage].type = MessageType_SCRIPT;
+	messageBuffer[this->currentMessage].mess = ScriptMess_RUN;
+	messageBuffer[this->currentMessage].read = false;
+	messageBuffer[this->currentMessage].SetParams(tempBuff, 0, 4);
+	outQueue->PushMessage(&messageBuffer[this->currentMessage]);
+	this->currentMessage = (this->currentMessage + 1) % outMessages;
+
+}
+
 void GameBoardHandler::UpdateMessages(unsigned int time)
 {
 
@@ -68,42 +94,31 @@ void GameBoardHandler::UpdateMessages(unsigned int time)
 			direction /= sqrt(abs(VectorDot(direction, direction)));
 			float minDist = 0;
 			unsigned int selectedObject = localGameBoard->GetClosestObject(cam->GetPosition(), direction, minDist);
+			ScriptableObject* obj = localGameBoard;
 
 			if (minDist != 0)
 			{
 
-				PositionableObject* obj = (PositionableObject*)gameObjects->GetValue(selectedObject);
+				obj = (ScriptableObject*)gameObjects->GetValue(selectedObject);
 
-				unsigned int script = param1 == 0 ? obj->GetLeftClickScript() : 
-					param1 == 1 ? obj->GetMiddleClickScript() :
-					obj->GetRightClickScript();
+			}
+			else
+			{
 
-				if (script != 0)
-				{
+				selectedObject = localGameBoard->GetId();
 
-					script--;
-					unsigned char tempBuff[]{script >> 0, script >> 8, script >> 16, script >> 24,
-						selectedObject >> 0, selectedObject >> 8, selectedObject >> 16, selectedObject >> 24};
+			}
 
-					messageBuffer[this->currentMessage].timeSent = time;
-					messageBuffer[this->currentMessage].destination = MessageSource_CELSCRIPT;
-					messageBuffer[this->currentMessage].type = MessageType_SCRIPT;
-					messageBuffer[this->currentMessage].mess = ScriptMess_ADDPARNUM;
-					messageBuffer[this->currentMessage].read = false;
-					messageBuffer[this->currentMessage].SetParams(tempBuff, 0, 8);
-					outQueue->PushMessage(&messageBuffer[this->currentMessage]);
-					this->currentMessage = (this->currentMessage + 1) % outMessages;
+			unsigned int script = param1 == 0 ? obj->GetLeftClickScript() :
+				param1 == 1 ? obj->GetMiddleClickScript() :
+				obj->GetRightClickScript();
 
-					messageBuffer[this->currentMessage].timeSent = time;
-					messageBuffer[this->currentMessage].destination = MessageSource_CELSCRIPT;
-					messageBuffer[this->currentMessage].type = MessageType_SCRIPT;
-					messageBuffer[this->currentMessage].mess = ScriptMess_RUN;
-					messageBuffer[this->currentMessage].read = false;
-					messageBuffer[this->currentMessage].SetParams(tempBuff, 0, 4);
-					outQueue->PushMessage(&messageBuffer[this->currentMessage]);
-					this->currentMessage = (this->currentMessage + 1) % outMessages;
+			if (script != 0)
+			{
 
-				}
+				script--;
+				triggerClickScript(script, selectedObject, time, 0, 0);
+
 			}
 		}
 		else if (currentMessage->mess == GameBoardMess_SETCAM && localGameBoard != nullptr)

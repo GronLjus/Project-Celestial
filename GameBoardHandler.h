@@ -19,6 +19,7 @@ namespace Entities
 		private:
 			CrossHandlers::CelestialSlicedList<Resources::BaseObject*>* gameObjects;
 			Resources::GameBoard* localGameBoard;
+			void triggerClickScript(unsigned int script, unsigned int objectId, unsigned int time, int mouseX, int mouseY);
 
 	};
 }

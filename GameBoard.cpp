@@ -32,6 +32,8 @@ void GameBoard::Update(CrossHandlers::Message* mess)
 			param1 = mess->params[0] | ((int)mess->params[1] << 8) | ((int)mess->params[2] << 16) | ((int)mess->params[3] << 24);
 			objectRoot->RemoveObject(param1);
 			break;
+		default:
+			ScriptableObject::Update(mess);
 
 		}
 	}
