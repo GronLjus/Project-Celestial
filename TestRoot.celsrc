@@ -21,7 +21,7 @@ focus outTextBox
 
 post 'test'
 
-set rightclick localGameboard cameraPanScript
+set rightdrag localGameboard cameraPanScript
 set gameboard localGameboard
 set camera cam
 hide splashImage

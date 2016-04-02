@@ -12,6 +12,10 @@ ScriptableObject::ScriptableObject()
 	leftClickScript = 0;
 	middleClickScript = 0;
 
+	rightDragScript = 0;
+	leftDragScript = 0;
+	middleDragScript = 0;
+
 }
 
 
@@ -34,6 +38,15 @@ void ScriptableObject::Update(Message* mess)
 		case ObjectMess_SETLCSCRPT:
 			leftClickScript = param1 + 1;
 			break;
+		case ObjectMess_SETRDSCRPT:
+			rightDragScript = param1 + 1;
+			break;
+		case ObjectMess_SETMDSCRPT:
+			middleDragScript = param1 + 1;
+			break;
+		case ObjectMess_SETLDSCRPT:
+			leftDragScript = param1 + 1;
+			break;
 		}
 	}
 }
@@ -48,6 +61,27 @@ unsigned int ScriptableObject::GetMiddleClickScript() const
 {
 
 	return middleClickScript;
+
+}
+
+unsigned int Resources::ScriptableObject::GetRightDragScript() const
+{
+
+	return rightDragScript;
+
+}
+
+unsigned int Resources::ScriptableObject::GetLeftDragScript() const
+{
+
+	return leftDragScript;
+
+}
+
+unsigned int Resources::ScriptableObject::GetMiddleDragScript() const
+{
+
+	return middleDragScript;
 
 }
 
