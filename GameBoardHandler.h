@@ -19,7 +19,12 @@ namespace Entities
 		private:
 			CrossHandlers::CelestialSlicedList<Resources::BaseObject*>* gameObjects;
 			Resources::GameBoard* localGameBoard;
-			void triggerClickScript(unsigned int script, unsigned int objectId, unsigned int time, int mouseX, int mouseY);
+			void triggerMouseScript(unsigned int script, unsigned int objectId, unsigned int time, int mouseX, int mouseY);
+			CelestialMath::Vector3 getMouseWorldLine(unsigned int mouseX, unsigned int mouseY) const;
+			Resources::ScriptableObject* getMouseObject(CelestialMath::Vector3 direction) const;
+			unsigned int dragScript;
+			unsigned int dragId;
+			CelestialMath::Vector3 boardPos;
 
 	};
 }

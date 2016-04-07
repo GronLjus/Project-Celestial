@@ -10,6 +10,7 @@ GameBoardHandler::GameBoardHandler() : IHandleMessages(200, MessageSource_ENTITI
 
 	localGameBoard = nullptr;
 	filter = MessageType_ENTITIES;
+	dragScript = 0;
 
 }
 
@@ -20,11 +21,18 @@ void GameBoardHandler::Init(CelestialSlicedList<BaseObject*>* gameObjects)
 
 }
 
-void GameBoardHandler::triggerClickScript(unsigned int script, unsigned int objectId, unsigned int time, int mouseX, int mouseY)
+void GameBoardHandler::triggerMouseScript(unsigned int script, unsigned int objectId, unsigned int time, int mouseX, int mouseY)
 {
 
 	unsigned char tempBuff[]{ script >> 0, script >> 8, script >> 16, script >> 24,
 		objectId >> 0, objectId >> 8, objectId >> 16, objectId >> 24 };
+
+	unsigned char tempBuff2[]{ script >> 0, script >> 8, script >> 16, script >> 24,
+		mouseX >> 0, mouseX >> 8, mouseX >> 16, mouseX >> 24
+	};
+	unsigned char tempBuff3[]{ script >> 0, script >> 8, script >> 16, script >> 24,
+		mouseY >> 0, mouseY >> 8, mouseY >> 16, mouseY >> 24
+	};
 
 	messageBuffer[this->currentMessage].timeSent = time;
 	messageBuffer[this->currentMessage].destination = MessageSource_CELSCRIPT;
@@ -38,11 +46,64 @@ void GameBoardHandler::triggerClickScript(unsigned int script, unsigned int obje
 	messageBuffer[this->currentMessage].timeSent = time;
 	messageBuffer[this->currentMessage].destination = MessageSource_CELSCRIPT;
 	messageBuffer[this->currentMessage].type = MessageType_SCRIPT;
+	messageBuffer[this->currentMessage].mess = ScriptMess_ADDPARNUM;
+	messageBuffer[this->currentMessage].read = false;
+	messageBuffer[this->currentMessage].SetParams(tempBuff2, 0, 8);
+	outQueue->PushMessage(&messageBuffer[this->currentMessage]);
+	this->currentMessage = (this->currentMessage + 1) % outMessages;
+
+	messageBuffer[this->currentMessage].timeSent = time;
+	messageBuffer[this->currentMessage].destination = MessageSource_CELSCRIPT;
+	messageBuffer[this->currentMessage].type = MessageType_SCRIPT;
+	messageBuffer[this->currentMessage].mess = ScriptMess_ADDPARNUM;
+	messageBuffer[this->currentMessage].read = false;
+	messageBuffer[this->currentMessage].SetParams(tempBuff3, 0, 8);
+	outQueue->PushMessage(&messageBuffer[this->currentMessage]);
+	this->currentMessage = (this->currentMessage + 1) % outMessages;
+
+	messageBuffer[this->currentMessage].timeSent = time;
+	messageBuffer[this->currentMessage].destination = MessageSource_CELSCRIPT;
+	messageBuffer[this->currentMessage].type = MessageType_SCRIPT;
 	messageBuffer[this->currentMessage].mess = ScriptMess_RUN;
 	messageBuffer[this->currentMessage].read = false;
 	messageBuffer[this->currentMessage].SetParams(tempBuff, 0, 4);
 	outQueue->PushMessage(&messageBuffer[this->currentMessage]);
 	this->currentMessage = (this->currentMessage + 1) % outMessages;
+
+}
+
+Vector3 GameBoardHandler::getMouseWorldLine(unsigned int mouseX, unsigned int mouseY) const
+{
+
+	CameraObject* cam = localGameBoard->GetCam();
+	float screenX = ((float)mouseX) / (float)(cam->GetView()->GetPort().width);
+	float screenY = ((float)mouseY) / (float)(cam->GetView()->GetPort().height);
+	screenX = 2 * screenX - 1;
+	screenY = 2 * screenY - 1;
+	float screenZ = 0;// cam->GetView()->GetPort().minDepth;
+
+	Vector3 worldPoint = VectorTransform(Vector3(screenX, screenY, screenZ), cam->GetView()->GetInverseViewProjection(cam->GetFlip()));
+	Vector3 direction = worldPoint - cam->GetPosition();
+	direction /= sqrt(abs(VectorDot(direction, direction)));
+	return direction;
+
+}
+
+ScriptableObject * GameBoardHandler::getMouseObject(CelestialMath::Vector3 direction) const
+{
+
+	CameraObject* cam = localGameBoard->GetCam();
+	float minDist = 0;
+	unsigned int selectedObject = localGameBoard->GetClosestObject(cam->GetPosition(), direction, minDist);
+	ScriptableObject* obj = localGameBoard;
+
+	if (minDist != 0)
+	{
+
+		obj = (ScriptableObject*)gameObjects->GetValue(selectedObject);
+
+	}
+	return obj;
 
 }
 
@@ -81,43 +142,82 @@ void GameBoardHandler::UpdateMessages(unsigned int time)
 		{
 
 			CameraObject* cam = localGameBoard->GetCam();
-			int mouseX = currentMessage->params[4] | ((int)currentMessage->params[5] << 8) | ((int)currentMessage->params[6] << 16) | ((int)currentMessage->params[7] << 24);
-			int mouseY = currentMessage->params[8] | ((int)currentMessage->params[9] << 8) | ((int)currentMessage->params[10] << 16) | ((int)currentMessage->params[11] << 24);
-			float screenX = ((float)mouseX) / (float)(cam->GetView()->GetPort().width);
-			float screenY = ((float)mouseY) / (float)(cam->GetView()->GetPort().height);
-			screenX = 2 * screenX - 1;
-			screenY = 2 * screenY - 1;
-			float screenZ = 0;// cam->GetView()->GetPort().minDepth;
+			unsigned int mouseX = currentMessage->params[1] | ((int)currentMessage->params[2] << 8) | ((int)currentMessage->params[3] << 16) | ((int)currentMessage->params[4] << 24);
+			unsigned int mouseY = currentMessage->params[5] | ((int)currentMessage->params[6] << 8) | ((int)currentMessage->params[7] << 16) | ((int)currentMessage->params[8] << 24);
+			
+			Vector3 direction = getMouseWorldLine(mouseX, mouseY);
+			ScriptableObject* obj = getMouseObject(direction);
 
-			Vector3 worldPoint = VectorTransform(Vector3(screenX, screenY, screenZ), cam->GetView()->GetInverseViewProjection(cam->GetFlip()));
-			Vector3 direction = worldPoint - cam->GetPosition();
-			direction /= sqrt(abs(VectorDot(direction, direction)));
-			float minDist = 0;
-			unsigned int selectedObject = localGameBoard->GetClosestObject(cam->GetPosition(), direction, minDist);
-			ScriptableObject* obj = localGameBoard;
-
-			if (minDist != 0)
-			{
-
-				obj = (ScriptableObject*)gameObjects->GetValue(selectedObject);
-
-			}
-			else
-			{
-
-				selectedObject = localGameBoard->GetId();
-
-			}
-
-			unsigned int script = param1 == 0 ? obj->GetLeftClickScript() :
-				param1 == 1 ? obj->GetMiddleClickScript() :
+			unsigned int script = currentMessage->params[0] == 0 ? obj->GetLeftClickScript() :
+				currentMessage->params[0] == 1 ? obj->GetMiddleClickScript() :
 				obj->GetRightClickScript();
 
 			if (script != 0)
 			{
 
 				script--;
-				triggerClickScript(script, selectedObject, time, 0, 0);
+				localGameBoard->GetBoardPosition(cam->GetPosition(), direction, boardPos);
+				triggerMouseScript(script, obj->GetId(), time, 0, 0);
+
+			}
+		}
+		else if (currentMessage->mess == GameBoardMess_STARTDRAGGING &&
+			localGameBoard != nullptr && localGameBoard->GetCam() != nullptr)
+		{
+
+			unsigned int mouseX = currentMessage->params[1] | ((int)currentMessage->params[2] << 8) | ((int)currentMessage->params[3] << 16) | ((int)currentMessage->params[4] << 24);
+			unsigned int mouseY = currentMessage->params[5] | ((int)currentMessage->params[6] << 8) | ((int)currentMessage->params[7] << 16) | ((int)currentMessage->params[8] << 24);
+
+			Vector3 direction = getMouseWorldLine(mouseX, mouseY);
+			ScriptableObject* obj = getMouseObject(direction);
+
+			unsigned int script = currentMessage->params[0] == 0 ? obj->GetLeftDragScript() :
+				currentMessage->params[0] == 1 ? obj->GetMiddleDragScript() :
+				obj->GetRightDragScript();
+
+			if (script != 0)
+			{
+
+				dragScript = script;
+				dragId = obj->GetId();
+				script--;
+				localGameBoard->GetBoardPosition(localGameBoard->GetCam()->GetPosition(), direction, boardPos);
+				triggerMouseScript(script, dragId, time, 0, 0);
+
+			}
+		}
+		else if (currentMessage->mess == GameBoardMess_DRAGOBJECT &&
+			localGameBoard != nullptr && localGameBoard->GetCam() != nullptr)
+		{
+
+			unsigned int mouseX = currentMessage->params[1] | ((int)currentMessage->params[2] << 8) | ((int)currentMessage->params[3] << 16) | ((int)currentMessage->params[4] << 24);
+			unsigned int mouseY = currentMessage->params[5] | ((int)currentMessage->params[6] << 8) | ((int)currentMessage->params[7] << 16) | ((int)currentMessage->params[8] << 24);
+
+			Vector3 direction = getMouseWorldLine(mouseX, mouseY);
+
+			if (dragScript != 0)
+			{
+
+				localGameBoard->GetBoardPosition(localGameBoard->GetCam()->GetPosition(), direction, boardPos);
+				triggerMouseScript(dragScript-1, dragId, time, 0, 0);
+
+			}
+		}
+		else if (currentMessage->mess == GameBoardMess_STOPDRAGGING &&
+			localGameBoard != nullptr && localGameBoard->GetCam() != nullptr)
+		{
+
+			unsigned int mouseX = currentMessage->params[1] | ((int)currentMessage->params[2] << 8) | ((int)currentMessage->params[3] << 16) | ((int)currentMessage->params[4] << 24);
+			unsigned int mouseY = currentMessage->params[5] | ((int)currentMessage->params[6] << 8) | ((int)currentMessage->params[7] << 16) | ((int)currentMessage->params[8] << 24);
+
+			Vector3 direction = getMouseWorldLine(mouseX, mouseY);
+
+			if (dragScript != 0)
+			{
+
+				localGameBoard->GetBoardPosition(localGameBoard->GetCam()->GetPosition(), direction, boardPos);
+				triggerMouseScript(dragScript - 1, dragId, time, 0, 0);
+				dragScript = 0;
 
 			}
 		}

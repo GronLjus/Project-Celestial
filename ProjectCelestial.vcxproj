@@ -408,6 +408,7 @@
     </None>
     <None Include="CameraPanning.celsrc" />
     <None Include="ErrorTest.celsrc" />
+    <None Include="MoveGUI.celsrc" />
     <None Include="PreLoad.celsrc" />
     <None Include="rootscript.celsrc" />
     <None Include="Shaders_Registers.hlsli" />

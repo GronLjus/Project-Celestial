@@ -1063,6 +1063,9 @@
     <None Include="CameraPanning.celsrc">
       <Filter>Source Files\Scripts</Filter>
     </None>
+    <None Include="MoveGUI.celsrc">
+      <Filter>Source Files\Scripts</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Project Celestial.rc">

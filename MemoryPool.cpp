@@ -187,6 +187,7 @@ void MemoryPool::writeData(unsigned int var, unsigned int bytes, unsigned char* 
 	memBlock mem = variables->GetValue(var);
 	unsigned int totalBytes = bytes;
 	unsigned int globalPlace = mem.place;
+	unsigned int writtenBytes = 0;
 
 	while (totalBytes > 0)
 	{
@@ -195,10 +196,11 @@ void MemoryPool::writeData(unsigned int var, unsigned int bytes, unsigned char* 
 		unsigned int toend = memoryA->GetSliceSize() - localPlace;
 		unsigned int readBytes = toend > totalBytes ? totalBytes : toend;
 
-		memcpy(&(memoryA->GetSlice(globalPlace)[localPlace]), val, readBytes);
+		memcpy(&(memoryA->GetSlice(globalPlace)[localPlace]), &(val[writtenBytes]), readBytes);
 
 		totalBytes -= readBytes;
 		globalPlace += readBytes;
+		writtenBytes += readBytes;
 
 	}
 }
@@ -211,6 +213,7 @@ MemErrorCode MemoryPool::readData(unsigned int var, unsigned int offset, unsigne
 
 	unsigned int totalBytes = bytes;
 	unsigned int globalPlace = mem.place+offset;
+	unsigned int writtenBytes = 0;
 
 	while (totalBytes > 0)
 	{
@@ -219,10 +222,11 @@ MemErrorCode MemoryPool::readData(unsigned int var, unsigned int offset, unsigne
 		unsigned int toend = memoryA->GetSliceSize() - localPlace;
 		unsigned int readBytes = toend > totalBytes ? totalBytes : toend;
 
-		memcpy(val, &(memoryA->GetSlice(globalPlace)[localPlace]), readBytes);
+		memcpy(&(val[writtenBytes]), &(memoryA->GetSlice(globalPlace)[localPlace]), readBytes);
 
 		totalBytes -= readBytes;
 		globalPlace += readBytes;
+		writtenBytes += readBytes;
 
 	}
 

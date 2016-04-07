@@ -6,6 +6,7 @@ namespace CelestialMath
 {
 
 	const double CELESTIAL_PI = 3.1415926535897931;
+	const float CELESTIAL_EPSILON = 0.00002f;
 
 	Matrix MatrixLookAtLH(Vector3 &pos, Vector3 &lookAt, Vector3 &up);
 	Matrix MatrixInverse(Matrix &input);
@@ -25,7 +26,7 @@ namespace CelestialMath
 	Vector3 VectorTransform(Vector3 &vec, Matrix &mat);
 	Vector3 VectorCross(Vector3 &vecA, Vector3 &vecB);
 	float VectorDot(Vector4 &vecA, Vector4 &vecB);
-	float VectorDot(Vector3 &vecA, Vector3 &vecB);
+	float VectorDot(const Vector3 &vecA,const Vector3 &vecB);
 	float VectorDot(Vector2 &vecA, Vector2 &vecB);
 	Vector3 VectorNormal(Vector3 &vecA);
 

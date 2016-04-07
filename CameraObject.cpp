@@ -25,7 +25,7 @@ CameraObject::CameraObject(unsigned int width, unsigned int height, float depth,
 	Message mess = Message();
 	mess.type = MessageType_OBJECT;
 	mess.mess = ObjectMess_MOVE;
-	Vector3 moveVal(0.0f,0.0f,5.0f);
+	Vector3 moveVal(0.0f,2.0f,15.0f);
 	unsigned char tempBuff[12];
 	memcpy(tempBuff, &moveVal.x, 4);
 	memcpy(&tempBuff[4], &moveVal.y, 4);

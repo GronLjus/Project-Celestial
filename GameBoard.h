@@ -19,6 +19,7 @@ namespace Resources
 			Resources::CameraObject* GetCam() const;
 			Entities::DrawingBoard* GetDrawingBoard() const;
 			unsigned int GetClosestObject(CelestialMath::Vector3 origin, CelestialMath::Vector3 unitDirection, float &smallestDistance) const;
+			bool GetBoardPosition(CelestialMath::Vector3 origin, CelestialMath::Vector3 unitDirection, Vector3 &position) const;
 			~GameBoard();
 
 		private:
@@ -26,6 +27,7 @@ namespace Resources
 			Entities::DrawingBoard* drawingBoard;
 			Resources::CameraObject* camera;
 			GameObject* boardObject;
+			CelestialMath::Vector3 boardNormal;
 			unsigned int cells;
 
 	};

@@ -197,7 +197,7 @@ CelestialDoubleList<Token>* CelScriptLexer::tokenizeWord(string word, int lNumbe
 		if (!isQoutes)
 		{
 
-			breakSearch = err.errorType != ScriptError_OK && i > 0 && word[i] == '\\' && word[i - 1] == '\\';
+			breakSearch = err.errorType != ScriptError_OK || i > 0 && word[i] == '\\' && word[i - 1] == '\\';
 
 			if (breakSearch)
 			{

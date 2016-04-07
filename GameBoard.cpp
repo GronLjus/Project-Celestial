@@ -12,6 +12,46 @@ GameBoard::GameBoard(unsigned int cells) : ScriptableObject()
 	objectRoot = new ObjectTree(cells, 32, CelestialMath::Vector2(0.0f, 0.0f));
 	camera = nullptr;
 	boardObject = nullptr;
+	boardNormal = Vector3(0.0f, 1.0f, 0.0f);
+
+}
+
+bool GameBoard::GetBoardPosition(Vector3 origin, Vector3 unitDirection, Vector3 &position) const
+{
+
+	if (VectorDot(unitDirection, boardNormal) > 0)
+	{
+
+		return false;
+
+	}
+
+	Vector3 point(0, 0, 0);
+
+	Vector3 toLineOrigin = point - origin;
+	float scalar = VectorDot(toLineOrigin, boardNormal);
+	Vector3 projectedLine = boardNormal *scalar;
+	float dotProduct = VectorDot(unitDirection, projectedLine);
+	float distance = 0;
+
+	if (dotProduct <= CELESTIAL_EPSILON)
+	{
+
+		distance = VectorDot(origin, boardNormal);
+
+	}
+	else
+	{
+
+		float lineMag = sqrt(VectorDot(projectedLine, projectedLine));
+		float angle = acos(VectorDot(unitDirection, projectedLine) / lineMag);
+
+		distance = (1 / cos(angle)) *lineMag;
+
+	}
+
+	position = origin + unitDirection*distance;
+	return true;
 
 }
 

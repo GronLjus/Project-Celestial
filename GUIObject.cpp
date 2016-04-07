@@ -165,8 +165,12 @@ void GUIObject::Update(Message* mess)
 		case ObjectMess_SETENTRSCRPT:
 		case ObjectMess_SETEXTSCRPT:
 		case ObjectMess_SETHVRSCRPT:
-		case ObjectMess_SETRCSCRPT:
 		case ObjectMess_SETLCSCRPT:
+		case ObjectMess_SETMCSCRPT:
+		case ObjectMess_SETRCSCRPT:
+		case ObjectMess_SETLDSCRPT:
+		case ObjectMess_SETMDSCRPT:
+		case ObjectMess_SETRDSCRPT:
 			target->Update(mess);
 			break;
 		case ObjectMess_INCREMENTLAYER:

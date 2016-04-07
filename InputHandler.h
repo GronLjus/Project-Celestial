@@ -60,5 +60,16 @@ namespace Input
 			CelestialMath::vectorUI2 mouse;
 			void handleMouse(unsigned int time);
 			void handleKeys(unsigned int time);
+			Resources::ScreenTarget* checkScreenTargets(unsigned int time);
+
+			bool checkMouseClick(unsigned int time, keyCode ks) const;
+			bool checkDrag(unsigned int time);
+			void sendMessageToGB(unsigned int mess, unsigned int time,keyCode key);
+			keyCode dragging;
+			unsigned short clickTime;
+
+			unsigned int draggedTarget;
+			unsigned int draggedScript;
+
 	};
 }
