@@ -693,6 +693,9 @@
     <ClInclude Include="ScriptableObject.h">
       <Filter>Header Files\Resources\Objects</Filter>
     </ClInclude>
+    <ClInclude Include="GridLoader.h">
+      <Filter>Header Files\Resources\Loaders\ShapeLoaders</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Camera.cpp">
@@ -952,6 +955,9 @@
     </ClCompile>
     <ClCompile Include="ScriptableObject.cpp">
       <Filter>Source Files\Resources\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="GridLoader.cpp">
+      <Filter>Source Files\Resources\Loaders\ShapeLoaders</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

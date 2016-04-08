@@ -6,12 +6,13 @@
 #include "PlaneLoader.h"
 #include "GUITextBoxLoader.h"
 #include "GUILayoutLoader.h"
+#include "GUIImageLoader.h"
 #include "LightParticleEmitter.h"
 #include "SkyboxParticle.h"
 #include "PointLight.h"
 #include "CelScriptBinLoader.h"
 #include "CelScriptSourceLoader.h"
-#include "GUIImageLoader.h"
+#include "GridLoader.h"
 
 using namespace std;
 using namespace Resources;
@@ -93,6 +94,7 @@ ResourceLoader::ResourceLoader()
 
 	shapeLoads = new IShapeLoader*[shapeLoaders];
 	shapeLoads[Shape_PLANE] = new PlaneLoader();
+	shapeLoads[Shape_GRID] = new GridLoader();
 
 	gUILoads = new IGUILoader*[gUILoaders];
 	gUILoads[GUIObjects_TEXTBOX] = new GUITextBoxLoader();
@@ -205,6 +207,15 @@ ImageResourceObject** ResourceLoader::LoadBitMapesFromFile(std::string file, uns
 	}
 
 	return nullptr;
+
+}
+
+MeshObject* ResourceLoader::LoadGrid(unsigned int cells, float gridSize) const
+{
+
+	MeshObject* obj = ((GridLoader*)shapeLoads[Shape_GRID])->LoadGrid(cells,gridSize);
+	obj->OptimizeLevels(true);
+	return obj;
 
 }
 

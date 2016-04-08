@@ -11,7 +11,7 @@ namespace CrossHandlers
 	{
 
 		public:
-			ObjectTree(unsigned int cells, unsigned int minCells, CelestialMath::Vector2 position);
+			ObjectTree(unsigned int cells, unsigned int minCells, CelestialMath::Vector2 position, unsigned int mesh);
 			void AddObject(Resources::GameObject* obj);
 			unsigned int AddInstance(Entities::ViewObject* view, Entities::DrawingBoard* board);
 			unsigned int GetClosestObject(CelestialMath::Vector3 origin, CelestialMath::Vector3 unitDirection,float &smallestDistance) const;
@@ -23,6 +23,9 @@ namespace CrossHandlers
 		private:
 			unsigned int objectAmountMax;
 			unsigned int size;
+			unsigned int gridMeshId;
+			CelestialMath::Matrix gridMatrix;
+			CelestialMath::Matrix gridInvTrMatrix;
 			BoundingBox* box;
 			CelestialSlicedList<Resources::GameObject*>* objects;
 			ObjectTree** subTrees;

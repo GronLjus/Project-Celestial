@@ -15,7 +15,7 @@
 namespace Resources
 {
 
-	enum Shape{Shape_PLANE,Shape_NA};
+	enum Shape{Shape_PLANE, Shape_GRID,Shape_NA};
 	///<summary>This class manages the internal resources of the engine</summary>
 	class ResourceLoader
 	{
@@ -75,6 +75,8 @@ namespace Resources
 			///<param val='material'>[in]The material to use</param>
 			///<returns>The id for the mesh</returns>
 			MeshObject* LoadBasicShape(Shape shape, MeshObject::Material* material);
+
+			MeshObject* LoadGrid(unsigned int cells, float gridSize) const;
 
 			///<summary>Loads a particlesystem from a file</summary>
 			///<param val='system'>[in]The type of system to load</param>

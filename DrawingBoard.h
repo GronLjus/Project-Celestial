@@ -16,10 +16,11 @@ namespace Entities
 	
 		public:
 			DrawingBoard();
-			void AddMesh(Resources::MeshObject* mesh);
+			unsigned int AddMesh(Resources::MeshObject* mesh);
 			Graphics::GraphicalMesh* GetMeshes() const;
 			void StartAddingInstances();
 			void AddInstance(Resources::GameObject* object);
+			void AddInstance(CelestialMath::Matrix objectMatrix, CelestialMath::Matrix objectMatrixInvTr, unsigned int meshId);
 			void FinalizeInstances(Entities::ViewObject* onView);
 			CrossHandlers::BufferObject2<CrossHandlers::BufferVertex>* GetVertexBuffers() const;
 			CrossHandlers::BufferObject2<CrossHandlers::Instance>* GetInstanceBuffer() const;

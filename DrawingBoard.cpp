@@ -39,6 +39,22 @@ GraphicalMesh* DrawingBoard::GetMeshes() const
 
 }
 
+void  DrawingBoard::AddInstance(Matrix objectMatrix, Matrix objectMatrixInvTr, unsigned int meshId)
+{
+
+	if (!(hasInstance->GetValue(meshId)))
+	{
+
+		meshInstance->PushElement(meshId);
+		hasInstance->Add(true, meshId);
+
+	}
+
+	BufferObject2<Instance>* instBuff = meshInstances->GetValue(meshDictionary->GetValue(meshId));
+	instBuff->Add(Instance(objectMatrix, objectMatrixInvTr, objectMatrix));
+
+}
+
 void DrawingBoard::AddInstance(GameObject* object)
 {
 
@@ -157,7 +173,7 @@ void DrawingBoard::addObjectToIndexBuffer(Resources::MeshObject* mesh, unsigned 
 	}
 }
 
-void DrawingBoard::AddMesh(MeshObject* mesh)
+unsigned int DrawingBoard::AddMesh(MeshObject* mesh)
 {
 
 	unsigned int indexStart = indexBuffer->GetBufferSize();
@@ -185,9 +201,20 @@ void DrawingBoard::AddMesh(MeshObject* mesh)
 
 	}
 
-	DXTextureResource* amb = mesh->getMaterials()[0]->GetAmbient() == nullptr ? nullptr : mesh->getMaterials()[0]->GetAmbient()->GetDXT();
-	DXTextureResource* diff = mesh->getMaterials()[0]->GetDiffuse() == nullptr ? nullptr : mesh->getMaterials()[0]->GetDiffuse()->GetDXT();
-	DXTextureResource* norm = mesh->getMaterials()[0]->GetNormal() == nullptr ? nullptr : mesh->getMaterials()[0]->GetNormal()->GetDXT();
+	DXTextureResource* amb = nullptr;
+	DXTextureResource* diff = nullptr;
+	DXTextureResource* norm = nullptr;
+
+	MeshObject::Material** mats = mesh->getMaterials();
+
+	if (mats != nullptr)
+	{
+
+		amb = mats[0]->GetAmbient() == nullptr ? nullptr : mesh->getMaterials()[0]->GetAmbient()->GetDXT();
+		diff = mats[0]->GetDiffuse() == nullptr ? nullptr : mesh->getMaterials()[0]->GetDiffuse()->GetDXT();
+		norm = mats[0]->GetNormal() == nullptr ? nullptr : mesh->getMaterials()[0]->GetNormal()->GetDXT();
+
+	}
 
 	GraphicalMesh meshRep(amb,
 		diff,
@@ -209,6 +236,9 @@ void DrawingBoard::AddMesh(MeshObject* mesh)
 		meshInstances->GetValue(localMesh)->Reset();
 
 	}
+
+	return localMesh;
+
 }
 
 BufferObject2<BufferVertex>* DrawingBoard::GetVertexBuffers() const

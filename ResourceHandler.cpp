@@ -29,10 +29,12 @@ unsigned int ResourceHandler::GetCrossScriptObject() const
 
 ///<summary>Initializes The handler and its underobjects</summary>
 ///<param name='card'>[in]The device to load from</param>
-void ResourceHandler::Init(Graphics::CardHandler* &card, TextContainer* outText, vectorUI2 screen)
+void ResourceHandler::Init(Graphics::CardHandler* &card, TextContainer* outText, vectorUI2 screen, unsigned int gameBoardGridCells, unsigned int gameBoardGridSize)
 {
 
 	loader->Init(card,outText);
+	gameBoardGridMesh = loader->LoadGrid(gameBoardGridCells, gameBoardGridSize);
+	((BaseObject*)gameBoardGridMesh)->SetId(gameObjects->Add(gameBoardGridMesh));
 	this->screen = screen;
 
 }
@@ -63,8 +65,7 @@ GameObject* ResourceHandler::loadGameObject(unsigned int param1)
 	}
 
 	GameObject* obj = new GameObject(baseBox, baseSphere, meshId);
-	obj->SetId(gameObjects->GetFirstEmpty());
-	gameObjects->Add(obj);
+	obj->SetId(gameObjects->Add(obj));
 	return obj;
 
 }
@@ -83,7 +84,7 @@ void ResourceHandler::Update(unsigned int time)
 		{
 
 			unsigned int param1 = currentMessage->params[0] | ((int)currentMessage->params[1] << 8) | ((int)currentMessage->params[2] << 16) | ((int)currentMessage->params[3] << 24);
-			GameBoard* bo = new GameBoard(param1);
+			GameBoard* bo = new GameBoard(param1,gameBoardGridMesh);
 			bo->SetId(gameObjects->Add(bo));
 			outId = bo->GetId();
 

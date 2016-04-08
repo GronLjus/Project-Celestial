@@ -4,12 +4,13 @@
 using namespace Resources;
 using namespace Entities;
 
-GameBoard::GameBoard(unsigned int cells) : ScriptableObject()
+GameBoard::GameBoard(unsigned int cells, MeshObject* gridObject) : ScriptableObject()
 {
 
 	this->cells = cells;
 	drawingBoard = new DrawingBoard();
-	objectRoot = new ObjectTree(cells, 32, CelestialMath::Vector2(0.0f, 0.0f));
+	drawingBoard->AddMesh(gridObject);
+	objectRoot = new ObjectTree(cells, 32, CelestialMath::Vector2(0.0f, 0.0f), ((BaseObject*)gridObject)->GetId());
 	camera = nullptr;
 	boardObject = nullptr;
 	boardNormal = Vector3(0.0f, 1.0f, 0.0f);

@@ -90,7 +90,7 @@ HRESULT Overlord::Init(HWND hwnd)
 	}
 
 	CardHandler* tempCard = gH->GetCardHandler();
-	rH->Init(tempCard, dbgOut, vectorUI2(gQ.resolutionX, gQ.resolutionY));
+	rH->Init(tempCard, dbgOut, vectorUI2(gQ.resolutionX, gQ.resolutionY),32,32*1.0f);
 	cH->Init(rH->GetObjectContainer(), rH->GetCrossScriptObject());
 
 	Message mess;

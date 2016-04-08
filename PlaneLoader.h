@@ -1,3 +1,4 @@
+#pragma once
 #include "IShapeLoader.h"
 
 namespace Resources

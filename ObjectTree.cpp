@@ -6,7 +6,7 @@ using namespace Resources;
 using namespace CelestialMath;
 using namespace Entities;
 
-ObjectTree::ObjectTree(unsigned int cells, unsigned int minCells, Vector2 position)
+ObjectTree::ObjectTree(unsigned int cells, unsigned int minCells, Vector2 position, unsigned int mesh)
 {
 
 	box = new BoundingBox(cells, 1.0f, cells, position.x, 0, position.y);
@@ -22,10 +22,10 @@ ObjectTree::ObjectTree(unsigned int cells, unsigned int minCells, Vector2 positi
 		Vector2 bottomLeft = position + Vector2(-(float)((cells) / 4), (cells) / 4);
 		Vector2 bottomRight = position + Vector2((cells) / 4, (cells) / 4);
 
-		subTrees[0] = new ObjectTree(cells / 2, minCells, topLeft);
-		subTrees[1] = new ObjectTree(cells / 2, minCells, topRight);
-		subTrees[2] = new ObjectTree(cells / 2, minCells, bottomLeft);
-		subTrees[3] = new ObjectTree(cells / 2, minCells, bottomRight);
+		subTrees[0] = new ObjectTree(cells / 2, minCells, topLeft, mesh);
+		subTrees[1] = new ObjectTree(cells / 2, minCells, topRight, mesh);
+		subTrees[2] = new ObjectTree(cells / 2, minCells, bottomLeft, mesh);
+		subTrees[3] = new ObjectTree(cells / 2, minCells, bottomRight, mesh);
 
 	}
 	else
@@ -37,6 +37,12 @@ ObjectTree::ObjectTree(unsigned int cells, unsigned int minCells, Vector2 positi
 
 	this->size = cells;
 	objectAmountMax = 0;
+	gridMeshId = mesh;
+
+	gridMatrix = MatrixTranslation(position.x, 0.0f, position.y);
+	gridInvTrMatrix = MatrixInverse(gridMatrix);
+	gridInvTrMatrix = MatrixTranspose(gridInvTrMatrix);
+
 
 }
 
@@ -187,6 +193,8 @@ unsigned int ObjectTree::AddInstance(ViewObject* view, DrawingBoard* board)
 
 	if (objects != nullptr)
 	{
+
+		board->AddInstance(gridMatrix, gridInvTrMatrix, gridMeshId);
 
 		for (unsigned int i = 0; i < objectAmountMax; i++)
 		{
