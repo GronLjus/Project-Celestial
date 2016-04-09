@@ -436,7 +436,8 @@ CelScriptCompiler::CelScriptCompiler()
 	operators[OperatorTypes_EQUAL].writeParam = new unsigned char[operators[OperatorTypes_EQUAL].enumAmount]{0, 0, 0, 0, 0, 0, 0, 0};
 	operators[OperatorTypes_EQUAL].priority = 4;
 	operators[OperatorTypes_EQUAL].shortHandsAmounts = 1;
-	operators[OperatorTypes_EQUAL].shortHands = new std::string[operators[OperatorTypes_EQUAL].shortHandsAmounts]; operators[OperatorTypes_EQUAL].shortHands[0] = ":";
+	operators[OperatorTypes_EQUAL].shortHands = new std::string[operators[OperatorTypes_EQUAL].shortHandsAmounts]; 
+	operators[OperatorTypes_EQUAL].shortHands[0] = ":";
 	operators[OperatorTypes_EQUAL].rightParams = new unsigned char[operators[OperatorTypes_EQUAL].shortHandsAmounts]{1};
 	operators[OperatorTypes_EQUAL].leftParams = new unsigned char[operators[OperatorTypes_EQUAL].shortHandsAmounts]{1};
 	operators[OperatorTypes_EQUAL].shortFlipParams = new bool[operators[OperatorTypes_EQUAL].shortHandsAmounts]{false};
@@ -665,6 +666,51 @@ CelScriptCompiler::CelScriptCompiler()
 		nullptr,
 		new unsigned char[operators[OperatorTypes_POS].params[1]]{ 0, 1, 1, 1 }
 	};
+
+	operators[OperatorTypes_MOVE].keyword = "move";
+	operators[OperatorTypes_MOVE].enumAmount = 2;
+	operators[OperatorTypes_MOVE].enums = new std::string[operators[OperatorTypes_MOVE].enumAmount]; operators[OperatorTypes_MOVE].enums[0] = ""; operators[OperatorTypes_MOVE].enums[1] = "";
+	operators[OperatorTypes_MOVE].byteCodes = new unsigned char[operators[OperatorTypes_MOVE].enumAmount]{ opcode_MVE,opcode_MVE };
+	operators[OperatorTypes_MOVE].params = new unsigned char[operators[OperatorTypes_MOVE].enumAmount]{ 4,4 };
+	operators[OperatorTypes_MOVE].minParams = new unsigned char[operators[OperatorTypes_MOVE].enumAmount]{ 3,3 };
+	operators[OperatorTypes_MOVE].paramsyntax = new VarType*[operators[OperatorTypes_MOVE].enumAmount]{
+		new VarType[operators[OperatorTypes_MOVE].params[0]]{ VarType_NUMBER, VarType_FLOAT, VarType_FLOAT, VarType_FLOAT },
+		new VarType[operators[OperatorTypes_MOVE].params[1]]{ VarType_NUMBER, VarType_NUMBER, VarType_NUMBER, VarType_NUMBER } };
+	operators[OperatorTypes_MOVE].paramTypes = new ParamType*[operators[OperatorTypes_MOVE].enumAmount]{
+		new ParamType[operators[OperatorTypes_MOVE].params[0]]{ ParamType_NA, ParamType_NA, ParamType_NA, ParamType_NA },
+		new ParamType[operators[OperatorTypes_MOVE].params[0]]{ ParamType_NA, ParamType_NA, ParamType_NA, ParamType_NA } };
+	operators[OperatorTypes_MOVE].optionalPar = new bool*[operators[OperatorTypes_MOVE].enumAmount]{
+		new bool[operators[OperatorTypes_MOVE].params[0]]{ false, false, false, true },
+		new bool[operators[OperatorTypes_MOVE].params[0]]{ false, false, false, true }
+	};
+	operators[OperatorTypes_MOVE].readParam = new unsigned char[operators[OperatorTypes_MOVE].enumAmount]{ 0,0 };
+	operators[OperatorTypes_MOVE].returns = new VarType[operators[OperatorTypes_MOVE].enumAmount]{ VarType_NA,VarType_NA };
+	operators[OperatorTypes_MOVE].returnType = new ParamType[operators[OperatorTypes_MOVE].enumAmount]{ ParamType_NA,ParamType_NA };
+	operators[OperatorTypes_MOVE].writeParam = new unsigned char[operators[OperatorTypes_MOVE].enumAmount]{ 0,0 };
+	operators[OperatorTypes_MOVE].priority = 0;
+	operators[OperatorTypes_MOVE].shortHandsAmounts = 0;
+	operators[OperatorTypes_MOVE].amountParOperators = new unsigned char[operators[OperatorTypes_MOVE].enumAmount]{ 0,1 };
+	operators[OperatorTypes_MOVE].parRepeatsMin = new unsigned char*[operators[OperatorTypes_MOVE].enumAmount]{
+		new unsigned char[operators[OperatorTypes_MOVE].params[0]]{ 0, 0, 0, 0 },
+		new unsigned char[operators[OperatorTypes_MOVE].params[1]]{ 0, 0, 0, 0 }
+	};
+	operators[OperatorTypes_MOVE].parRepeatsMax = new unsigned char*[operators[OperatorTypes_MOVE].enumAmount]{
+		new unsigned char[operators[OperatorTypes_MOVE].params[0]]{ 0, 0, 0, 0 },
+		new unsigned char[operators[OperatorTypes_MOVE].params[1]]{ 0, 0, 0, 0 }
+	};
+	operators[OperatorTypes_MOVE].parOperatorAppend = new bool*[operators[OperatorTypes_MOVE].enumAmount]{
+		new bool[operators[OperatorTypes_MOVE].params[0]]{ false, false, false, false },
+		new bool[operators[OperatorTypes_MOVE].params[0]]{ false, false, false, false }
+	};
+	operators[OperatorTypes_MOVE].parOperators = new OperatorTypes*[operators[OperatorTypes_MOVE].enumAmount]{
+		nullptr,
+		new OperatorTypes[operators[OperatorTypes_MOVE].amountParOperators[1]]{ OperatorTypes_CAST }
+	};
+	operators[OperatorTypes_MOVE].parOperator = new unsigned char*[operators[OperatorTypes_MOVE].enumAmount]{
+		nullptr,
+		new unsigned char[operators[OperatorTypes_MOVE].params[1]]{ 0, 1, 1, 1 }
+	};
+
 
 	operators[OperatorTypes_SIZE].keyword = "size";
 	operators[OperatorTypes_SIZE].enumAmount = 1;
@@ -1767,6 +1813,7 @@ CelScriptCompiled* CelScriptCompiler::CompileSource(CelScriptSource* source, Com
 								{
 
 									scriptParams = param;
+
 								}
 
 								if (compiledSource != nullptr)

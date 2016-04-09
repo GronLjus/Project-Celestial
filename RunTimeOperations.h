@@ -22,7 +22,7 @@ namespace Logic
 
 		opcode_GETSCRNX, opcode_GETSCRNY,
 
-		opcode_RESNAP, opcode_POS, opcode_SIZE, opcode_2DADDCHLD,
+		opcode_RESNAP, opcode_POS, opcode_MVE, opcode_SIZE, opcode_2DADDCHLD,
 
 		opcode_POSTSTR, opcode_POSTNMBR, opcode_POSTFLOAT,
 

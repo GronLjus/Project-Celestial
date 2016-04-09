@@ -13,8 +13,11 @@ CelScriptCompiled::CelScriptCompiled(unsigned int maxParams, unsigned int maxStr
 	this->maxFloatParams = maxFloatParams;
 
 	paramAdrDic = new unsigned int[maxParams];
+	for (unsigned int i = 0; i < maxParams; i++) { paramAdrDic[i] = 0; }
 	stringParamAdrDic = new unsigned int[maxStringParams];
+	for (unsigned int i = 0; i < maxStringParams; i++) { stringParamAdrDic[i] = 0; }
 	floatParamAdrDic = new unsigned int[maxFloatParams];
+	for (unsigned int i = 0; i < maxFloatParams; i++) { floatParamAdrDic[i] = 0; }
 
 	systemParams = new unsigned int[Logic::RunTimeParams_NA];
 
@@ -61,13 +64,7 @@ void CelScriptCompiled::AddCommand(unsigned char* code, int codeSize)
 void CelScriptCompiled::AddParamAdr(unsigned int param, unsigned int adr, char type)
 {
 
-	if (type == 'n' && param < maxParams)
-	{
-
-		paramAdrDic[param] = adr;
-
-	}
-	else if(type == 's' && param <maxStringParams)
+	if(type == 's' && param <maxStringParams)
 	{
 
 		stringParamAdrDic[param] = adr;
@@ -77,6 +74,12 @@ void CelScriptCompiled::AddParamAdr(unsigned int param, unsigned int adr, char t
 	{
 
 		floatParamAdrDic[param] = adr;
+
+	}
+	else
+	{
+
+		paramAdrDic[param] = adr;
 
 	}
 }

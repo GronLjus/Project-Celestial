@@ -1,2 +1,22 @@
-focus ?0
-pos ?0 ?1 ?2
+$
+{
+	lastX = 0
+	lastY = 0
+}
+
+if ?3 : 0
+{
+
+	lastX = ?1
+	lastY = ?2
+
+}
+else
+{
+	
+	move ?0 ?1-lastX , ?2-lastY
+	lastX = ?1
+	lastY = ?2
+	post 'coordinates'
+
+}

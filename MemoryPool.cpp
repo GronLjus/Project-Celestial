@@ -265,7 +265,7 @@ MemErrorCode MemoryPool::CopyVariable(unsigned int dst, unsigned int src)
 	memBlock mem = variables->GetValue(src);
 
 	unsigned int totalBytes = mem.length;
-	unsigned int globalPlace = mem.place + mem.length;
+	unsigned int globalPlace = mem.place;
 
 	while (totalBytes > 0)
 	{

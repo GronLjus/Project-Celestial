@@ -588,6 +588,50 @@ RunTimeError PosOperator(unsigned int returnVar, unsigned char* params, unsigned
 
 }
 
+RunTimeError MoveOperator(unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int mId, RunTimeCommons* rtc)
+{
+
+	if (paramSize < 12)
+	{
+
+		return RunTimeError_BADPARAMS;
+
+	}
+
+	unsigned int s = 4;
+	unsigned int var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
+	rtc->memory->ReadVariable(var - 1, rtc->intLoader, s);
+	unsigned int objectToMod = (rtc->intLoader[0] | ((int)rtc->intLoader[1] << 8) | ((int)rtc->intLoader[2] << 16) | ((int)rtc->intLoader[3] << 24));
+	BaseObject* object = rtc->gameObjects->GetValue(objectToMod);
+
+	Message mess;
+	mess.destination = MessageSource_OBJECT;
+	mess.type = MessageType_OBJECT;
+	mess.mess = ObjectMess_MOVE;
+
+	unsigned int xVar = (params[4] | ((int)params[5] << 8) | ((int)params[6] << 16) | ((int)params[7] << 24));
+	rtc->memory->ReadVariable(xVar - 1, rtc->intLoader, s);
+	mess.SetParams(rtc->intLoader, 0, 4);
+
+	unsigned int yVar = (params[8] | ((int)params[9] << 8) | ((int)params[10] << 16) | ((int)params[11] << 24));
+	rtc->memory->ReadVariable(yVar - 1, rtc->intLoader, s);
+	mess.SetParams(rtc->intLoader, 4, 4);
+
+	if (paramSize == 16)
+	{
+
+		unsigned int zVar = (params[12] | ((int)params[13] << 8) | ((int)params[14] << 16) | ((int)params[15] << 24));
+		rtc->memory->ReadVariable(zVar - 1, rtc->intLoader, s);
+		mess.SetParams(rtc->intLoader, 8, 4);
+
+	}
+
+	object->Update(&mess);
+
+	return RunTimeError_OK;
+
+}
+
 RunTimeError IgnoreMouseOperator(unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int mId, RunTimeCommons* rtc)
 {
 
@@ -2219,6 +2263,7 @@ CelScriptRuntimeHandler::CelScriptRuntimeHandler(MessageQueue* mQueue, Celestial
 
 	operators[opcode_RESNAP] = ReSnapOperator;
 	operators[opcode_POS] = PosOperator;
+	operators[opcode_MVE] = MoveOperator;
 	operators[opcode_SIZE] = SizeOperator;
 	operators[opcode_2DADDCHLD] = Add2DOperator;
 
@@ -2366,11 +2411,11 @@ RunTimeError CelScriptRuntimeHandler::AddScriptFloatParam(int scriptId, unsigned
 
 	unsigned int par = scriptFloatParams->GetValue(script->GetScriptId() - 1);
 	unsigned int parPlace = script->GetAdr(par, 'f');
+	scriptFloatParams->Add(par + 1, script->GetScriptId() - 1);
 
 	if (parPlace != 0)
 	{
 
-		scriptFloatParams->Add(par + 1, script->GetScriptId() - 1);
 		rtc->GetValue(script->GetScriptId() - 1)->memory->AddVariable(parPlace - 1, value, 4);
 
 	}
@@ -2386,11 +2431,11 @@ RunTimeError CelScriptRuntimeHandler::AddScriptNumParam(int scriptId, unsigned c
 
 	unsigned int par = scriptNumParams->GetValue(script->GetScriptId() - 1);
 	unsigned int parPlace = script->GetAdr(par, 'n');
+	scriptNumParams->Add(par + 1, script->GetScriptId() - 1);
 
 	if (parPlace != 0)
 	{
 
-		scriptNumParams->Add(par + 1, script->GetScriptId() - 1);
 		rtc->GetValue(script->GetScriptId() - 1)->memory->AddVariable(parPlace - 1, value, 4);
 
 	}
@@ -2407,10 +2452,10 @@ RunTimeError CelScriptRuntimeHandler::AddScriptStrParam(int scriptId, std::strin
 
 	unsigned int par = scriptStrParams->GetValue(script->GetScriptId() - 1);
 	unsigned int parPlace = script->GetAdr(par, 's');
+	scriptStrParams->Add(par + 1, script->GetScriptId() - 1);
 
 	if (parPlace != 0)
 	{
-		scriptStrParams->Add(par + 1, script->GetScriptId() - 1);
 		unsigned char* charArr = new unsigned char[value.length() + 4];
 		charArr[0] = value.length() >> 0;
 		charArr[1] = value.length() >> 8;

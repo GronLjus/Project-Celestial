@@ -214,7 +214,7 @@ CelestialDoubleList<Token>* CelScriptLexer::tokenizeWord(string word, int lNumbe
 			if (isSep)
 			{
 
-				if (returnVal->GetLastNode()->GetNodeObject().type != TokenType_SEPERATOR)
+				if (returnVal->GetLastNode() == nullptr || returnVal->GetLastNode()->GetNodeObject().type != TokenType_SEPERATOR)
 				{
 
 					Token lexT = Token();
@@ -903,6 +903,15 @@ void CelScriptLexer::extractOps(CelestialDoubleList<Token>* tokens, int lNumber,
 						{
 
 							flipParamsAroundOp(node, operators[k].leftParams[j], operators[k].rightParams[j]);
+
+						}
+
+						CelestialDoubleListNode<Token>* rightTok = node;
+
+						for (unsigned char h = 0; h < operators[k].rightParams[j]; h++)
+						{
+
+							rightTok = rightTok->GetNext();
 
 						}
 

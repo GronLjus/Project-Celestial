@@ -588,7 +588,7 @@ CelestialList<CelestialList<unsigned char>*>* CelScriptCodeGenerator::generateCo
 		if (varRemove == var - 1)
 		{
 
-			var--;
+			holes->PushElement(varRemove);
 
 		}
 		else
@@ -610,13 +610,13 @@ CelScriptCodeGenerator::CelScriptCodeGenerator(Keyword* keywords, int keyWordsSi
 	this->keywords = keywords;
 	this->keyWordsSize = keyWordsSize;
 
-	holes = new CelestialList<int>;
 
 }
 
 CelestialList<CelestialList<unsigned char>*>* CelScriptCodeGenerator::GenerateCode(AST ast)
 {
 
+	holes = new CelestialList<int>;
 	CelestialListNode<CelestialTree<syntax>*>* trees = ast.trees->GetFirstNode();
 	CelestialList<CelestialList<unsigned char>*>* byteCode = new CelestialList<CelestialList<unsigned char>*>();
 	var = 1;
@@ -660,6 +660,7 @@ CelestialList<CelestialList<unsigned char>*>* CelScriptCodeGenerator::GenerateCo
 	initBlock->AddElement(initSize[1]);
 	initBlock->AddElement(initSize[2]);
 	initBlock->AddElement(initSize[3]);
+	delete holes;
 	return byteCode;
 
 }
@@ -667,6 +668,5 @@ CelestialList<CelestialList<unsigned char>*>* CelScriptCodeGenerator::GenerateCo
 CelScriptCodeGenerator::~CelScriptCodeGenerator()
 {
 
-	delete holes;
 
 }

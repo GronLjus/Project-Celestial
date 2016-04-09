@@ -56,10 +56,10 @@ void InputHandler::Init(CelestialSlicedList<BaseObject*>* gameObjects)
 
 }
 
-void InputHandler::triggerScript(unsigned int script, unsigned int time, unsigned int targetId)
+void InputHandler::setCommonScriptParameters(unsigned int script, unsigned int time, unsigned int targetId)
 {
 
-	unsigned char tempBuff[]{script >> 0, script >> 8, script >> 16, script >> 24, 
+	unsigned char tempBuff[]{ script >> 0, script >> 8, script >> 16, script >> 24,
 		targetId >> 0, targetId >> 8, targetId >> 16, targetId >> 24
 	};
 	unsigned char tempBuff2[]{ script >> 0, script >> 8, script >> 16, script >> 24,
@@ -96,6 +96,15 @@ void InputHandler::triggerScript(unsigned int script, unsigned int time, unsigne
 	outQueue->PushMessage(&messageBuffer[this->currentMessage]);
 	this->currentMessage = (this->currentMessage + 1) % outMessages;
 
+}
+
+
+void InputHandler::runScript(unsigned int script, unsigned int time)
+{
+
+	unsigned char tempBuff[]{script >> 0, script >> 8, script >> 16, script >> 24
+	};
+
 	messageBuffer[this->currentMessage].SetParams(tempBuff, 0, 4);
 	messageBuffer[this->currentMessage].timeSent = time;
 	messageBuffer[this->currentMessage].destination = MessageSource_CELSCRIPT;
@@ -104,6 +113,36 @@ void InputHandler::triggerScript(unsigned int script, unsigned int time, unsigne
 	messageBuffer[this->currentMessage].read = false;
 	outQueue->PushMessage(&messageBuffer[this->currentMessage]);
 	this->currentMessage = (this->currentMessage + 1) % outMessages;
+
+}
+
+void InputHandler::triggerScript(unsigned int script, unsigned int time, unsigned int targetId, unsigned int dragStatus)
+{
+
+	setCommonScriptParameters(script, time, targetId);
+
+	unsigned char tempBuff[]{ script >> 0, script >> 8, script >> 16, script >> 24,
+		dragStatus >> 0, dragStatus >> 8, dragStatus >> 16, dragStatus >> 24
+	};
+
+	messageBuffer[this->currentMessage].timeSent = time;
+	messageBuffer[this->currentMessage].destination = MessageSource_CELSCRIPT;
+	messageBuffer[this->currentMessage].type = MessageType_SCRIPT;
+	messageBuffer[this->currentMessage].mess = ScriptMess_ADDPARNUM;
+	messageBuffer[this->currentMessage].read = false;
+	messageBuffer[this->currentMessage].SetParams(tempBuff, 0, 8);
+	outQueue->PushMessage(&messageBuffer[this->currentMessage]);
+	this->currentMessage = (this->currentMessage + 1) % outMessages;
+
+	runScript(script, time);
+}
+
+void InputHandler::triggerScript(unsigned int script, unsigned int time, unsigned int targetId)
+{
+
+	setCommonScriptParameters(script, time, targetId);
+	runScript(script, time);
+
 }
 
 void InputHandler::handleKeys(unsigned int time)
@@ -260,7 +299,7 @@ bool InputHandler::checkDrag(unsigned int time)
 					{
 
 						draggedTarget = firstTarget->GetTargetId();
-						triggerScript(draggedScript-1, time, draggedTarget);
+						triggerScript(draggedScript-1, time, draggedTarget,0);
 
 					}
 				}
@@ -296,7 +335,7 @@ bool InputHandler::checkDrag(unsigned int time)
 			if (draggedScript != 0)
 			{
 
-				triggerScript(draggedScript-1, time, draggedTarget);
+				triggerScript(draggedScript-1, time, draggedTarget, 2);
 				draggedScript = 0;
 				draggedTarget = 0;
 
@@ -317,7 +356,7 @@ bool InputHandler::checkDrag(unsigned int time)
 			if (draggedScript != 0)
 			{
 
-				triggerScript(draggedScript-1, time, draggedTarget);
+				triggerScript(draggedScript-1, time, draggedTarget,1);
 
 			}
 			else if (draggedTarget == 0)
