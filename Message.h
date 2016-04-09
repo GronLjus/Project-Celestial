@@ -8,7 +8,7 @@ namespace CrossHandlers
 	enum MessageType{ MessageType_INPUT, MessageType_SCRIPT, MessageType_RESOURCES, MessageType_ENTITIES, MessageType_GUIENTITIES, MessageType_GRAPHICS, MessageType_EVENT, MessageType_SYSTEM, MessageType_OBJECT, MessageType_NA };
 
 	enum InputMess{ InputMess_ADDSCREENTARGET, InputMess_MOUSEMOVE,InputMess_MOUSEDWN, InputMess_MOUSEUP, InputMess_KEYDWN, InputMess_KEYUP, InputMess_CHAR, InputMess_NA };
-	enum ScriptMess{ ScriptMess_RUN, ScriptMess_RUNFROM, ScriptMess_ADDPARNUM, ScriptMess_ADDPARASTR, ScriptMess_RESUME, ScriptMess_CATCHUP, ScriptMess_NA };
+	enum ScriptMess{ ScriptMess_RUN, ScriptMess_RUNFROM, ScriptMess_ADDPARNUM, ScriptMess_ADDPARASTR, ScriptMess_ADDPARFLOAT, ScriptMess_RESUME, ScriptMess_CATCHUP, ScriptMess_NA };
 	enum ResourceMess{
 		ResourceMess_LOADCAMERA, ResourceMess_LOADOBJECT,
 		ResourceMess_LOADGAMEBOARD, ResourceMess_LOADMESH, ResourceMess_LOADLIGHT, ResourceMess_LOADCHARKEYTRIGGER, ResourceMess_LOADKEYTRIGGER, ResourceMess_LOADSCRIPT,

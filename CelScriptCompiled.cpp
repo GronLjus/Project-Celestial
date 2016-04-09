@@ -3,16 +3,19 @@
 
 using namespace Resources;
 
-CelScriptCompiled::CelScriptCompiled(unsigned int maxParams, unsigned int maxStringParams)
+CelScriptCompiled::CelScriptCompiled(unsigned int maxParams, unsigned int maxStringParams, unsigned int maxFloatParams)
 {
 
 	maxCodeSize = 100;
 	
 	this->maxParams = maxParams;
 	this->maxStringParams = maxStringParams;
+	this->maxFloatParams = maxFloatParams;
 
 	paramAdrDic = new unsigned int[maxParams];
-	stringParamAdrDic = new unsigned int[maxParams];
+	stringParamAdrDic = new unsigned int[maxStringParams];
+	floatParamAdrDic = new unsigned int[maxFloatParams];
+
 	systemParams = new unsigned int[Logic::RunTimeParams_NA];
 
 	code = new unsigned char*[maxCodeSize];
@@ -55,19 +58,25 @@ void CelScriptCompiled::AddCommand(unsigned char* code, int codeSize)
 
 }
 
-void CelScriptCompiled::AddParamAdr(unsigned int param, unsigned int adr, bool string)
+void CelScriptCompiled::AddParamAdr(unsigned int param, unsigned int adr, char type)
 {
 
-	if (!string && param < maxParams)
+	if (type == 'n' && param < maxParams)
 	{
 
 		paramAdrDic[param] = adr;
 
 	}
-	else if(string && param <maxStringParams)
+	else if(type == 's' && param <maxStringParams)
 	{
 
 		stringParamAdrDic[param] = adr;
+
+	}
+	else if (type == 'f' && param <maxFloatParams)
+	{
+
+		floatParamAdrDic[param] = adr;
 
 	}
 }
@@ -90,14 +99,36 @@ unsigned int CelScriptCompiled::GetMaxParams(bool string) const
 
 }
 
-unsigned int CelScriptCompiled::GetAdr(unsigned int param, bool string) const
+unsigned int CelScriptCompiled::GetAdr(unsigned int param, char type) const
 {
 
-	if ((!string && param < maxParams ) || (string && param <maxStringParams))
+	switch (type)
 	{
 
-		return string ? stringParamAdrDic[param] : paramAdrDic[param];
+		case 'n':
+			if (param < maxParams)
+			{
 
+				return paramAdrDic[param];
+
+			}
+			break;
+		case 's':
+			if (param < maxStringParams)
+			{
+
+				return stringParamAdrDic[param];
+
+			}
+			break;
+		case 'f':
+			if (param < maxFloatParams)
+			{
+
+				return floatParamAdrDic[param];
+
+			}
+			break;
 	}
 
 	return 0;
@@ -184,6 +215,8 @@ CelScriptCompiled::~CelScriptCompiled()
 
 	delete[] paramAdrDic;
 	delete[] stringParamAdrDic;
+	delete[] floatParamAdrDic;
+
 	delete[] systemParams;
 
 }

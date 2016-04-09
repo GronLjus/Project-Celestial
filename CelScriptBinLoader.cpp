@@ -114,7 +114,9 @@ CelScriptCompiled* CelScriptBinLoader::Load(std::string path)
 			readbytes += sizeof(int);
 			unsigned int strParams = memblock[readbytes] | ((int)memblock[readbytes + 1] << 8) | ((int)memblock[readbytes + 2] << 16) | ((int)memblock[readbytes + 3] << 24);
 			readbytes += sizeof(int);
-			retVal = new CelScriptCompiled(numParams, strParams);
+			unsigned int fltParams = memblock[readbytes] | ((int)memblock[readbytes + 1] << 8) | ((int)memblock[readbytes + 2] << 16) | ((int)memblock[readbytes + 3] << 24);
+			readbytes += sizeof(int);
+			retVal = new CelScriptCompiled(numParams, strParams, fltParams);
 
 			for (int i = 0; i < numParams; i++)
 			{

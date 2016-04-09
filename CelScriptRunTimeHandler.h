@@ -21,8 +21,11 @@ namespace Logic
 		CrossHandlers::CelestialSlicedList<Resources::BaseObject*>* gameObjects;
 		///<summary>Where the scripts start</summary>
 		CrossHandlers::CelestialSlicedList<unsigned int>* scriptStarts;
+
 		CrossHandlers::CelestialSlicedList<unsigned int>* scriptNumParams;
 		CrossHandlers::CelestialSlicedList<unsigned int>* scriptStrParams;
+		CrossHandlers::CelestialSlicedList<unsigned int>* scriptFloatParams;
+
 		CrossHandlers::CelestialSlicedList<unsigned int>* scriptParents;
 		CrossHandlers::CelestialSlicedList<bool>* scriptInited;
 		///<summary>The common values for all operators</summary>
@@ -44,12 +47,10 @@ namespace Logic
 		///<param val='id'>[in]The id of the script to run</param>
 		///<returns>Any runtime errors</returns>
 		RunTimeError RunScript(int id, unsigned int stackId, unsigned int eTime);
-		///<summary>Resumes a script</summary>
-		///<param val='id'>[in]The id of the script to run</param>
-		///<param val='inVal'>[in]The value to use as parameter</param>
-		///<returns>Any runtime errors</returns>
-		RunTimeError AddScriptParam(int scriptId, int value);
-		RunTimeError AddScriptParam(int scriptId, std::string value);
+
+		RunTimeError AddScriptFloatParam(int scriptId, unsigned char* value);
+		RunTimeError AddScriptNumParam(int scriptId, unsigned char* value);
+		RunTimeError AddScriptStrParam(int scriptId, std::string value);
 
 		void SetWaitingScriptVar(unsigned int scriptId, unsigned int scriptVar, int value);
 

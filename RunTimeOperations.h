@@ -42,7 +42,7 @@ namespace Logic
 
 		opcode_NUMGRT2CONST, opcode_NUMGRTFLOAT, opcode_NUMGRTVAR,
 
-		opcode_RNSCRPT, opcode_STSCRPTPRMNMBR, opcode_STSCRPTPRMSTR,
+		opcode_RNSCRPT, opcode_STSCRPTPRMNMBR, opcode_STSCRPTPRMSTR, opcode_STSCRPTPRMFLT,
 
 		opcode_EXPRTCNST, opcode_EXPRTVAR, opcode_IMPRT,
 		opcode_HDE, opcode_SHW,

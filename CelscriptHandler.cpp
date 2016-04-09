@@ -109,13 +109,19 @@ void CelscriptHandler::Update(unsigned int time)
 		{
 
 			string parString((char*)(&currentMessage->params[4]));
-			runTime->AddScriptParam(param1, parString);
+			runTime->AddScriptStrParam(param1, parString);
 
 		}
 		else if (currentMessage->mess == ScriptMess_ADDPARNUM)
 		{
-			unsigned int param2 = currentMessage->params[4] | ((int)currentMessage->params[5] << 8) | ((int)currentMessage->params[6] << 16) | ((int)currentMessage->params[7] << 24);
-			runTime->AddScriptParam(param1, param2);
+			
+			runTime->AddScriptNumParam(param1, &(currentMessage->params[4]));
+
+		}
+		else if (currentMessage->mess == ScriptMess_ADDPARFLOAT)
+		{
+
+			runTime->AddScriptFloatParam(param1, &(currentMessage->params[4]));
 
 		}
 

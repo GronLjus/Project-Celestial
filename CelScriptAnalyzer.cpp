@@ -439,7 +439,7 @@ CelScriptAnalyzer::operatorParams CelScriptAnalyzer::analyzeOperatorParams(Compi
 							val.val[i] == '7' ||
 							val.val[i] == '8' ||
 							val.val[i] == '9') && 
-							!(i == 1 && val.val[i] == 's');
+							!((i == 1 && val.val[i] == 's') || (i == 1 && val.val[i] == 'f'));
 
 					}
 
@@ -474,7 +474,9 @@ CelScriptAnalyzer::operatorParams CelScriptAnalyzer::analyzeOperatorParams(Compi
 					else
 					{
 
-						type = val.val[1] == 's' ? VarType_STRING : VarType_NUMBER;
+						type = val.val[1] == 's' ? VarType_STRING : 
+							val.val[1] == 'f' ? VarType_FLOAT : 
+							VarType_NUMBER;
 
 					}
 				}

@@ -24,22 +24,24 @@ namespace Resources
 			unsigned int* systemParams;
 			unsigned int* paramAdrDic;
 			unsigned int* stringParamAdrDic;
+			unsigned int* floatParamAdrDic;
 			unsigned int maxParams;
 			unsigned int maxStringParams;
+			unsigned int maxFloatParams;
 			unsigned int scriptId;
 
 		public:
-			CelScriptCompiled(unsigned int maxParams, unsigned int maxStringParams);
+			CelScriptCompiled(unsigned int maxParams, unsigned int maxStringParams, unsigned int maxFloatParams);
 			///<summary>Add a compiled command to the script</summary>
 			///<param val='code'>[in]An array of bytes</param>
 			///<param val='codeSize'>[in]The amount of bytes in the array</param>
 			void AddCommand(unsigned char* code, int codeSize);
 
-			void AddParamAdr(unsigned int param, unsigned int adr,bool string);
+			void AddParamAdr(unsigned int param, unsigned int adr, char type);
 			void AddSystemParamAdr(Logic::RunTimeParams rtp, unsigned int adr);
 
 			unsigned int GetMaxParams(bool string) const;
-			unsigned int GetAdr(unsigned int param,bool string) const;
+			unsigned int GetAdr(unsigned int param,char type) const;
 			unsigned int GetAdr(Logic::RunTimeParams rtp) const;
 
 			///<summary>Sets the offset of the script</summary>

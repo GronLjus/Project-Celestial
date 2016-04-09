@@ -733,41 +733,47 @@ CelScriptCompiler::CelScriptCompiler()
 	};
 
 	operators[OperatorTypes_SETPARAM].keyword = "stprm";
-	operators[OperatorTypes_SETPARAM].enumAmount = 2;
-	operators[OperatorTypes_SETPARAM].enums = new std::string[operators[OperatorTypes_SETPARAM].enumAmount]; operators[OperatorTypes_SETPARAM].enums[0] = "num"; operators[OperatorTypes_SETPARAM].enums[1] = "str";
-	operators[OperatorTypes_SETPARAM].byteCodes = new unsigned char[operators[OperatorTypes_SETPARAM].enumAmount]{opcode_STSCRPTPRMNMBR,opcode_STSCRPTPRMSTR};
-	operators[OperatorTypes_SETPARAM].params = new unsigned char[operators[OperatorTypes_SETPARAM].enumAmount]{2,2};
-	operators[OperatorTypes_SETPARAM].minParams = new unsigned char[operators[OperatorTypes_SETPARAM].enumAmount]{ 2,2 };
+	operators[OperatorTypes_SETPARAM].enumAmount = 3;
+	operators[OperatorTypes_SETPARAM].enums = new std::string[operators[OperatorTypes_SETPARAM].enumAmount]; operators[OperatorTypes_SETPARAM].enums[0] = "num"; operators[OperatorTypes_SETPARAM].enums[1] = "str"; operators[OperatorTypes_SETPARAM].enums[2] = "float";
+	operators[OperatorTypes_SETPARAM].byteCodes = new unsigned char[operators[OperatorTypes_SETPARAM].enumAmount]{opcode_STSCRPTPRMNMBR,opcode_STSCRPTPRMSTR,opcode_STSCRPTPRMFLT};
+	operators[OperatorTypes_SETPARAM].params = new unsigned char[operators[OperatorTypes_SETPARAM].enumAmount]{2,2,2};
+	operators[OperatorTypes_SETPARAM].minParams = new unsigned char[operators[OperatorTypes_SETPARAM].enumAmount]{ 2,2,2 };
 	operators[OperatorTypes_SETPARAM].paramsyntax = new VarType*[operators[OperatorTypes_SETPARAM].enumAmount]{
 		new VarType[operators[OperatorTypes_SETPARAM].params[0]]{VarType_NUMBER, VarType_NUMBER},
-			new VarType[operators[OperatorTypes_SETPARAM].params[1]]{VarType_STRING, VarType_NUMBER}
+			new VarType[operators[OperatorTypes_SETPARAM].params[1]]{VarType_STRING, VarType_NUMBER},
+		new VarType[operators[OperatorTypes_SETPARAM].params[2]]{ VarType_FLOAT, VarType_NUMBER }
 	};
 	operators[OperatorTypes_SETPARAM].paramTypes = new ParamType*[operators[OperatorTypes_SETPARAM].enumAmount]{
 		new ParamType[operators[OperatorTypes_SETPARAM].params[0]]{ParamType_NA, ParamType_NA},
-			new ParamType[operators[OperatorTypes_SETPARAM].params[1]]{ParamType_NA, ParamType_NA}
+		new ParamType[operators[OperatorTypes_SETPARAM].params[1]]{ParamType_NA, ParamType_NA},
+		new ParamType[operators[OperatorTypes_SETPARAM].params[2]]{ ParamType_NA, ParamType_NA }
 	};
 	operators[OperatorTypes_SETPARAM].optionalPar = new bool*[operators[OperatorTypes_SETPARAM].enumAmount]{
 		new bool[operators[OperatorTypes_SETPARAM].params[0]]{ false, false },
-		new bool[operators[OperatorTypes_SETPARAM].params[1]]{ false, false }
+		new bool[operators[OperatorTypes_SETPARAM].params[1]]{ false, false },
+		new bool[operators[OperatorTypes_SETPARAM].params[2]]{ false, false }
 	};
-	operators[OperatorTypes_SETPARAM].readParam = new unsigned char[operators[OperatorTypes_SETPARAM].enumAmount]{0,0};
-	operators[OperatorTypes_SETPARAM].returns = new VarType[operators[OperatorTypes_SETPARAM].enumAmount]{VarType_NA, VarType_NA};
-	operators[OperatorTypes_SETPARAM].returnType = new ParamType[operators[OperatorTypes_SETPARAM].enumAmount]{ParamType_NA, ParamType_NA};
-	operators[OperatorTypes_SETPARAM].writeParam = new unsigned char[operators[OperatorTypes_SETPARAM].enumAmount]{0,0};
+	operators[OperatorTypes_SETPARAM].readParam = new unsigned char[operators[OperatorTypes_SETPARAM].enumAmount]{0,0,0};
+	operators[OperatorTypes_SETPARAM].returns = new VarType[operators[OperatorTypes_SETPARAM].enumAmount]{VarType_NA, VarType_NA,VarType_NA };
+	operators[OperatorTypes_SETPARAM].returnType = new ParamType[operators[OperatorTypes_SETPARAM].enumAmount]{ParamType_NA, ParamType_NA,ParamType_NA };
+	operators[OperatorTypes_SETPARAM].writeParam = new unsigned char[operators[OperatorTypes_SETPARAM].enumAmount]{0,0,0};
 	operators[OperatorTypes_SETPARAM].priority = 0;
 	operators[OperatorTypes_SETPARAM].shortHandsAmounts = 0;
-	operators[OperatorTypes_SETPARAM].amountParOperators = new unsigned char[operators[OperatorTypes_SETPARAM].enumAmount]{0,0};
+	operators[OperatorTypes_SETPARAM].amountParOperators = new unsigned char[operators[OperatorTypes_SETPARAM].enumAmount]{0,0,0};
 	operators[OperatorTypes_SETPARAM].parRepeatsMin = new unsigned char*[operators[OperatorTypes_SETPARAM].enumAmount]{
 		new unsigned char[operators[OperatorTypes_SETPARAM].params[0]]{0, 0},
-			new unsigned char[operators[OperatorTypes_SETPARAM].params[1]]{0, 0}
+			new unsigned char[operators[OperatorTypes_SETPARAM].params[1]]{0, 0},
+		new unsigned char[operators[OperatorTypes_SETPARAM].params[2]]{ 0, 0 }
 	};
 	operators[OperatorTypes_SETPARAM].parRepeatsMax = new unsigned char*[operators[OperatorTypes_SETPARAM].enumAmount]{
 		new unsigned char[operators[OperatorTypes_SETPARAM].params[0]]{0, 0},
-			new unsigned char[operators[OperatorTypes_SETPARAM].params[1]]{0, 0}
+			new unsigned char[operators[OperatorTypes_SETPARAM].params[1]]{0, 0},
+		new unsigned char[operators[OperatorTypes_SETPARAM].params[2]]{ 0, 0 }
 	};
 	operators[OperatorTypes_SETPARAM].parOperatorAppend = new bool*[operators[OperatorTypes_SETPARAM].enumAmount]{
 		new bool[operators[OperatorTypes_SETPARAM].params[0]]{false, false},
-			new bool[operators[OperatorTypes_SETPARAM].params[1]]{false, false}
+			new bool[operators[OperatorTypes_SETPARAM].params[1]]{false, false},
+		new bool[operators[OperatorTypes_SETPARAM].params[2]]{ false, false }
 	};
 
 
@@ -1670,9 +1676,9 @@ unsigned int CelScriptCompiler::getParam(std::string param) const
 			param[i] == '7' ||
 			param[i] == '8' ||
 			param[i] == '9') &&
-			!(i == 1 && param[i] == 's');
+			!((i == 1 && param[i] == 's') || (i == 1 && param[i] == 'f'));
 
-		if (!isRP && param[i] != 's')
+		if (!isRP && param[i] != 's' && param[i] != 'f')
 		{
 
 			numb += param[i];
@@ -1727,6 +1733,7 @@ CelScriptCompiled* CelScriptCompiler::CompileSource(CelScriptSource* source, Com
 				CelestialList<CelestialList<unsigned char>*>* compiledCode = generator->GenerateCode(abstractSyntaxTree);
 				unsigned int scriptParams = 0;
 				unsigned int scriptStringParams = 0;
+				unsigned int scriptFloatParams = 0;
 
 				for (int k = 0; k < 2; k++)
 				{
@@ -1750,6 +1757,12 @@ CelScriptCompiled* CelScriptCompiler::CompileSource(CelScriptSource* source, Com
 									scriptStringParams = param;
 
 								}
+								else if (symbol[1] == 'f' && scriptStringParams < param)
+								{
+
+									scriptFloatParams = param;
+
+								}
 								else if (scriptParams < param)
 								{
 
@@ -1759,7 +1772,7 @@ CelScriptCompiled* CelScriptCompiler::CompileSource(CelScriptSource* source, Com
 								if (compiledSource != nullptr)
 								{
 
-									compiledSource->AddParamAdr(param - 1, abstractSyntaxTree.symbolTable->GetValue(i).address, symbol[1] == 's');
+									compiledSource->AddParamAdr(param - 1, abstractSyntaxTree.symbolTable->GetValue(i).address, symbol[1]);
 
 								}
 							}
@@ -1787,7 +1800,7 @@ CelScriptCompiled* CelScriptCompiler::CompileSource(CelScriptSource* source, Com
 					if (k == 0)
 					{
 						
-						compiledSource = new CelScriptCompiled(scriptParams, scriptStringParams);
+						compiledSource = new CelScriptCompiled(scriptParams, scriptStringParams, scriptFloatParams);
 
 					}
 				}

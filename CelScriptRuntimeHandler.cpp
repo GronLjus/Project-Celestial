@@ -1933,6 +1933,32 @@ RunTimeError SetScriptParStrOperator(unsigned int returnVar, unsigned char* para
 
 }
 
+RunTimeError SetScriptParFloatOperator(unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int mId, RunTimeCommons* rtc)
+{
+
+	if (paramSize < 8)
+	{
+
+		return RunTimeError_BADPARAMS;
+
+	}
+
+	unsigned int s = 4;
+	unsigned int var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
+	unsigned int var2 = (params[4] | ((int)params[5] << 8) | ((int)params[6] << 16) | ((int)params[7] << 24));
+
+	Message mess;
+	mess.destination = MessageSource_CELSCRIPT;
+	mess.type = MessageType_SCRIPT;
+	mess.mess = ScriptMess_ADDPARFLOAT;
+	rtc->memory->ReadVariable(var2 - 1, rtc->intLoader, s);
+	mess.SetParams(rtc->intLoader, 0, 4);
+	rtc->memory->ReadVariable(var - 1, rtc->intLoader, s);
+	mess.SetParams(rtc->intLoader, 4, 4);
+	return sendMessageOut(mess, rtc);
+
+}
+
 RunTimeError SetUIOperator(unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int mId, RunTimeCommons* rtc)
 {
 
@@ -2272,8 +2298,11 @@ CelScriptRuntimeHandler::CelScriptRuntimeHandler(MessageQueue* mQueue, Celestial
 	rtc = new CelestialSlicedList<RunTimeCommons*>(20,nullptr);
 	this->gameObjects = gameObjects;
 	scriptStarts = new CelestialSlicedList<unsigned int>(20, 0);
+
+	scriptFloatParams = new CelestialSlicedList<unsigned int>(20, 0);
 	scriptNumParams = new CelestialSlicedList<unsigned int>(20, 0);
 	scriptStrParams = new CelestialSlicedList<unsigned int>(20, 0);
+
 	scriptParents = new CelestialSlicedList<unsigned int>(20, 0);
 	scriptInited = new CelestialSlicedList<bool>(20);
 	scriptIds = 0;
@@ -2329,21 +2358,40 @@ RunTimeError CelScriptRuntimeHandler::initScript(Resources::CelScriptCompiled* s
 
 }
 
-RunTimeError CelScriptRuntimeHandler::AddScriptParam(int scriptId, int value)
+RunTimeError CelScriptRuntimeHandler::AddScriptFloatParam(int scriptId, unsigned char* value)
+{
+
+	CelScriptCompiled* script = (CelScriptCompiled*)gameObjects->GetValue(scriptId);
+	RunTimeError er = initScript(script, scriptId);
+
+	unsigned int par = scriptFloatParams->GetValue(script->GetScriptId() - 1);
+	unsigned int parPlace = script->GetAdr(par, 'f');
+
+	if (parPlace != 0)
+	{
+
+		scriptFloatParams->Add(par + 1, script->GetScriptId() - 1);
+		rtc->GetValue(script->GetScriptId() - 1)->memory->AddVariable(parPlace - 1, value, 4);
+
+	}
+
+	return er;
+}
+
+RunTimeError CelScriptRuntimeHandler::AddScriptNumParam(int scriptId, unsigned char* value)
 {
 
 	CelScriptCompiled* script = (CelScriptCompiled*)gameObjects->GetValue(scriptId); 
 	RunTimeError er = initScript(script, scriptId);
 
 	unsigned int par = scriptNumParams->GetValue(script->GetScriptId() - 1);
-	unsigned int parPlace = script->GetAdr(par, false);
+	unsigned int parPlace = script->GetAdr(par, 'n');
 
 	if (parPlace != 0)
 	{
 
 		scriptNumParams->Add(par + 1, script->GetScriptId() - 1);
-		unsigned char charArr[4]{value >> 0, value >> 8, value >> 16, value >> 24 };
-		rtc->GetValue(script->GetScriptId() - 1)->memory->AddVariable(parPlace - 1, charArr, 4);
+		rtc->GetValue(script->GetScriptId() - 1)->memory->AddVariable(parPlace - 1, value, 4);
 
 	}
 
@@ -2351,14 +2399,14 @@ RunTimeError CelScriptRuntimeHandler::AddScriptParam(int scriptId, int value)
 
 }
 
-RunTimeError CelScriptRuntimeHandler::AddScriptParam(int scriptId, std::string value)
+RunTimeError CelScriptRuntimeHandler::AddScriptStrParam(int scriptId, std::string value)
 {
 
 	CelScriptCompiled* script = (CelScriptCompiled*)gameObjects->GetValue(scriptId);
 	RunTimeError er = initScript(script, scriptId);
 
 	unsigned int par = scriptStrParams->GetValue(script->GetScriptId() - 1);
-	unsigned int parPlace = script->GetAdr(par, true);
+	unsigned int parPlace = script->GetAdr(par, 's');
 
 	if (parPlace != 0)
 	{
@@ -2535,8 +2583,11 @@ CelScriptRuntimeHandler::~CelScriptRuntimeHandler()
 	delete[] operators;
 	delete scriptStarts;
 	delete scriptInited;
+
 	delete scriptNumParams;
 	delete scriptStrParams;
+	delete scriptFloatParams;
+
 	delete scriptParents;
 
 }
