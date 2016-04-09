@@ -154,17 +154,21 @@ void DrawingBoard::addObjectToIndexBuffer(Resources::MeshObject* mesh, unsigned 
 
 			indexBuffer->Add(offset + face->GetIndexAt(k));
 
-			if (face->GetAdjIndexAt(k) == -1)
+			if (!mesh->IsWireFrame())
 			{
 
-				indexBuffer->Add(offset + face->GetIndexAt(k));
+				if (face->GetAdjIndexAt(k) == -1)
+				{
 
-			}
-			else
-			{
+					indexBuffer->Add(offset + face->GetIndexAt(k));
 
-				indexBuffer->Add(offset + face->GetAdjIndexAt(k));
+				}
+				else
+				{
 
+					indexBuffer->Add(offset + face->GetAdjIndexAt(k));
+
+				}
 			}
 		}
 
@@ -220,7 +224,8 @@ unsigned int DrawingBoard::AddMesh(MeshObject* mesh)
 		diff,
 		norm,
 		indexStart,
-		indexBuffer->GetBufferSize()-indexStart);
+		indexBuffer->GetBufferSize()-indexStart,
+		mesh->IsWireFrame() ? MeshType_WF : MeshType_SOLID);
 
 	meshesArr[localMesh] = meshRep;
 

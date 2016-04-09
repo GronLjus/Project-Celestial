@@ -83,6 +83,7 @@ MeshObject::MeshObject(MeshObject*& copy,int id)
 	indexBuffer = nullptr;
 	instanceBuffers = nullptr;
 	instances  = 0;
+	isWireFrame = false;
 
 }
 
@@ -108,6 +109,7 @@ MeshObject::MeshObject(int id)
 	indexBuffer = nullptr;
 	instanceBuffers = nullptr;
 	instances  = 0;
+	isWireFrame = false;
 
 	for(int i=0;i<Shape_COUNT;i++)
 	{
@@ -117,17 +119,17 @@ MeshObject::MeshObject(int id)
 	}
 }
 
-int MeshObject::GetId() const
+bool MeshObject::IsWireFrame() const
 {
 
-	return id;
+	return isWireFrame;
 
 }
 
-void MeshObject::SetId(int id)
+void MeshObject::SetWireFrame(bool wF)
 {
 
-	this->id = id;
+	isWireFrame = wF;
 
 }
 

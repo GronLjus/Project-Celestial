@@ -49,7 +49,7 @@ namespace Graphics
 			enum Technique{ Technique_PREDRAW, Technique_TERRAIN, Technique_GEOMETRY, Technique_SHADOW, Technique_LIGHT, Technique_SCREEN, Technique_PARTICLE, Technique_DEBUG, Technique_SIZE };
 			enum Type{Type_SOLIDS,Type_WIREFRAME,Type_SIZE};
 			enum PreDrawCode{PreDrawCode_SIZE};
-			enum GeometryCode{GeometryCode_GEO,GeometryCode_GEOBORDERS,GeometryCode_SIZE};
+			enum GeometryCode{GeometryCode_GEO,GeometryCode_GEOBORDERS, GeometryCode_GEOWIREFRAME,GeometryCode_SIZE};
 			enum ShadowCode{ ShadowCode_TRNMAP, ShadowCode_TRNVOLUME, ShadowCode_GEOMAP, ShadowCode_GEOVOLUME, ShadowCode_GEOUMBRAVOLUME, ShadowCode_GEOPENUMBRAVOLUME, ShadowCode_GEOSSVOLUME, ShadowCode_SSPCSSMAJOR, ShadowCode_SIZE };
 			enum LightCode{ LightCode_POINTNOSHADOWS, LightCode_POINTSHADOWMAPPING, LightCode_POINTUMBRASHADOWMAPPING, LightCode_POINTSSPCSS, LightCode_SIZE };
 			enum ParticleCode{ ParticleCode_LIGHT, ParticleCode_SKYBOX, ParticleCode_SIZE };
@@ -77,6 +77,7 @@ namespace Graphics
 			enum GeometryShaders{
 				GeometryShaders_GSSKYCUBE,
 				GeometryShaders_GSTriangles,
+				GeometryShaders_GSLines,
 				GeometryShaders_GSTrianglesBorders,
 				GeometryShaders_GSSHADOW,
 				GeometryShaders_GSSHADOWVolumes, 

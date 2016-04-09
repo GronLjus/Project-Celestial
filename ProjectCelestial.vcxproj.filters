@@ -330,9 +330,6 @@
     <ClInclude Include="IBufferHandler.h">
       <Filter>Header Files\Graphics\Buffer</Filter>
     </ClInclude>
-    <ClInclude Include="PlayerHandler.h">
-      <Filter>Header Files\Logic</Filter>
-    </ClInclude>
     <ClInclude Include="TRNFileLoader.h">
       <Filter>Header Files\Resources\Loaders\FileLoaders</Filter>
     </ClInclude>
@@ -389,9 +386,6 @@
     </ClInclude>
     <ClInclude Include="IDXTexWrite.h">
       <Filter>Header Files\CrossHandler-Tools\Texture\DX</Filter>
-    </ClInclude>
-    <ClInclude Include="Intermediator.h">
-      <Filter>Header Files\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="DXTextureResourceViews.h">
       <Filter>Header Files\CrossHandler-Tools\Texture\DX</Filter>
@@ -740,9 +734,6 @@
     <ClCompile Include="CelestialShader.cpp">
       <Filter>Source Files\Graphics\Shaders</Filter>
     </ClCompile>
-    <ClCompile Include="PlayerHandler.cpp">
-      <Filter>Source Files\Logic</Filter>
-    </ClCompile>
     <ClCompile Include="TRNFileLoader.cpp">
       <Filter>Source Files\Resources\Loaders\FileLoaders</Filter>
     </ClCompile>
@@ -778,9 +769,6 @@
     </ClCompile>
     <ClCompile Include="TextureResourceObject.cpp">
       <Filter>Source Files\CrossHandler-Tools\Texture</Filter>
-    </ClCompile>
-    <ClCompile Include="Intermediator.cpp">
-      <Filter>Source Files\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="DXTextureResourceViews.cpp">
       <Filter>Source Files\CrossHandler-Tools\Texture</Filter>

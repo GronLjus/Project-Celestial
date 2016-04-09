@@ -50,8 +50,6 @@ namespace Logic
 			Resources::ResourceHandler* rH;
 			///<summary>The pointer to the inputhandler being used by this</summary>
 			Input::InputHandler* iH;
-			///<summary>The pointer to handler handling any player-user interactions</summary>
-			PlayerHandler* pH;
 			Entities::GameBoardHandler* gBH;
 			CelscriptHandler* cH;
 			Entities::GUIEntityHandler* guiH;

@@ -39,7 +39,7 @@ ObjectTree::ObjectTree(unsigned int cells, unsigned int minCells, Vector2 positi
 	objectAmountMax = 0;
 	gridMeshId = mesh;
 
-	gridMatrix = MatrixTranslation(position.x, 0.0f, position.y);
+	gridMatrix = MatrixTranslation(position.x, 1.5f, position.y);
 	gridInvTrMatrix = MatrixInverse(gridMatrix);
 	gridInvTrMatrix = MatrixTranspose(gridInvTrMatrix);
 
@@ -215,7 +215,7 @@ unsigned int ObjectTree::AddInstance(ViewObject* view, DrawingBoard* board)
 		for (unsigned int i = 0; i < 4; i++)
 		{
 
-			if (subTrees[i]->GetObjects() > 0)
+			if (subTrees[i]->GetObjects() >= 0)
 			{
 
 				checkedBoxes++;

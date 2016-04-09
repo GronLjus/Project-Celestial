@@ -3,7 +3,6 @@
 #include "CelestialShader.h"
 #include "Celestial2DDrawer.h"
 #include "ICardDebug.h"
-#include "Intermediator.h"
 #include "CelestialBufferHandler.h"
 
 namespace Graphics
@@ -27,10 +26,6 @@ namespace Graphics
 			///<param val='errorOut'>[in]A pointer to a textcontainer to use for debugging</param>
 			///<returns>Any errors</returns>
 			HRESULT InitShader(CrossHandlers::TextContainer* errorOut);
-
-			///<summary>Gets the intermediator of the cardhandler</summary>
-			///<returns>A pointer to the intermediato this cardhandler uses</returns>
-			Intermediator* GetIntermediator();
 
 			ImageResourceObject* Load2DImage(unsigned char* values, UINT bPC, UINT channels, UINT width, UINT height);
 			void UpdateMeshBuffers(Entities::DrawingBoard* db);
@@ -128,9 +123,6 @@ namespace Graphics
 			ID3D11CommandList* commandList;
 			///<summary>The drivertype the device uses</summary>
 			//D3D11_DRIVER_TYPE driverType;
-
-			///<summary>The intermediator to the card</summary>
-			Intermediator* inter;
 
 			///<summary>The swapchain used by this card</summary>
 			IDXGISwapChain* swapChain;

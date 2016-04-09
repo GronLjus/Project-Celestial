@@ -10,10 +10,10 @@ MeshObject* GridLoader::LoadGrid(unsigned int cells, float gridSize) const
 	MeshObject::Vertex** vertices = new MeshObject::Vertex*[totalCells];
 	unsigned int globalVertex = 0;
 	
-	for (unsigned int x = 0; x <= cells; x++)
+	for (unsigned int z = 0; z <= cells; z++)
 	{
 
-		for (unsigned int z = 0; z <= cells; z++)
+		for (unsigned int x = 0; x <= cells; x++)
 		{
 
 			float u = ((float)x) / (float)cells;
@@ -31,11 +31,20 @@ MeshObject* GridLoader::LoadGrid(unsigned int cells, float gridSize) const
 			vertices[globalVertex]->SetVertixNormal(1, 1.0f);
 			vertices[globalVertex]->SetVertixNormal(2, 0.0f);
 
-			if (x < cells && z < cells)
+			if (x < cells)
 			{
 
-				unsigned int* indexes = new unsigned int[4]{ globalVertex,globalVertex + 1,globalVertex + cells + 1 ,globalVertex + cells + 2 };
-				MeshObject::Face* face = new MeshObject::Face(4, 0, 0);
+				unsigned int* indexes = new unsigned int[2]{ globalVertex,globalVertex + 1 };
+				MeshObject::Face* face = new MeshObject::Face(2, 0, 0);
+				face->SetIndex((int*)indexes);
+				mesh->AddFace(face);
+
+			}
+			
+			if(z < cells)
+			{
+				unsigned int* indexes = new unsigned int[2]{ globalVertex ,globalVertex + cells + 1 };
+				MeshObject::Face* face = new MeshObject::Face(2, 0, 0);
 				face->SetIndex((int*)indexes);
 				mesh->AddFace(face);
 
@@ -48,6 +57,7 @@ MeshObject* GridLoader::LoadGrid(unsigned int cells, float gridSize) const
 
 	delete[] mesh->AddVertices(vertices, totalCells);
 	delete[] vertices;
+	mesh->SetWireFrame(true);
 	return mesh;
 
 }

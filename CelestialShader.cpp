@@ -253,6 +253,9 @@ HRESULT CelestialShader::initShaders(TextContainer* errorOut)
 	hr = InitGeometryShader(temp, geometryShaderVersion, card, geometryShaders[GeometryShaders_GSTriangles], TEXT("Shaders_Geometry.hlsl"), "GSTriangles", errorOut);
 	if (FAILED(hr)){ return hr; }
 	temp->Release();
+	hr = InitGeometryShader(temp, geometryShaderVersion, card, geometryShaders[GeometryShaders_GSLines], TEXT("Shaders_Geometry.hlsl"), "GSLines", errorOut);
+	if (FAILED(hr)) { return hr; }
+	temp->Release();
 	hr = InitGeometryShader(temp, geometryShaderVersion, card, geometryShaders[GeometryShaders_GSTrianglesBorders], TEXT("Shaders_Geometry.hlsl"), "GSTrianglesBorders", errorOut);
 	if (FAILED(hr)){ return hr; }
 	temp->Release();
@@ -861,6 +864,11 @@ void CelestialShader::initTechniques()
 		geometryShaders[GeometryShaders_GSTrianglesBorders],
 		pixelShaders[PixelShaders_MAPPER]);
 
+	techs[Technique_GEOMETRY][GeometryCode_GEOWIREFRAME] = new ShaderContainer(
+		vertexShaders[VertexShaders_VS],
+		geometryShaders[GeometryShaders_GSLines],
+		pixelShaders[PixelShaders_MAPPER]);
+
 	//Initiate shadowing techniques
 	techs[Technique_SHADOW][CelestialShader::ShadowCode_TRNMAP] = new ShaderContainer(
 		vertexShaders[VertexShaders_VSTERRAINSHADOW],
@@ -1232,17 +1240,44 @@ void CelestialShader::DrawScene(ViewObject* scene, GraphicalMesh* meshes, ID3D11
 	context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST_ADJ);
 	context->IASetInputLayout(bH->GetVertexLayout());
 
-	GeometryCode rendCode = globalBorders ? GeometryCode_GEOBORDERS : GeometryCode_GEO;
-	context->VSSetShader(techs[Technique_GEOMETRY][rendCode]->GetVertexShader(),nullptr,0);
-	context->GSSetShader(techs[Technique_GEOMETRY][rendCode]->GetGeometryShader(), nullptr, 0);
-	context->PSSetShader(techs[Technique_GEOMETRY][rendCode]->GetPixelShader(), nullptr, 0);
 	CelestialStack<ViewObject::Fragment>* instanceStack = scene->GetInstanceStack(flip);
+	MeshType lastType = MeshType_NA;
 
 	while (instanceStack->GetCount() > 0)
 	{
 
 		ViewObject::Fragment fragment = instanceStack->PopElement();
 		GraphicalMesh mesh = meshes[fragment.mesh];
+		MeshType thisType = mesh.GetMeshType();
+
+		if (thisType != lastType)
+		{
+
+			GeometryCode rendCode = globalBorders ? GeometryCode_GEOBORDERS : GeometryCode_GEO;
+
+			switch (thisType)
+			{
+
+				case MeshType_SOLID:
+					context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST_ADJ);
+					context->RSSetState(rastStates[RastState_BACKCULL]);
+					context->VSSetShader(techs[Technique_GEOMETRY][rendCode]->GetVertexShader(), nullptr, 0);
+					context->GSSetShader(techs[Technique_GEOMETRY][rendCode]->GetGeometryShader(), nullptr, 0);
+					context->PSSetShader(techs[Technique_GEOMETRY][rendCode]->GetPixelShader(), nullptr, 0);
+					break;
+				case MeshType_WF:
+					//context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST_ADJ);
+					context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_LINELIST);
+					context->RSSetState(rastStates[RastState_WIREFRAME]);
+					context->VSSetShader(techs[Technique_GEOMETRY][GeometryCode_GEOWIREFRAME]->GetVertexShader(), nullptr, 0);
+					context->GSSetShader(techs[Technique_GEOMETRY][GeometryCode_GEOWIREFRAME]->GetGeometryShader(), nullptr, 0);
+					context->PSSetShader(techs[Technique_GEOMETRY][GeometryCode_GEOWIREFRAME]->GetPixelShader(), nullptr, 0);
+					break;
+
+			}
+			lastType = thisType;
+
+		}
 
 		srvs[0] = mesh.GetAmbientTexture() == nullptr ? nullptr : mesh.GetAmbientTexture()->GetShaderView();
 		srvs[1] = mesh.GetDiffuseTexture() == nullptr ? nullptr : mesh.GetDiffuseTexture()->GetShaderView();

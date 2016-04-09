@@ -1000,9 +1000,6 @@ namespace Resources
 			///<summary>Calculates the appropiate volumes from the mesh</summary>
 			void CalculateShapes();
 
-			virtual int GetId() const;
-			virtual void SetId(int id);
-
 			///<summary>Get the number of on a level</summary>
 			///<returns>The amount of vertices</returns>
 			int GetVertices() const;
@@ -1045,6 +1042,9 @@ namespace Resources
 
 			///<summary>Releases the resources used by this mesh, must be called at the end of it's life</summary>
 			void Release(); 
+
+			bool IsWireFrame() const;
+			void SetWireFrame(bool wf);
 
 			virtual ~MeshObject();
 
@@ -1098,5 +1098,6 @@ namespace Resources
 			///<summary>The amount of buffers in the instancearray</summary>
 			int instances;
 
+			bool isWireFrame;
 	};
 }

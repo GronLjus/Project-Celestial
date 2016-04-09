@@ -41,7 +41,6 @@ CardHandler::CardHandler(int flips, bool useText)
 	bufferContext = nullptr;
 
 	bH = nullptr;
-	inter = nullptr;
 	shader = new CelestialShader();
 	basic2DHandler = nullptr;
 
@@ -173,16 +172,8 @@ HRESULT CardHandler::InitShader(TextContainer* errorOut)
 	if (FAILED(hr)){ return hr; }
 	bH = (CelestialBufferHandler*)(shader->GetBufferHandler());
 	shader->ToggleWireFrameMode(wireFrame, dStyle.enlighten);
-	inter = new Intermediator(nullptr,true,true);
 	underInitiated = true;
 	return hr;
-
-}
-
-Intermediator* CardHandler::GetIntermediator()
-{
-
-	return inter;
 
 }
 
@@ -552,6 +543,5 @@ CardHandler::~CardHandler()
 	}
 
 	delete backBuffer;
-	delete inter;
 
 }

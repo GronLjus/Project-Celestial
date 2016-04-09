@@ -159,6 +159,21 @@ PS_INPUTRENDER commonFaceGeometry(GS_INPUTRENDER gsIn)
 
 }
 
+[maxvertexcount(2)]//2 points on the line
+void GSLines(line GS_INPUTRENDER input[2], inout LineStream<PS_INPUTRENDER> OutStream)
+{
+
+	for (int j = 0; j<2; j++)
+	{
+
+		PS_INPUTRENDER outPut = commonFaceGeometry(input[j]);
+		OutStream.Append(outPut);
+
+	}
+
+	OutStream.RestartStrip();
+}
+
 [maxvertexcount(3)]//3 points on the face
 void GSTriangles(triangleadj GS_INPUTRENDER input[6], inout TriangleStream<PS_INPUTRENDER> OutStream )
 {

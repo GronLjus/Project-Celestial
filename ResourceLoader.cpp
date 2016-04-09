@@ -214,7 +214,7 @@ MeshObject* ResourceLoader::LoadGrid(unsigned int cells, float gridSize) const
 {
 
 	MeshObject* obj = ((GridLoader*)shapeLoads[Shape_GRID])->LoadGrid(cells,gridSize);
-	obj->OptimizeLevels(true);
+	//obj->OptimizeLevels(false);
 	return obj;
 
 }

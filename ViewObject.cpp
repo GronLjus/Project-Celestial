@@ -30,7 +30,7 @@ ViewObject::ViewObject(CelestialMath::Vector3 pos,Vector3 sidePoint, Vector3 loo
 
 		instances[i] = new CelestialStack<Fragment>(false);
 		views[i] = MatrixLookAtLH(pos, lookAtPoint, up);
-		projections[i] = MatrixPerspectiveFovLH(fov, port.width / port.height, port.minDepth, port.maxDepth);
+		projections[i] = MatrixPerspectiveFovLH(fov, (float)port.width / (float)port.height, port.minDepth, port.maxDepth);
 
 		viewProjections[i] = MatrixMultiply(views[i], projections[i]);
 		invViewProjections[i] = MatrixInverse(viewProjections[i]);

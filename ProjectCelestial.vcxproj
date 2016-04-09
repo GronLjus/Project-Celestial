@@ -243,7 +243,6 @@
     <ClInclude Include="IMaterialLoader.h" />
     <ClInclude Include="InputHandler.h" />
     <ClInclude Include="InputHeader.h" />
-    <ClInclude Include="Intermediator.h" />
     <ClInclude Include="IParticleEmitter.h" />
     <ClInclude Include="IParticleEmitterBufferable.h" />
     <ClInclude Include="IPlayerDebug.h" />
@@ -277,7 +276,6 @@
     <ClInclude Include="Particle.h" />
     <ClInclude Include="ParticleEmitterInstance.h" />
     <ClInclude Include="PlaneLoader.h" />
-    <ClInclude Include="PlayerHandler.h" />
     <ClInclude Include="ImageFileLoader.h" />
     <ClInclude Include="PointLight.h" />
     <ClInclude Include="Project Celestial.h" />
@@ -352,7 +350,6 @@
     <ClCompile Include="IHandleMessages.cpp" />
     <ClCompile Include="ImageResourceObject.cpp" />
     <ClCompile Include="InputHandler.cpp" />
-    <ClCompile Include="Intermediator.cpp" />
     <ClCompile Include="MemoryPool.cpp" />
     <ClCompile Include="MessageQueue.cpp" />
     <ClCompile Include="ObjectTree.cpp" />
@@ -371,7 +368,6 @@
     <ClCompile Include="Particle.cpp" />
     <ClCompile Include="ParticleEmitterInstance.cpp" />
     <ClCompile Include="PlaneLoader.cpp" />
-    <ClCompile Include="PlayerHandler.cpp" />
     <ClCompile Include="ImageFileLoader.cpp" />
     <ClCompile Include="PointLight.cpp" />
     <ClCompile Include="Project Celestial.cpp" />

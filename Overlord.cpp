@@ -36,7 +36,6 @@ Overlord::Overlord(void)
 	gH = new GraphicHandler(flip);
 	rH = new ResourceHandler(flip);
 	iH = new InputHandler();
-	pH = new PlayerHandler();
 	cH = new CelscriptHandler();
 	guiH = new GUIEntityHandler();
 
@@ -332,8 +331,6 @@ void Overlord::Update(unsigned int time)
 		updateMessages(MessageSource_ENTITIES);
 		cH->Update(time);
 		updateMessages(MessageSource_CELSCRIPT);
-		unsigned int start2 = clock();
-		pH->Update();
 		unsigned int start3 = clock();
 		rH->Update(time);
 		updateMessages(MessageSource_RESOURCES);
@@ -364,7 +361,6 @@ Overlord::~Overlord()
 	delete gBH;
 	delete iH;
 	delete gH;
-	delete pH;
 	delete cH;
 	delete guiH;
 	delete rH;
