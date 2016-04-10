@@ -17,6 +17,5 @@ else
 	move ?0 ?1-lastX , ?2-lastY
 	lastX = ?1
 	lastY = ?2
-	post 'coordinates'
 
 }

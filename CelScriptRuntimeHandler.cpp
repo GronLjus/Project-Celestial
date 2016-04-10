@@ -2572,6 +2572,7 @@ RunTimeError CelScriptRuntimeHandler::RunScript(int id,unsigned int stackId, uns
 
 			scriptNumParams->Add(0, script->GetScriptId() - 1);
 			scriptStrParams->Add(0, script->GetScriptId() - 1);
+			scriptFloatParams->Add(0, script->GetScriptId() - 1);
 
 		}
 

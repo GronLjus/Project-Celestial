@@ -62,6 +62,22 @@ unsigned int CameraObject::GetFlip() const
 
 void CameraObject::Update(Message* mess)
 {
+	if (mess->type == MessageType_OBJECT)
+	{
+
+		Vector3 newVec;
+		PositionableObject::Update(mess);
+
+		switch (mess->mess)
+		{
+
+		case ObjectMess_MOVE:
+		case ObjectMess_POS:
+			theView->Update(GetPosition());
+			break;
+
+		}
+	}
 }
 
 ViewObject* CameraObject::GetView() const

@@ -21,6 +21,7 @@ outTextBox = import 'dbgout'
 focus outTextBox
 
 post 'test'
+export 'camera' cam
 
 set rightdrag localGameboard cameraPanScript
 set gameboard localGameboard

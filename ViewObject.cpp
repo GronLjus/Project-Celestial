@@ -17,6 +17,8 @@ ViewObject::ViewObject(CelestialMath::Vector3 pos,Vector3 sidePoint, Vector3 loo
 	this->up = up;
 	this->fov = fov;
 
+	forward = lookAtPoint - pos;
+
 	views = new Matrix[flips];
 	projections = new Matrix[flips];
 	viewProjections = new Matrix[flips];
@@ -49,7 +51,12 @@ void ViewObject::IncrementInstances()
 	unsigned int oldFlip = flip;
 	flip++;
 	flip %= flips;
-	pos[flip] = pos[oldFlip];
+
+	pos[flip] = pos[oldFlip]; 
+	views[flip] = views[oldFlip];
+	projections[flip] = projections[oldFlip];
+	viewProjections[flip] = viewProjections[oldFlip];
+	invViewProjections[flip] = invViewProjections[oldFlip];
 
 }
 
@@ -63,22 +70,15 @@ unsigned int ViewObject::PeekNextFlip() const
 
 }
 
-void ViewObject::Update(Matrix transform)
+void ViewObject::Update(Vector3 position)
 {
 
-	Vector4 newPoint(lookAtPoint, 0);
-	Vector4 newUp(up, 0);
-	Vector4 newSide(sidePoint, 0);
 
-	newPoint = VectorTransform(newPoint, transform);
-	newUp = VectorTransform(newUp, transform);
-	newSide = VectorTransform(newSide, transform);
-
-	lookAtPoint = Vector3(newPoint.x, newPoint.y, newPoint.z);
-	pos[flip] += Vector3(transform._41, transform._42, transform._43);
+	lookAtPoint = position + forward;
+	pos[flip] = position;
 
 	views[flip] = MatrixLookAtLH(pos[flip], lookAtPoint, up);
-	projections[flip] = MatrixPerspectiveFovLH(fov, vp.width / vp.height, vp.minDepth, vp.maxDepth);
+	projections[flip] = MatrixPerspectiveFovLH(fov, (float)vp.width / (float)vp.height, vp.minDepth, vp.maxDepth);
 	viewProjections[flip] = MatrixMultiply(views[flip], projections[flip]);
 	invViewProjections[flip] = MatrixInverse(viewProjections[flip]);
 

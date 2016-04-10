@@ -1,1 +1,28 @@
-post 'Dragging the gameboard'
+$
+{
+	
+	cam = import 'camera'
+	lastX = 0.0
+	lastZ = 0.0
+
+}
+
+if ?3 : 0
+{
+
+	lastX = ?f0
+	lastZ = ?f2
+
+}
+else
+{
+
+	moveByX = lastX-?f0
+	moveByZ = ?f2-lastZ
+
+	move cam moveByX 0.0 moveByZ
+
+	lastX = ?f0 + moveByX
+	lastZ = ?f2 + moveByZ
+
+}
