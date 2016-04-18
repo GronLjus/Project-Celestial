@@ -69,13 +69,6 @@ bool GameObject::IsFlipBuffered(unsigned char flip)
 
 }
 
-Matrix GameObject::GetInverseTransformation() const
-{
-
-	return MatrixInverse(this->GetMatrix());
-
-}
-
 Matrix GameObject::PopTransformation()
 {
 	

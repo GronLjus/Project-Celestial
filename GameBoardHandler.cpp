@@ -268,6 +268,33 @@ void GameBoardHandler::UpdateMessages(unsigned int time)
 
 			}
 		}
+		else if (currentMessage->mess == GameBoardMess_ORBITOBJECT &&
+			localGameBoard != nullptr && localGameBoard->GetCam() != nullptr)
+		{
+
+			unsigned int obj = currentMessage->params[0] | ((int)currentMessage->params[1] << 8) | ((int)currentMessage->params[2] << 16) | ((int)currentMessage->params[3] << 24);
+			PositionableObject* object = (PositionableObject*)gameObjects->GetValue(obj);
+
+			Vector3 objectDirection = object->GetDirection();
+			Vector3 gameBoardPos(object->GetPosition() + objectDirection*10);
+
+			localGameBoard->GetBoardPosition(object->GetPosition(), objectDirection, gameBoardPos);
+
+			messageBuffer[this->currentMessage].timeSent = time;
+			messageBuffer[this->currentMessage].destination = MessageSource_OBJECT;
+			messageBuffer[this->currentMessage].type = MessageType_OBJECT;
+			messageBuffer[this->currentMessage].mess = ObjectMess_ORBIT;
+			messageBuffer[this->currentMessage].read = false;
+
+			unsigned char tempBuff[16];
+			memcpy(tempBuff, &gameBoardPos.x, 4);
+			memcpy(&tempBuff[4], &gameBoardPos.y, 4);
+			memcpy(&tempBuff[8], &gameBoardPos.z, 4);
+			memcpy(&tempBuff[12], &currentMessage->params[4], 4);
+			messageBuffer[this->currentMessage].SetParams(tempBuff, 0, 16);
+			object->Update(&messageBuffer[this->currentMessage]);
+
+		}
 		else if (currentMessage->mess == GameBoardMess_STOPDRAGGING &&
 			localGameBoard != nullptr && localGameBoard->GetCam() != nullptr)
 		{

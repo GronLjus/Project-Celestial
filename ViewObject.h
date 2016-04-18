@@ -35,6 +35,8 @@ namespace Entities
 
 			ViewObject(CelestialMath::Vector3 pos,CelestialMath::Vector3 sidePoint, CelestialMath::Vector3 lookAtPoint, CelestialMath::Vector3 up, float fov, unsigned int bufferFlips, ViewPort port);
 			void Update(CelestialMath::Vector3 position);
+			void Rotate(CelestialMath::Vector3 rotations);
+
 			void IncrementInstances();
 			unsigned int PeekNextFlip() const;
 			void AddInstanceFragment(unsigned int mesh, unsigned int start, unsigned int length);

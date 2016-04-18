@@ -12,6 +12,7 @@ CameraObject::CameraObject(unsigned int width, unsigned int height, float depth,
 	Vector3 sidePoint (1, 0, 0);
 	Vector3 up(0, 0, 1);
 	Vector3 lookAtPoint(0, 0, 0);
+	Vector3 direction(0, -1, 0);
 	fov = CELESTIAL_PI*0.25f;
 
 	ViewObject::ViewPort port;
@@ -30,7 +31,14 @@ CameraObject::CameraObject(unsigned int width, unsigned int height, float depth,
 	memcpy(tempBuff, &moveVal.x, 4);
 	memcpy(&tempBuff[4], &moveVal.y, 4);
 	memcpy(&tempBuff[8], &moveVal.z, 4);
+	mess.SetParams(tempBuff, 0, 12);
+	PositionableObject::Update(&mess);
 
+	mess.type = MessageType_OBJECT;
+	mess.mess = ObjectMess_POINT;
+	memcpy(tempBuff, &direction.x, 4);
+	memcpy(&tempBuff[4], &direction.y, 4);
+	memcpy(&tempBuff[8], &direction.z, 4);
 	mess.SetParams(tempBuff, 0, 12);
 	PositionableObject::Update(&mess);
 
@@ -41,7 +49,6 @@ CameraObject::CameraObject(unsigned int width, unsigned int height, float depth,
 void CameraObject::IncrementFlipBuff()
 {
 
-	
 	theView->IncrementInstances();
 
 }
@@ -73,6 +80,12 @@ void CameraObject::Update(Message* mess)
 
 		case ObjectMess_MOVE:
 		case ObjectMess_POS:
+			theView->Update(GetPosition());
+			break;
+		case ObjectMess_POINT:
+		case ObjectMess_ORBIT:
+		case ObjectMess_ROTATE:
+			theView->Rotate(GetRotation());
 			theView->Update(GetPosition());
 			break;
 

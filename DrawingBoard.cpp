@@ -61,7 +61,7 @@ void DrawingBoard::AddInstance(GameObject* object)
 	if (!object->IsFlipBuffered(bufflip))
 	{
 
-		Matrix invTranW = object->GetInverseTransformation();
+		Matrix invTranW = MatrixTranspose(object->GetInvTrnMatrix());
 		Matrix oW = MatrixTranspose(object->GetLastTransformation());
 		Matrix w = MatrixTranspose(object->GetMatrix());
 

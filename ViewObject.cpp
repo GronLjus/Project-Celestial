@@ -18,7 +18,6 @@ ViewObject::ViewObject(CelestialMath::Vector3 pos,Vector3 sidePoint, Vector3 loo
 	this->fov = fov;
 
 	forward = lookAtPoint - pos;
-
 	views = new Matrix[flips];
 	projections = new Matrix[flips];
 	viewProjections = new Matrix[flips];
@@ -67,6 +66,22 @@ unsigned int ViewObject::PeekNextFlip() const
 	nextFlip++;
 	nextFlip %= flips;
 	return nextFlip;
+
+}
+
+void ViewObject::Rotate(Vector3 rotion)
+{
+
+	Vector3 fwrd = Vector3(0.0f, 0.0f, 1.0f);
+	Vector3 side = Vector3(1.0f, 0.0f, 0.0f);
+	Vector3 upVector = Vector3(0.0f, 1.0f, 0.0f);
+
+	Matrix rotation = MatrixRotationYawPitchRoll(rotion.y, rotion.x, rotion.z);
+	rotation = MatrixTranspose(MatrixInverse(rotation));
+
+	forward = VectorTransform(fwrd, rotation);
+	sidePoint = VectorTransform(side, rotation);
+	up = VectorTransform(upVector, rotation);
 
 }
 

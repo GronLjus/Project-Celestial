@@ -15,9 +15,6 @@ namespace Resources
 			bool IsFlipBuffered(unsigned char flip);
 			void SetParent(BaseObject* parent);
 
-			///<summary>Gets the inverse transformation matrix of the object</summary>
-			///<returns>A matrix that describes the inverse of the objects transformation</returns>
-			CelestialMath::Matrix GetInverseTransformation() const;
 			///<summary>Gets the transformation matrix of the object and stores it internally as the last transformation used</summary>
 			///<returns>A matrix that describes the objects transformation</returns>
 			CelestialMath::Matrix PopTransformation();
