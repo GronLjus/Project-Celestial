@@ -1071,4 +1071,9 @@
       <Filter>Source Files</Filter>
     </Object>
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="CameraRotation.celsrc">
+      <Filter>Source Files\Scripts</Filter>
+    </Text>
+  </ItemGroup>
 </Project>

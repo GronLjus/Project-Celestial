@@ -47,6 +47,7 @@ namespace Logic
 		OperatorTypes_CAST,
 		OperatorTypes_EQUAL, OperatorTypes_GREATER, 
 		OperatorTypes_GET, OperatorTypes_SNAP,
+		OperatorTypes_ROTATE, OperatorTypes_ORBIT,
 		OperatorTypes_POS, OperatorTypes_SIZE, OperatorTypes_MOVE,
 		OperatorTypes_RUN, OperatorTypes_SETPARAM,
 		OperatorTypes_IMPORT, OperatorTypes_EXPORT,

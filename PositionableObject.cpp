@@ -55,7 +55,8 @@ void PositionableObject::rotateObjectToPoint(Vector3 point)
 	if (targetMagnitude > CELESTIAL_EPSILON)
 	{
 
-		float xAngle = acos(VectorDot(targetToObject, Vector3(0.0f, 1.0f, 0.0f)));
+		float dot = VectorDot(targetToObject, Vector3(0.0f, 1.0f, 0.0f));
+		float xAngle = acos(dot/targetMagnitude);
 		xAngle -= CELESTIAL_PI*0.5f;
 		rotation.x = xAngle;
 
@@ -145,10 +146,10 @@ void PositionableObject::Update(Message* mess)
 			createMatrix();
 			break;
 		case ObjectMess_ORBIT:
-			memcpy(&factor, mess->params, 4);
-			memcpy(&newVec.x, &mess->params[4], 4);
-			memcpy(&newVec.y, &mess->params[8], 4);
-			memcpy(&newVec.z, &mess->params[12], 4);
+			memcpy(&newVec.x, mess->params, 4);
+			memcpy(&newVec.y, &mess->params[4], 4);
+			memcpy(&newVec.z, &mess->params[8], 4);
+			memcpy(&factor, &mess->params[12], 4);
 			orbitAroundPoint(newVec, factor);
 			break;
 		case ObjectMess_ROTATE:

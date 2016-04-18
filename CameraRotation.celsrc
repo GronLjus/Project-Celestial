@@ -1,0 +1,25 @@
+$
+{
+	
+	cam = import 'camera'
+	lastX = 0
+	lastY = 0
+
+}
+
+if ?3 : 0
+{
+
+	lastX = ?1
+	lastY = ?2
+
+}
+else ?3 : 1
+{
+
+	diff = lastY-?2
+	rotByX = cast diff
+	rotByX = (diff/768.0)*0.05
+	rotate cam rotByX 0.0 0.0
+
+}

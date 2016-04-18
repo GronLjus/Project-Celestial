@@ -55,6 +55,15 @@ void GameBoardHandler::sendCommonScriptParams(unsigned int script, unsigned int 
 	messageBuffer[this->currentMessage].timeSent = time;
 	messageBuffer[this->currentMessage].destination = MessageSource_CELSCRIPT;
 	messageBuffer[this->currentMessage].type = MessageType_SCRIPT;
+	messageBuffer[this->currentMessage].mess = ScriptMess_ADDPARNUM;
+	messageBuffer[this->currentMessage].read = false;
+	messageBuffer[this->currentMessage].SetParams(tempBuff3, 0, 8);
+	outQueue->PushMessage(&messageBuffer[this->currentMessage]);
+	this->currentMessage = (this->currentMessage + 1) % outMessages;
+
+	messageBuffer[this->currentMessage].timeSent = time;
+	messageBuffer[this->currentMessage].destination = MessageSource_CELSCRIPT;
+	messageBuffer[this->currentMessage].type = MessageType_SCRIPT;
 	messageBuffer[this->currentMessage].mess = ScriptMess_ADDPARFLOAT;
 	messageBuffer[this->currentMessage].read = false;
 	memcpy(&(tempBuff[4]), &(boardPos.x), 4);
@@ -77,15 +86,6 @@ void GameBoardHandler::sendCommonScriptParams(unsigned int script, unsigned int 
 	messageBuffer[this->currentMessage].read = false;
 	memcpy(&(tempBuff[4]), &(boardPos.z), 4);
 	messageBuffer[this->currentMessage].SetParams(tempBuff, 0, 8);
-	outQueue->PushMessage(&messageBuffer[this->currentMessage]);
-	this->currentMessage = (this->currentMessage + 1) % outMessages;
-
-	messageBuffer[this->currentMessage].timeSent = time;
-	messageBuffer[this->currentMessage].destination = MessageSource_CELSCRIPT;
-	messageBuffer[this->currentMessage].type = MessageType_SCRIPT;
-	messageBuffer[this->currentMessage].mess = ScriptMess_ADDPARNUM;
-	messageBuffer[this->currentMessage].read = false;
-	messageBuffer[this->currentMessage].SetParams(tempBuff3, 0, 8);
 	outQueue->PushMessage(&messageBuffer[this->currentMessage]);
 	this->currentMessage = (this->currentMessage + 1) % outMessages;
 
@@ -247,7 +247,7 @@ void GameBoardHandler::UpdateMessages(unsigned int time)
 				dragId = obj->GetId();
 				script--;
 				localGameBoard->GetBoardPosition(localGameBoard->GetCam()->GetPosition(), direction, boardPos);
-				triggerMouseScript(script, dragId, time, 0, 0, 0);
+				triggerMouseScript(script, dragId, time, mouseX, mouseY, 0);
 
 			}
 		}
@@ -308,7 +308,7 @@ void GameBoardHandler::UpdateMessages(unsigned int time)
 			{
 
 				localGameBoard->GetBoardPosition(localGameBoard->GetCam()->GetPosition(), direction, boardPos);
-				triggerMouseScript(dragScript - 1, dragId, time, 0, 0, 2);
+				triggerMouseScript(dragScript - 1, dragId, time, mouseX, mouseY, 2);
 				dragScript = 0;
 
 			}

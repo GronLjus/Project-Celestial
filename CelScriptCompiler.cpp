@@ -681,7 +681,7 @@ CelScriptCompiler::CelScriptCompiler()
 		new ParamType[operators[OperatorTypes_MOVE].params[0]]{ ParamType_NA, ParamType_NA, ParamType_NA, ParamType_NA } };
 	operators[OperatorTypes_MOVE].optionalPar = new bool*[operators[OperatorTypes_MOVE].enumAmount]{
 		new bool[operators[OperatorTypes_MOVE].params[0]]{ false, false, false, true },
-		new bool[operators[OperatorTypes_MOVE].params[0]]{ false, false, false, true }
+		new bool[operators[OperatorTypes_MOVE].params[1]]{ false, false, false, true }
 	};
 	operators[OperatorTypes_MOVE].readParam = new unsigned char[operators[OperatorTypes_MOVE].enumAmount]{ 0,0 };
 	operators[OperatorTypes_MOVE].returns = new VarType[operators[OperatorTypes_MOVE].enumAmount]{ VarType_NA,VarType_NA };
@@ -700,7 +700,7 @@ CelScriptCompiler::CelScriptCompiler()
 	};
 	operators[OperatorTypes_MOVE].parOperatorAppend = new bool*[operators[OperatorTypes_MOVE].enumAmount]{
 		new bool[operators[OperatorTypes_MOVE].params[0]]{ false, false, false, false },
-		new bool[operators[OperatorTypes_MOVE].params[0]]{ false, false, false, false }
+		new bool[operators[OperatorTypes_MOVE].params[1]]{ false, false, false, false }
 	};
 	operators[OperatorTypes_MOVE].parOperators = new OperatorTypes*[operators[OperatorTypes_MOVE].enumAmount]{
 		nullptr,
@@ -711,6 +711,65 @@ CelScriptCompiler::CelScriptCompiler()
 		new unsigned char[operators[OperatorTypes_MOVE].params[1]]{ 0, 1, 1, 1 }
 	};
 
+	operators[OperatorTypes_ROTATE].keyword = "rotate";
+	operators[OperatorTypes_ROTATE].enumAmount = 1;
+	operators[OperatorTypes_ROTATE].enums = new std::string[operators[OperatorTypes_ROTATE].enumAmount]; operators[OperatorTypes_ROTATE].enums[0] = "";
+	operators[OperatorTypes_ROTATE].byteCodes = new unsigned char[operators[OperatorTypes_ROTATE].enumAmount]{ opcode_RTE };
+	operators[OperatorTypes_ROTATE].params = new unsigned char[operators[OperatorTypes_ROTATE].enumAmount]{ 4};
+	operators[OperatorTypes_ROTATE].minParams = new unsigned char[operators[OperatorTypes_ROTATE].enumAmount]{ 4 };
+	operators[OperatorTypes_ROTATE].paramsyntax = new VarType*[operators[OperatorTypes_ROTATE].enumAmount]{
+		new VarType[operators[OperatorTypes_ROTATE].params[0]]{ VarType_NUMBER, VarType_FLOAT, VarType_FLOAT, VarType_FLOAT }};
+	operators[OperatorTypes_ROTATE].paramTypes = new ParamType*[operators[OperatorTypes_ROTATE].enumAmount]{
+		new ParamType[operators[OperatorTypes_ROTATE].params[0]]{ ParamType_NA, ParamType_NA, ParamType_NA, ParamType_NA }};
+	operators[OperatorTypes_ROTATE].optionalPar = new bool*[operators[OperatorTypes_ROTATE].enumAmount]{
+		new bool[operators[OperatorTypes_ROTATE].params[0]]{ false, false, false, false }
+	};
+	operators[OperatorTypes_ROTATE].readParam = new unsigned char[operators[OperatorTypes_ROTATE].enumAmount]{ 0 };
+	operators[OperatorTypes_ROTATE].returns = new VarType[operators[OperatorTypes_ROTATE].enumAmount]{ VarType_NA};
+	operators[OperatorTypes_ROTATE].returnType = new ParamType[operators[OperatorTypes_ROTATE].enumAmount]{ ParamType_NA};
+	operators[OperatorTypes_ROTATE].writeParam = new unsigned char[operators[OperatorTypes_ROTATE].enumAmount]{ 0};
+	operators[OperatorTypes_ROTATE].priority = 0;
+	operators[OperatorTypes_ROTATE].shortHandsAmounts = 0;
+	operators[OperatorTypes_ROTATE].amountParOperators = new unsigned char[operators[OperatorTypes_ROTATE].enumAmount]{ 0 };
+	operators[OperatorTypes_ROTATE].parRepeatsMin = new unsigned char*[operators[OperatorTypes_ROTATE].enumAmount]{
+		new unsigned char[operators[OperatorTypes_ROTATE].params[0]]{ 0, 0, 0, 0 }
+	};
+	operators[OperatorTypes_ROTATE].parRepeatsMax = new unsigned char*[operators[OperatorTypes_ROTATE].enumAmount]{
+		new unsigned char[operators[OperatorTypes_ROTATE].params[0]]{ 0, 0, 0, 0 }
+	};
+	operators[OperatorTypes_ROTATE].parOperatorAppend = new bool*[operators[OperatorTypes_ROTATE].enumAmount]{
+		new bool[operators[OperatorTypes_ROTATE].params[0]]{ false, false, false, false }
+	};
+
+	operators[OperatorTypes_ORBIT].keyword = "orbit";
+	operators[OperatorTypes_ORBIT].enumAmount = 1;
+	operators[OperatorTypes_ORBIT].enums = new std::string[operators[OperatorTypes_ORBIT].enumAmount]; operators[OperatorTypes_ORBIT].enums[0] = "";
+	operators[OperatorTypes_ORBIT].byteCodes = new unsigned char[operators[OperatorTypes_ORBIT].enumAmount]{ opcode_ORB };
+	operators[OperatorTypes_ORBIT].params = new unsigned char[operators[OperatorTypes_ORBIT].enumAmount]{ 2 };
+	operators[OperatorTypes_ORBIT].minParams = new unsigned char[operators[OperatorTypes_ORBIT].enumAmount]{ 2 };
+	operators[OperatorTypes_ORBIT].paramsyntax = new VarType*[operators[OperatorTypes_ORBIT].enumAmount]{
+		new VarType[operators[OperatorTypes_ORBIT].params[0]]{ VarType_NUMBER, VarType_FLOAT} };
+	operators[OperatorTypes_ORBIT].paramTypes = new ParamType*[operators[OperatorTypes_ORBIT].enumAmount]{
+		new ParamType[operators[OperatorTypes_ORBIT].params[0]]{ ParamType_NA, ParamType_NA} };
+	operators[OperatorTypes_ORBIT].optionalPar = new bool*[operators[OperatorTypes_ORBIT].enumAmount]{
+		new bool[operators[OperatorTypes_ORBIT].params[0]]{ false, false}
+	};
+	operators[OperatorTypes_ORBIT].readParam = new unsigned char[operators[OperatorTypes_ORBIT].enumAmount]{ 0 };
+	operators[OperatorTypes_ORBIT].returns = new VarType[operators[OperatorTypes_ORBIT].enumAmount]{ VarType_NA };
+	operators[OperatorTypes_ORBIT].returnType = new ParamType[operators[OperatorTypes_ORBIT].enumAmount]{ ParamType_NA };
+	operators[OperatorTypes_ORBIT].writeParam = new unsigned char[operators[OperatorTypes_ORBIT].enumAmount]{ 0 };
+	operators[OperatorTypes_ORBIT].priority = 0;
+	operators[OperatorTypes_ORBIT].shortHandsAmounts = 0;
+	operators[OperatorTypes_ORBIT].amountParOperators = new unsigned char[operators[OperatorTypes_ORBIT].enumAmount]{ 0 };
+	operators[OperatorTypes_ORBIT].parRepeatsMin = new unsigned char*[operators[OperatorTypes_ORBIT].enumAmount]{
+		new unsigned char[operators[OperatorTypes_ORBIT].params[0]]{ 0, 0}
+	};
+	operators[OperatorTypes_ORBIT].parRepeatsMax = new unsigned char*[operators[OperatorTypes_ORBIT].enumAmount]{
+		new unsigned char[operators[OperatorTypes_ORBIT].params[0]]{ 0, 0}
+	};
+	operators[OperatorTypes_ORBIT].parOperatorAppend = new bool*[operators[OperatorTypes_ORBIT].enumAmount]{
+		new bool[operators[OperatorTypes_ORBIT].params[0]]{ false, false}
+	};
 
 	operators[OperatorTypes_SIZE].keyword = "size";
 	operators[OperatorTypes_SIZE].enumAmount = 1;

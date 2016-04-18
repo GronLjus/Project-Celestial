@@ -98,7 +98,6 @@ void InputHandler::setCommonScriptParameters(unsigned int script, unsigned int t
 
 }
 
-
 void InputHandler::runScript(unsigned int script, unsigned int time)
 {
 
