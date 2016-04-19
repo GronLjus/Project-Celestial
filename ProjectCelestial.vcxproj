@@ -390,6 +390,7 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="Celestial.ico" />
+    <Image Include="Content\Splash.gif" />
     <Image Include="heightmap.bmp" />
     <Image Include="heightmap.jpg" />
     <Image Include="NewTennisBallColor.jpg" />
@@ -496,6 +497,9 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Object Include="Content\Tile.obj">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </Object>
     <Object Include="Tile.obj">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </Object>

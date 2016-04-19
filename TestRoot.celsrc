@@ -8,7 +8,7 @@ splashImage = import 'splashImage'
 debugLayout = import 'debugLayer'
 screenLayout = import 'screenLayout'
 
-tile = load mesh 'Tile.obj'
+tile = load mesh 'content\Tile.obj'
 testPar = load script 'TestRoot2.celsrc'
 testClick = load script 'TestClick.celsrc'
 cam = load camera

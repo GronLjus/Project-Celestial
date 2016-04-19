@@ -262,6 +262,9 @@
     <Filter Include="Source Files\CrossHandler-Tools\Image">
       <UniqueIdentifier>{50de7c1d-2efc-436b-a4f3-1f64e1b9a025}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resource Files\Content">
+      <UniqueIdentifier>{6187615c-0d7a-4f62-b03a-7c0244cd7ea2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Project Celestial.h">
@@ -979,6 +982,9 @@
     <Image Include="Texture1.png">
       <Filter>Source Files</Filter>
     </Image>
+    <Image Include="Content\Splash.gif">
+      <Filter>Resource Files\Content</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\d3dcompiler_46.dll">
@@ -1069,6 +1075,9 @@
   <ItemGroup>
     <Object Include="Tile.obj">
       <Filter>Source Files</Filter>
+    </Object>
+    <Object Include="Content\Tile.obj">
+      <Filter>Resource Files\Content</Filter>
     </Object>
   </ItemGroup>
   <ItemGroup>
