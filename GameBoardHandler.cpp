@@ -278,7 +278,7 @@ void GameBoardHandler::UpdateMessages(unsigned int time)
 			Vector3 objectDirection = object->GetDirection();
 			Vector3 gameBoardPos(object->GetPosition() + objectDirection*10);
 
-			localGameBoard->GetBoardPosition(object->GetPosition(), objectDirection, gameBoardPos);
+			bool result = localGameBoard->GetBoardPosition(object->GetPosition(), objectDirection, gameBoardPos);
 
 			messageBuffer[this->currentMessage].timeSent = time;
 			messageBuffer[this->currentMessage].destination = MessageSource_OBJECT;

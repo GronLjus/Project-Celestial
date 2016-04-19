@@ -205,6 +205,7 @@ void CelestialBufferHandler::UpdateInstanceBuffer(DrawingBoard* db, ID3D11Device
 		D3D11_MAPPED_SUBRESOURCE mapped = D3D11_MAPPED_SUBRESOURCE();
 		context->Map(instances[flip], 0, D3D11_MAP_WRITE_DISCARD, 0, &mapped);
 		memcpy(mapped.pData, db->GetInstanceBuffer()->GetBuffer(), sizeof(Instance)*db->GetInstanceBuffer()->GetBufferSize());
+		Instance* dbg = (Instance*)mapped.pData;
 		context->Unmap(instances[flip], 0);
 
 	}

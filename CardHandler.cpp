@@ -201,7 +201,7 @@ void CardHandler::UpdateMeshBuffers(DrawingBoard* db)
 void CardHandler::UpdateInstanceBuffers(DrawingBoard* db, unsigned int flip)
 {
 
-	bH->UpdateInstanceBuffer(db, bufferContext, flip);
+	bH->UpdateInstanceBuffer(db, context1, flip);
 
 }
 

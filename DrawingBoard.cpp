@@ -7,9 +7,10 @@ using namespace Resources;
 using namespace CelestialMath;
 using namespace Graphics;
 
-DrawingBoard::DrawingBoard()
+DrawingBoard::DrawingBoard(unsigned char maxFlips)
 {
 
+	this->maxFlips = maxFlips;
 	bufflip = 0;
 	vertexBuffer = new BufferObject2<BufferVertex>(100);
 	indexBuffer = new BufferObject2<unsigned int>(2048);
@@ -83,6 +84,7 @@ void DrawingBoard::FinalizeInstances(ViewObject* onView)
 {
 
 	bufflip++;
+	bufflip %= maxFlips;
 	unsigned int totalInst = 0;
 
 	while (meshInstance->GetCount() > 0)

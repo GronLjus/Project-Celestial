@@ -84,7 +84,7 @@ void ResourceHandler::Update(unsigned int time)
 		{
 
 			unsigned int param1 = currentMessage->params[0] | ((int)currentMessage->params[1] << 8) | ((int)currentMessage->params[2] << 16) | ((int)currentMessage->params[3] << 24);
-			GameBoard* bo = new GameBoard(param1,gameBoardGridMesh);
+			GameBoard* bo = new GameBoard(param1,gameBoardGridMesh,bufferFlips);
 			bo->SetId(gameObjects->Add(bo));
 			outId = bo->GetId();
 
