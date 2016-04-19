@@ -693,6 +693,8 @@ RunTimeError OrbitOperator(unsigned int returnVar, unsigned char* params, unsign
 
 	unsigned int fVar = (params[4] | ((int)params[5] << 8) | ((int)params[6] << 16) | ((int)params[7] << 24));
 	rtc->memory->ReadVariable(fVar - 1, rtc->intLoader, s);
+	float dbg = 0.0f;
+	memcpy(&dbg, rtc->intLoader, 4);
 	mess.SetParams(rtc->intLoader, 4, 4);
 
 	return sendMessageOut(mess, rtc);

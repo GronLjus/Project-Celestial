@@ -43,6 +43,7 @@ void PositionableObject::createMatrix()
 	Matrix r = MatrixRotationYawPitchRoll(rotation.y, rotation.x, rotation.z);
 	transformMatrix = MatrixMultiply(MatrixMultiply(r, t), s);
 	transformInvTrMatrix = MatrixInverse(MatrixTranspose(transformMatrix));
+	direction = VectorTransform(Vector3(0.0f, 0.0f, 1.0f), MatrixInverse(MatrixTranspose(r)));
 
 }
 
@@ -72,31 +73,34 @@ void PositionableObject::rotateObjectToPoint(Vector3 point)
 			rotation.y = yAngle;
 
 		}
-
-		direction = targetToObject / targetMagnitude;
-
 	}
 }
 
 void PositionableObject::orbitAroundPoint(Vector3 point, float arc)
 {
 
-	Vector3 circleCenter = Vector3(point.x, position.y, point.x);
+	Vector3 circleCenter = Vector3(point.x, position.y, point.z);
 	Vector3 circleRad = circleCenter - position;
 	float circleRadMagnitude = sqrt(VectorDot(circleRad, circleRad));
-	float circleCirc = CELESTIAL_PI*circleRadMagnitude*circleRadMagnitude;
-	float angle = circleRadMagnitude / circleCirc * (2 * CELESTIAL_PI);
 
-	rotation.y -= angle;
 
-	Matrix r = MatrixRotationYawPitchRoll(rotation.y, rotation.x, rotation.z);
-	direction = VectorTransform(Vector3(0.0f,0.0f,1.0f), MatrixInverse(MatrixTranspose(r)));
+	if (circleRadMagnitude >= CELESTIAL_EPSILON)
+	{
 
-	Vector3 pointToPos = point - position;
-	float pointToPosMag = sqrt(VectorDot(pointToPos, pointToPos));
-	position = point + (-direction)*pointToPosMag;
-	createMatrix();
+		float circleCirc = CELESTIAL_PI*circleRadMagnitude*circleRadMagnitude;
+		float angle = ((arc*circleCirc) / circleCirc) * (2 * CELESTIAL_PI);
 
+		rotation.y -= angle;
+
+		Matrix r = MatrixRotationYawPitchRoll(rotation.y, rotation.x, rotation.z);
+		direction = VectorTransform(Vector3(0.0f, 0.0f, 1.0f), MatrixInverse(MatrixTranspose(r)));
+
+		Vector3 pointToPos = point - position;
+		float pointToPosMag = sqrt(VectorDot(pointToPos, pointToPos));
+		position = point + (-direction)*pointToPosMag;
+		createMatrix();
+
+	}
 }
 
 void PositionableObject::Update(Message* mess)

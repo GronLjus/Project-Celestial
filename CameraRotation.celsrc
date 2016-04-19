@@ -17,9 +17,14 @@ if ?3 : 0
 else ?3 : 1
 {
 
-	diff = lastY-?2
-	rotByX = cast diff
-	rotByX = (diff/768.0)*0.05
+	diffY = lastY-?2
+	rotByX = cast diffY
+	rotByX = (diffY/768.0)*0.05
 	rotate cam rotByX 0.0 0.0
+
+	diffX = lastX-?1
+	rotAroundY = cast diffX
+	rotAroundY = (diffX/768.0)*0.005
+	orbit cam rotAroundY
 
 }
