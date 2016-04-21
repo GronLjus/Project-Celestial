@@ -92,7 +92,7 @@ Intersection BoundingBox::getPlaneDistSquare(Vector3 &point1, Vector3 &point2, B
 	float distance1 = VectorDot(plane.unitNormals, point1);
 	float distance2 = VectorDot(plane.unitNormals, point2);
 
-	if (distance1 < 0 && distance2 >= 0)
+	if (distance1 < 0 && distance2 >= 0 || distance1 >= 0 && distance2 < 0)
 	{
 		return Intersection_THROUGH;
 

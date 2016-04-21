@@ -756,7 +756,9 @@ CelestialDoubleListNode<Token>* CelScriptLexer::breakOutShortHand(CelestialDoubl
 
 	}
 
-	if (token->GetPrev() == nullptr || (token->GetPrev()->GetNodeObject().type != TokenType_WORD && token->GetPrev()->GetNodeObject().type != TokenType_UNARY))//Is unary operator
+	if (token->GetPrev() == nullptr || 
+		(leftOfShort == "" && token->GetNodeObject().val.length() > 1)||
+		(token->GetPrev()->GetNodeObject().type != TokenType_WORD && token->GetPrev()->GetNodeObject().type != TokenType_UNARY))//Is unary operator
 	{
 
 		if (token->GetNodeObject().val.length() == 1)
@@ -1123,6 +1125,15 @@ CelestialDoubleList<Token>* CelScriptLexer::TokenizeLine(string line, int lNumbe
 				}
 
 				tok = tok->GetNext();
+
+			}
+
+			if (returnVal->GetLastNode()->GetNodeObject().type == TokenType_SEPERATOR)
+			{
+
+				Token newToken = returnVal->GetLastNode()->GetNodeObject();
+				newToken.val = ';';
+				returnVal->GetLastNode()->SetNodeObject(newToken);
 
 			}
 

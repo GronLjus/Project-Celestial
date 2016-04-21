@@ -29,6 +29,9 @@ set middledrag localGameboard cameraRotScript
 
 set gameboard localGameboard
 set camera cam
+
+pos cam -30.0 15.0 30.0
+
 hide splashImage
 remove splashImage
 unload splashImage

@@ -63,8 +63,6 @@ namespace Entities
 			unsigned int flip;
 			ViewPort vp;
 
-			Entities::ViewObject* theView;
-
 			CelestialMath::Matrix* views;
 			CelestialMath::Matrix* projections;
 			CelestialMath::Matrix* viewProjections;

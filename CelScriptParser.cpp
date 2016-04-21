@@ -462,7 +462,7 @@ CelestialList<CelestialTree<Token>*>* CelScriptParser::ParseTokens(CelestialList
 			err.errorType = ScriptError_UNKNOWNKEYWORD;
 			err.line = node->GetNodeObject().line;
 			node = nullptr;
-
+		
 		}
 		else
 		{
