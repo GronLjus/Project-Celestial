@@ -89,8 +89,8 @@ IBounding* BoundingBox::GetCopy() const
 Intersection BoundingBox::getPlaneDistSquare(Vector3 &point1, Vector3 &point2, BoundingPlane& plane)
 {
 
-	float distance1 = VectorDot(plane.unitNormals, point1) + plane.GetP();
-	float distance2 = VectorDot(plane.unitNormals, point2) + plane.GetP();
+	float distance1 = VectorDot(plane.unitNormals, point1);
+	float distance2 = VectorDot(plane.unitNormals, point2);
 
 	if (distance1 < 0 && distance2 >= 0 || distance1 >= 0 && distance2 < 0)
 	{

@@ -30,12 +30,12 @@ set middledrag localGameboard cameraRotScript
 set gameboard localGameboard
 set camera cam
 
-pos cam -32.0 15.0 32.0
+pos cam -30.0 15.0 30.0
 
 hide splashImage
 remove splashImage
 unload splashImage
-hide screenLayout
+show debugLayout
 
 set leftdrag testBox guiDrag
 set text testBox 'Test 1'
