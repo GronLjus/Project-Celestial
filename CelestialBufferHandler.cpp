@@ -188,7 +188,7 @@ void CelestialBufferHandler::UpdateInstanceBuffer(DrawingBoard* db, ID3D11Device
 
 		D3D11_BUFFER_DESC bd;
 		bd.Usage = D3D11_USAGE_DYNAMIC;
-		bd.ByteWidth = strides[BufferTypes_INSTANCE] * db->GetInstanceBuffer()->GetBufferSize(); //total size of buffer in bytes
+		bd.ByteWidth = strides[BufferTypes_INSTANCE] * 1024; //total size of buffer in bytes
 		bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 		bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 		bd.MiscFlags = 0;
@@ -197,15 +197,15 @@ void CelestialBufferHandler::UpdateInstanceBuffer(DrawingBoard* db, ID3D11Device
 		initData.SysMemPitch = 0;
 		initData.SysMemSlicePitch = 0;
 		HRESULT hr = card->CreateBuffer(&bd, &initData, &instances[flip]);
-
+		int dbg = 0;
 	}
 	else
 	{
 
 		D3D11_MAPPED_SUBRESOURCE mapped = D3D11_MAPPED_SUBRESOURCE();
 		context->Map(instances[flip], 0, D3D11_MAP_WRITE_DISCARD, 0, &mapped);
-		memcpy(mapped.pData, db->GetInstanceBuffer()->GetBuffer(), sizeof(Instance)*db->GetInstanceBuffer()->GetBufferSize());
-		Instance* dbg = (Instance*)mapped.pData;
+		unsigned int size = sizeof(Instance)*db->GetInstanceBuffer()->GetBufferSize();
+		memcpy(mapped.pData, db->GetInstanceBuffer()->GetBuffer(), size);
 		context->Unmap(instances[flip], 0);
 
 	}

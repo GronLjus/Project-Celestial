@@ -292,7 +292,16 @@ void CardHandler::Present()
 
 	//Flip buffer
 	HRESULT hr = swapChain->Present(0,0);
-	
+
+	if (hr == DXGI_ERROR_DEVICE_REMOVED || hr == DXGI_ERROR_DEVICE_RESET)
+	{
+		HRESULT reason = card->GetDeviceRemovedReason();
+		wchar_t outString[100];
+		size_t size = 100;
+		swprintf_s(outString, size, L"Device removed! DXGI_ERROR code: 0x%X\n", reason);
+		OutputDebugStringW(outString);
+	}
+
 }
 ImageResourceObject* CardHandler::Load2DImage(unsigned char* values, UINT bPC, UINT channels, UINT width, UINT height)
 {

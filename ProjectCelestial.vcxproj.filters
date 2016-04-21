@@ -958,9 +958,6 @@
     <Image Include="ProjectCelestial.ico">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="Celestial.ico">
-      <Filter>Resource Files</Filter>
-    </Image>
     <Image Include="NewTennisBallColor.jpg">
       <Filter>Source Files</Filter>
     </Image>
@@ -983,6 +980,9 @@
       <Filter>Source Files</Filter>
     </Image>
     <Image Include="Content\Splash.gif">
+      <Filter>Resource Files\Content</Filter>
+    </Image>
+    <Image Include="Celestial.ico">
       <Filter>Resource Files\Content</Filter>
     </Image>
   </ItemGroup>

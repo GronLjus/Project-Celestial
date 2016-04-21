@@ -237,20 +237,11 @@ void GraphicHandler::Update(unsigned int time)
 	{
 
 		unsigned int newFlip = cameraObject->GetFlip();
+		pauseRendering();
 		cardHandler->UpdateInstanceBuffers(gameBoard->GetDrawingBoard(), newFlip);
 		nextFlip = newFlip;
-
-		unsigned int waitTimeStart = clock();
-		while (cameraObject->PeekNextFlip() == renderFlip && isInited)
-		{
-
-			this_thread::yield();
-
-		}
-
-		unsigned int waitTimeEnd = clock();
-		unsigned int waitTimeDiff = waitTimeEnd - waitTimeStart;
 		cameraObject->IncrementFlipBuff();
+		resumeRendering();
 		canDraw = true;
 
 	}
