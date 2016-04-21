@@ -210,13 +210,13 @@ void Frustum::Construct(Matrix viewProjection,Matrix invViewProjection,bool proj
 		}
 	}
 
-	planes[Plane_LEFT] = new BoundingPlane(viewProjection._14+viewProjection._11,viewProjection._24+viewProjection._21,viewProjection._34+viewProjection._31,viewProjection._44+viewProjection._41);
+	/*planes[Plane_LEFT] = new BoundingPlane(viewProjection._14+viewProjection._11,viewProjection._24+viewProjection._21,viewProjection._34+viewProjection._31,viewProjection._44+viewProjection._41);
 	planes[Plane_RIGHT] = new BoundingPlane(viewProjection._14-viewProjection._11,viewProjection._24-viewProjection._21,viewProjection._34-viewProjection._31,viewProjection._44-viewProjection._41);
 	planes[Plane_DOWN] = new BoundingPlane(viewProjection._14+viewProjection._12,viewProjection._24+viewProjection._22,viewProjection._34+viewProjection._32,viewProjection._44+viewProjection._42);
 	planes[Plane_UP] = new BoundingPlane(viewProjection._14-viewProjection._12,viewProjection._24-viewProjection._22,viewProjection._34-viewProjection._32,viewProjection._44-viewProjection._42);
 	planes[Plane_NEAR] = new BoundingPlane(viewProjection._13,viewProjection._23,viewProjection._33,viewProjection._43);
 	planes[Plane_FAR] =  new BoundingPlane(viewProjection._14-viewProjection._13,viewProjection._24-viewProjection._23,viewProjection._34-viewProjection._33,viewProjection._44-viewProjection._43);
-	
+	*/
 
 	Vector4 rightUpperNear = VectorTransform(Vector4(1, 1, 0, 1), invViewProjection);
 	rightUpperNear /= rightUpperNear.w;
@@ -236,6 +236,20 @@ void Frustum::Construct(Matrix viewProjection,Matrix invViewProjection,bool proj
 	Vector4 rightLowerFar = VectorTransform(Vector4(1, -1, 1, 1), invViewProjection);
 	rightLowerFar /= rightLowerFar.w;
 	
+	Vector3 leftNormal = VectorCross((leftLowerNear - leftLowerFar).To3(), (leftUpperFar - leftLowerFar).To3());
+	Vector3 rightNormal = VectorCross((rightUpperFar - rightLowerFar).To3(), (rightLowerNear - rightLowerFar).To3());
+	Vector3 topNormal = VectorCross((leftUpperNear - leftUpperFar).To3(), (rightUpperFar - leftUpperFar).To3());
+	Vector3 bottomNormal = VectorCross((leftLowerFar - leftLowerNear).To3(), (rightLowerNear - leftLowerNear).To3());
+	Vector3 nearNormal = VectorCross((rightUpperNear - rightLowerNear).To3(), (leftLowerNear - rightLowerNear).To3());
+	Vector3 farNormal = -nearNormal;
+
+	planes[Plane_LEFT] = new BoundingPlane(leftNormal,-VectorDot(leftNormal,leftLowerNear.To3()));
+	planes[Plane_RIGHT] = new BoundingPlane(rightNormal, -VectorDot(rightNormal, rightLowerNear.To3()));
+	planes[Plane_DOWN] = new BoundingPlane(bottomNormal, -VectorDot(bottomNormal, leftLowerNear.To3()));
+	planes[Plane_UP] = new BoundingPlane(topNormal, -VectorDot(topNormal, rightUpperNear.To3()));
+	planes[Plane_NEAR] = new BoundingPlane(nearNormal, -VectorDot(nearNormal, rightLowerNear.To3()));
+	planes[Plane_FAR] = new BoundingPlane(farNormal, -VectorDot(farNormal, rightLowerFar.To3()));
+
 	bool* isFace = new bool[6];
 	Vector2* points = new Vector2[8];
 	char* pointIndices = new char[20];
