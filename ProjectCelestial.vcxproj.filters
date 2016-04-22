@@ -1076,13 +1076,13 @@
     <Object Include="Tile.obj">
       <Filter>Source Files</Filter>
     </Object>
-    <Object Include="Content\Tile.obj">
-      <Filter>Resource Files\Content</Filter>
-    </Object>
   </ItemGroup>
   <ItemGroup>
     <Text Include="CameraRotation.celsrc">
       <Filter>Source Files\Scripts</Filter>
+    </Text>
+    <Text Include="Content\Tile.obj">
+      <Filter>Resource Files\Content</Filter>
     </Text>
   </ItemGroup>
 </Project>
