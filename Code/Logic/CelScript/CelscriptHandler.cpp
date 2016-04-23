@@ -134,7 +134,7 @@ void CelscriptHandler::Update(unsigned int time)
 
 		ScriptStack* stack = scriptStacks->GetValue(i);
 
-		if (stack->sleep == 0 && stack->status == stackStatus_PREPPED)
+		while (stack->sleep == 0 && stack->status == stackStatus_PREPPED)
 		{
 
 			stack->status = stackStatus_RUNNING;
@@ -163,7 +163,8 @@ void CelscriptHandler::Update(unsigned int time)
 				}
 			}
 		}
-		else
+
+		if(stack->sleep > 0)
 		{
 
 			stack->sleep = stack->sleep > time ? stack->sleep - time : 0;

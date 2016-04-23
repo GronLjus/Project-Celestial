@@ -98,7 +98,7 @@ HRESULT Overlord::Init(HWND hwnd)
 	mess.type = MessageType_RESOURCES;
 	mess.destination = MessageSource_RESOURCES;
 	mess.source = MessageSource_CELSCRIPT;
-	mess.SetParams((unsigned char*)"PreLoad.celsrc", 0, 15);
+	mess.SetParams((unsigned char*)"content\\scripts\\PreLoad.celsrc", 0, 31);
 	mess.mess = ResourceMess_LOADSCRIPT;
 	rH->HandleMessage(&mess);
 	rH->Update(0);
@@ -139,7 +139,7 @@ HRESULT Overlord::Init(HWND hwnd)
 	dbgOut->AddTextLine("Engine Loaded!");
 	dbgOut->AddTextLine("Loading root script");
 
-	mess.SetParams((unsigned char*)"TestRoot.celsrc", 0, 15);
+	mess.SetParams((unsigned char*)"content\\scripts\\Root.celsrc", 0, 28);
 	rH->HandleMessage(&mess);
 	rH->Update(0);
 	retMess = rH->GetMessages()->PopMessage();

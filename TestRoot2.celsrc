@@ -1,8 +1,0 @@
-
-numTest = import 'numTest'
-post numTest + 10
-post import string 'strTest'
-
-post ?0
-post ?s0
-post ?etime

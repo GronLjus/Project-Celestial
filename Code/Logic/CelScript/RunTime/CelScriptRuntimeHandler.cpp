@@ -2626,7 +2626,7 @@ RunTimeError CelScriptRuntimeHandler::commonScripts(unsigned int end, RunTimeCom
 		{
 
 			er = RunTimeError_HALT;
-			thisRtc->counter++;
+			//thisRtc->counter++;
 
 		}
 
