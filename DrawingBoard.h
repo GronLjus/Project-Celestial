@@ -15,7 +15,7 @@ namespace Entities
 	{
 	
 		public:
-			DrawingBoard(unsigned char maxFlips);
+			DrawingBoard(unsigned char maxFlips, unsigned int maxInstances);
 			unsigned int AddMesh(Resources::MeshObject* mesh);
 			Graphics::GraphicalMesh* GetMeshes() const;
 			void StartAddingInstances();
@@ -29,6 +29,7 @@ namespace Entities
 
 		private:
 			
+			unsigned int maxInstances;
 			unsigned char maxFlips;
 			unsigned char bufflip;
 			unsigned int meshes;

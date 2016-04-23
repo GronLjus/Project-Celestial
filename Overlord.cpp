@@ -57,6 +57,7 @@ Overlord::Overlord(void)
 HRESULT Overlord::Init(HWND hwnd)
 {
 
+	unsigned int maxInstances = 512;
 	dbgOut->AddTextLine("Initiating CelestialEngine");
 	CoInitialize(nullptr);
 	this->hWnd = hwnd;
@@ -89,7 +90,7 @@ HRESULT Overlord::Init(HWND hwnd)
 	}
 
 	CardHandler* tempCard = gH->GetCardHandler();
-	rH->Init(tempCard, dbgOut, vectorUI2(gQ.resolutionX, gQ.resolutionY),32,32*1.0f);
+	rH->Init(tempCard, dbgOut, vectorUI2(gQ.resolutionX, gQ.resolutionY),32,32*1.0f,maxInstances);
 	cH->Init(rH->GetObjectContainer(), rH->GetCrossScriptObject());
 
 	Message mess;
@@ -133,7 +134,7 @@ HRESULT Overlord::Init(HWND hwnd)
 	iH->Init(rH->GetObjectContainer());
 
 	dbgOut->AddTextLine("Initiating CelestialGraphics");
-	res = gH->FullInit(dbgOut);
+	res = gH->FullInit(dbgOut, maxInstances);
 
 	dbgOut->AddTextLine("Engine Loaded!");
 	dbgOut->AddTextLine("Loading root script");

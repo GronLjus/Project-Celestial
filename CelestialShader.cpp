@@ -1024,14 +1024,14 @@ HRESULT CelestialShader::releaseShadowMap()
 
 }
 
-HRESULT CelestialShader::Init(ID3D11Device* card, GraphicQuality gQ, DrawingStyle dS, TextureResourceObject* backBuffer,TextContainer* errorOut)
+HRESULT CelestialShader::Init(ID3D11Device* card, GraphicQuality gQ, DrawingStyle dS, TextureResourceObject* backBuffer,TextContainer* errorOut, unsigned int maxInstances)
 {
 
 	quality = gQ;
 	dStyle = dS;
 
 	this->card = card;
-	bH = new CelestialBufferHandler(card,2);
+	bH = new CelestialBufferHandler(card,2,maxInstances);
 	sMC = new ShadowMapConstants(gQ.shadows);
 
 	HRESULT hr = initBuffers(errorOut);
@@ -1215,6 +1215,7 @@ void CelestialShader::StartDrawing(ViewObject* scene, ID3D11DeviceContext* conte
 void CelestialShader::DrawScene(ViewObject* scene, GraphicalMesh* meshes, ID3D11DeviceContext* context, unsigned int flip)
 {
 
+	unsigned int lastChain = 0;
 	ID3D11RenderTargetView* target[4] = { mtrs[MRTVal_AMB]->GetDXT()->GetTargetView(), 
 		mtrs[MRTVal_DIFF]->GetDXT()->GetTargetView(),
 		mtrs[MRTVal_NORM]->GetDXT()->GetTargetView(),
@@ -1297,6 +1298,17 @@ void CelestialShader::DrawScene(ViewObject* scene, GraphicalMesh* meshes, ID3D11
 
 		transferRenderConstants(context);
 		context->PSSetShaderResources(SRVRegisters_AMB, size, srvs);
+
+		if (fragment.buffer != lastChain)
+		{
+
+			ID3D11Buffer* instances = bH->GetInstanceBuffer(flip, fragment.buffer);
+			unsigned int iStride = sizeof(Instance);
+			unsigned int offset = 0;
+			context->IASetVertexBuffers(1, 1, &instances, &iStride, &offset);
+			lastChain = fragment.buffer;
+
+		}
 		context->DrawIndexedInstanced(mesh.GetIndexLength(), fragment.length, mesh.GetIndexStart(), 0, fragment.start);
 
 		unsigned int max = D3D11_REQ_DRAW_VERTEX_COUNT_2_TO_EXP;

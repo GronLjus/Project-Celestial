@@ -76,10 +76,10 @@ HRESULT GraphicHandler::PreInit(HWND hwnd, GraphicQuality gQ, DrawingStyle dStyl
 
 }
 
-HRESULT GraphicHandler::FullInit(TextContainer* errorOut)
+HRESULT GraphicHandler::FullInit(TextContainer* errorOut, unsigned int maxInstances)
 {
 
-	HRESULT hr = cardHandler->InitShader(errorOut);
+	HRESULT hr = cardHandler->InitShader(errorOut, maxInstances);
 	isInited = true;
 	debugCard->ToggleWireFrame(wf);
 	debugCard->ToggleNormalSpikes(false);

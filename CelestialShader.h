@@ -22,7 +22,10 @@ namespace Graphics
 		public:
 			CelestialShader();
 
-			HRESULT Init(ID3D11Device* card, GraphicQuality gQ, DrawingStyle dS, CrossHandlers::TextureResourceObject* backBuffer,CrossHandlers::TextContainer* errorOut);
+			HRESULT Init(ID3D11Device* card, GraphicQuality gQ, DrawingStyle dS, 
+				CrossHandlers::TextureResourceObject* backBuffer,
+				CrossHandlers::TextContainer* errorOut, 
+				unsigned int maxInstances);
 
 			void SetVertexBuffers(ID3D11Buffer* vertices, ID3D11Buffer* indices, ID3D11DeviceContext* context);
 			void ToggleWireFrameMode(bool val,bool light);

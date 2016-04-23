@@ -7,13 +7,13 @@ using namespace Resources;
 using namespace CelestialMath;
 using namespace Entities;
 
-CelestialBufferHandler::CelestialBufferHandler(ID3D11Device* card, unsigned int flips)
+CelestialBufferHandler::CelestialBufferHandler(ID3D11Device* card, unsigned int flips, unsigned int maxInstances)
 {
 
 	this->card = card;
 
 	maxLights = 100;
-	maxInstances = 200;//Gives us a buffersize of 200*2^7=25600 bytes
+	this->maxInstances = maxInstances;
 	strides = new UINT[BufferTypes_COUNT];
 	strides[BufferTypes_VERTEX] = sizeof(BufferVertex);
 	strides[BufferTypes_INSTANCE] = sizeof(Instance);
@@ -23,12 +23,21 @@ CelestialBufferHandler::CelestialBufferHandler(ID3D11Device* card, unsigned int 
 	instantFlip = 0;
 	instantFlips = flips;
 
-	instances = new ID3D11Buffer*[instantFlips];
+	instances = new ID3D11Buffer**[instantFlips];
+	instanceChain = new unsigned int[instantFlips];
 
 	for (unsigned int i = 0; i < flips; i++)
 	{
 		
-		instances[i] = nullptr;
+		instanceChain[i] = 1;
+		instances[i] = new ID3D11Buffer*[instanceChain[i]];
+
+		for (unsigned int k = 0; k < instanceChain[i]; k++ )
+		{
+
+			instances[i][k] = nullptr;
+
+		}
 
 	}
 
@@ -180,33 +189,62 @@ void CelestialBufferHandler::UpdateMeshBuffers(DrawingBoard* db, ID3D11DeviceCon
 	}
 }
 
-void CelestialBufferHandler::UpdateInstanceBuffer(DrawingBoard* db, ID3D11DeviceContext* context, unsigned int flip)
+void CelestialBufferHandler::UpdateInstanceBuffer(DrawingBoard* db, ID3D11DeviceContext* context, unsigned int flip, unsigned int chain)
 {
 
-	if (instances[flip] == nullptr)
+	if (chain >= instanceChain[flip])
+	{
+
+		ID3D11Buffer** newInstances = new ID3D11Buffer*[chain+1];
+
+		for (unsigned int i = 0; i < instanceChain[flip]; i++)
+		{
+
+			newInstances[i] = instances[flip][i];
+
+		}
+
+		for (unsigned i = instanceChain[flip]; i <= chain; i++)
+		{
+
+			newInstances[i] = nullptr;
+
+		}
+
+		delete[] instances[flip];
+		instances[flip] = newInstances;
+		instanceChain[flip] = chain + 1;
+
+	}
+
+	if (instances[flip][chain] == nullptr)
 	{
 
 		D3D11_BUFFER_DESC bd;
 		bd.Usage = D3D11_USAGE_DYNAMIC;
-		bd.ByteWidth = strides[BufferTypes_INSTANCE] * 512; //total size of buffer in bytes
+		bd.ByteWidth = strides[BufferTypes_INSTANCE] * maxInstances; //total size of buffer in bytes
 		bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 		bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 		bd.MiscFlags = 0;
-		D3D11_SUBRESOURCE_DATA initData;
-		initData.pSysMem = db->GetInstanceBuffer()->GetBuffer();
-		initData.SysMemPitch = 0;
-		initData.SysMemSlicePitch = 0;
-		HRESULT hr = card->CreateBuffer(&bd, &initData, &instances[flip]);
+		HRESULT hr = card->CreateBuffer(&bd, nullptr, &instances[flip][chain]);
+
 		int dbg = 0;
+
 	}
-	else
+
+	unsigned int totalSize = db->GetInstanceBuffer()->GetBufferSize() - (chain * maxInstances);
+	unsigned int toAdd = totalSize >= maxInstances ? maxInstances : totalSize;
+
+	D3D11_MAPPED_SUBRESOURCE mapped = D3D11_MAPPED_SUBRESOURCE();
+	context->Map(instances[flip][chain], 0, D3D11_MAP_WRITE_DISCARD, 0, &mapped);
+	memcpy(mapped.pData, &(db->GetInstanceBuffer()->GetBuffer()[chain * maxInstances]), toAdd * sizeof(Instance));
+	context->Unmap(instances[flip][chain], 0);
+	totalSize -= toAdd;
+
+	if (totalSize > 0)
 	{
 
-		D3D11_MAPPED_SUBRESOURCE mapped = D3D11_MAPPED_SUBRESOURCE();
-		context->Map(instances[flip], 0, D3D11_MAP_WRITE_DISCARD, 0, &mapped);
-		unsigned int size = sizeof(Instance)*db->GetInstanceBuffer()->GetBufferSize();
-		memcpy(mapped.pData, db->GetInstanceBuffer()->GetBuffer(), size);
-		context->Unmap(instances[flip], 0);
+		UpdateInstanceBuffer(db, context, flip, chain + 1);
 
 	}
 }
@@ -225,10 +263,10 @@ ID3D11Buffer* CelestialBufferHandler::GetIndexBuffer() const
 
 }
 
-ID3D11Buffer* CelestialBufferHandler::GetInstanceBuffer(unsigned int flip) const
+ID3D11Buffer* CelestialBufferHandler::GetInstanceBuffer(unsigned int flip, unsigned int chain) const
 {
 
-	return instances[flip];
+	return instances[flip][chain];
 
 }
 
@@ -305,14 +343,22 @@ void CelestialBufferHandler::Release()
 	for (unsigned int i = 0; i < instantFlips; i++)
 	{
 
-		if (instances[i] != nullptr)
+		for (unsigned int k = 0; k < instanceChain[i]; k++)
 		{
 
-			instances[i]->Release();
+			if (instances[i][k] != nullptr)
+			{
 
+				instances[i][k]->Release();
+				instances[i][k] = nullptr;
+
+			}
 		}
-	}
 
+		delete[] instances[i];
+		instanceChain[i] = 0;
+
+	}
 	//lightLayout->Release();
 
 }
@@ -320,7 +366,8 @@ void CelestialBufferHandler::Release()
 CelestialBufferHandler::~CelestialBufferHandler()
 {
 
-	delete[] strides;
+	delete[] instanceChain;
 	delete[] instances;
+	delete[] strides;
 
 }

@@ -16,9 +16,10 @@ namespace Entities
 				unsigned int mesh;
 				unsigned int start;
 				unsigned int length;
+				unsigned int buffer;
 
-				Fragment(){ mesh = 0; start = 0; length = 0; }
-				Fragment(unsigned int mesh, unsigned int start, unsigned int length) : mesh(mesh), start(start), length(length){}
+				Fragment() { mesh = 0; start = 0; length = 0; buffer = 0; }
+				Fragment(unsigned int mesh, unsigned int start, unsigned int length, unsigned int buffer) : mesh(mesh), start(start), length(length), buffer(buffer){}
 
 			};
 
@@ -39,7 +40,7 @@ namespace Entities
 
 			void IncrementInstances();
 			unsigned int PeekNextFlip() const;
-			void AddInstanceFragment(unsigned int mesh, unsigned int start, unsigned int length);
+			void AddInstanceFragment(unsigned int mesh, unsigned int start, unsigned int length, unsigned int buffer);
 			void ResetInstances();
 			CrossHandlers::Frustum* GetFrustum() const;
 			CrossHandlers::CelestialStack<Fragment>* GetInstanceStack(unsigned int bufferFlip) const;

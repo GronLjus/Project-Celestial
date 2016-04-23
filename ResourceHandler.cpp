@@ -29,9 +29,10 @@ unsigned int ResourceHandler::GetCrossScriptObject() const
 
 ///<summary>Initializes The handler and its underobjects</summary>
 ///<param name='card'>[in]The device to load from</param>
-void ResourceHandler::Init(Graphics::CardHandler* &card, TextContainer* outText, vectorUI2 screen, unsigned int gameBoardGridCells, unsigned int gameBoardGridSize)
+void ResourceHandler::Init(Graphics::CardHandler* &card, TextContainer* outText, vectorUI2 screen, unsigned int gameBoardGridCells, unsigned int gameBoardGridSize, unsigned int maxInstances)
 {
 
+	this->maxInstances = maxInstances;
 	loader->Init(card,outText);
 	gameBoardGridMesh = loader->LoadGrid(gameBoardGridCells, gameBoardGridSize);
 	((BaseObject*)gameBoardGridMesh)->SetId(gameObjects->Add(gameBoardGridMesh));
@@ -84,7 +85,7 @@ void ResourceHandler::Update(unsigned int time)
 		{
 
 			unsigned int param1 = currentMessage->params[0] | ((int)currentMessage->params[1] << 8) | ((int)currentMessage->params[2] << 16) | ((int)currentMessage->params[3] << 24);
-			GameBoard* bo = new GameBoard(param1,gameBoardGridMesh,bufferFlips);
+			GameBoard* bo = new GameBoard(param1,gameBoardGridMesh,bufferFlips,maxInstances);
 			bo->SetId(gameObjects->Add(bo));
 			outId = bo->GetId();
 

@@ -23,7 +23,7 @@ namespace Graphics
 			HRESULT PreInit(HWND hwnd, GraphicQuality initQuality, DrawingStyle dStyle, CrossHandlers::CelestialSlicedList<Resources::BaseObject*>* gameObjects);
 			///<summary>Initilizes the rest of the graphichandler so we can output complicated drawings</summary>
 			///<param val='errorOut'>[in]A pointer to a textcontainer to use for debugging</param>
-			HRESULT FullInit(CrossHandlers::TextContainer* errorOut);
+			HRESULT FullInit(CrossHandlers::TextContainer* errorOut, unsigned int maxInstances);
 
 			///<summary>Updates the handler and prepares to draw</summary>
 			void Update(unsigned int time);

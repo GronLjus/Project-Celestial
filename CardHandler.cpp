@@ -164,11 +164,11 @@ HRESULT CardHandler::Init(HWND hwnd, GraphicQuality gQ, DrawingStyle dS)
 
 }
 
-HRESULT CardHandler::InitShader(TextContainer* errorOut)
+HRESULT CardHandler::InitShader(TextContainer* errorOut, unsigned int maxInstances)
 {
 
 	errorOut->AddTextLine("Creating shaders");
-	HRESULT hr = shader->Init(card, quality, dStyle, backBuffer, errorOut);
+	HRESULT hr = shader->Init(card, quality, dStyle, backBuffer, errorOut, maxInstances);
 	if (FAILED(hr)){ return hr; }
 	bH = (CelestialBufferHandler*)(shader->GetBufferHandler());
 	shader->ToggleWireFrameMode(wireFrame, dStyle.enlighten);
@@ -201,14 +201,14 @@ void CardHandler::UpdateMeshBuffers(DrawingBoard* db)
 void CardHandler::UpdateInstanceBuffers(DrawingBoard* db, unsigned int flip)
 {
 
-	bH->UpdateInstanceBuffer(db, context1, flip);
+	bH->UpdateInstanceBuffer(db, context1, flip,0);
 
 }
 
 void CardHandler::SetInstanceBuffers(unsigned int flip)
 {
 
-	ID3D11Buffer* instances = bH->GetInstanceBuffer(flip);
+	ID3D11Buffer* instances = bH->GetInstanceBuffer(flip,0);
 	unsigned int iStride = sizeof(Instance);
 	unsigned int offset = 0;
 	context1->IASetVertexBuffers(1, 1, &instances, &iStride, &offset);

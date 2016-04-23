@@ -25,7 +25,7 @@ namespace Graphics
 			///<summary>Initilizes the cards underobject enabling advanced drawing</summary>
 			///<param val='errorOut'>[in]A pointer to a textcontainer to use for debugging</param>
 			///<returns>Any errors</returns>
-			HRESULT InitShader(CrossHandlers::TextContainer* errorOut);
+			HRESULT InitShader(CrossHandlers::TextContainer* errorOut, unsigned int maxInstances);
 
 			ImageResourceObject* Load2DImage(unsigned char* values, UINT bPC, UINT channels, UINT width, UINT height);
 			void UpdateMeshBuffers(Entities::DrawingBoard* db);

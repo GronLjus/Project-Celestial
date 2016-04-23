@@ -108,10 +108,10 @@ unsigned int ViewObject::GetFlip() const
 
 }
 
-void ViewObject::AddInstanceFragment(unsigned int mesh, unsigned int start, unsigned int length)
+void ViewObject::AddInstanceFragment(unsigned int mesh, unsigned int start, unsigned int length, unsigned int buffer)
 {
 
-	instances[flip]->PushElement(Fragment(mesh,start,length));
+	instances[flip]->PushElement(Fragment(mesh,start,length,buffer));
 
 }
 

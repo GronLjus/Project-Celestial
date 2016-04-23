@@ -75,13 +75,6 @@ void CelscriptHandler::Update(unsigned int time)
 
 				}
 
-				if (scriptStacks->GetValue(chosenStack) == nullptr)
-				{
-
-					int dbg = 0;
-
-				}
-
 				reverseStacks->Add(chosenStack, param1);
 				ScriptStack* stack = scriptStacks->GetValue(chosenStack);
 				stack->sleep = 0;

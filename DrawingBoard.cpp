@@ -7,9 +7,10 @@ using namespace Resources;
 using namespace CelestialMath;
 using namespace Graphics;
 
-DrawingBoard::DrawingBoard(unsigned char maxFlips)
+DrawingBoard::DrawingBoard(unsigned char maxFlips, unsigned int maxInstances)
 {
 
+	this->maxInstances = maxInstances;
 	this->maxFlips = maxFlips;
 	bufflip = 0;
 	vertexBuffer = new BufferObject2<BufferVertex>(100);
@@ -86,6 +87,8 @@ void DrawingBoard::FinalizeInstances(ViewObject* onView)
 	bufflip++;
 	bufflip %= maxFlips;
 	unsigned int totalInst = 0;
+	unsigned int inBuff = 0;
+	unsigned int start = 0;
 
 	while (meshInstance->GetCount() > 0)
 	{
@@ -93,7 +96,21 @@ void DrawingBoard::FinalizeInstances(ViewObject* onView)
 		unsigned int meshVal = meshInstance->PopElement();
 		unsigned int localMesh = meshDictionary->GetValue(meshVal);
 		BufferObject2<Instance>* instBuff = meshInstances->GetValue(localMesh);
-		onView->AddInstanceFragment(localMesh, instanceBuffer->GetBufferSize(), instBuff->GetBufferSize());
+		unsigned int objectsToAdd = instBuff->GetBufferSize();
+
+		while (start + objectsToAdd >= maxInstances)
+		{
+
+			onView->AddInstanceFragment(localMesh, start, maxInstances-start, inBuff);
+			objectsToAdd -= maxInstances - start;
+			start = 0;
+			inBuff++;
+
+		}
+
+		onView->AddInstanceFragment(localMesh, start, objectsToAdd, inBuff);
+		start += objectsToAdd;
+
 		instanceBuffer->Add(instBuff);
 		instBuff->Reset();
 		hasInstance->Add(false, meshVal);

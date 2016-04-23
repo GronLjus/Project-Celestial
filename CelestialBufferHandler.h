@@ -16,14 +16,14 @@ namespace Graphics
 		public:
 			///<param name='card'>[in]The device to create buffers from</param>
 			///<param name='meshDictionary'>[in]The meshDictionary to use as id-reference</param>
-			CelestialBufferHandler(ID3D11Device* card,unsigned int flips);
+			CelestialBufferHandler(ID3D11Device* card,unsigned int flips,unsigned int maxInstances);
 
 			void UpdateMeshBuffers(Entities::DrawingBoard* db, ID3D11DeviceContext* context);
-			void UpdateInstanceBuffer(Entities::DrawingBoard* db, ID3D11DeviceContext* context, unsigned int flip);
+			void UpdateInstanceBuffer(Entities::DrawingBoard* db, ID3D11DeviceContext* context, unsigned int flip, unsigned int chain);
 
 			ID3D11Buffer* GetVertexBuffer() const;
 			ID3D11Buffer* GetIndexBuffer() const;
-			ID3D11Buffer* GetInstanceBuffer(unsigned int flip) const;
+			ID3D11Buffer* GetInstanceBuffer(unsigned int flip, unsigned int chain) const;
 
 			HRESULT InitVertexLayout(void* signature,SIZE_T size);
 			HRESULT InitTerrainVertexLayout(void* signature,SIZE_T size);
@@ -169,8 +169,6 @@ namespace Graphics
 
 			};
 
-			///<summary>The maximum number of instances in a instancebuffer</summary>
-			int maxInstances;
 
 			///<summary> A double buffer containing all strides for buffers</summary>
 			UINT* strides;
@@ -195,9 +193,11 @@ namespace Graphics
 			///<summary>The maximum number of lights in a buffer</summary>
 			int maxLights;
 
+			unsigned int maxInstances;
 			ID3D11Buffer* vertices;
 			ID3D11Buffer* indices;
-			ID3D11Buffer** instances;
+			ID3D11Buffer*** instances;
+			unsigned int* instanceChain;
 			unsigned int instantFlip;
 			unsigned int instantFlips;
 
