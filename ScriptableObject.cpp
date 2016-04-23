@@ -16,6 +16,8 @@ ScriptableObject::ScriptableObject()
 	leftDragScript = 0;
 	middleDragScript = 0;
 
+	wheelScript = 0;
+
 }
 
 
@@ -47,9 +49,20 @@ void ScriptableObject::Update(Message* mess)
 		case ObjectMess_SETLDSCRPT:
 			leftDragScript = param1 + 1;
 			break;
+		case ObjectMess_SETWHEELSCRIPT:
+			wheelScript = param1 + 1;
+			break;
 		}
 	}
 }
+
+unsigned int ScriptableObject::GetWheelScript() const
+{
+
+	return wheelScript;
+
+}
+
 unsigned int ScriptableObject::GetRightClickScript() const
 {
 

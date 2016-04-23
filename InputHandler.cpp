@@ -14,9 +14,7 @@ InputHandler::InputHandler() : IHandleMessages(300,MessageSource_INPUT)
 	draggedScript = 0;
 	clickTime = 125;
 	filter = MessageType_INPUT;
-	screenTargets = new CelestialSlicedList<ScreenTarget*>(32, nullptr);
 	gameObjects = nullptr;
-	maxScreenTargets = 0;
 	mouse = vectorUI2(0, 0);
 	keyStates = new keyState[keyCodeNA];
 	pressedKeys = new CelestialStack<key>(false);
@@ -56,94 +54,6 @@ void InputHandler::Init(CelestialSlicedList<BaseObject*>* gameObjects)
 
 }
 
-void InputHandler::setCommonScriptParameters(unsigned int script, unsigned int time, unsigned int targetId)
-{
-
-	unsigned char tempBuff[]{ script >> 0, script >> 8, script >> 16, script >> 24,
-		targetId >> 0, targetId >> 8, targetId >> 16, targetId >> 24
-	};
-	unsigned char tempBuff2[]{ script >> 0, script >> 8, script >> 16, script >> 24,
-		mouse.x >> 0, mouse.x >> 8, mouse.x >> 16, mouse.x >> 24
-	};
-	unsigned char tempBuff3[]{ script >> 0, script >> 8, script >> 16, script >> 24,
-		mouse.y >> 0, mouse.y >> 8, mouse.y >> 16, mouse.y >> 24
-	};
-
-	messageBuffer[this->currentMessage].timeSent = time;
-	messageBuffer[this->currentMessage].destination = MessageSource_CELSCRIPT;
-	messageBuffer[this->currentMessage].type = MessageType_SCRIPT;
-	messageBuffer[this->currentMessage].mess = ScriptMess_ADDPARNUM;
-	messageBuffer[this->currentMessage].read = false;
-	messageBuffer[this->currentMessage].SetParams(tempBuff, 0, 8);
-	outQueue->PushMessage(&messageBuffer[this->currentMessage]);
-	this->currentMessage = (this->currentMessage + 1) % outMessages;
-
-	messageBuffer[this->currentMessage].timeSent = time;
-	messageBuffer[this->currentMessage].destination = MessageSource_CELSCRIPT;
-	messageBuffer[this->currentMessage].type = MessageType_SCRIPT;
-	messageBuffer[this->currentMessage].mess = ScriptMess_ADDPARNUM;
-	messageBuffer[this->currentMessage].read = false;
-	messageBuffer[this->currentMessage].SetParams(tempBuff2, 0, 8);
-	outQueue->PushMessage(&messageBuffer[this->currentMessage]);
-	this->currentMessage = (this->currentMessage + 1) % outMessages;
-
-	messageBuffer[this->currentMessage].timeSent = time;
-	messageBuffer[this->currentMessage].destination = MessageSource_CELSCRIPT;
-	messageBuffer[this->currentMessage].type = MessageType_SCRIPT;
-	messageBuffer[this->currentMessage].mess = ScriptMess_ADDPARNUM;
-	messageBuffer[this->currentMessage].read = false;
-	messageBuffer[this->currentMessage].SetParams(tempBuff3, 0, 8);
-	outQueue->PushMessage(&messageBuffer[this->currentMessage]);
-	this->currentMessage = (this->currentMessage + 1) % outMessages;
-
-}
-
-void InputHandler::runScript(unsigned int script, unsigned int time)
-{
-
-	unsigned char tempBuff[]{script >> 0, script >> 8, script >> 16, script >> 24
-	};
-
-	messageBuffer[this->currentMessage].SetParams(tempBuff, 0, 4);
-	messageBuffer[this->currentMessage].timeSent = time;
-	messageBuffer[this->currentMessage].destination = MessageSource_CELSCRIPT;
-	messageBuffer[this->currentMessage].type = MessageType_SCRIPT;
-	messageBuffer[this->currentMessage].mess = ScriptMess_RUN;
-	messageBuffer[this->currentMessage].read = false;
-	outQueue->PushMessage(&messageBuffer[this->currentMessage]);
-	this->currentMessage = (this->currentMessage + 1) % outMessages;
-
-}
-
-void InputHandler::triggerScript(unsigned int script, unsigned int time, unsigned int targetId, unsigned int dragStatus)
-{
-
-	setCommonScriptParameters(script, time, targetId);
-
-	unsigned char tempBuff[]{ script >> 0, script >> 8, script >> 16, script >> 24,
-		dragStatus >> 0, dragStatus >> 8, dragStatus >> 16, dragStatus >> 24
-	};
-
-	messageBuffer[this->currentMessage].timeSent = time;
-	messageBuffer[this->currentMessage].destination = MessageSource_CELSCRIPT;
-	messageBuffer[this->currentMessage].type = MessageType_SCRIPT;
-	messageBuffer[this->currentMessage].mess = ScriptMess_ADDPARNUM;
-	messageBuffer[this->currentMessage].read = false;
-	messageBuffer[this->currentMessage].SetParams(tempBuff, 0, 8);
-	outQueue->PushMessage(&messageBuffer[this->currentMessage]);
-	this->currentMessage = (this->currentMessage + 1) % outMessages;
-
-	runScript(script, time);
-}
-
-void InputHandler::triggerScript(unsigned int script, unsigned int time, unsigned int targetId)
-{
-
-	setCommonScriptParameters(script, time, targetId);
-	runScript(script, time);
-
-}
-
 void InputHandler::handleKeys(unsigned int time)
 {
 
@@ -179,80 +89,6 @@ void InputHandler::handleKeys(unsigned int time)
 
 }
 
-ScreenTarget * InputHandler::checkScreenTargets(unsigned int time)
-{
-
-	ScreenTarget* firstTarget = nullptr;
-	unsigned char topLayer = 1;
-
-	for (unsigned int i = 0; i < maxScreenTargets; i++)
-	{
-
-		ScreenTarget* st = screenTargets->GetValue(i);
-
-		if (st != nullptr)
-		{
-
-			if (st->IsVisible() && !st->ShouldRemove() &&
-				(st->GetPosition().x <= mouse.x && st->GetPosition().x + st->GetScale().x >= mouse.x &&
-					st->GetPosition().y <= mouse.y && st->GetPosition().y + st->GetScale().y >= mouse.y) &&
-				(st->GetLayer() > topLayer))
-			{
-
-				if (firstTarget != nullptr && firstTarget->IsHovering())
-				{
-
-					firstTarget->SetHovering(false);
-
-					if (firstTarget->GetExitScript() != 0)
-					{
-
-						unsigned int script = firstTarget->GetExitScript() - 1;
-						triggerScript(script, time, firstTarget->GetTargetId());
-
-					}
-				}
-
-				topLayer = st->GetLayer();
-				firstTarget = st;
-
-			}
-			else if (st->ShouldRemove())
-			{
-
-				unsigned char tempBuff[]{ st->GetId() >> 0, st->GetId() >> 8, st->GetId() >> 16, st->GetId() >> 24 };
-				messageBuffer[this->currentMessage].SetParams(tempBuff, 0, 4);
-				messageBuffer[this->currentMessage].timeSent = time;
-				messageBuffer[this->currentMessage].destination = MessageSource_RESOURCES;
-				messageBuffer[this->currentMessage].type = MessageType_RESOURCES;
-				messageBuffer[this->currentMessage].mess = ResourceMess_UNLOADOBJECT;
-				messageBuffer[this->currentMessage].read = false;
-				outQueue->PushMessage(&messageBuffer[this->currentMessage]);
-				this->currentMessage = (this->currentMessage + 1) % outMessages;
-
-				screenTargets->Add(nullptr, i);
-
-			}
-			else if (st->IsHovering())
-			{
-
-				st->SetHovering(false);
-
-				if (st->GetExitScript() != 0)
-				{
-
-					unsigned int script = st->GetExitScript() - 1;
-					triggerScript(script, time, st->GetTargetId());
-
-				}
-			}
-		}
-	}
-
-	return firstTarget;
-
-}
-
 bool InputHandler::checkMouseClick(unsigned int time, keyCode ks) const
 {
 
@@ -284,30 +120,7 @@ bool InputHandler::checkDrag(unsigned int time)
 
 
 				dragging = keyCode(i);
-
-				ScreenTarget* firstTarget = checkScreenTargets(time);
-
-				if (firstTarget != nullptr)
-				{
-
-					draggedScript = i == keyCodeMouseL ? firstTarget->GetLeftDragScript() :
-						i == keyCodeMouseM ? firstTarget->GetMiddleClickScript() :
-						firstTarget->GetRightDragScript();
-
-					if (draggedScript != 0)
-					{
-
-						draggedTarget = firstTarget->GetTargetId();
-						triggerScript(draggedScript-1, time, draggedTarget,0);
-
-					}
-				}
-				else
-				{
-
-					sendMessageToGB(GameBoardMess_STARTDRAGGING, time, dragging);
-
-				}
+				sendMessage(GUIMess_STARTDRAGGING, time, dragging);
 
 				for (unsigned char k = 0; k < keyCodeNA; k++)
 				{
@@ -331,39 +144,15 @@ bool InputHandler::checkDrag(unsigned int time)
 		if (keyStates[dragging].state)
 		{
 
-			if (draggedScript != 0)
-			{
-
-				triggerScript(draggedScript-1, time, draggedTarget, 2);
-				draggedScript = 0;
-				draggedTarget = 0;
-
-			}
-			else if(draggedTarget == 0)
-			{
-
-				sendMessageToGB(GameBoardMess_STOPDRAGGING, time, dragging);
-			
-			}
-
+			sendMessage(GUIMess_STOPDRAGGING, time, dragging);
 			dragging = keyCodeNA;
 
 		}
 		else
 		{
 
-			if (draggedScript != 0)
-			{
+			sendMessage(GUIMess_DRAGOBJECT, time, dragging);
 
-				triggerScript(draggedScript-1, time, draggedTarget,1);
-
-			}
-			else if (draggedTarget == 0)
-			{
-
-				sendMessageToGB(GameBoardMess_DRAGOBJECT, time, dragging);
-
-			}
 		}
 	}
 
@@ -371,18 +160,70 @@ bool InputHandler::checkDrag(unsigned int time)
 
 }
 
-void InputHandler::sendMessageToGB(unsigned int mess, unsigned int time, keyCode key)
+void InputHandler::checkMouseWheel(unsigned int time)
 {
 
-	unsigned char tempBuff[]{ key,
+	if (mouseWheel != 0)
+	{
+
+		sendMessage(GUIMess_WHEELOBJECT, time, mouseWheel);
+		mouseWheel = 0;
+
+	}
+}
+
+void InputHandler::sendMessage(unsigned int mess, unsigned int time, short delta)
+{
+
+	unsigned char tempBuff[]{
 		mouse.x >> 0, mouse.x >> 8, mouse.x >> 16, mouse.x >> 24,
-		mouse.y >> 0, mouse.y >> 8, mouse.y >> 16, mouse.y >> 24
+		mouse.y >> 0, mouse.y >> 8, mouse.y >> 16, mouse.y >> 24,
+		delta >> 0, delta >> 8
+	};
+
+	messageBuffer[this->currentMessage].SetParams(tempBuff, 0, 14);
+	messageBuffer[this->currentMessage].timeSent = time;
+	messageBuffer[this->currentMessage].destination = MessageSource_GUIENTITIES;
+	messageBuffer[this->currentMessage].type = MessageType_GUIENTITIES;
+	messageBuffer[this->currentMessage].mess = mess;
+	messageBuffer[this->currentMessage].read = false;
+	outQueue->PushMessage(&messageBuffer[this->currentMessage]);
+	this->currentMessage = (this->currentMessage + 1) % outMessages;
+
+}
+
+void InputHandler::sendMessage(unsigned int mess, unsigned int time, keyCode key)
+{
+
+	unsigned char tempBuff[]{
+		mouse.x >> 0, mouse.x >> 8, mouse.x >> 16, mouse.x >> 24,
+		mouse.y >> 0, mouse.y >> 8, mouse.y >> 16, mouse.y >> 24,
+		key
 	};
 
 	messageBuffer[this->currentMessage].SetParams(tempBuff, 0, 12);
 	messageBuffer[this->currentMessage].timeSent = time;
-	messageBuffer[this->currentMessage].destination = MessageSource_ENTITIES;
-	messageBuffer[this->currentMessage].type = MessageType_ENTITIES;
+	messageBuffer[this->currentMessage].destination = MessageSource_GUIENTITIES;
+	messageBuffer[this->currentMessage].type = MessageType_GUIENTITIES;
+	messageBuffer[this->currentMessage].mess = mess;
+	messageBuffer[this->currentMessage].read = false;
+	outQueue->PushMessage(&messageBuffer[this->currentMessage]);
+	this->currentMessage = (this->currentMessage + 1) % outMessages;
+
+}
+
+void InputHandler::sendMessage(unsigned int mess, unsigned int time)
+{
+
+	unsigned char tempBuff[]{
+		mouse.x >> 0, mouse.x >> 8, mouse.x >> 16, mouse.x >> 24,
+		mouse.y >> 0, mouse.y >> 8, mouse.y >> 16, mouse.y >> 24
+	};
+
+	messageBuffer[this->currentMessage].SetParams(tempBuff, 0, 8);
+	messageBuffer[this->currentMessage].timeSent = time;
+	messageBuffer[this->currentMessage].destination = MessageSource_GUIENTITIES;
+	messageBuffer[this->currentMessage].type = MessageType_GUIENTITIES;
 	messageBuffer[this->currentMessage].mess = mess;
 	messageBuffer[this->currentMessage].read = false;
 	outQueue->PushMessage(&messageBuffer[this->currentMessage]);
@@ -400,68 +241,14 @@ void InputHandler::handleMouse(unsigned int time)
 
 	}
 
-	ScreenTarget* firstTarget = checkScreenTargets(time);
-	
-	if (firstTarget != nullptr)
+	for (unsigned char i = 0; i < keyCodeNA; i++)
 	{
 
-		if (!firstTarget->IsHovering() && firstTarget->GetEnterScript() != 0)
+		if (checkMouseClick(time, keyCode(i)))
 		{
 
-			unsigned int script = firstTarget->GetEnterScript() - 1;
-			triggerScript(script, time, firstTarget->GetTargetId());
+			sendMessage(GUIMess_CLICKOBJECT, time, keyCode(i));
 
-		}
-
-		firstTarget->SetHovering(true);
-
-		if (firstTarget->GetHoverScript() != 0)
-		{
-
-			unsigned int hoverScript = firstTarget->GetHoverScript() - 1;
-			triggerScript(hoverScript, time, firstTarget->GetTargetId());
-
-		}
-
-		if (firstTarget->GetLeftClickScript() != 0 &&
-			checkMouseClick(time,keyCodeMouseL))
-		{
-
-			unsigned int lcScript = firstTarget->GetLeftClickScript() - 1;
-			triggerScript(lcScript, time, firstTarget->GetTargetId());
-
-		}
-		
-		if (firstTarget->GetMiddleClickScript() != 0 &&
-			checkMouseClick(time, keyCodeMouseM))
-		{
-
-			unsigned int mcScript = firstTarget->GetMiddleClickScript() - 1;
-			triggerScript(mcScript, time, firstTarget->GetTargetId());
-
-		}
-
-		if (firstTarget->GetRightClickScript() != 0 &&
-			checkMouseClick(time, keyCodeMouseR))
-		{
-
-			unsigned int rcScript = firstTarget->GetRightClickScript() - 1;
-			triggerScript(rcScript, time, firstTarget->GetTargetId());
-
-		}
-	}
-	else
-	{
-
-		for (unsigned char i = 0; i < keyCodeNA; i++)
-		{
-
-			if (checkMouseClick(time, keyCode(i)))
-			{
-
-				sendMessageToGB(GameBoardMess_CLICKOBJECT, time, keyCode(i));
-
-			}
 		}
 	}
 }
@@ -482,23 +269,18 @@ void InputHandler::Update(unsigned int time)
 
 		unsigned int param1 = currentMessage->params[0] | ((int)currentMessage->params[1] << 8) | ((int)currentMessage->params[2] << 16) | ((int)currentMessage->params[3] << 24);
 
-		if (currentMessage->mess == InputMess_ADDSCREENTARGET)
-		{
-				
-			unsigned int stId = screenTargets->Add((ScreenTarget*)gameObjects->GetValue(param1));
-
-			if (stId >= maxScreenTargets)
-			{
-
-				maxScreenTargets = stId+1;
-
-			}
-		}
-		else if (currentMessage->mess == InputMess_MOUSEMOVE)
+		if (currentMessage->mess == InputMess_MOUSEMOVE)
 		{
 
 			mouse.x = currentMessage->params[0] | ((int)currentMessage->params[1] << 8);
 			mouse.y = currentMessage->params[2] | ((int)currentMessage->params[3] << 8);
+			sendMessage(GUIMess_MOVEMOUSE, time);
+
+		}
+		else if (currentMessage->mess == InputMess_MOUSEWHEEL)
+		{
+
+			sendMessage(GUIMess_WHEELOBJECT, time, param10);
 
 		}
 		else if ((currentMessage->mess == InputMess_MOUSEUP && !keyStates[param1].state) || (currentMessage->mess == InputMess_MOUSEDWN && keyStates[param1].state))
@@ -526,6 +308,7 @@ void InputHandler::Update(unsigned int time)
 			{
 
 				int dbg = 0;
+
 			}
 		}
 		else if (currentMessage->mess == InputMess_CHAR)
@@ -556,7 +339,6 @@ InputHandler::~InputHandler()
 {
 
 	delete[] keyStates;
-	delete screenTargets;
 	delete pressedKeys;
 
 	delete[] keyStatus[CelestialKeyCategories_CHAR];

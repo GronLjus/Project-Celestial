@@ -177,9 +177,9 @@ void ResourceHandler::Update(unsigned int time)
 			ScreenTarget* target = obj->GetScreenTarget();
 			target->SetId(gameObjects->Add(target));
 			messageBuffer[this->currentMessage].timeSent = time;
-			messageBuffer[this->currentMessage].destination = MessageSource_INPUT;
-			messageBuffer[this->currentMessage].type = MessageType_INPUT;
-			messageBuffer[this->currentMessage].mess = InputMess_ADDSCREENTARGET;
+			messageBuffer[this->currentMessage].destination = MessageSource_GUIENTITIES;
+			messageBuffer[this->currentMessage].type = MessageType_GUIENTITIES;
+			messageBuffer[this->currentMessage].mess = GUIMess_ADDSCREENTARGET;
 			unsigned char tempBuff[]{target->GetId() >> 0, target->GetId() >> 8, target->GetId() >> 16, target->GetId() >> 24};
 			messageBuffer[this->currentMessage].SetParams(tempBuff, 0, 4);
 			messageBuffer[this->currentMessage].read = false;

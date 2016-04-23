@@ -329,6 +329,7 @@ void Overlord::Update(unsigned int time)
 		unsigned int start1 = clock();
 		gBH->UpdateMessages(time);
 		updateMessages(MessageSource_ENTITIES);
+
 		cH->Update(time);
 		updateMessages(MessageSource_CELSCRIPT);
 		unsigned int start3 = clock();

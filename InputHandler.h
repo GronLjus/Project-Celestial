@@ -26,6 +26,7 @@ namespace Input
 				keyCodeMouseL,
 				keyCodeMouseM,
 				keyCodeMouseR,
+				keyCodeMouseW,
 				keyCodeNA
 			};
 
@@ -50,30 +51,28 @@ namespace Input
 
 			};
 
-			void setCommonScriptParameters(unsigned int script, unsigned int time, unsigned int targetId);
-			void runScript(unsigned int script, unsigned int time);
-			void triggerScript(unsigned int script, unsigned int time, unsigned int targetId, unsigned int dragStatus);
-			void triggerScript(unsigned int script, unsigned int time, unsigned int targetId);
-
 			bool** keyStatus;
 			CrossHandlers::CelestialStack<key>* pressedKeys;
 			keyState* keyStates;
 			CrossHandlers::CelestialSlicedList<Resources::BaseObject*>* gameObjects;
-			CrossHandlers::CelestialSlicedList<Resources::ScreenTarget*>* screenTargets;
-			unsigned int maxScreenTargets;
+
 			CelestialMath::vectorUI2 mouse;
 			void handleMouse(unsigned int time);
 			void handleKeys(unsigned int time);
-			Resources::ScreenTarget* checkScreenTargets(unsigned int time);
 
 			bool checkMouseClick(unsigned int time, keyCode ks) const;
 			bool checkDrag(unsigned int time);
-			void sendMessageToGB(unsigned int mess, unsigned int time,keyCode key);
+			void checkMouseWheel(unsigned int time);
+
+			void sendMessage(unsigned int mess, unsigned int time, short delta);
+			void sendMessage(unsigned int mess, unsigned int time,keyCode key);
+			void sendMessage(unsigned int mess, unsigned int time);
 			keyCode dragging;
 			unsigned short clickTime;
 
 			unsigned int draggedTarget;
 			unsigned int draggedScript;
 
+			short mouseWheel;
 	};
 }

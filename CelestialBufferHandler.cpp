@@ -188,7 +188,7 @@ void CelestialBufferHandler::UpdateInstanceBuffer(DrawingBoard* db, ID3D11Device
 
 		D3D11_BUFFER_DESC bd;
 		bd.Usage = D3D11_USAGE_DYNAMIC;
-		bd.ByteWidth = strides[BufferTypes_INSTANCE] * 1024; //total size of buffer in bytes
+		bd.ByteWidth = strides[BufferTypes_INSTANCE] * 512; //total size of buffer in bytes
 		bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 		bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 		bd.MiscFlags = 0;

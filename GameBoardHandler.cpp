@@ -207,14 +207,14 @@ void GameBoardHandler::UpdateMessages(unsigned int time)
 		{
 
 			CameraObject* cam = localGameBoard->GetCam();
-			unsigned int mouseX = currentMessage->params[1] | ((int)currentMessage->params[2] << 8) | ((int)currentMessage->params[3] << 16) | ((int)currentMessage->params[4] << 24);
-			unsigned int mouseY = currentMessage->params[5] | ((int)currentMessage->params[6] << 8) | ((int)currentMessage->params[7] << 16) | ((int)currentMessage->params[8] << 24);
+			unsigned int mouseX = currentMessage->params[0] | ((int)currentMessage->params[1] << 8) | ((int)currentMessage->params[2] << 16) | ((int)currentMessage->params[3] << 24);
+			unsigned int mouseY = currentMessage->params[4] | ((int)currentMessage->params[5] << 8) | ((int)currentMessage->params[6] << 16) | ((int)currentMessage->params[7] << 24);
 			
 			Vector3 direction = getMouseWorldLine(mouseX, mouseY);
 			ScriptableObject* obj = getMouseObject(direction);
 
-			unsigned int script = currentMessage->params[0] == 0 ? obj->GetLeftClickScript() :
-				currentMessage->params[0] == 1 ? obj->GetMiddleClickScript() :
+			unsigned int script = currentMessage->params[8] == 0 ? obj->GetLeftClickScript() :
+				currentMessage->params[8] == 1 ? obj->GetMiddleClickScript() :
 				obj->GetRightClickScript();
 
 			if (script != 0)
@@ -230,14 +230,14 @@ void GameBoardHandler::UpdateMessages(unsigned int time)
 			localGameBoard != nullptr && localGameBoard->GetCam() != nullptr)
 		{
 
-			unsigned int mouseX = currentMessage->params[1] | ((int)currentMessage->params[2] << 8) | ((int)currentMessage->params[3] << 16) | ((int)currentMessage->params[4] << 24);
-			unsigned int mouseY = currentMessage->params[5] | ((int)currentMessage->params[6] << 8) | ((int)currentMessage->params[7] << 16) | ((int)currentMessage->params[8] << 24);
-
+			unsigned int mouseX = currentMessage->params[0] | ((int)currentMessage->params[1] << 8) | ((int)currentMessage->params[2] << 16) | ((int)currentMessage->params[3] << 24);
+			unsigned int mouseY = currentMessage->params[4] | ((int)currentMessage->params[5] << 8) | ((int)currentMessage->params[6] << 16) | ((int)currentMessage->params[7] << 24);
+			
 			Vector3 direction = getMouseWorldLine(mouseX, mouseY);
 			ScriptableObject* obj = getMouseObject(direction);
 
-			unsigned int script = currentMessage->params[0] == 0 ? obj->GetLeftDragScript() :
-				currentMessage->params[0] == 1 ? obj->GetMiddleDragScript() :
+			unsigned int script = currentMessage->params[8] == 0 ? obj->GetLeftDragScript() :
+				currentMessage->params[8] == 1 ? obj->GetMiddleDragScript() :
 				obj->GetRightDragScript();
 
 			if (script != 0)
@@ -255,8 +255,8 @@ void GameBoardHandler::UpdateMessages(unsigned int time)
 			localGameBoard != nullptr && localGameBoard->GetCam() != nullptr)
 		{
 
-			unsigned int mouseX = currentMessage->params[1] | ((int)currentMessage->params[2] << 8) | ((int)currentMessage->params[3] << 16) | ((int)currentMessage->params[4] << 24);
-			unsigned int mouseY = currentMessage->params[5] | ((int)currentMessage->params[6] << 8) | ((int)currentMessage->params[7] << 16) | ((int)currentMessage->params[8] << 24);
+			unsigned int mouseX = currentMessage->params[0] | ((int)currentMessage->params[1] << 8) | ((int)currentMessage->params[2] << 16) | ((int)currentMessage->params[3] << 24);
+			unsigned int mouseY = currentMessage->params[4] | ((int)currentMessage->params[5] << 8) | ((int)currentMessage->params[6] << 16) | ((int)currentMessage->params[7] << 24);
 
 			Vector3 direction = getMouseWorldLine(mouseX, mouseY);
 

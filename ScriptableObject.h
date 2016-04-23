@@ -18,6 +18,8 @@ namespace Resources
 			unsigned int GetLeftDragScript() const;
 			unsigned int GetMiddleDragScript() const;
 
+			unsigned int GetWheelScript() const;
+
 			virtual ~ScriptableObject(){}
 
 		private:
@@ -28,6 +30,8 @@ namespace Resources
 			unsigned int rightDragScript;
 			unsigned int leftDragScript;
 			unsigned int middleDragScript;
+
+			unsigned int wheelScript;
 
 	};
 }
