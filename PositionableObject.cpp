@@ -156,6 +156,10 @@ void PositionableObject::Update(Message* mess)
 			memcpy(&factor, &mess->params[12], 4);
 			orbitAroundPoint(newVec, factor);
 			break;
+		case ObjectMess_PROPEL:
+			memcpy(&factor, mess->params, 4);
+			position += direction*factor;
+			break;
 		case ObjectMess_ROTATE:
 			memcpy(&newVec.x, mess->params, 4);
 			memcpy(&newVec.y, &mess->params[4], 4);

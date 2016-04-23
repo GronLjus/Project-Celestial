@@ -693,11 +693,38 @@ RunTimeError OrbitOperator(unsigned int returnVar, unsigned char* params, unsign
 
 	unsigned int fVar = (params[4] | ((int)params[5] << 8) | ((int)params[6] << 16) | ((int)params[7] << 24));
 	rtc->memory->ReadVariable(fVar - 1, rtc->intLoader, s);
-	float dbg = 0.0f;
-	memcpy(&dbg, rtc->intLoader, 4);
 	mess.SetParams(rtc->intLoader, 4, 4);
 
 	return sendMessageOut(mess, rtc);
+
+}
+
+RunTimeError PropelOperator(unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int mId, RunTimeCommons* rtc)
+{
+
+	if (paramSize < 8)
+	{
+
+		return RunTimeError_BADPARAMS;
+
+	}
+	unsigned int s = 4;
+	unsigned int var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
+	rtc->memory->ReadVariable(var - 1, rtc->intLoader, s);
+	unsigned int objectToMod = (rtc->intLoader[0] | ((int)rtc->intLoader[1] << 8) | ((int)rtc->intLoader[2] << 16) | ((int)rtc->intLoader[3] << 24));
+	BaseObject* object = rtc->gameObjects->GetValue(objectToMod);
+
+	Message mess;
+	mess.destination = MessageSource_OBJECT;
+	mess.type = MessageType_OBJECT;
+	mess.mess = ObjectMess_PROPEL;
+
+	unsigned int fVar = (params[4] | ((int)params[5] << 8) | ((int)params[6] << 16) | ((int)params[7] << 24));
+	rtc->memory->ReadVariable(fVar - 1, rtc->intLoader, s);
+	mess.SetParams(rtc->intLoader, 0, 4);
+	object->Update(&mess);
+
+	return RunTimeError_OK;
 
 }
 
@@ -1966,6 +1993,34 @@ RunTimeError SetMiddleDragOperator(unsigned int returnVar, unsigned char* params
 
 }
 
+RunTimeError SetMouseWheelOperator(unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int mId, RunTimeCommons* rtc)
+{
+
+	if (paramSize < 8)
+	{
+
+		return RunTimeError_BADPARAMS;
+
+	}
+
+	unsigned int s = 4;
+	unsigned int var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
+	rtc->memory->ReadVariable(var - 1, rtc->intLoader, s);
+	unsigned int objectToMod = (rtc->intLoader[0] | ((int)rtc->intLoader[1] << 8) | ((int)rtc->intLoader[2] << 16) | ((int)rtc->intLoader[3] << 24));
+	BaseObject* object = rtc->gameObjects->GetValue(objectToMod);
+
+	Message mess;
+	unsigned int var2 = (params[4] | ((int)params[5] << 8) | ((int)params[6] << 16) | ((int)params[7] << 24));
+	rtc->memory->ReadVariable(var2 - 1, rtc->intLoader, s);
+	mess.destination = MessageSource_OBJECT;
+	mess.type = MessageType_OBJECT;
+	mess.mess = ObjectMess_SETWHLSCRPT;
+	mess.SetParams(rtc->intLoader, 0, 4);
+	object->Update(&mess);
+	return RunTimeError_OK;
+
+}
+
 RunTimeError SetRightDragOperator(unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int mId, RunTimeCommons* rtc)
 {
 
@@ -2324,6 +2379,7 @@ CelScriptRuntimeHandler::CelScriptRuntimeHandler(MessageQueue* mQueue, Celestial
 	operators[opcode_SETLDRG] = SetLeftDragOperator;
 	operators[opcode_SETMDRG] = SetMiddleDragOperator;
 	operators[opcode_SETRDRG] = SetRightDragOperator;
+	operators[opcode_SETMWHL] = SetMouseWheelOperator;
 
 	operators[opcode_SETUI] = SetUIOperator;
 	operators[opcode_FCSUI] = FocusUIOperator;
@@ -2334,6 +2390,7 @@ CelScriptRuntimeHandler::CelScriptRuntimeHandler(MessageQueue* mQueue, Celestial
 	operators[opcode_RESNAP] = ReSnapOperator;
 	operators[opcode_POS] = PosOperator;
 	operators[opcode_MVE] = MoveOperator;
+	operators[opcode_PRPL] =PropelOperator;
 	operators[opcode_RTE] = RotateOperator;
 	operators[opcode_ORB] = OrbitOperator;
 	operators[opcode_SIZE] = SizeOperator;

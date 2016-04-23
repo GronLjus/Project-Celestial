@@ -395,7 +395,7 @@ void GUIEntityHandler::Update(unsigned int time)
 					currentMessage->mess == GUIMess_DRAGOBJECT ? GameBoardMess_DRAGOBJECT :
 					currentMessage->mess == GUIMess_STARTDRAGGING ? GameBoardMess_STARTDRAGGING :
 					currentMessage->mess == GUIMess_STOPDRAGGING ? GameBoardMess_STOPDRAGGING :
-					GameBoardMess_WHEELDRAGGING;
+					GameBoardMess_WHEELOBJECT;
 
 				outQueue->PushMessage(currentMessage);
 

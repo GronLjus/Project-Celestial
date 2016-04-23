@@ -406,6 +406,7 @@
       <FileType>Document</FileType>
     </None>
     <None Include="CameraPanning.celsrc" />
+    <None Include="CameraZoom.celsrc" />
     <None Include="ErrorTest.celsrc" />
     <None Include="MoveGUI.celsrc" />
     <None Include="PreLoad.celsrc" />

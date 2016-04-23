@@ -25,18 +25,19 @@ namespace CrossHandlers
 	};
 
 	enum GameBoardMess{ GameBoardMess_ADDMESH, GameBoardMess_SETBOARDOBJECT, GameBoardMess_SETCAM, GameBoardMess_ADDOBJECT, GameBoardMess_SETGAMEBOARD, 
-		GameBoardMess_CLICKOBJECT, GameBoardMess_STARTDRAGGING, GameBoardMess_DRAGOBJECT, GameBoardMess_STOPDRAGGING, GameBoardMess_WHEELDRAGGING,
+		GameBoardMess_CLICKOBJECT, GameBoardMess_WHEELOBJECT, GameBoardMess_STARTDRAGGING, GameBoardMess_DRAGOBJECT, GameBoardMess_STOPDRAGGING,
 		GameBoardMess_ORBITOBJECT, GameBoardMess_NA };
 	enum SystemMess{SystemMess_GETSCREENRES,SystemMesss_NA};
 
 	enum ObjectMess{
-		ObjectMess_MOVE, ObjectMess_SCALE, ObjectMess_POS, ObjectMess_SIZE, ObjectMess_POINT,
+		ObjectMess_MOVE, ObjectMess_POS, ObjectMess_PROPEL,
+		ObjectMess_SCALE, ObjectMess_SIZE, ObjectMess_POINT,
 		ObjectMess_ORBIT, ObjectMess_ROTATE,
 		ObjectMess_HIDE, ObjectMess_SHOW,
 		ObjectMess_SETHVRSCRPT, ObjectMess_SETENTRSCRPT, ObjectMess_SETEXTSCRPT, 
 		ObjectMess_SETLCSCRPT, ObjectMess_SETRCSCRPT, ObjectMess_SETMCSCRPT,
 		ObjectMess_SETLDSCRPT, ObjectMess_SETRDSCRPT, ObjectMess_SETMDSCRPT,
-		ObjectMess_SETWHEELSCRIPT,
+		ObjectMess_SETWHLSCRPT,
 		ObjectMess_SETSNAP, ObjectMess_SETTEXT, ObjectMess_APPENDTEXT, ObjectMess_APPENDTEXTLINE,
 		ObjectMess_HANDLECHAR, ObjectMess_HANDLEKEY,
 		ObjectMess_STEPFRAME, ObjectMess_REMOVECHILD, ObjectMess_REMOVE,

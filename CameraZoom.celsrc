@@ -1,0 +1,9 @@
+$
+{
+	
+	cam = import 'camera'
+
+}
+
+factor = cast ?3
+propel cam factor/120.0

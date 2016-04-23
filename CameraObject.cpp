@@ -78,6 +78,7 @@ void CameraObject::Update(Message* mess)
 		switch (mess->mess)
 		{
 
+		case ObjectMess_PROPEL:
 		case ObjectMess_MOVE:
 		case ObjectMess_POS:
 			theView->Update(GetPosition());

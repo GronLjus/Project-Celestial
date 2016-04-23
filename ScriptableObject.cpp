@@ -49,7 +49,7 @@ void ScriptableObject::Update(Message* mess)
 		case ObjectMess_SETLDSCRPT:
 			leftDragScript = param1 + 1;
 			break;
-		case ObjectMess_SETWHEELSCRIPT:
+		case ObjectMess_SETWHLSCRPT:
 			wheelScript = param1 + 1;
 			break;
 		}

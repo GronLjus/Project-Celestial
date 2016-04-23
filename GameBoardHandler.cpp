@@ -137,6 +137,28 @@ void GameBoardHandler::triggerMouseScript(unsigned int script, unsigned int obje
 
 }
 
+void GameBoardHandler::triggerMouseScript(unsigned int script, unsigned int objectId, unsigned int time, int mouseX, int mouseY, short delta)
+{
+
+	sendCommonScriptParams(script, objectId, time, mouseX, mouseY);
+
+	unsigned char tempBuff[]{ script >> 0, script >> 8, script >> 16, script >> 24,
+		delta >> 0, delta >> 8, delta >> 16, delta >> 24
+	};
+
+	messageBuffer[this->currentMessage].timeSent = time;
+	messageBuffer[this->currentMessage].destination = MessageSource_CELSCRIPT;
+	messageBuffer[this->currentMessage].type = MessageType_SCRIPT;
+	messageBuffer[this->currentMessage].mess = ScriptMess_ADDPARNUM;
+	messageBuffer[this->currentMessage].read = false;
+	messageBuffer[this->currentMessage].SetParams(tempBuff, 0, 8);
+	outQueue->PushMessage(&messageBuffer[this->currentMessage]);
+	this->currentMessage = (this->currentMessage + 1) % outMessages;
+
+	runScript(script, time);
+
+}
+
 Vector3 GameBoardHandler::getMouseWorldLine(unsigned int mouseX, unsigned int mouseY) const
 {
 
@@ -226,6 +248,29 @@ void GameBoardHandler::UpdateMessages(unsigned int time)
 
 			}
 		}
+		else if (currentMessage->mess == GameBoardMess_WHEELOBJECT &&
+			localGameBoard != nullptr && localGameBoard->GetCam() != nullptr)
+		{
+
+			CameraObject* cam = localGameBoard->GetCam();
+			unsigned int mouseX = currentMessage->params[0] | ((int)currentMessage->params[1] << 8) | ((int)currentMessage->params[2] << 16) | ((int)currentMessage->params[3] << 24);
+			unsigned int mouseY = currentMessage->params[4] | ((int)currentMessage->params[5] << 8) | ((int)currentMessage->params[6] << 16) | ((int)currentMessage->params[7] << 24);
+			short wheelDelta = currentMessage->params[8] | ((int)currentMessage->params[9] << 8);
+
+			Vector3 direction = getMouseWorldLine(mouseX, mouseY);
+			ScriptableObject* obj = getMouseObject(direction);
+
+			unsigned int script = obj->GetWheelScript();
+
+			if (script != 0)
+			{
+
+				script--;
+				localGameBoard->GetBoardPosition(cam->GetPosition(), direction, boardPos);
+				triggerMouseScript(script, obj->GetId(), time, mouseX, mouseY, wheelDelta);
+
+			}
+		}
 		else if (currentMessage->mess == GameBoardMess_STARTDRAGGING &&
 			localGameBoard != nullptr && localGameBoard->GetCam() != nullptr)
 		{
@@ -247,7 +292,7 @@ void GameBoardHandler::UpdateMessages(unsigned int time)
 				dragId = obj->GetId();
 				script--;
 				localGameBoard->GetBoardPosition(localGameBoard->GetCam()->GetPosition(), direction, boardPos);
-				triggerMouseScript(script, dragId, time, mouseX, mouseY, 0);
+				triggerMouseScript(script, dragId, time, mouseX, mouseY, (unsigned int)0);
 
 			}
 		}
@@ -264,7 +309,7 @@ void GameBoardHandler::UpdateMessages(unsigned int time)
 			{
 
 				localGameBoard->GetBoardPosition(localGameBoard->GetCam()->GetPosition(), direction, boardPos);
-				triggerMouseScript(dragScript-1, dragId, time, mouseX, mouseY, 1);
+				triggerMouseScript(dragScript-1, dragId, time, mouseX, mouseY, (unsigned int)1);
 
 			}
 		}
@@ -308,7 +353,7 @@ void GameBoardHandler::UpdateMessages(unsigned int time)
 			{
 
 				localGameBoard->GetBoardPosition(localGameBoard->GetCam()->GetPosition(), direction, boardPos);
-				triggerMouseScript(dragScript - 1, dragId, time, mouseX, mouseY, 2);
+				triggerMouseScript(dragScript - 1, dragId, time, mouseX, mouseY, (unsigned int)2);
 				dragScript = 0;
 
 			}

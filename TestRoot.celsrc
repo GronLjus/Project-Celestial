@@ -14,8 +14,11 @@ testClick = load script 'TestClick.celsrc'
 cam = load camera
 localGameboard = load gameboard 1024 tile
 testBox = load textbox
+
 cameraPanScript = load script 'CameraPanning.celsrc'
 cameraRotScript = load script 'CameraRotation.celsrc'
+cameraZoomScript = load script 'CameraZoom.celsrc'
+
 guiDrag = load script 'MoveGui.celsrc'
 
 outTextBox = import 'dbgout'
@@ -26,6 +29,7 @@ export 'camera' cam
 
 set rightdrag localGameboard cameraPanScript
 set middledrag localGameboard cameraRotScript
+set mousewheel localGameboard cameraZoomScript
 
 set gameboard localGameboard
 set camera cam
