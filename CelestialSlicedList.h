@@ -223,13 +223,13 @@ unsigned int CelestialSlicedList<T>::Add(T element)
 
 				id = i*maxSliceSize + sliceSize[i];
 				breakFor = true;
+				sliceSize[i]++;
 
 			}
 		}
 	}
 
 	Add(element, id);
-	sliceSize[slice]++;
 	return id;
 
 }
