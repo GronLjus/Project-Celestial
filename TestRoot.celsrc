@@ -1,0 +1,58 @@
+$
+{
+	testPar1 = 0
+	testPar2 = 0
+}
+
+splashImage = import 'splashImage'
+debugLayout = import 'debugLayer'
+screenLayout = import 'screenLayout'
+
+tile = load mesh 'content\Tile.obj'
+testPar = load script 'TestRoot2.celsrc'
+testClick = load script 'TestClick.celsrc'
+cam = load camera
+localGameboard = load gameboard 1024 tile
+testBox = load textbox
+
+cameraPanScript = load script 'CameraPanning.celsrc'
+cameraRotScript = load script 'CameraRotation.celsrc'
+cameraZoomScript = load script 'CameraZoom.celsrc'
+
+guiDrag = load script 'MoveGui.celsrc'
+
+outTextBox = import 'dbgout'
+focus outTextBox
+
+post 'test'
+export 'camera' cam
+
+set rightdrag localGameboard cameraPanScript
+set middledrag localGameboard cameraRotScript
+set mousewheel localGameboard cameraZoomScript
+
+set gameboard localGameboard
+set camera cam
+
+pos cam 0.0 15.0 0.0
+
+hide splashImage
+remove splashImage
+unload splashImage
+show debugLayout
+
+set leftdrag testBox guiDrag
+set text testBox 'Test 1'
+pos testBox 600.0 200.0
+size testBox 400.0 200.0
+set content testBox 0.8 0.8 0.8
+set border testBox 0.0 1.0 0.0
+set leftclick testBox testClick
+set leftclick outTextBox testClick
+
+add ui screenLayout testBox
+increment layer testBox
+accept mouse testBox
+accept mouse outTextBox
+accept keys outTextBox
+accept keys testBox

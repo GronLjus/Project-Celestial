@@ -226,6 +226,9 @@
     <Filter Include="Source Files\CrossHandler-Tools\Messaging">
       <UniqueIdentifier>{56f1a52e-873c-444d-b994-d77f465b276a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Scripts">
+      <UniqueIdentifier>{a3a83c75-3546-4548-8dfc-ac36bb20e2df}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Header Files\Entities">
       <UniqueIdentifier>{ee8f80d3-2444-450a-ae4c-f7c4d0d187a7}</UniqueIdentifier>
     </Filter>
@@ -262,19 +265,16 @@
     <Filter Include="Resource Files\Content">
       <UniqueIdentifier>{6187615c-0d7a-4f62-b03a-7c0244cd7ea2}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Resource Files\Content\Scripts">
-      <UniqueIdentifier>{a3a83c75-3546-4548-8dfc-ac36bb20e2df}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Resource Files\Content\Scripts\LoadScripts">
-      <UniqueIdentifier>{f1eeb2c0-7eb7-47cb-a2c4-3f8ca9275e15}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Resource Files\Content\Scripts\CameraScripts">
-      <UniqueIdentifier>{51f90c3d-ac05-4fbc-a3dc-cd47e181185f}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Project Celestial.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MeshObject.h">
+      <Filter>Header Files\Resources\Objects\MeshObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="MTLFileLoader.h">
+      <Filter>Header Files\Resources\Loaders\FileLoaders</Filter>
     </ClInclude>
     <ClInclude Include="targetver.h">
       <Filter>Header Files</Filter>
@@ -285,676 +285,670 @@
     <ClInclude Include="Resource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="OBJFileLoader.h">
+      <Filter>Header Files\Resources\Loaders\FileLoaders</Filter>
+    </ClInclude>
+    <ClInclude Include="Overlord.h">
+      <Filter>Header Files\Logic</Filter>
+    </ClInclude>
+    <ClInclude Include="ILogicCamera.h">
+      <Filter>Header Files\Logic</Filter>
+    </ClInclude>
+    <ClInclude Include="InputHandler.h">
+      <Filter>Header Files\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="IGraphicCamera.h">
+      <Filter>Header Files\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="IBounding.h">
+      <Filter>Header Files\CrossHandler-Tools\Bounding</Filter>
+    </ClInclude>
+    <ClInclude Include="BoundingPlane.h">
+      <Filter>Header Files\CrossHandler-Tools\Bounding</Filter>
+    </ClInclude>
+    <ClInclude Include="BoundingSphere.h">
+      <Filter>Header Files\CrossHandler-Tools\Bounding\Shapes</Filter>
+    </ClInclude>
+    <ClInclude Include="BoundingBox.h">
+      <Filter>Header Files\CrossHandler-Tools\Bounding\Shapes</Filter>
+    </ClInclude>
+    <ClInclude Include="IThreadSafeObject.h">
+      <Filter>Header Files\CrossHandler-Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="UnderCamera.h">
+      <Filter>Header Files\CrossHandler-Tools\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera.h">
+      <Filter>Header Files\CrossHandler-Tools\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="IShaderHandler.h">
+      <Filter>Header Files\Graphics\Shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="CelestialShader.h">
+      <Filter>Header Files\Graphics\Shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="CelestialBufferHandler.h">
+      <Filter>Header Files\Graphics\Buffer</Filter>
+    </ClInclude>
+    <ClInclude Include="IBufferHandler.h">
+      <Filter>Header Files\Graphics\Buffer</Filter>
+    </ClInclude>
+    <ClInclude Include="TRNFileLoader.h">
+      <Filter>Header Files\Resources\Loaders\FileLoaders</Filter>
+    </ClInclude>
+    <ClInclude Include="ICachableObject.h">
+      <Filter>Header Files\CrossHandler-Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="BoxedBool.h">
+      <Filter>Header Files\CrossHandler-Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="Frustum.h">
+      <Filter>Header Files\CrossHandler-Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="IShapeLoader.h">
+      <Filter>Header Files\Resources\Loaders\ShapeLoaders</Filter>
+    </ClInclude>
+    <ClInclude Include="PlaneLoader.h">
+      <Filter>Header Files\Resources\Loaders\ShapeLoaders</Filter>
+    </ClInclude>
+    <ClInclude Include="BufferObject.h">
+      <Filter>Header Files\CrossHandler-Tools\Buffer</Filter>
+    </ClInclude>
+    <ClInclude Include="DXBufferObject.h">
+      <Filter>Header Files\CrossHandler-Tools\Buffer</Filter>
+    </ClInclude>
+    <ClInclude Include="CameraFrame.h">
+      <Filter>Header Files\CrossHandler-Tools\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="IKeyBoardHandler.h">
+      <Filter>Header Files\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="CardHandler.h">
+      <Filter>Header Files\Graphics\CardHandler</Filter>
+    </ClInclude>
     <ClInclude Include="ICardDebug.h">
       <Filter>Header Files\Graphics\CardHandler</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphicHandler.h">
+      <Filter>Header Files\Graphics\GraphicHandler</Filter>
+    </ClInclude>
+    <ClInclude Include="IGraphicDebug.h">
+      <Filter>Header Files\Graphics\GraphicHandler</Filter>
+    </ClInclude>
+    <ClInclude Include="IPlayerDebug.h">
+      <Filter>Header Files\Logic</Filter>
+    </ClInclude>
+    <ClInclude Include="TextureResourceObject.h">
+      <Filter>Header Files\CrossHandler-Tools\Texture</Filter>
+    </ClInclude>
+    <ClInclude Include="DXTextureResource.h">
+      <Filter>Header Files\CrossHandler-Tools\Texture\DX</Filter>
+    </ClInclude>
+    <ClInclude Include="IDXTexRead.h">
+      <Filter>Header Files\CrossHandler-Tools\Texture\DX</Filter>
+    </ClInclude>
+    <ClInclude Include="IDXTexWrite.h">
+      <Filter>Header Files\CrossHandler-Tools\Texture\DX</Filter>
+    </ClInclude>
+    <ClInclude Include="DXTextureResourceViews.h">
+      <Filter>Header Files\CrossHandler-Tools\Texture\DX</Filter>
+    </ClInclude>
+    <ClInclude Include="ShaderContainer.h">
+      <Filter>Header Files\Graphics\Shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="IFileLoader.h">
+      <Filter>Header Files\Resources\Loaders\FileLoaders\Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="IFileMaterialLoader.h">
+      <Filter>Header Files\Resources\Loaders\FileLoaders\Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="IFileMeshLoader.h">
+      <Filter>Header Files\Resources\Loaders\FileLoaders\Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="IFileTerrainLoader.h">
+      <Filter>Header Files\Resources\Loaders\FileLoaders\Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="IMaterialLoader.h">
+      <Filter>Header Files\Resources\Loaders\FileLoaders\Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="CelestialVector.h">
+      <Filter>Header Files\CelestialMath</Filter>
+    </ClInclude>
+    <ClInclude Include="CelestialMatrix.h">
+      <Filter>Header Files\CelestialMath</Filter>
+    </ClInclude>
+    <ClInclude Include="CelestialMath.h">
+      <Filter>Header Files\CelestialMath</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphicCodes.h">
+      <Filter>Header Files\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="TextureHandler.h">
+      <Filter>Header Files\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="IFileTextureLoader.h">
+      <Filter>Header Files\Resources\Loaders\FileLoaders\Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="ImageFileLoader.h">
+      <Filter>Header Files\Resources\Loaders\FileLoaders</Filter>
+    </ClInclude>
+    <ClInclude Include="DrawScene.h">
+      <Filter>Header Files\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="LogicScene.h">
+      <Filter>Header Files\Logic</Filter>
+    </ClInclude>
+    <ClInclude Include="IParticleEmitter.h">
+      <Filter>Header Files\Resources\Objects\Particles</Filter>
+    </ClInclude>
+    <ClInclude Include="IParticleEmitterBufferable.h">
+      <Filter>Header Files\Resources\Objects\Particles</Filter>
+    </ClInclude>
+    <ClInclude Include="LightParticleEmitter.h">
+      <Filter>Header Files\Resources\Objects\Particles</Filter>
+    </ClInclude>
+    <ClInclude Include="Particle.h">
+      <Filter>Header Files\Resources\Objects\Particles</Filter>
+    </ClInclude>
+    <ClInclude Include="ParticleEmitterInstance.h">
+      <Filter>Header Files\Resources\Objects\Particles</Filter>
+    </ClInclude>
+    <ClInclude Include="TerrainObject.h">
+      <Filter>Header Files\Resources\Loaders\TerrainObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="TerrainMesh.h">
+      <Filter>Header Files\Resources\Loaders\TerrainObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="ILight.h">
+      <Filter>Header Files\Resources\Objects\Lights</Filter>
+    </ClInclude>
+    <ClInclude Include="PointLight.h">
+      <Filter>Header Files\Resources\Objects\Lights</Filter>
+    </ClInclude>
+    <ClInclude Include="IContainable.h">
+      <Filter>Header Files\Resources\Objects\Container</Filter>
+    </ClInclude>
+    <ClInclude Include="ResourceContainer.h">
+      <Filter>Header Files\Resources\Objects\Container</Filter>
+    </ClInclude>
+    <ClInclude Include="ColourLoader.h">
+      <Filter>Header Files\Resources\Loaders</Filter>
+    </ClInclude>
+    <ClInclude Include="CommonParticle.h">
+      <Filter>Header Files\Resources\Objects\Particles</Filter>
+    </ClInclude>
+    <ClInclude Include="SkyboxParticle.h">
+      <Filter>Header Files\Resources\Objects\Particles</Filter>
+    </ClInclude>
+    <ClInclude Include="CrossHandlerHeader.h">
+      <Filter>Header Files\CrossHandler-Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphicHeader.h">
+      <Filter>Header Files\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="ShadowMapConstants.h">
+      <Filter>Header Files\Graphics\Lights</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphicAPI.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="InputHeader.h">
+      <Filter>Header Files\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="LogicHeader.h">
+      <Filter>Header Files\Logic</Filter>
+    </ClInclude>
+    <ClInclude Include="ResourceHeader.h">
+      <Filter>Header Files\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="CelestialMathHeader.h">
+      <Filter>Header Files\CelestialMath</Filter>
+    </ClInclude>
+    <ClInclude Include="GUITextBox.h">
+      <Filter>Header Files\Resources\Objects\GUIObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="GUILayout.h">
+      <Filter>Header Files\Resources\Objects\GUIObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="IFileGUILoader.h">
+      <Filter>Header Files\Resources\Loaders\FileLoaders\Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="IGUILoader.h">
+      <Filter>Header Files\Resources\Loaders\UILoaders</Filter>
+    </ClInclude>
+    <ClInclude Include="GUITextBoxLoader.h">
+      <Filter>Header Files\Resources\Loaders\UILoaders</Filter>
+    </ClInclude>
+    <ClInclude Include="GUILayoutLoader.h">
+      <Filter>Header Files\Resources\Loaders\UILoaders</Filter>
+    </ClInclude>
+    <ClInclude Include="TextContainer.h">
+      <Filter>Header Files\CrossHandler-Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="I2DDrawer.h">
+      <Filter>Header Files\Graphics\2D</Filter>
+    </ClInclude>
+    <ClInclude Include="Celestial2DDrawer.h">
+      <Filter>Header Files\Graphics\2D</Filter>
+    </ClInclude>
+    <ClInclude Include="CelestialList.h">
+      <Filter>Header Files\CrossHandler-Tools\Container</Filter>
+    </ClInclude>
+    <ClInclude Include="CelestialListNode.h">
+      <Filter>Header Files\CrossHandler-Tools\Container</Filter>
+    </ClInclude>
+    <ClInclude Include="CelestialSlicedList.h">
+      <Filter>Header Files\CrossHandler-Tools\Container</Filter>
+    </ClInclude>
+    <ClInclude Include="MemoryPool.h">
+      <Filter>Header Files\Logic\CelScript</Filter>
+    </ClInclude>
+    <ClInclude Include="CelScriptAnalyzer.h">
+      <Filter>Header Files\Logic\CelScript\Compiler</Filter>
+    </ClInclude>
+    <ClInclude Include="CelScriptCompiler.h">
+      <Filter>Header Files\Logic\CelScript\Compiler</Filter>
+    </ClInclude>
+    <ClInclude Include="CelScriptLexer.h">
+      <Filter>Header Files\Logic\CelScript\Compiler</Filter>
+    </ClInclude>
+    <ClInclude Include="CelScriptParser.h">
+      <Filter>Header Files\Logic\CelScript\Compiler</Filter>
+    </ClInclude>
+    <ClInclude Include="CelestialTree.h">
+      <Filter>Header Files\CrossHandler-Tools\Container</Filter>
+    </ClInclude>
+    <ClInclude Include="CelestialTreeNode.h">
+      <Filter>Header Files\CrossHandler-Tools\Container</Filter>
+    </ClInclude>
+    <ClInclude Include="CelScriptCodeGenerator.h">
+      <Filter>Header Files\Logic\CelScript\Compiler</Filter>
+    </ClInclude>
+    <ClInclude Include="CelScriptSource.h">
+      <Filter>Header Files\Resources\Objects\CelScript</Filter>
+    </ClInclude>
+    <ClInclude Include="CelScriptCompiled.h">
+      <Filter>Header Files\Resources\Objects\CelScript</Filter>
+    </ClInclude>
+    <ClInclude Include="Keyword.h">
+      <Filter>Header Files\Logic\CelScript\KeyWords</Filter>
+    </ClInclude>
+    <ClInclude Include="RunTimeOperations.h">
+      <Filter>Header Files\Logic\CelScript\KeyWords</Filter>
+    </ClInclude>
+    <ClInclude Include="CelscriptHandler.h">
+      <Filter>Header Files\Logic\CelScript</Filter>
+    </ClInclude>
+    <ClInclude Include="CelScriptSourceLoader.h">
+      <Filter>Header Files\Resources\Loaders\FileLoaders</Filter>
+    </ClInclude>
+    <ClInclude Include="CelScriptBinLoader.h">
+      <Filter>Header Files\Resources\Loaders\FileLoaders</Filter>
+    </ClInclude>
+    <ClInclude Include="Message.h">
+      <Filter>Header Files\CrossHandler-Tools\Messaging</Filter>
+    </ClInclude>
+    <ClInclude Include="MessageQueue.h">
+      <Filter>Header Files\CrossHandler-Tools\Messaging</Filter>
+    </ClInclude>
+    <ClInclude Include="IHandleMessages.h">
+      <Filter>Header Files\CrossHandler-Tools\Messaging</Filter>
+    </ClInclude>
+    <ClInclude Include="ResourceLoader.h">
+      <Filter>Header Files\Resources\Loaders</Filter>
+    </ClInclude>
+    <ClInclude Include="ResourceHandler.h">
+      <Filter>Header Files\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="ResourceObject.h">
+      <Filter>Header Files\Resources\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="Triggers.h">
+      <Filter>Header Files\Resources\Objects\Triggers</Filter>
+    </ClInclude>
+    <ClInclude Include="CelScriptRunTimeHandler.h">
+      <Filter>Header Files\Logic\CelScript\RunTime</Filter>
+    </ClInclude>
+    <ClInclude Include="CelScriptRuntime.h">
+      <Filter>Header Files\Logic\CelScript\RunTime</Filter>
+    </ClInclude>
+    <ClInclude Include="IFileCLLoader.h">
+      <Filter>Header Files\Resources\Loaders\FileLoaders\Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="CelestialStack.h">
+      <Filter>Header Files\CrossHandler-Tools\Container</Filter>
+    </ClInclude>
+    <ClInclude Include="CelestialDoubleList.h">
+      <Filter>Header Files\CrossHandler-Tools\Container</Filter>
+    </ClInclude>
+    <ClInclude Include="CelestialDoubleListNode.h">
+      <Filter>Header Files\CrossHandler-Tools\Container</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseObject.h">
+      <Filter>Header Files\Resources\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="GUIObject.h">
+      <Filter>Header Files\Resources\Objects\GUIObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="GUIEntityHandler.h">
+      <Filter>Header Files\Entities\Handlers</Filter>
+    </ClInclude>
+    <ClInclude Include="GameBoardHandler.h">
+      <Filter>Header Files\Entities\Handlers</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject.h">
+      <Filter>Header Files\Resources\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="DrawingBoard.h">
+      <Filter>Header Files\Entities\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="GameBoard.h">
+      <Filter>Header Files\Resources\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjectTree.h">
+      <Filter>Header Files\CrossHandler-Tools\Container</Filter>
+    </ClInclude>
+    <ClInclude Include="BufferObj.h">
+      <Filter>Header Files\CrossHandler-Tools\Buffer</Filter>
+    </ClInclude>
+    <ClInclude Include="BufferPoints.h">
+      <Filter>Header Files\CrossHandler-Tools\Buffer</Filter>
+    </ClInclude>
+    <ClInclude Include="CameraObject.h">
+      <Filter>Header Files\Resources\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="PositionableObject.h">
+      <Filter>Header Files\Resources\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="ViewObject.h">
+      <Filter>Header Files\Entities\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphicalMesh.h">
+      <Filter>Header Files\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="ScreenTarget.h">
+      <Filter>Header Files\Resources\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="CrossScriptMemoryObject.h">
+      <Filter>Header Files\Resources\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="ImageResourceObject.h">
+      <Filter>Header Files\CrossHandler-Tools\Image</Filter>
+    </ClInclude>
+    <ClInclude Include="GUIImage.h">
+      <Filter>Header Files\Resources\Objects\GUIObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="GUIImageLoader.h">
+      <Filter>Header Files\Resources\Loaders\UILoaders</Filter>
+    </ClInclude>
+    <ClInclude Include="KeyCodes.h">
+      <Filter>Header Files\Input</Filter>
     </ClInclude>
     <ClInclude Include="KeyTranslation.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Code\CrossHandler-Tools\BoxedBool.h">
-      <Filter>Header Files\CrossHandler-Tools</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\CrossHandler-Tools\Bounding\Shapes\BoundingBox.h">
-      <Filter>Header Files\CrossHandler-Tools\Bounding\Shapes</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\CrossHandler-Tools\Bounding\Shapes\BoundingSphere.h">
-      <Filter>Header Files\CrossHandler-Tools\Bounding\Shapes</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\CrossHandler-Tools\Bounding\BoundingPlane.h">
-      <Filter>Header Files\CrossHandler-Tools\Bounding</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\CrossHandler-Tools\Bounding\IBounding.h">
-      <Filter>Header Files\CrossHandler-Tools\Bounding</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\CrossHandler-Tools\Buffer\BufferObj.h">
-      <Filter>Header Files\CrossHandler-Tools\Buffer</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\CrossHandler-Tools\Buffer\BufferObject.h">
-      <Filter>Header Files\CrossHandler-Tools\Buffer</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\CrossHandler-Tools\Buffer\BufferPoints.h">
-      <Filter>Header Files\CrossHandler-Tools\Buffer</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\CrossHandler-Tools\Buffer\DXBufferObject.h">
-      <Filter>Header Files\CrossHandler-Tools\Buffer</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\CrossHandler-Tools\Camera\Camera.h">
-      <Filter>Header Files\CrossHandler-Tools\Camera</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\CrossHandler-Tools\Camera\CameraFrame.h">
-      <Filter>Header Files\CrossHandler-Tools\Camera</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\CrossHandler-Tools\Camera\UnderCamera.h">
-      <Filter>Header Files\CrossHandler-Tools\Camera</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\CrossHandler-Tools\Container\CelestialDoubleList.h">
-      <Filter>Header Files\CrossHandler-Tools\Container</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\CrossHandler-Tools\Container\CelestialDoubleListNode.h">
-      <Filter>Header Files\CrossHandler-Tools\Container</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\CrossHandler-Tools\Container\CelestialList.h">
-      <Filter>Header Files\CrossHandler-Tools\Container</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\CrossHandler-Tools\Container\CelestialListNode.h">
-      <Filter>Header Files\CrossHandler-Tools\Container</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\CrossHandler-Tools\Container\CelestialSlicedList.h">
-      <Filter>Header Files\CrossHandler-Tools\Container</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\CrossHandler-Tools\Container\CelestialTree.h">
-      <Filter>Header Files\CrossHandler-Tools\Container</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\CrossHandler-Tools\Container\CelestialTreeNode.h">
-      <Filter>Header Files\CrossHandler-Tools\Container</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\CrossHandler-Tools\Container\CelestialStack.h">
-      <Filter>Header Files\CrossHandler-Tools\Container</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\CrossHandler-Tools\Container\ObjectTree.h">
-      <Filter>Header Files\CrossHandler-Tools\Container</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\CrossHandler-Tools\Image\ImageResourceObject.h">
-      <Filter>Header Files\CrossHandler-Tools\Image</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\CrossHandler-Tools\Messaging\IHandleMessages.h">
-      <Filter>Header Files\CrossHandler-Tools\Messaging</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\CrossHandler-Tools\Messaging\Message.h">
-      <Filter>Header Files\CrossHandler-Tools\Messaging</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\CrossHandler-Tools\Messaging\MessageQueue.h">
-      <Filter>Header Files\CrossHandler-Tools\Messaging</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\CrossHandler-Tools\Texture\DX\DXTextureResource.h">
-      <Filter>Header Files\CrossHandler-Tools\Texture\DX</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\CrossHandler-Tools\Texture\DX\DXTextureResourceViews.h">
-      <Filter>Header Files\CrossHandler-Tools\Texture\DX</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\CrossHandler-Tools\Texture\DX\IDXTexRead.h">
-      <Filter>Header Files\CrossHandler-Tools\Texture\DX</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\CrossHandler-Tools\Texture\DX\IDXTexWrite.h">
-      <Filter>Header Files\CrossHandler-Tools\Texture\DX</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\CrossHandler-Tools\CrossHandlerHeader.h">
-      <Filter>Header Files\CrossHandler-Tools</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\CrossHandler-Tools\Frustum.h">
-      <Filter>Header Files\CrossHandler-Tools</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\CrossHandler-Tools\ICachableObject.h">
-      <Filter>Header Files\CrossHandler-Tools</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\CrossHandler-Tools\IThreadSafeObject.h">
-      <Filter>Header Files\CrossHandler-Tools</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\Entities\Handlers\GameBoardHandler.h">
-      <Filter>Header Files\Entities\Handlers</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\Entities\Handlers\GUIEntityHandler.h">
-      <Filter>Header Files\Entities\Handlers</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\Entities\Objects\DrawingBoard.h">
-      <Filter>Header Files\Entities\Objects</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\Entities\Objects\ViewObject.h">
-      <Filter>Header Files\Entities\Objects</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\CelestialMath\CelestialMath.h">
-      <Filter>Header Files\CelestialMath</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\CelestialMath\CelestialMathHeader.h">
-      <Filter>Header Files\CelestialMath</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\CelestialMath\CelestialMatrix.h">
-      <Filter>Header Files\CelestialMath</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\CelestialMath\CelestialVector.h">
-      <Filter>Header Files\CelestialMath</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\Graphics\2D\Celestial2DDrawer.h">
-      <Filter>Header Files\Graphics\2D</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\Graphics\Buffer\IBufferHandler.h">
-      <Filter>Header Files\Graphics\Buffer</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\Graphics\2D\I2DDrawer.h">
-      <Filter>Header Files\Graphics\2D</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\Graphics\CardHandler\CardHandler.h">
-      <Filter>Header Files\Graphics\CardHandler</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\Graphics\Buffer\CelestialBufferHandler.h">
-      <Filter>Header Files\Graphics\Buffer</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\Graphics\GraphicHandler\GraphicHandler.h">
-      <Filter>Header Files\Graphics\GraphicHandler</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\Graphics\Shaders\CelestialShader.h">
-      <Filter>Header Files\Graphics\Shaders</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\Graphics\Shaders\ShaderContainer.h">
-      <Filter>Header Files\Graphics\Shaders</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\Graphics\Lights\ShadowMapConstants.h">
-      <Filter>Header Files\Graphics\Lights</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\Graphics\Shaders\IShaderHandler.h">
-      <Filter>Header Files\Graphics\Shaders</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\Graphics\DrawScene.h">
-      <Filter>Header Files\Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\Graphics\GraphicalMesh.h">
-      <Filter>Header Files\Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\Graphics\IGraphicCamera.h">
-      <Filter>Header Files\Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\Graphics\IGraphicDebug.h">
-      <Filter>Header Files\Graphics\GraphicHandler</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\Graphics\GraphicAPI.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\Graphics\GraphicCodes.h">
-      <Filter>Header Files\Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\Graphics\GraphicHeader.h">
-      <Filter>Header Files\Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\Input\IKeyBoardHandler.h">
-      <Filter>Header Files\Input</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\Input\InputHandler.h">
-      <Filter>Header Files\Input</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\Input\InputHeader.h">
-      <Filter>Header Files\Input</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\Input\KeyCodes.h">
-      <Filter>Header Files\Input</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\Logic\CelScript\Compiler\CelScriptAnalyzer.h">
-      <Filter>Header Files\Logic\CelScript\Compiler</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\Logic\CelScript\Compiler\CelScriptCodeGenerator.h">
-      <Filter>Header Files\Logic\CelScript\Compiler</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\Logic\CelScript\Compiler\CelScriptCompiler.h">
-      <Filter>Header Files\Logic\CelScript\Compiler</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\Logic\CelScript\Compiler\CelScriptLexer.h">
-      <Filter>Header Files\Logic\CelScript\Compiler</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\Logic\CelScript\Compiler\CelScriptParser.h">
-      <Filter>Header Files\Logic\CelScript\Compiler</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\Logic\CelScript\RunTime\CelScriptRunTimeHandler.h">
-      <Filter>Header Files\Logic\CelScript\RunTime</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\Logic\CelScript\RunTime\CelScriptRuntime.h">
-      <Filter>Header Files\Logic\CelScript\RunTime</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\Logic\CelScript\KeyWords\Keyword.h">
-      <Filter>Header Files\Logic\CelScript\KeyWords</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\Logic\CelScript\KeyWords\RunTimeOperations.h">
-      <Filter>Header Files\Logic\CelScript\KeyWords</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\Logic\CelScript\CelscriptHandler.h">
-      <Filter>Header Files\Logic\CelScript</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\Logic\CelScript\MemoryPool.h">
-      <Filter>Header Files\Logic\CelScript</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\Logic\ILogicCamera.h">
-      <Filter>Header Files\Logic</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\Logic\IPlayerDebug.h">
-      <Filter>Header Files\Logic</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\Logic\LogicHeader.h">
-      <Filter>Header Files\Logic</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\Logic\LogicScene.h">
-      <Filter>Header Files\Logic</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\Logic\Overlord.h">
-      <Filter>Header Files\Logic</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\Resources\Objects\BaseObject.h">
+    <ClInclude Include="ScriptableObject.h">
       <Filter>Header Files\Resources\Objects</Filter>
     </ClInclude>
-    <ClInclude Include="Code\Resources\Objects\CameraObject.h">
-      <Filter>Header Files\Resources\Objects</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\Resources\Loaders\ColourLoader.h">
-      <Filter>Header Files\Resources\Loaders</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\Resources\Objects\CrossScriptMemoryObject.h">
-      <Filter>Header Files\Resources\Objects</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\Resources\Objects\GameBoard.h">
-      <Filter>Header Files\Resources\Objects</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\Resources\Objects\GameObject.h">
-      <Filter>Header Files\Resources\Objects</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\Resources\Objects\PositionableObject.h">
-      <Filter>Header Files\Resources\Objects</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\Resources\Loaders\FileLoaders\Interfaces\IFileCLLoader.h">
-      <Filter>Header Files\Resources\Loaders\FileLoaders\Interfaces</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\Resources\Loaders\FileLoaders\Interfaces\IFileGUILoader.h">
-      <Filter>Header Files\Resources\Loaders\FileLoaders\Interfaces</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\Resources\Loaders\FileLoaders\Interfaces\IFileLoader.h">
-      <Filter>Header Files\Resources\Loaders\FileLoaders\Interfaces</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\Resources\Loaders\FileLoaders\Interfaces\IFileMaterialLoader.h">
-      <Filter>Header Files\Resources\Loaders\FileLoaders\Interfaces</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\Resources\Loaders\FileLoaders\Interfaces\IFileMeshLoader.h">
-      <Filter>Header Files\Resources\Loaders\FileLoaders\Interfaces</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\Resources\Loaders\FileLoaders\Interfaces\IFileTerrainLoader.h">
-      <Filter>Header Files\Resources\Loaders\FileLoaders\Interfaces</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\Resources\Loaders\FileLoaders\Interfaces\IFileTextureLoader.h">
-      <Filter>Header Files\Resources\Loaders\FileLoaders\Interfaces</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\Resources\Loaders\FileLoaders\CelScriptBinLoader.h">
-      <Filter>Header Files\Resources\Loaders\FileLoaders</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\Resources\Loaders\FileLoaders\CelScriptSourceLoader.h">
-      <Filter>Header Files\Resources\Loaders\FileLoaders</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\Resources\Loaders\FileLoaders\ImageFileLoader.h">
-      <Filter>Header Files\Resources\Loaders\FileLoaders</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\Resources\Loaders\FileLoaders\MTLFileLoader.h">
-      <Filter>Header Files\Resources\Loaders\FileLoaders</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\Resources\Loaders\FileLoaders\OBJFileLoader.h">
-      <Filter>Header Files\Resources\Loaders\FileLoaders</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\Resources\Loaders\FileLoaders\TRNFileLoader.h">
-      <Filter>Header Files\Resources\Loaders\FileLoaders</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\Resources\Loaders\ShapeLoaders\GridLoader.h">
+    <ClInclude Include="GridLoader.h">
       <Filter>Header Files\Resources\Loaders\ShapeLoaders</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\Resources\Loaders\ShapeLoaders\PlaneLoader.h">
-      <Filter>Header Files\Resources\Loaders\ShapeLoaders</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\Resources\Loaders\ShapeLoaders\IShapeLoader.h">
-      <Filter>Header Files\Resources\Loaders\ShapeLoaders</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\Resources\Loaders\TerrainObjects\TerrainMesh.h">
-      <Filter>Header Files\Resources\Loaders\TerrainObjects</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\Resources\Loaders\TerrainObjects\TerrainObject.h">
-      <Filter>Header Files\Resources\Loaders\TerrainObjects</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\Resources\Loaders\UILoaders\GUILayoutLoader.h">
-      <Filter>Header Files\Resources\Loaders\UILoaders</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\Resources\Loaders\UILoaders\GUITextBoxLoader.h">
-      <Filter>Header Files\Resources\Loaders\UILoaders</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\Resources\Loaders\UILoaders\IGUILoader.h">
-      <Filter>Header Files\Resources\Loaders\UILoaders</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\Resources\Loaders\UILoaders\GUIImageLoader.h">
-      <Filter>Header Files\Resources\Loaders\UILoaders</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\Resources\Loaders\FileLoaders\Interfaces\IMaterialLoader.h">
-      <Filter>Header Files\Resources\Loaders\FileLoaders\Interfaces</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\Resources\Loaders\ResourceLoader.h">
-      <Filter>Header Files\Resources\Loaders</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\Resources\Objects\CelScript\CelScriptCompiled.h">
-      <Filter>Header Files\Resources\Objects\CelScript</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\Resources\Objects\CelScript\CelScriptSource.h">
-      <Filter>Header Files\Resources\Objects\CelScript</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\Resources\Objects\Container\IContainable.h">
-      <Filter>Header Files\Resources\Objects\Container</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\Resources\Objects\Container\ResourceObject.h">
-      <Filter>Header Files\Resources\Objects</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\Resources\Objects\GUIObjects\GUIImage.h">
-      <Filter>Header Files\Resources\Objects\GUIObjects</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\Resources\Objects\GUIObjects\GUILayout.h">
-      <Filter>Header Files\Resources\Objects\GUIObjects</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\Resources\Objects\GUIObjects\GUIObject.h">
-      <Filter>Header Files\Resources\Objects\GUIObjects</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\Resources\Objects\GUIObjects\GUITextBox.h">
-      <Filter>Header Files\Resources\Objects\GUIObjects</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\Resources\Objects\Lights\ILight.h">
-      <Filter>Header Files\Resources\Objects\Lights</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\Resources\Objects\Lights\PointLight.h">
-      <Filter>Header Files\Resources\Objects\Lights</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\Resources\Objects\MeshObject\MeshObject.h">
-      <Filter>Header Files\Resources\Objects\MeshObjects</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\Resources\Objects\Particles\IParticleEmitter.h">
-      <Filter>Header Files\Resources\Objects\Particles</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\Resources\Objects\Particles\IParticleEmitterBufferable.h">
-      <Filter>Header Files\Resources\Objects\Particles</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\Resources\Objects\Particles\LightParticleEmitter.h">
-      <Filter>Header Files\Resources\Objects\Particles</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\Resources\Objects\Particles\Particle.h">
-      <Filter>Header Files\Resources\Objects\Particles</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\Resources\Objects\Particles\ParticleEmitterInstance.h">
-      <Filter>Header Files\Resources\Objects\Particles</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\Resources\Objects\Particles\CommonParticle.h">
-      <Filter>Header Files\Resources\Objects\Particles</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\Resources\Objects\Particles\SkyboxParticle.h">
-      <Filter>Header Files\Resources\Objects\Particles</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\Resources\Objects\Triggers\Triggers.h">
-      <Filter>Header Files\Resources\Objects\Triggers</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\Resources\Objects\ScreenTarget.h">
-      <Filter>Header Files\Resources\Objects</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\Resources\Objects\ScriptableObject.h">
-      <Filter>Header Files\Resources\Objects</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\Resources\ResourceHandler.h">
-      <Filter>Header Files\Resources</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\Resources\ResourceHeader.h">
-      <Filter>Header Files\Resources</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\Resources\TextureHandler.h">
-      <Filter>Header Files\Resources</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\CrossHandler-Tools\Texture\TextureResourceObject.h">
-      <Filter>Header Files\CrossHandler-Tools\Texture</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\CrossHandler-Tools\Container\ResourceContainer.h">
-      <Filter>Header Files\Resources\Objects\Container</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\CrossHandler-Tools\TextContainer.h">
-      <Filter>Header Files\CrossHandler-Tools</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Camera.cpp">
+      <Filter>Source Files\CrossHandler-Tools\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="UnderCamera.cpp">
+      <Filter>Source Files\CrossHandler-Tools\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="BoundingBox.cpp">
+      <Filter>Source Files\CrossHandler-Tools\Bounding\Shapes</Filter>
+    </ClCompile>
+    <ClCompile Include="BoundingSphere.cpp">
+      <Filter>Source Files\CrossHandler-Tools\Bounding\Shapes</Filter>
+    </ClCompile>
+    <ClCompile Include="BoundingPlane.cpp">
+      <Filter>Source Files\CrossHandler-Tools\Bounding</Filter>
+    </ClCompile>
+    <ClCompile Include="CardHandler.cpp">
+      <Filter>Source Files\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="GraphicHandler.cpp">
+      <Filter>Source Files\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="InputHandler.cpp">
+      <Filter>Source Files\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="Overlord.cpp">
+      <Filter>Source Files\Logic</Filter>
+    </ClCompile>
+    <ClCompile Include="MTLFileLoader.cpp">
+      <Filter>Source Files\Resources\Loaders\FileLoaders</Filter>
+    </ClCompile>
+    <ClCompile Include="OBJFileLoader.cpp">
+      <Filter>Source Files\Resources\Loaders\FileLoaders</Filter>
+    </ClCompile>
+    <ClCompile Include="MeshObject.cpp">
+      <Filter>Source Files\Resources\Objects\MeshObject</Filter>
+    </ClCompile>
+    <ClCompile Include="CelestialBufferHandler.cpp">
+      <Filter>Source Files\Graphics\Buffers</Filter>
+    </ClCompile>
+    <ClCompile Include="CelestialShader.cpp">
+      <Filter>Source Files\Graphics\Shaders</Filter>
+    </ClCompile>
+    <ClCompile Include="TRNFileLoader.cpp">
+      <Filter>Source Files\Resources\Loaders\FileLoaders</Filter>
+    </ClCompile>
+    <ClCompile Include="BoxedBool.cpp">
+      <Filter>Source Files\CrossHandler-Tools</Filter>
+    </ClCompile>
+    <ClCompile Include="Frustum.cpp">
+      <Filter>Source Files\CrossHandler-Tools</Filter>
+    </ClCompile>
+    <ClCompile Include="LightParticleEmitter.cpp">
+      <Filter>Source Files\Resources\Objects\Particle</Filter>
+    </ClCompile>
+    <ClCompile Include="Particle.cpp">
+      <Filter>Source Files\Resources\Objects\Particle</Filter>
+    </ClCompile>
+    <ClCompile Include="ParticleEmitterInstance.cpp">
+      <Filter>Source Files\Resources\Objects\Particle</Filter>
+    </ClCompile>
+    <ClCompile Include="PlaneLoader.cpp">
+      <Filter>Source Files\Resources\Loaders\ShapeLoaders</Filter>
+    </ClCompile>
+    <ClCompile Include="BufferObject.cpp">
+      <Filter>Source Files\CrossHandler-Tools\Buffers</Filter>
+    </ClCompile>
+    <ClCompile Include="DXBufferObject.cpp">
+      <Filter>Source Files\CrossHandler-Tools\Buffers</Filter>
+    </ClCompile>
+    <ClCompile Include="CameraFrame.cpp">
+      <Filter>Source Files\CrossHandler-Tools\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="DXTextureResource.cpp">
+      <Filter>Source Files\CrossHandler-Tools\Texture</Filter>
+    </ClCompile>
+    <ClCompile Include="TextureResourceObject.cpp">
+      <Filter>Source Files\CrossHandler-Tools\Texture</Filter>
+    </ClCompile>
+    <ClCompile Include="DXTextureResourceViews.cpp">
+      <Filter>Source Files\CrossHandler-Tools\Texture</Filter>
+    </ClCompile>
+    <ClCompile Include="ShaderContainer.cpp">
+      <Filter>Source Files\Graphics\Shaders</Filter>
+    </ClCompile>
+    <ClCompile Include="CelestialMath.cpp">
+      <Filter>Source Files\CelestialMath</Filter>
+    </ClCompile>
+    <ClCompile Include="TextureHandler.cpp">
+      <Filter>Source Files\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="ImageFileLoader.cpp">
+      <Filter>Source Files\Resources\Loaders\FileLoaders</Filter>
+    </ClCompile>
+    <ClCompile Include="DrawScene.cpp">
+      <Filter>Source Files\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="LogicScene.cpp">
+      <Filter>Source Files\Logic</Filter>
+    </ClCompile>
+    <ClCompile Include="TerrainObject.cpp">
+      <Filter>Source Files\Resources\Terrain</Filter>
+    </ClCompile>
+    <ClCompile Include="TerrainMesh.cpp">
+      <Filter>Source Files\Resources\Terrain</Filter>
+    </ClCompile>
+    <ClCompile Include="PointLight.cpp">
+      <Filter>Source Files\Resources\Objects\Lights</Filter>
+    </ClCompile>
+    <ClCompile Include="ResourceContainer.cpp">
+      <Filter>Source Files\Resources\Objects\Container</Filter>
+    </ClCompile>
+    <ClCompile Include="ColourLoader.cpp">
+      <Filter>Source Files\Resources\Loaders</Filter>
+    </ClCompile>
+    <ClCompile Include="CommonParticle.cpp">
+      <Filter>Source Files\Resources\Objects\Particle</Filter>
+    </ClCompile>
+    <ClCompile Include="SkyboxParticle.cpp">
+      <Filter>Source Files\Resources\Objects\Particle</Filter>
+    </ClCompile>
+    <ClCompile Include="ShadowMapConstants.cpp">
+      <Filter>Source Files\Graphics\Lights</Filter>
+    </ClCompile>
     <ClCompile Include="Project Celestial.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="stdafx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Code\CrossHandler-Tools\BoxedBool.cpp">
+    <ClCompile Include="GUITextBox.cpp">
+      <Filter>Source Files\Resources\Objects\GUIObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="GUILayout.cpp">
+      <Filter>Source Files\Resources\Objects\GUIObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="GUITextBoxLoader.cpp">
+      <Filter>Source Files\Resources\Loaders\UILoaders</Filter>
+    </ClCompile>
+    <ClCompile Include="GUILayoutLoader.cpp">
+      <Filter>Source Files\Resources\Loaders\UILoaders</Filter>
+    </ClCompile>
+    <ClCompile Include="TextContainer.cpp">
       <Filter>Source Files\CrossHandler-Tools</Filter>
     </ClCompile>
-    <ClCompile Include="Code\CrossHandler-Tools\Bounding\Shapes\BoundingBox.cpp">
-      <Filter>Source Files\CrossHandler-Tools\Bounding\Shapes</Filter>
-    </ClCompile>
-    <ClCompile Include="Code\CrossHandler-Tools\Bounding\Shapes\BoundingSphere.cpp">
-      <Filter>Source Files\CrossHandler-Tools\Bounding\Shapes</Filter>
-    </ClCompile>
-    <ClCompile Include="Code\CrossHandler-Tools\Bounding\BoundingPlane.cpp">
-      <Filter>Source Files\CrossHandler-Tools\Bounding</Filter>
-    </ClCompile>
-    <ClCompile Include="Code\CrossHandler-Tools\Buffer\BufferObject.cpp">
-      <Filter>Source Files\CrossHandler-Tools\Buffers</Filter>
-    </ClCompile>
-    <ClCompile Include="Code\CrossHandler-Tools\Buffer\DXBufferObject.cpp">
-      <Filter>Source Files\CrossHandler-Tools\Buffers</Filter>
-    </ClCompile>
-    <ClCompile Include="Code\CrossHandler-Tools\Camera\Camera.cpp">
-      <Filter>Source Files\CrossHandler-Tools\Camera</Filter>
-    </ClCompile>
-    <ClCompile Include="Code\CrossHandler-Tools\Camera\CameraFrame.cpp">
-      <Filter>Source Files\CrossHandler-Tools\Camera</Filter>
-    </ClCompile>
-    <ClCompile Include="Code\CrossHandler-Tools\Camera\UnderCamera.cpp">
-      <Filter>Source Files\CrossHandler-Tools\Camera</Filter>
-    </ClCompile>
-    <ClCompile Include="Code\CrossHandler-Tools\Container\ObjectTree.cpp">
-      <Filter>Source Files\CrossHandler-Tools\Container</Filter>
-    </ClCompile>
-    <ClCompile Include="Code\CrossHandler-Tools\Image\ImageResourceObject.cpp">
-      <Filter>Source Files\CrossHandler-Tools\Image</Filter>
-    </ClCompile>
-    <ClCompile Include="Code\CrossHandler-Tools\Messaging\IHandleMessages.cpp">
-      <Filter>Source Files\CrossHandler-Tools\Messaging</Filter>
-    </ClCompile>
-    <ClCompile Include="Code\CrossHandler-Tools\Messaging\MessageQueue.cpp">
-      <Filter>Source Files\CrossHandler-Tools\Messaging</Filter>
-    </ClCompile>
-    <ClCompile Include="Code\CrossHandler-Tools\Texture\DX\DXTextureResource.cpp">
-      <Filter>Source Files\CrossHandler-Tools\Texture</Filter>
-    </ClCompile>
-    <ClCompile Include="Code\CrossHandler-Tools\Texture\DX\DXTextureResourceViews.cpp">
-      <Filter>Source Files\CrossHandler-Tools\Texture</Filter>
-    </ClCompile>
-    <ClCompile Include="Code\CrossHandler-Tools\Frustum.cpp">
-      <Filter>Source Files\CrossHandler-Tools</Filter>
-    </ClCompile>
-    <ClCompile Include="Code\CrossHandler-Tools\TextContainer.cpp">
-      <Filter>Source Files\CrossHandler-Tools</Filter>
-    </ClCompile>
-    <ClCompile Include="Code\Entities\Handlers\GameBoardHandler.cpp">
-      <Filter>Source Files\Entities\Handlers</Filter>
-    </ClCompile>
-    <ClCompile Include="Code\Entities\Handlers\GUIEntityHandler.cpp">
-      <Filter>Source Files\Entities\Handlers</Filter>
-    </ClCompile>
-    <ClCompile Include="Code\Entities\Objects\DrawingBoard.cpp">
-      <Filter>Source Files\Entities\Objects</Filter>
-    </ClCompile>
-    <ClCompile Include="Code\Entities\Objects\ViewObject.cpp">
-      <Filter>Source Files\Entities\Objects</Filter>
-    </ClCompile>
-    <ClCompile Include="Code\CelestialMath\CelestialMath.cpp">
-      <Filter>Source Files\CelestialMath</Filter>
-    </ClCompile>
-    <ClCompile Include="Code\Graphics\2D\Celestial2DDrawer.cpp">
+    <ClCompile Include="Celestial2DDrawer.cpp">
       <Filter>Source Files\Graphics\2D</Filter>
     </ClCompile>
-    <ClCompile Include="Code\Graphics\Buffer\CelestialBufferHandler.cpp">
-      <Filter>Source Files\Graphics\Buffers</Filter>
+    <ClCompile Include="MemoryPool.cpp">
+      <Filter>Source Files\Logic\CelScript</Filter>
     </ClCompile>
-    <ClCompile Include="Code\Graphics\CardHandler\CardHandler.cpp">
-      <Filter>Source Files\Graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="Code\Graphics\GraphicHandler\GraphicHandler.cpp">
-      <Filter>Source Files\Graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="Code\Graphics\Shaders\CelestialShader.cpp">
-      <Filter>Source Files\Graphics\Shaders</Filter>
-    </ClCompile>
-    <ClCompile Include="Code\Graphics\Shaders\ShaderContainer.cpp">
-      <Filter>Source Files\Graphics\Shaders</Filter>
-    </ClCompile>
-    <ClCompile Include="Code\Graphics\Lights\ShadowMapConstants.cpp">
-      <Filter>Source Files\Graphics\Lights</Filter>
-    </ClCompile>
-    <ClCompile Include="Code\Graphics\DrawScene.cpp">
-      <Filter>Source Files\Graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="Code\Graphics\GraphicalMesh.cpp">
-      <Filter>Source Files\Graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="Code\Input\InputHandler.cpp">
-      <Filter>Source Files\Input</Filter>
-    </ClCompile>
-    <ClCompile Include="Code\Logic\CelScript\Compiler\CelScriptAnalyzer.cpp">
+    <ClCompile Include="CelScriptAnalyzer.cpp">
       <Filter>Source Files\Logic\CelScript\Compiler</Filter>
     </ClCompile>
-    <ClCompile Include="Code\Logic\CelScript\Compiler\CelScriptCodeGenerator.cpp">
+    <ClCompile Include="CelScriptLexer.cpp">
       <Filter>Source Files\Logic\CelScript\Compiler</Filter>
     </ClCompile>
-    <ClCompile Include="Code\Logic\CelScript\Compiler\CelScriptCompiler.cpp">
+    <ClCompile Include="CelScriptParser.cpp">
       <Filter>Source Files\Logic\CelScript\Compiler</Filter>
     </ClCompile>
-    <ClCompile Include="Code\Logic\CelScript\Compiler\CelScriptLexer.cpp">
+    <ClCompile Include="CelScriptCodeGenerator.cpp">
       <Filter>Source Files\Logic\CelScript\Compiler</Filter>
     </ClCompile>
-    <ClCompile Include="Code\Logic\CelScript\Compiler\CelScriptParser.cpp">
+    <ClCompile Include="CelScriptSource.cpp">
+      <Filter>Source Files\Resources\Objects\CelScript</Filter>
+    </ClCompile>
+    <ClCompile Include="CelScriptCompiled.cpp">
+      <Filter>Source Files\Resources\Objects\CelScript</Filter>
+    </ClCompile>
+    <ClCompile Include="CelScriptCompiler.cpp">
       <Filter>Source Files\Logic\CelScript\Compiler</Filter>
     </ClCompile>
-    <ClCompile Include="Code\Logic\CelScript\RunTime\CelScriptRuntimeHandler.cpp">
+    <ClCompile Include="CelscriptHandler.cpp">
+      <Filter>Source Files\Logic\CelScript</Filter>
+    </ClCompile>
+    <ClCompile Include="CelScriptSourceLoader.cpp">
+      <Filter>Source Files\Resources\Loaders\FileLoaders</Filter>
+    </ClCompile>
+    <ClCompile Include="CelScriptBinLoader.cpp">
+      <Filter>Source Files\Resources\Loaders\FileLoaders</Filter>
+    </ClCompile>
+    <ClCompile Include="MessageQueue.cpp">
+      <Filter>Source Files\CrossHandler-Tools\Messaging</Filter>
+    </ClCompile>
+    <ClCompile Include="IHandleMessages.cpp">
+      <Filter>Source Files\CrossHandler-Tools\Messaging</Filter>
+    </ClCompile>
+    <ClCompile Include="ResourceLoader.cpp">
+      <Filter>Source Files\Resources\Loaders</Filter>
+    </ClCompile>
+    <ClCompile Include="ResourceHandler.cpp">
+      <Filter>Source Files\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="ResourceObject.cpp">
+      <Filter>Source Files\Resources\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="CelScriptRuntimeHandler.cpp">
       <Filter>Source Files\Logic\CelScript\CelScriptRuntime</Filter>
     </ClCompile>
-    <ClCompile Include="Code\Logic\CelScript\CelscriptHandler.cpp">
-      <Filter>Source Files\Logic\CelScript</Filter>
+    <ClCompile Include="GUIObject.cpp">
+      <Filter>Source Files\Resources\Objects\GUIObjects</Filter>
     </ClCompile>
-    <ClCompile Include="Code\Logic\CelScript\MemoryPool.cpp">
-      <Filter>Source Files\Logic\CelScript</Filter>
-    </ClCompile>
-    <ClCompile Include="Code\Logic\LogicScene.cpp">
-      <Filter>Source Files\Logic</Filter>
-    </ClCompile>
-    <ClCompile Include="Code\Logic\Overlord.cpp">
-      <Filter>Source Files\Logic</Filter>
-    </ClCompile>
-    <ClCompile Include="Code\Resources\Objects\BaseObject.cpp">
+    <ClCompile Include="BaseObject.cpp">
       <Filter>Source Files\Resources\Objects</Filter>
     </ClCompile>
-    <ClCompile Include="Code\Resources\Objects\CameraObject.cpp">
+    <ClCompile Include="GameObject.cpp">
       <Filter>Source Files\Resources\Objects</Filter>
     </ClCompile>
-    <ClCompile Include="Code\Resources\Loaders\ColourLoader.cpp">
-      <Filter>Source Files\Resources\Loaders</Filter>
+    <ClCompile Include="ObjectTree.cpp">
+      <Filter>Source Files\CrossHandler-Tools\Container</Filter>
     </ClCompile>
-    <ClCompile Include="Code\Resources\Objects\CrossScriptMemoryObject.cpp">
+    <ClCompile Include="DrawingBoard.cpp">
+      <Filter>Source Files\Entities\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="GameBoard.cpp">
       <Filter>Source Files\Resources\Objects</Filter>
     </ClCompile>
-    <ClCompile Include="Code\Resources\Objects\GameBoard.cpp">
+    <ClCompile Include="GUIEntityHandler.cpp">
+      <Filter>Source Files\Entities\Handlers</Filter>
+    </ClCompile>
+    <ClCompile Include="GameBoardHandler.cpp">
+      <Filter>Source Files\Entities\Handlers</Filter>
+    </ClCompile>
+    <ClCompile Include="PositionableObject.cpp">
       <Filter>Source Files\Resources\Objects</Filter>
     </ClCompile>
-    <ClCompile Include="Code\Resources\Objects\GameObject.cpp">
+    <ClCompile Include="ViewObject.cpp">
+      <Filter>Source Files\Entities\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="CameraObject.cpp">
       <Filter>Source Files\Resources\Objects</Filter>
     </ClCompile>
-    <ClCompile Include="Code\Resources\Objects\PositionableObject.cpp">
+    <ClCompile Include="GraphicalMesh.cpp">
+      <Filter>Source Files\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="ScreenTarget.cpp">
       <Filter>Source Files\Resources\Objects</Filter>
     </ClCompile>
-    <ClCompile Include="Code\Resources\Loaders\FileLoaders\CelScriptBinLoader.cpp">
-      <Filter>Source Files\Resources\Loaders\FileLoaders</Filter>
+    <ClCompile Include="CrossScriptMemoryObject.cpp">
+      <Filter>Source Files\Resources\Objects</Filter>
     </ClCompile>
-    <ClCompile Include="Code\Resources\Loaders\FileLoaders\CelScriptSourceLoader.cpp">
-      <Filter>Source Files\Resources\Loaders\FileLoaders</Filter>
+    <ClCompile Include="ImageResourceObject.cpp">
+      <Filter>Source Files\CrossHandler-Tools\Image</Filter>
     </ClCompile>
-    <ClCompile Include="Code\Resources\Loaders\FileLoaders\ImageFileLoader.cpp">
-      <Filter>Source Files\Resources\Loaders\FileLoaders</Filter>
+    <ClCompile Include="GUIImage.cpp">
+      <Filter>Source Files\Resources\Objects\GUIObjects</Filter>
     </ClCompile>
-    <ClCompile Include="Code\Resources\Loaders\FileLoaders\MTLFileLoader.cpp">
-      <Filter>Source Files\Resources\Loaders\FileLoaders</Filter>
+    <ClCompile Include="GUIImageLoader.cpp">
+      <Filter>Source Files\Resources\Loaders\UILoaders</Filter>
     </ClCompile>
-    <ClCompile Include="Code\Resources\Loaders\FileLoaders\OBJFileLoader.cpp">
-      <Filter>Source Files\Resources\Loaders\FileLoaders</Filter>
+    <ClCompile Include="ScriptableObject.cpp">
+      <Filter>Source Files\Resources\Objects</Filter>
     </ClCompile>
-    <ClCompile Include="Code\Resources\Loaders\FileLoaders\TRNFileLoader.cpp">
-      <Filter>Source Files\Resources\Loaders\FileLoaders</Filter>
-    </ClCompile>
-    <ClCompile Include="Code\Resources\Loaders\ShapeLoaders\GridLoader.cpp">
+    <ClCompile Include="GridLoader.cpp">
       <Filter>Source Files\Resources\Loaders\ShapeLoaders</Filter>
-    </ClCompile>
-    <ClCompile Include="Code\Resources\Loaders\ShapeLoaders\PlaneLoader.cpp">
-      <Filter>Source Files\Resources\Loaders\ShapeLoaders</Filter>
-    </ClCompile>
-    <ClCompile Include="Code\Resources\Loaders\TerrainObjects\TerrainMesh.cpp">
-      <Filter>Source Files\Resources\Terrain</Filter>
-    </ClCompile>
-    <ClCompile Include="Code\Resources\Loaders\TerrainObjects\TerrainObject.cpp">
-      <Filter>Source Files\Resources\Terrain</Filter>
-    </ClCompile>
-    <ClCompile Include="Code\Resources\Loaders\UILoaders\GUILayoutLoader.cpp">
-      <Filter>Source Files\Resources\Loaders\UILoaders</Filter>
-    </ClCompile>
-    <ClCompile Include="Code\Resources\Loaders\UILoaders\GUITextBoxLoader.cpp">
-      <Filter>Source Files\Resources\Loaders\UILoaders</Filter>
-    </ClCompile>
-    <ClCompile Include="Code\Resources\Loaders\UILoaders\GUIImageLoader.cpp">
-      <Filter>Source Files\Resources\Loaders\UILoaders</Filter>
-    </ClCompile>
-    <ClCompile Include="Code\Resources\Loaders\ResourceLoader.cpp">
-      <Filter>Source Files\Resources\Loaders</Filter>
-    </ClCompile>
-    <ClCompile Include="Code\Resources\Objects\CelScript\CelScriptCompiled.cpp">
-      <Filter>Source Files\Resources\Objects\CelScript</Filter>
-    </ClCompile>
-    <ClCompile Include="Code\Resources\Objects\CelScript\CelScriptSource.cpp">
-      <Filter>Source Files\Resources\Objects\CelScript</Filter>
-    </ClCompile>
-    <ClCompile Include="Code\Resources\Objects\Container\ResourceObject.cpp">
-      <Filter>Source Files\Resources\Objects</Filter>
-    </ClCompile>
-    <ClCompile Include="Code\Resources\Objects\GUIObjects\GUIImage.cpp">
-      <Filter>Source Files\Resources\Objects\GUIObjects</Filter>
-    </ClCompile>
-    <ClCompile Include="Code\Resources\Objects\GUIObjects\GUILayout.cpp">
-      <Filter>Source Files\Resources\Objects\GUIObjects</Filter>
-    </ClCompile>
-    <ClCompile Include="Code\Resources\Objects\GUIObjects\GUIObject.cpp">
-      <Filter>Source Files\Resources\Objects\GUIObjects</Filter>
-    </ClCompile>
-    <ClCompile Include="Code\Resources\Objects\GUIObjects\GUITextBox.cpp">
-      <Filter>Source Files\Resources\Objects\GUIObjects</Filter>
-    </ClCompile>
-    <ClCompile Include="Code\Resources\Objects\Lights\PointLight.cpp">
-      <Filter>Source Files\Resources\Objects\Lights</Filter>
-    </ClCompile>
-    <ClCompile Include="Code\Resources\Objects\MeshObject\MeshObject.cpp">
-      <Filter>Source Files\Resources\Objects\MeshObject</Filter>
-    </ClCompile>
-    <ClCompile Include="Code\Resources\Objects\Particles\LightParticleEmitter.cpp">
-      <Filter>Source Files\Resources\Objects\Particle</Filter>
-    </ClCompile>
-    <ClCompile Include="Code\Resources\Objects\Particles\Particle.cpp">
-      <Filter>Source Files\Resources\Objects\Particle</Filter>
-    </ClCompile>
-    <ClCompile Include="Code\Resources\Objects\Particles\ParticleEmitterInstance.cpp">
-      <Filter>Source Files\Resources\Objects\Particle</Filter>
-    </ClCompile>
-    <ClCompile Include="Code\Resources\Objects\Particles\CommonParticle.cpp">
-      <Filter>Source Files\Resources\Objects\Particle</Filter>
-    </ClCompile>
-    <ClCompile Include="Code\Resources\Objects\Particles\SkyboxParticle.cpp">
-      <Filter>Source Files\Resources\Objects\Particle</Filter>
-    </ClCompile>
-    <ClCompile Include="Code\Resources\Objects\ScreenTarget.cpp">
-      <Filter>Source Files\Resources\Objects</Filter>
-    </ClCompile>
-    <ClCompile Include="Code\Resources\Objects\ScriptableObject.cpp">
-      <Filter>Source Files\Resources\Objects</Filter>
-    </ClCompile>
-    <ClCompile Include="Code\Resources\ResourceHandler.cpp">
-      <Filter>Source Files\Resources</Filter>
-    </ClCompile>
-    <ClCompile Include="Code\Resources\TextureHandler.cpp">
-      <Filter>Source Files\Resources</Filter>
-    </ClCompile>
-    <ClCompile Include="Code\CrossHandler-Tools\Texture\TextureResourceObject.cpp">
-      <Filter>Source Files\CrossHandler-Tools\Texture</Filter>
-    </ClCompile>
-    <ClCompile Include="Code\CrossHandler-Tools\Container\ResourceContainer.cpp">
-      <Filter>Source Files\Resources\Objects\Container</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1051,23 +1045,29 @@
     <None Include="testBin.celbin">
       <Filter>Source Files</Filter>
     </None>
-    <None Include="Content\Scripts\PreLoad.celsrc">
-      <Filter>Resource Files\Content\Scripts</Filter>
+    <None Include="rootscript.celsrc">
+      <Filter>Source Files\Scripts</Filter>
     </None>
-    <None Include="Content\Scripts\Root.celsrc">
-      <Filter>Resource Files\Content\Scripts</Filter>
+    <None Include="TestRoot.celsrc">
+      <Filter>Source Files\Scripts</Filter>
     </None>
-    <None Include="Content\Scripts\CameraScripts\CameraPanning.celsrc">
-      <Filter>Resource Files\Content\Scripts\CameraScripts</Filter>
+    <None Include="TestRoot2.celsrc">
+      <Filter>Source Files\Scripts</Filter>
     </None>
-    <None Include="Content\Scripts\CameraScripts\CameraRotation.celsrc">
-      <Filter>Resource Files\Content\Scripts\CameraScripts</Filter>
+    <None Include="TestClick.celsrc">
+      <Filter>Source Files\Scripts</Filter>
     </None>
-    <None Include="Content\Scripts\CameraScripts\CameraZoom.celsrc">
-      <Filter>Resource Files\Content\Scripts\CameraScripts</Filter>
+    <None Include="PreLoad.celsrc">
+      <Filter>Source Files\Scripts</Filter>
     </None>
-    <None Include="Content\Scripts\LoadScripts\LoadGameBoard.celsrc">
-      <Filter>Resource Files\Content\Scripts\LoadScripts</Filter>
+    <None Include="CameraPanning.celsrc">
+      <Filter>Source Files\Scripts</Filter>
+    </None>
+    <None Include="MoveGUI.celsrc">
+      <Filter>Source Files\Scripts</Filter>
+    </None>
+    <None Include="CameraZoom.celsrc">
+      <Filter>Source Files\Scripts</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -1081,6 +1081,9 @@
     </Object>
   </ItemGroup>
   <ItemGroup>
+    <Text Include="CameraRotation.celsrc">
+      <Filter>Source Files\Scripts</Filter>
+    </Text>
     <Text Include="Content\Tile.obj">
       <Filter>Resource Files\Content</Filter>
     </Text>
