@@ -410,6 +410,7 @@
     <None Include="Content\Scripts\CameraScripts\CameraRotation.celsrc" />
     <None Include="Content\Scripts\CameraScripts\CameraZoom.celsrc" />
     <None Include="Content\Scripts\LoadScripts\LoadGameBoard.celsrc" />
+    <None Include="Content\Scripts\LoadScripts\LoadToolBar.celsrc" />
     <None Include="Content\Scripts\PreLoad.celsrc" />
     <None Include="Content\Scripts\Root.celsrc" />
     <None Include="ErrorTest.celsrc" />

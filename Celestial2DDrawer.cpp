@@ -140,6 +140,7 @@ HRESULT Celestial2DDrawer::InitSolidBrush(float r, float g, float b, int &index)
 
 	brushes[numberOfBrushes] = temp;
 	numberOfBrushes++;
+
 	return hr;
 
 }
@@ -236,13 +237,6 @@ void Celestial2DDrawer::DrawGUIObject(Resources::GUIObject* object, unsigned int
 
 		ID2D1Brush* contentBrush = object->GetContentBrush() > 0 ? brushes[object->GetContentBrush() - 1] : nullptr;
 		ID2D1Brush* borderBrush = object->GetBorderBrush() > 0 ? brushes[object->GetBorderBrush() - 1] : nullptr;
-
-		if (borderBrush != nullptr)
-		{
-
-			rT->DrawRectangle(layoutRect, borderBrush);
-
-		}
 
 		if (object->GetType() == GUIObjects_TEXTBOX && contentBrush != nullptr)
 		{
@@ -386,6 +380,13 @@ void Celestial2DDrawer::DrawGUIObject(Resources::GUIObject* object, unsigned int
 			}
 		}
 
+		if (borderBrush != nullptr)
+		{
+
+			rT->DrawRectangle(layoutRect, borderBrush);
+
+		}
+
 		rT->PopAxisAlignedClip();
 
 	}
@@ -405,14 +406,14 @@ void Celestial2DDrawer::Release()
 	for(int i=0;i<numberOfFonts;i++)
 	{
 
-		fonts[i]->Release();
+		ULONG res = fonts[i]->Release();
 
 	}
 
 	for (int i = 0; i<numberOfBrushes; i++)
 	{
 
-		brushes[i]->Release();
+		ULONG res = brushes[i]->Release();
 
 	}
 
@@ -450,7 +451,7 @@ void Celestial2DDrawer::extendBrushArray(int by)
 {
 
 	maxBrushes += by;
-	ID2D1Brush** tempBrushes = new ID2D1Brush*[maxFonts];
+	ID2D1Brush** tempBrushes = new ID2D1Brush*[maxBrushes];
 
 	for (int i = 0; i<maxBrushes - by; i++)
 	{
@@ -488,4 +489,5 @@ Celestial2DDrawer::~Celestial2DDrawer()
 	
 	delete[] fonts;
 	delete[] brushes;
+
 }

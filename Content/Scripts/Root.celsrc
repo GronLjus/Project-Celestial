@@ -6,10 +6,13 @@ outTextBox = import 'dbgout'
 focus outTextBox
 
 gameBoardLoad = load script 'Content\Scripts\LoadScripts\LoadGameBoard.celsrc'
+toolbarLoad = load script 'Content\Scripts\LoadScripts\LoadToolBar.celsrc'
+
 cam = load camera
 export 'cmra' cam
 run gameBoardLoad
-post 'loading cam'
+run toolbarLoad
+
 set camera cam
 
 pos cam 0.0 15.0 0.0

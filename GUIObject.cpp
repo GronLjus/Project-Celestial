@@ -200,18 +200,18 @@ Vector2 GUIObject::GetTopLeft() const
 
 		parentTopLeft = parentGUI->GetTopLeft();
 		parentSize = parentGUI->GetScale();
-		parentMidPoint = parentTopLeft + Vector2(parentSize.x,parentSize.y);
+		parentMidPoint = parentTopLeft + Vector2(parentSize.x / 2,parentSize.y / 2);
 
 	}
 
 	return Vector2(
 		GetHorizontalSnap() == GUISnap_LEFT ? parentTopLeft.x + GetPosition().x :
 		GetHorizontalSnap() == GUISnap_MIDDLE ? parentMidPoint.x - objSize.x*0.5f :
-		parentTopLeft.x + parentSize.x - GetPosition().x,
+		parentTopLeft.x + parentSize.x - (GetPosition().x + GetScale().x),
 
 		GetVerticalSnap() == GUISnap_TOP ? parentTopLeft.y + GetPosition().y :
 		GetVerticalSnap() == GUISnap_MIDDLE ? parentMidPoint.y - objSize.y*0.5f :
-		parentTopLeft.y + parentSize.y - GetPosition().y);
+		parentTopLeft.y + parentSize.y - (GetPosition().y + GetScale().y));
 
 }
 

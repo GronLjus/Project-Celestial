@@ -531,13 +531,20 @@ RunTimeError ReSnapOperator(unsigned int returnVar, unsigned char* params, unsig
 
 	unsigned int hV = (params[4] | ((int)params[5] << 8) | ((int)params[6] << 16) | ((int)params[7] << 24));
 	unsigned int snapEnum = (params[8] | ((int)params[9] << 8) | ((int)params[10] << 16) | ((int)params[11] << 24));
+	
+	rtc->memory->ReadVariable(hV - 1, rtc->intLoader, s);
+	hV = (rtc->intLoader[0] | ((int)rtc->intLoader[1] << 8) | ((int)rtc->intLoader[2] << 16) | ((int)rtc->intLoader[3] << 24));
+	
+	rtc->memory->ReadVariable(snapEnum - 1, rtc->intLoader, s);
+	snapEnum = (rtc->intLoader[0] | ((int)rtc->intLoader[1] << 8) | ((int)rtc->intLoader[2] << 16) | ((int)rtc->intLoader[3] << 24));
+
 
 	unsigned char tempBuff[]{(unsigned char)hV, (unsigned char)snapEnum};
 	Message mess;
 	mess.destination = MessageSource_OBJECT;
 	mess.type = MessageType_OBJECT;
 	mess.mess = ObjectMess_SETSNAP;
-	mess.SetParams(params, 0, 2);
+	mess.SetParams(tempBuff, 0, 2);
 	object->Update(&mess);
 
 	return RunTimeError_OK;
