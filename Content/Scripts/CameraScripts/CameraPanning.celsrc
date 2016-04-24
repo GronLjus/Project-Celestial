@@ -1,7 +1,7 @@
 $
 {
 	
-	cam = import 'camera'
+	cam = import 'cmra'
 	lastX = 0.0
 	lastZ = 0.0
 

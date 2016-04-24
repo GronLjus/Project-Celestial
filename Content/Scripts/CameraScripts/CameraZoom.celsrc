@@ -1,7 +1,7 @@
 $
 {
 	
-	cam = import 'camera'
+	cam = import 'cmra'
 
 }
 

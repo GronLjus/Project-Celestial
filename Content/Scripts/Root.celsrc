@@ -1,0 +1,20 @@
+
+splashImage = import 'splashImage'
+debugLayout = import 'debugLayer'
+screenLayout = import 'screenLayout'
+outTextBox = import 'dbgout'
+focus outTextBox
+
+gameBoardLoad = load script 'Content\Scripts\LoadScripts\LoadGameBoard.celsrc'
+cam = load camera
+export 'cmra' cam
+run gameBoardLoad
+post 'loading cam'
+set camera cam
+
+pos cam 0.0 15.0 0.0
+
+hide splashImage
+remove splashImage
+unload splashImage
+show debugLayout

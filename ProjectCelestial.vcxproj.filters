@@ -226,9 +226,6 @@
     <Filter Include="Source Files\CrossHandler-Tools\Messaging">
       <UniqueIdentifier>{56f1a52e-873c-444d-b994-d77f465b276a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Scripts">
-      <UniqueIdentifier>{a3a83c75-3546-4548-8dfc-ac36bb20e2df}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\Entities">
       <UniqueIdentifier>{ee8f80d3-2444-450a-ae4c-f7c4d0d187a7}</UniqueIdentifier>
     </Filter>
@@ -264,6 +261,15 @@
     </Filter>
     <Filter Include="Resource Files\Content">
       <UniqueIdentifier>{6187615c-0d7a-4f62-b03a-7c0244cd7ea2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Content\Scripts">
+      <UniqueIdentifier>{e6fd3454-a07f-4758-a153-39c56974b7fd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Content\Scripts\CameraScripts">
+      <UniqueIdentifier>{6509162a-5657-4d35-9a9c-53203d12ad3c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Content\Scripts\LoadScripts">
+      <UniqueIdentifier>{1c755db6-df37-496d-a472-54f695ae5d51}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1045,29 +1051,24 @@
     <None Include="testBin.celbin">
       <Filter>Source Files</Filter>
     </None>
-    <None Include="rootscript.celsrc">
-      <Filter>Source Files\Scripts</Filter>
+    <None Include="ClassDiagram.cd" />
+    <None Include="Content\Scripts\Root.celsrc">
+      <Filter>Resource Files\Content\Scripts</Filter>
     </None>
-    <None Include="TestRoot.celsrc">
-      <Filter>Source Files\Scripts</Filter>
+    <None Include="Content\Scripts\CameraScripts\CameraPanning.celsrc">
+      <Filter>Resource Files\Content\Scripts\CameraScripts</Filter>
     </None>
-    <None Include="TestRoot2.celsrc">
-      <Filter>Source Files\Scripts</Filter>
+    <None Include="Content\Scripts\CameraScripts\CameraRotation.celsrc">
+      <Filter>Resource Files\Content\Scripts\CameraScripts</Filter>
     </None>
-    <None Include="TestClick.celsrc">
-      <Filter>Source Files\Scripts</Filter>
+    <None Include="Content\Scripts\CameraScripts\CameraZoom.celsrc">
+      <Filter>Resource Files\Content\Scripts\CameraScripts</Filter>
     </None>
-    <None Include="PreLoad.celsrc">
-      <Filter>Source Files\Scripts</Filter>
+    <None Include="Content\Scripts\LoadScripts\LoadGameBoard.celsrc">
+      <Filter>Resource Files\Content\Scripts\LoadScripts</Filter>
     </None>
-    <None Include="CameraPanning.celsrc">
-      <Filter>Source Files\Scripts</Filter>
-    </None>
-    <None Include="MoveGUI.celsrc">
-      <Filter>Source Files\Scripts</Filter>
-    </None>
-    <None Include="CameraZoom.celsrc">
-      <Filter>Source Files\Scripts</Filter>
+    <None Include="Content\Scripts\PreLoad.celsrc">
+      <Filter>Resource Files\Content\Scripts</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -1081,9 +1082,6 @@
     </Object>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="CameraRotation.celsrc">
-      <Filter>Source Files\Scripts</Filter>
-    </Text>
     <Text Include="Content\Tile.obj">
       <Filter>Resource Files\Content</Filter>
     </Text>
