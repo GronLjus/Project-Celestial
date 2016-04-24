@@ -1,6 +1,6 @@
 #pragma once
 #include "ScriptableObject.h"
-#include "../../CelestialMath/CelestialMath.h"
+#include "CelestialMath.h"
 
 namespace Resources
 {

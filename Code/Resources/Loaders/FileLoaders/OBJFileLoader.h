@@ -1,7 +1,7 @@
 #pragma once
-#include "Interfaces/IFileMeshLoader.h"
+#include "IFileMeshLoader.h"
 #include "MTLFileLoader.h"
-#include "../ColourLoader.h"
+#include "ColourLoader.h"
 #include <vector>
 
 namespace Resources

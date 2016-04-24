@@ -1,6 +1,6 @@
 #pragma once
 #include "PositionableObject.h"
-#include "../../Entities/Objects/ViewObject.h"
+#include "ViewObject.h"
 
 namespace Resources
 {

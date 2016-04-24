@@ -1,5 +1,5 @@
 #pragma once
-#include "Interfaces/IFileCLLoader.h"
+#include "IFileCLLoader.h"
 
 namespace Resources
 {

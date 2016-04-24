@@ -1,8 +1,10 @@
-#include "../../../StdAfx.h"
+#include "StdAfx.h"
 #include "GraphicHandler.h"
 #include <time.h>
 #include <sstream>
+
 #include <stdlib.h>
+
 #include <thread>
 
 using namespace Graphics;

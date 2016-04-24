@@ -1,5 +1,5 @@
 #pragma once 
-#include "Code/Input/KeyCodes.h"
+#include "KeyCodes.h"
 
 unsigned char translatedKeys[]
 {

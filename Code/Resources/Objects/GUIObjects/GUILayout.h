@@ -1,5 +1,5 @@
 #pragma once
-#include "GUIObject.h"
+#include "GUITextBox.h"
 
 namespace Resources
 {

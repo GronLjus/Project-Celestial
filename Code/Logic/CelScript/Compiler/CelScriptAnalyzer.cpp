@@ -1,4 +1,4 @@
-#include "../../../../stdafx.h"
+#include "stdafx.h"
 #include "CelScriptAnalyzer.h"
 
 using namespace Logic;

@@ -2,9 +2,9 @@
 #include <dwrite.h>
 #include <d2d1.h>
 #include <string>
-#include "../../CrossHandler-Tools/Texture/TextureResourceObject.h"
-#include "../../CrossHandler-Tools/Image/ImageResourceObject.h"
-#include "../../Resources/Objects/GUIObjects/GUIObject.h"
+#include "TextureResourceObject.h"
+#include "ImageResourceObject.h"
+#include "GUIObject.h"
 
 namespace Graphics
 {

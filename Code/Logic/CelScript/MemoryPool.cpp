@@ -1,4 +1,4 @@
-#include "../../../stdafx.h"
+#include "stdafx.h"
 #include "MemoryPool.h"
 
 using namespace Logic;

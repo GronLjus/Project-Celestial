@@ -1,5 +1,5 @@
-#include "../../../../stdafx.h"
-#include "../../../CelestialMath/CelestialMath.h"
+#include "stdafx.h"
+#include "CelestialMath.h"
 #include "BoundingBox.h"
 #include "BoundingSphere.h"
 

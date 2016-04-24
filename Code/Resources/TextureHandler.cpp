@@ -1,7 +1,7 @@
-#include "../../stdafx.h"
+#include "stdafx.h"
 #include "TextureHandler.h"
-#include "Loaders/FileLoaders/ImageFileLoader.h"
-#include "Loaders/ColourLoader.h"
+#include "ImageFileLoader.h"
+#include "ColourLoader.h"
 
 using namespace Resources;
 using namespace CrossHandlers;

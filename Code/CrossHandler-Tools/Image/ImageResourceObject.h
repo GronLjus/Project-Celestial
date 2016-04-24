@@ -1,6 +1,6 @@
 #pragma once
 #include <d2d1.h>
-#include "../../CelestialMath/CelestialMath.h"
+#include "CelestialMath.h"
 
 namespace CrossHandlers
 {

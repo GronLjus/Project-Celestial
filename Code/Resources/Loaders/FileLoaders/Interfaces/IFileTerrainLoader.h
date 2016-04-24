@@ -1,6 +1,6 @@
 #pragma once
 #include "IFileLoader.h"
-#include "../../TerrainObjects/TerrainObject.h"
+#include "TerrainObject.h"
 
 namespace Resources
 {

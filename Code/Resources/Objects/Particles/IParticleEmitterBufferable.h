@@ -1,7 +1,7 @@
 #pragma once
-#include "../../../CrossHandler-Tools/Buffer/BufferObject.h"
+#include "BufferObject.h"
 #include "Particle.h"
-#include "../../../CrossHandler-Tools/Texture/TextureResourceObject.h"
+#include "TextureResourceObject.h"
 
 namespace Resources
 {

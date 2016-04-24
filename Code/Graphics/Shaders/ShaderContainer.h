@@ -1,5 +1,5 @@
 #pragma once
-#include "../GraphicAPI.h"
+#include "GraphicAPI.h"
 
 namespace Graphics
 {

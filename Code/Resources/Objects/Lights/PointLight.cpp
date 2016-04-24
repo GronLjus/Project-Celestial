@@ -1,5 +1,6 @@
-#include "../../../../stdafx.h"
+#include "StdAfx.h"
 #include "PointLight.h"
+#include "CelestialMath.h"
 #include <time.h>
 
 using namespace Resources;

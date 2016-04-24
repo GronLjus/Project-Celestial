@@ -1,6 +1,6 @@
-#include "../../../../stdafx.h"
+#include "stdafx.h"
 #include "BoundingSphere.h"
-#include "../../../CelestialMath/CelestialMath.h"
+#include "CelestialMath.h"
 
 using namespace CrossHandlers;
 using namespace CelestialMath;

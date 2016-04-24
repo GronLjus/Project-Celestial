@@ -1,5 +1,5 @@
 #pragma once
-#include "../../CrossHandler-Tools/Container/ObjectTree.h"
+#include "ObjectTree.h"
 #include "CameraObject.h"
 
 namespace Resources

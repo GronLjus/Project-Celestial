@@ -3,8 +3,8 @@
 #include <wincodec.h>
 #include <wincodecsdk.h>
 
-#include "InterFaces/IFileTextureLoader.h"
-#include "InterFaces/IFileMaterialLoader.h"
+#include "IFileTextureLoader.h"
+#include "IFileMaterialLoader.h"
 
 namespace Resources
 {

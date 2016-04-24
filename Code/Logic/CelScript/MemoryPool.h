@@ -1,6 +1,6 @@
 #pragma once
-#include "../../CrossHandler-Tools/Container/CelestialSlicedList.h"
-#include "../../CrossHandler-Tools/Container/CelestialStack.h"
+#include "CelestialSlicedList.h"
+#include "CelestialStack.h"
 #include <string>
 
 namespace Logic

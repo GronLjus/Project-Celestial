@@ -1,7 +1,7 @@
 #pragma once
 #include <string>
-#include "../../CrossHandler-Tools/Texture/TextureResourceObject.h"
-#include "../../Resources/Objects/GUIObjects/GUIObject.h"
+#include "TextureResourceObject.h"
+#include "GUIObject.h"
 
 namespace Graphics
 {

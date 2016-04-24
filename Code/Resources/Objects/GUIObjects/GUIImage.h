@@ -1,5 +1,5 @@
 #include "GUIObject.h"
-#include "../../../CrossHandler-Tools/Image/ImageResourceObject.h"
+#include "ImageResourceObject.h"
 
 namespace Resources
 {

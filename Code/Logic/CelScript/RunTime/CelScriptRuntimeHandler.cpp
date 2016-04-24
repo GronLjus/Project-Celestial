@@ -1,9 +1,9 @@
-#include "../../../../stdafx.h"
+#include "stdafx.h"
 #include "CelScriptRunTimeHandler.h"
-#include "../../../Resources/Objects/GUIObjects/GUIObject.h"
-#include "../../../Resources/Objects/GUIObjects/GUILayout.h"
-#include "../../../Resources/Objects/CelScript/CelScriptCompiled.h"
-#include "../../../Resources/Objects/CrossScriptMemoryObject.h"
+#include "GUIObject.h"
+#include "CelScriptCompiled.h"
+#include "CrossScriptMemoryObject.h"
+#include "GUILayout.h"
 #include <thread>
 
 using namespace Logic;

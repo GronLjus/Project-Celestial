@@ -1,11 +1,11 @@
 #pragma once
-#include "../../../Resources/Objects/CelScript/CelScriptCompiled.h"
-#include "../../../Resources/Objects/CelScript/CelScriptSource.h"
+#include "CelScriptCompiled.h"
+#include "CelScriptSource.h"
 #include "CelScriptLexer.h"
 #include "CelScriptParser.h"
 #include "CelScriptAnalyzer.h"
 #include "CelScriptCodeGenerator.h"
-#include "../../../CrossHandler-Tools/TextContainer.h"
+#include "TextContainer.h"
 
 namespace Logic
 {

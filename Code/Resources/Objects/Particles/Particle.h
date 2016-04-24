@@ -1,5 +1,5 @@
 #pragma once
-#include "../../../CelestialMath/CelestialVector.h"
+#include "CelestialVector.h"
 
 namespace Resources
 {

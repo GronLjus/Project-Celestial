@@ -1,4 +1,4 @@
-#include "../../../../stdafx.h"
+#include "stdafx.h"
 #include "ResourceContainer.h"
 
 using namespace Resources;

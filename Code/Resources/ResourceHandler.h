@@ -1,7 +1,7 @@
 #pragma once
-#include "Loaders/ResourceLoader.h"
-#include "../CrossHandler-Tools/Messaging/IHandleMessages.h"
-#include "../CrossHandler-Tools/Container/CelestialSlicedList.h"
+#include "ResourceLoader.h"
+#include "IHandleMessages.h"
+#include "CelestialSlicedList.h"
 
 namespace Resources
 {

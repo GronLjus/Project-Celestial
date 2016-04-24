@@ -1,6 +1,6 @@
 #pragma once
 #include <string>
-#include "../Container/IContainable.h"
+#include "IContainable.h"
 
 namespace Resources
 {

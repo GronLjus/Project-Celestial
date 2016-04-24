@@ -1,6 +1,6 @@
-#include "../../../../stdafx.h"
+#include "stdafx.h"
 #include "LightParticleEmitter.h"
-#include "../../../CelestialMath/CelestialMath.h"
+#include "CelestialMath.h"
 #include <time.h>
 
 using namespace Resources;

@@ -1,9 +1,7 @@
 #pragma once
-#include "../../Resources/Loaders/TerrainObjects/TerrainMesh.h"
-#include "../../Resources/Objects/Lights/ILight.h"
-#include "../../Resources/Objects/Container/ResourceObject.h"
-#include "../../Resources/Objects/Particles/IParticleEmitterBufferable.h"
-#include "../../Resources/Objects/Particles/ParticleEmitterInstance.h"
+#include "TerrainMesh.h"
+#include "ILight.h"
+#include "ResourceObject.h"
 
 namespace Graphics
 {

@@ -1,4 +1,4 @@
-#include "../../../stdafx.h"
+#include "stdafx.h"
 #include "ScreenTarget.h"
 
 using namespace Resources;

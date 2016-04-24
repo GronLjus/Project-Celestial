@@ -1,7 +1,8 @@
 #pragma once
 
 #include "IFileLoader.h"
-#include "../../../Objects/CelScript/CelScriptCompiled.h"
+#include "GUIObject.h"
+#include "CelScriptCompiled.h"
 
 namespace Resources
 {

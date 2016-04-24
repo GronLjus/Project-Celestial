@@ -1,5 +1,5 @@
 #pragma once
-#include "../../Objects/MeshObject/MeshObject.h"
+#include "MeshObject.h"
 
 namespace Resources
 {

@@ -1,11 +1,13 @@
 #pragma once
 #include "ShaderContainer.h"
-#include "../../CelestialMath/CelestialMath.h"
-#include "../Lights/ShadowMapConstants.h"
-#include "../Buffer/CelestialBufferHandler.h"
-#include "../../CrossHandler-Tools/TextContainer.h"
-#include "../../Entities/Objects/ViewObject.h"
-#include "../GraphicalMesh.h"
+#include "CelestialMath.h"
+#include "CameraFrame.h"
+#include "ShadowMapConstants.h"
+#include "DrawScene.h"
+#include "CelestialBufferHandler.h"
+#include "TextContainer.h"
+#include "ViewObject.h"
+#include "GraphicalMesh.h"
 #include <string>
 
 using namespace CelestialMath;
@@ -167,6 +169,9 @@ namespace Graphics
 			///<summary>The underlying effect this file uses</summary>
 			ID3DBlob* compiledShader;
 		
+			///<summary>A pointer to the camera to be used</summary>
+			CrossHandlers::CameraFrame* camera;
+
 			///<summary>Releases all the the mtrs</summary>
 			///<returns>Errorcodes</returns>
 			HRESULT releaseMTRs();

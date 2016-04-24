@@ -1,6 +1,6 @@
-#include "../../../stdafx.h"
+#include "stdafx.h"
 #include "CelestialBufferHandler.h"
-#include "../../CelestialMath/CelestialMath.h"
+#include "CelestialMath.h"
 using namespace Graphics;
 using namespace CrossHandlers;
 using namespace Resources;

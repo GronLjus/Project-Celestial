@@ -1,6 +1,6 @@
 #pragma once
 #include <string>
-#include "../../../../Graphics/CardHandler/CardHandler.h"
+#include "CardHandler.h"
 
 namespace Resources
 {

@@ -1,4 +1,5 @@
 #pragma once
+#include "CelestialMath.h"
 #include "PositionableObject.h"
 
 namespace Resources

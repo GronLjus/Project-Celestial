@@ -1,5 +1,5 @@
 #pragma once
-#include "../../CelestialMath/CelestialMath.h"
+#include "CelestialMath.h"
 using namespace CelestialMath;
 
 namespace CrossHandlers

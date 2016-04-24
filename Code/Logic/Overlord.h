@@ -1,10 +1,12 @@
 #pragma once
-#include "CelScript/CelscriptHandler.h"
-#include "../Entities/Handlers/GameBoardHandler.h"
-#include "../Entities/Handlers/GUIEntityHandler.h"
-#include "../Graphics/GraphicHandler/GraphicHandler.h"
-#include "../Resources/ResourceHandler.h"
-#include "../Input/InputHandler.h"
+#include "CelscriptHandler.h"
+#include "GameBoardHandler.h"
+#include "GraphicHandler.h"
+#include "ResourceHandler.h"
+#include "InputHandler.h"
+#include "PlayerHandler.h"
+#include "GUIEntityHandler.h"
+#include "Camera.h"
 #include <condition_variable>
 
 namespace Logic

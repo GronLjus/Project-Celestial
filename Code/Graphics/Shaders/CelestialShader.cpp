@@ -1,7 +1,7 @@
-#include "../../../stdafx.h"
+#include "stdafx.h"
 
 #include "CelestialShader.h"
-#include "../Buffer/CelestialBufferHandler.h"
+#include "CelestialBufferHandler.h"
 
 #include <D3Dcompiler.h>
 #include <time.h>

@@ -1,6 +1,6 @@
 #pragma once
-#include "../../Graphics/GraphicAPI.h"
-#include "../../CrossHandler-Tools/Frustum.h"
+#include "GraphicAPI.h"
+#include "Frustum.h"
 
 namespace CrossHandlers
 {

@@ -1,7 +1,8 @@
 #pragma once
-#include "../../CrossHandler-Tools/Messaging/IHandleMessages.h"
-#include "../../Resources/Objects/GUIObjects/GUIObject.h"
-#include "../../CrossHandler-Tools/Container/CelestialSlicedList.h"
+#include "IHandleMessages.h"
+#include "GUIObject.h"
+#include "ResourceObject.h"
+#include "CelestialSlicedList.h"
 
 namespace Entities
 {

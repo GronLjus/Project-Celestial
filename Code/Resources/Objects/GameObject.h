@@ -1,7 +1,7 @@
 #pragma once
 #include "PositionableObject.h"
-#include "../../CrossHandler-Tools/Bounding/Shapes/BoundingBox.h"
-#include "../../CrossHandler-Tools/Bounding/Shapes/BoundingSphere.h"
+#include "BoundingBox.h"
+#include "BoundingSphere.h"
 
 namespace Resources
 {

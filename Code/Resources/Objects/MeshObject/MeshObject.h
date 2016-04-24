@@ -1,9 +1,9 @@
 #pragma once
 #include <string>
-#include "../../../CrossHandler-Tools/Buffer/BufferObject.h"
-#include "../../../CrossHandler-Tools/Bounding/IBounding.h"
-#include "../../../CrossHandler-Tools/Texture/TextureResourceObject.h"
-#include "../BaseObject.h"
+#include "BufferObject.h"
+#include "IBounding.h"
+#include "TextureResourceObject.h"
+#include "BaseObject.h"
 
 namespace Resources
 {

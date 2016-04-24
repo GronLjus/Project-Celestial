@@ -1,5 +1,5 @@
 #pragma once
-#include "../../Graphics/GraphicAPI.h"
+#include "GraphicAPI.h"
 
 namespace CrossHandlers
 {

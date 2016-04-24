@@ -1,5 +1,5 @@
 #pragma once
-#include "../KeyWords/Keyword.h"
+#include "Keyword.h"
 
 namespace Logic
 {

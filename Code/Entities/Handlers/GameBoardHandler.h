@@ -1,7 +1,7 @@
 #pragma once
-#include "../../Resources/Objects/GameBoard.h"
-#include "../../CrossHandler-Tools/Messaging/IHandleMessages.h"
-#include "../../CrossHandler-Tools/Container/CelestialSlicedList.h"
+#include "GameBoard.h"
+#include "IHandleMessages.h"
+#include "CelestialSlicedList.h"
 
 namespace Entities
 {

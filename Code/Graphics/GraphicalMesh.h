@@ -1,5 +1,5 @@
 #pragma once
-#include "../CrossHandler-Tools/Texture/DX/DXTextureResource.h"
+#include "DXTextureResource.h"
 
 namespace Graphics
 {

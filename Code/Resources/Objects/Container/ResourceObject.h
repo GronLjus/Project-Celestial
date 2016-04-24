@@ -1,10 +1,10 @@
 #pragma once
 #include <string>
-#include "../../../CrossHandler-Tools/Bounding/IBounding.h"
-#include "../MeshObject/MeshObject.h"
-#include "../../../CrossHandler-Tools/Container/CelestialList.h"
-#include "../Particles/IParticleEmitterBufferable.h"
-#include "../Lights/ILight.h"
+#include "IBounding.h"
+#include "MeshObject.h"
+#include "CelestialList.h"
+#include "ParticleEmitterInstance.h"
+#include "ILight.h"
 
 namespace Resources
 {

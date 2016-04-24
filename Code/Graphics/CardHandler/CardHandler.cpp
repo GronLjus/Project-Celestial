@@ -1,6 +1,7 @@
-#include "../../../stdafx.h"
+#include "StdAfx.h"
 #include <dxgidebug.h>
 #include "CardHandler.h"
+#include "Celestial2DDrawer.h"
 #include <thread>
 
 using namespace Graphics;

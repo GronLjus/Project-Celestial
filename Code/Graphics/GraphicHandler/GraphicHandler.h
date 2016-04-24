@@ -1,10 +1,12 @@
 #pragma once
 
-#include "../CardHandler/CardHandler.h"
-#include "../IGraphicDebug.h"
-#include "../../Resources/Objects/GUIObjects/GUILayout.h"
-#include "../../CrossHandler-Tools/Messaging/IHandleMessages.h"
-#include "../../Resources/Objects/GameBoard.h"
+#include "CardHandler.h"
+#include "IGraphicCamera.h"
+#include "IGraphicDebug.h"
+#include "LogicScene.h"
+#include "GUILayout.h"
+#include "IHandleMessages.h"
+#include "GameBoard.h"
 
 namespace Graphics
 {

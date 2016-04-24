@@ -1,7 +1,6 @@
 #pragma once
-#include "Interfaces/IFileCLLoader.h"
-#include "../../Objects/CelScript/CelScriptSource.h"
-#include "../../../Logic/CelScript/Compiler/CelScriptCompiler.h"
+#include "IFileCLLoader.h"
+#include "CelScriptCompiler.h"
 
 namespace Resources
 {

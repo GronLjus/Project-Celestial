@@ -1,19 +1,22 @@
-#include "Buffer/CelestialBufferHandler.h"
-#include "Buffer/IBufferHandler.h"
+#include "CelestialBufferHandler.h"
+#include "IBufferHandler.h"
 
-#include "CardHandler/CardHandler.h"
-#include "CardHandler/ICardDebug.h"
+#include "CardHandler.h"
+#include "ICardDebug.h"
 
-#include "GraphicHandler/GraphicHandler.h"
+#include "GraphicHandler.h"
 #include "IGraphicDebug.h"
 
-#include "Lights/ShadowMapConstants.h"
+#include "ShadowMapConstants.h"
 
-#include "Shaders/CelestialShader.h"
-#include "Shaders/IShaderHandler.h"
-#include "Shaders/ShaderContainer.h"
+#include "CelestialShader.h"
+#include "IShaderHandler.h"
+#include "ShaderContainer.h"
 
+#include "CelestialTextHandler10.h"
+#include "ITextHandler.h"
 
 #include "DrawScene.h"
 #include "GraphicCodes.h"
 #include "IGraphicCamera.h"
+#include "Intermediator.h"

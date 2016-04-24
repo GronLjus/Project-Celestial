@@ -1,8 +1,8 @@
 #pragma once
-#include "../CrossHandler-Tools/Messaging/IHandleMessages.h"
-#include "../CrossHandler-Tools/Container/CelestialSlicedList.h"
-#include "../Resources/Objects/ScreenTarget.h"
-#include "../CelestialMath/CelestialMath.h"
+#include "IHandleMessages.h"
+#include "CelestialSlicedList.h"
+#include "ScreenTarget.h"
+#include "CelestialMath.h"
 #include "KeyCodes.h"
 
 namespace Input

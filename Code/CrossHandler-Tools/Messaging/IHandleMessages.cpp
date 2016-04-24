@@ -1,5 +1,5 @@
-#include "../../../stdafx.h"
-#include "../../CrossHandler-Tools/Messaging/IHandleMessages.h"
+#include "stdafx.h"
+#include "IHandleMessages.h"
 using namespace CrossHandlers;
 
 IHandleMessages::IHandleMessages(unsigned int outMessages, MessageSource ms)

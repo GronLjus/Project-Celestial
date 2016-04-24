@@ -1,4 +1,4 @@
-#include "../../../../stdafx.h"
+#include "stdafx.h"
 #include "CelScriptCompiled.h"
 
 using namespace Resources;

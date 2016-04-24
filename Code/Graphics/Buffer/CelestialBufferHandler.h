@@ -1,7 +1,8 @@
 #pragma once
-#include "../../CrossHandler-Tools/Buffer/BufferObject.h"
-#include "../../Entities/Objects/DrawingBoard.h"
-#include "../../Resources/Objects/Lights/ILight.h"
+#include "DrawingBoard.h"
+#include "TerrainMesh.h"
+#include "ILight.h"
+#include "ResourceObject.h"
 
 using namespace CelestialMath;
 
