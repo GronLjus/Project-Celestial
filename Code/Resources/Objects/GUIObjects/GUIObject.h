@@ -1,9 +1,9 @@
 #pragma once
-#include "CelestialVector.h"
-#include "PositionableObject.h" 
-#include "Triggers.h"
-#include "CelestialSlicedList.h"
-#include "ScreenTarget.h"
+#include "../../../CelestialMath/CelestialVector.h"
+#include "../PositionableObject.h" 
+#include "../Triggers/Triggers.h"
+#include "../../../CrossHandler-Tools/Container/CelestialSlicedList.h"
+#include "../ScreenTarget.h"
 
 namespace Resources
 {

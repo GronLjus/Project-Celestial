@@ -1,6 +1,6 @@
-#include "stdafx.h"
+#include "../../stdafx.h"
 #include "Overlord.h"
-#include "CelestialMath.h"
+#include "../CelestialMath/CelestialMath.h"
 #include <iostream>
 #include <sstream>
 #include <thread>

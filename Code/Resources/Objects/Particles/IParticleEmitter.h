@@ -1,6 +1,6 @@
 #pragma once
 #include "IParticleEmitterBufferable.h"
-#include "IContainable.h"
+#include "../Container/IContainable.h"
 
 namespace Resources
 {

@@ -1,7 +1,7 @@
 #pragma once
-#include "CelestialVector.h"
-#include "CelestialMatrix.h"
-#include "IThreadSafeObject.h"
+#include "../CelestialMath/CelestialVector.h"
+#include "../CelestialMath/CelestialMatrix.h"
+#include "../CrossHandler-Tools/IThreadSafeObject.h"
 
 namespace Logic
 {

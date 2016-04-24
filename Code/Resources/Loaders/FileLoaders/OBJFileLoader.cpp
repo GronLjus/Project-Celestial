@@ -1,6 +1,6 @@
-#include "stdafx.h"
+#include "../../../../stdafx.h"
 #include "OBJFileLoader.h"
-#include "ResourceHandler.h"
+#include "../../ResourceHandler.h"
 #include <fstream>
 #include <sstream>
 #include <iostream>

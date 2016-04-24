@@ -1,6 +1,6 @@
 #pragma once
 
-#include "IBounding.h"
+#include "../IBounding.h"
 
 namespace CrossHandlers
 {

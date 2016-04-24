@@ -1,9 +1,9 @@
 #pragma once
-#include "GameObject.h"
+#include "../../Resources/Objects/GameObject.h"
 #include "CelestialSlicedList.h"
-#include "BoundingBox.h"
-#include "CelestialMath.h"
-#include "DrawingBoard.h"
+#include "../Bounding/Shapes/BoundingBox.h"
+#include "../../CelestialMath/CelestialMath.h"
+#include "../../Entities/Objects/DrawingBoard.h"
 
 namespace CrossHandlers
 {

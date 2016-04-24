@@ -1,5 +1,5 @@
 #pragma once
-#include "CelestialMatrix.h"
+#include "../../../CelestialMath/CelestialMatrix.h"
 #include "IParticleEmitter.h"
 
 namespace Resources

@@ -1,7 +1,7 @@
 #pragma once
 
-#include "CelestialList.h"
-#include "ResourceObject.h"
+#include "../CrossHandler-Tools/Container/CelestialList.h"
+#include "../Resources/Objects/Container/ResourceObject.h"
 
 namespace Logic
 {

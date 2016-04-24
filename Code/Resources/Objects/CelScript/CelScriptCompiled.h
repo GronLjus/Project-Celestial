@@ -1,6 +1,6 @@
 #pragma once
-#include "BaseObject.h"
-#include "RunTimeOperations.h"
+#include "../BaseObject.h"
+#include "../../../Logic/CelScript/KeyWords/RunTimeOperations.h"
 
 namespace Resources
 {

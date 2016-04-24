@@ -1,5 +1,5 @@
 #pragma once
-#include "CelScriptCompiled.h"
+#include "../../../Resources/Objects/CelScript/CelScriptCompiled.h"
 #include "CelScriptRuntime.h"
 
 namespace Logic

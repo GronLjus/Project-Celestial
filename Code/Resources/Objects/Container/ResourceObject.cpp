@@ -1,6 +1,6 @@
-#include "stdafx.h"
+#include "../../../../stdafx.h"
 #include "ResourceObject.h"
-#include "CelestialMath.h"
+#include "../../../CelestialMath/CelestialMath.h"
 
 using namespace Resources;
 using namespace CrossHandlers;

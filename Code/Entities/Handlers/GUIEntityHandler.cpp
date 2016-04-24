@@ -1,7 +1,7 @@
-#include "stdafx.h"
+#include "../../../stdafx.h"
 #include "GUIEntityHandler.h"
-#include "GUITextBox.h"
-#include "InputHandler.h"
+#include "../../Resources/Objects/GUIObjects/GUITextBox.h"
+#include "../../Input/InputHandler.h"
 
 using namespace Entities;
 using namespace CrossHandlers;

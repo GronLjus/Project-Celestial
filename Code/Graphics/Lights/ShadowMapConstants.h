@@ -1,7 +1,7 @@
 #pragma once
-#include "ILight.h"
-#include "GraphicCodes.h"
-#include "GraphicAPI.h"
+#include "../../Resources/Objects/Lights/ILight.h"
+#include "../GraphicCodes.h"
+#include "../GraphicAPI.h"
 
 namespace Graphics
 {

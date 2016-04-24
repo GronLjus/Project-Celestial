@@ -1,8 +1,8 @@
-#include "stdafx.h"
+#include "../../stdafx.h"
 #include "ResourceHandler.h"
-#include "GameBoard.h"
-#include "CameraObject.h"
-#include "CrossScriptMemoryObject.h"
+#include "Objects/GameBoard.h"
+#include "Objects/CameraObject.h"
+#include "Objects/CrossScriptMemoryObject.h"
 
 using namespace Resources;
 using namespace CrossHandlers;

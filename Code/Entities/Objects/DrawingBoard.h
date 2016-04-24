@@ -1,12 +1,11 @@
 #pragma once
-#include "BufferPoints.h"
-#include "BufferObj.h"
-#include "MeshObject.h"
-#include "GameObject.h"
-#include "CelestialSlicedList.h"
-#include "CelestialStack.h"
-#include "ViewObject.h"
-#include "GraphicalMesh.h"
+#include "../../CrossHandler-Tools/Buffer/BufferPoints.h"
+#include "../../CrossHandler-Tools/Buffer/BufferObj.h"
+#include "../../Resources/Objects/MeshObject/MeshObject.h"
+#include "../../Resources/Objects/GameObject.h"
+#include "../../CrossHandler-Tools/Container/CelestialSlicedList.h"
+#include "../../CrossHandler-Tools/Container/CelestialStack.h"
+#include "../../Entities/Objects/ViewObject.h"
 
 namespace Entities
 {

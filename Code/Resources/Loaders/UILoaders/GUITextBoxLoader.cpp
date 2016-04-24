@@ -1,6 +1,6 @@
-#include "stdafx.h"
+#include "../../../../stdafx.h"
 #include "GUITextBoxLoader.h"
-#include "GUITextBox.h"
+#include "../../Objects/GUIObjects/GUITextBox.h"
 
 using namespace Resources;
 using namespace std;

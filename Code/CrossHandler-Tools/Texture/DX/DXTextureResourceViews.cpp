@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "../../../../stdafx.h"
 #include "DXTextureResourceViews.h"
 
 using namespace CrossHandlers;

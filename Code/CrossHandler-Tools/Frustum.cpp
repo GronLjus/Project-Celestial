@@ -1,6 +1,6 @@
-#include "stdafx.h"
+#include "../../stdafx.h"
 #include "Frustum.h"
-#include "CelestialMath.h"
+#include "../CelestialMath/CelestialMath.h"
 
 using namespace CrossHandlers;
 using namespace CelestialMath;

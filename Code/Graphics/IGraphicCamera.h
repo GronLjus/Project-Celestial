@@ -1,12 +1,12 @@
 #pragma once
-#include "IThreadSafeObject.h"
-#include "CameraFrame.h"
+#include "../CrossHandler-Tools/IThreadSafeObject.h"
+#include "../CrossHandler-Tools/Camera/CameraFrame.h"
 
 namespace Graphics
 {
 
 	///<summary>This interface abstracts the usage of a camera for graphical objects</summary>
-	class IGraphicCamera:public CrossHandlers::IThreadSafeObject
+	class IGraphicCamera : public CrossHandlers::IThreadSafeObject
 	{
 
 		public:

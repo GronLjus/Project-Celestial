@@ -1,6 +1,6 @@
 #pragma once
 #include "GUIObject.h"
-#include "TextContainer.h"
+#include "../../../CrossHandler-Tools/TextContainer.h"
 
 namespace Resources
 {

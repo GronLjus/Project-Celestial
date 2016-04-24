@@ -1,9 +1,9 @@
 #pragma once
-#include "GUITextBox.h"
-#include "CelScriptCompiler.h"
-#include "CelScriptRunTimeHandler.h"
-#include "IHandleMessages.h"
-#include "CelestialStack.h"
+#include "../../Resources/Objects/GUIObjects/GUITextBox.h"
+#include "RunTime/CelScriptRunTimeHandler.h"
+#include "KeyWords/Keyword.h"
+#include "../../CrossHandler-Tools/Messaging/IHandleMessages.h"
+#include "../../CrossHandler-Tools/Container/CelestialStack.h"
 
 namespace Logic
 {

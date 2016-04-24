@@ -1,9 +1,9 @@
-#include "stdafx.h"
+#include "../../../stdafx.h"
 #include "Celestial2DDrawer.h"
-#include "CelestialMath.h"
-#include "GUITextBox.h"
-#include "GUILayout.h"
-#include "GUIImage.h"
+#include "../../CelestialMath/CelestialMath.h"
+#include "../../Resources/Objects/GUIObjects/GUITextBox.h"
+#include "../../Resources/Objects/GUIObjects/GUILayout.h"
+#include "../../Resources/Objects/GUIObjects/GUIImage.h"
 
 using namespace Graphics;
 using namespace CelestialMath;

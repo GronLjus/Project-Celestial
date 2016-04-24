@@ -1,7 +1,7 @@
 #pragma once
 
 #include "IFileLoader.h"
-#include "GUIObject.h"
+#include "../../../Objects/GUIObjects/GUIObject.h"
 
 namespace Resources
 {

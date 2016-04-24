@@ -1,5 +1,5 @@
 #pragma once
-#include "DXTextureResource.h"
+#include "DX/DXTextureResource.h"
 
 namespace CrossHandlers
 {

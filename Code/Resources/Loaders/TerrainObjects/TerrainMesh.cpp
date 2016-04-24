@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "../../../../stdafx.h"
 #include "TerrainMesh.h"
 
 using namespace Resources;

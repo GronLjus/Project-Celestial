@@ -1,6 +1,6 @@
-#include "stdafx.h"
+#include "../../../../stdafx.h"
 #include "CelScriptSourceLoader.h"
-#include "CelestialList.h"
+#include "../../../CrossHandler-Tools/Container/CelestialList.h"
 #include <fstream>
 #include <iostream>
 

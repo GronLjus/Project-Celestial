@@ -1,8 +1,7 @@
 #pragma once
 
 #include "IContainable.h"
-#include "CelestialSlicedList.h"
-
+#include "../../../CrossHandler-Tools/Container/CelestialSlicedList.h"
 
 namespace Resources
 {

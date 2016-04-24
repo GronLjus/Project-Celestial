@@ -1,5 +1,5 @@
 #pragma once
-#include "GraphicCodes.h"
+#include "../GraphicCodes.h"
 
 namespace Graphics
 {

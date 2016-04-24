@@ -3,7 +3,7 @@
 
 #include "stdafx.h"
 #include "Project Celestial.h"
-#include "Overlord.h"
+#include "Code/Logic/Overlord.h"
 #include "KeyTranslation.h"
 #include <windowsx.h>
 #include <thread>

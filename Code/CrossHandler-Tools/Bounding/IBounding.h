@@ -1,7 +1,7 @@
 #pragma once
 #include "BoundingPlane.h"
-#include "CelestialMatrix.h"
-#include "CelestialVector.h"
+#include "../../CelestialMath/CelestialMatrix.h"
+#include "../../CelestialMath/CelestialVector.h"
 
 namespace CrossHandlers
 {

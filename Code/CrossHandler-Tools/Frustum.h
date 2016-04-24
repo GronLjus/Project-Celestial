@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include "BoundingSphere.h"
+#include "Bounding\Shapes\BoundingSphere.h"
 
 namespace CrossHandlers
 {

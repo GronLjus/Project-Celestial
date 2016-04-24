@@ -1,7 +1,8 @@
-#include "stdafx.h"
+#include "../../../../stdafx.h"
 #include "GUIImage.h"
 
 using namespace Resources;
+using namespace CrossHandlers;
 
 GUIImage::GUIImage(GUISnap h, GUISnap v) : GUIObject()
 {

@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "../../../stdafx.h"
 #include "CameraFrame.h"
 
 using namespace CrossHandlers;

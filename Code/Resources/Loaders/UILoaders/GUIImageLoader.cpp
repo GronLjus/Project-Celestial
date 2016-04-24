@@ -1,6 +1,6 @@
-#include "stdafx.h"
+#include "../../../../stdafx.h"
 #include "GUIImageLoader.h"
-#include "GUIImage.h"
+#include "../../Objects/GUIObjects/GUIImage.h"
 
 using namespace Resources;
 using namespace std;

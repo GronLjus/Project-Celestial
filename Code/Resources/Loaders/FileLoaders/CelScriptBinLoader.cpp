@@ -1,9 +1,9 @@
-#include "stdafx.h"
+#include "../../../../stdafx.h"
 #include "CelScriptBinLoader.h"
-#include "CelestialList.h"
+#include "../../../CrossHandler-Tools/Container/CelestialList.h"
 #include <fstream>
 #include <iostream>
-#include "RunTimeOperations.h"
+#include "../../../Logic/CelScript/KeyWords/RunTimeOperations.h"
 
 using namespace Resources;
 using namespace std;

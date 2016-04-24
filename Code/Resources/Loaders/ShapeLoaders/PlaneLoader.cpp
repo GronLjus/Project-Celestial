@@ -1,6 +1,6 @@
-#include "stdafx.h"
+#include "../../../../stdafx.h"
 #include "PlaneLoader.h"
-#include "ResourceHandler.h"
+#include "../../ResourceHandler.h"
 #include <cmath>
 using namespace Resources;
 

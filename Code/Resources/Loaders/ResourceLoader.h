@@ -1,16 +1,16 @@
 #pragma once
 #include <string>
-#include "IFileMeshLoader.h"
-#include "IFileTerrainLoader.h"
-#include "IFileMaterialLoader.h"
-#include "IFileTextureLoader.h"
-#include "IMaterialLoader.h"
-#include "IShapeLoader.h"
-#include "IGUILoader.h"
-#include "IFileCLLoader.h"
-#include "ResourceContainer.h"
-#include "ResourceObject.h"
-#include "TextContainer.h"
+#include "FileLoaders/Interfaces/IFileMeshLoader.h"
+#include "FileLoaders/Interfaces/IFileTerrainLoader.h"
+#include "FileLoaders/Interfaces/IFileMaterialLoader.h"
+#include "FileLoaders/Interfaces/IFileTextureLoader.h"
+#include "FileLoaders/Interfaces/IMaterialLoader.h"
+#include "FileLoaders/Interfaces/IFileCLLoader.h"
+#include "ShapeLoaders/IShapeLoader.h"
+#include "UILoaders/IGUILoader.h"
+#include "../Objects/Container/ResourceContainer.h"
+#include "../Objects/Container/ResourceObject.h"
+#include "../../CrossHandler-Tools/TextContainer.h"
 
 namespace Resources
 {

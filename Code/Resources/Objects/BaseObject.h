@@ -1,5 +1,5 @@
 #pragma once
-#include "Message.h"
+#include "../../CrossHandler-Tools/Messaging/Message.h"
 #include <mutex>
 
 namespace Resources

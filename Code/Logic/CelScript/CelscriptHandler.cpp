@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "../../../stdafx.h"
 #include "CelscriptHandler.h"
 #include <sstream>
 

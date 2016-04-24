@@ -1,7 +1,6 @@
 #pragma once 
 
-#include "IFileGUILoader.h"
-#include "CelestialMath.h"
+#include "../FileLoaders/Interfaces/IFileGUILoader.h"
 
 namespace Resources
 {

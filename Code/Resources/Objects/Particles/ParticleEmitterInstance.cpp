@@ -1,6 +1,6 @@
-#include "stdafx.h"
+#include "../../../../stdafx.h"
 #include "ParticleEmitterInstance.h"
-#include "CelestialMath.h"
+#include "../../../CelestialMath/CelestialMath.h"
 
 using namespace Resources;
 using namespace CelestialMath;

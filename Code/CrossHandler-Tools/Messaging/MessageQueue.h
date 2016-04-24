@@ -1,6 +1,6 @@
 #pragma once
 #include "Message.h"
-#include "CelestialListNode.h"
+#include "../Container/CelestialListNode.h"
 #include <mutex>
 
 namespace CrossHandlers

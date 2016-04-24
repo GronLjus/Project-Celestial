@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "../../../stdafx.h"
 #include "BufferObject.h"
 
 using namespace CrossHandlers;

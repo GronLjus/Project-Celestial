@@ -1,6 +1,6 @@
-#include "stdafx.h"
+#include "../../../../stdafx.h"
 #include "GUILayoutLoader.h"
-#include "GUILayout.h"
+#include "../../Objects/GUIObjects/GUILayout.h"
 
 using namespace Resources;
 using namespace std;

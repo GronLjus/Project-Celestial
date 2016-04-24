@@ -1,6 +1,6 @@
-#include "StdAfx.h"
+#include "../../../stdafx.h"
 #include "UnderCamera.h"
-#include "CelestialMath.h"
+#include "../../CelestialMath/CelestialMath.h"
 
 using namespace CrossHandlers;
 using namespace CelestialMath;

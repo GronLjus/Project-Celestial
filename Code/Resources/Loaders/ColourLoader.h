@@ -1,6 +1,6 @@
 #pragma once
-#include "IFileMaterialLoader.h"
-#include "IMaterialLoader.h"
+#include "FileLoaders/Interfaces/IFileMaterialLoader.h"
+#include "FileLoaders/Interfaces/IMaterialLoader.h"
 
 namespace Resources
 {

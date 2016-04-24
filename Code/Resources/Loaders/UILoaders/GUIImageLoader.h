@@ -1,5 +1,5 @@
 #include "IGUILoader.h"
-#include "ResourceLoader.h"
+#include "../ResourceLoader.h"
 
 namespace Resources
 {

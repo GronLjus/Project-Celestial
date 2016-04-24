@@ -1,9 +1,9 @@
 #pragma once
-#include "CameraFrame.h"
-#include "ShadowMapConstants.h"
-#include "DrawScene.h"
-#include "IBufferHandler.h"
-#include "TextContainer.h"
+#include "../../CrossHandler-Tools/Camera/CameraFrame.h"
+#include "../Lights/ShadowMapConstants.h"
+#include "../DrawScene.h"
+#include "../Buffer/IBufferHandler.h"
+#include "../../CrossHandler-Tools/TextContainer.h"
 #include <string>
 
 namespace Graphics

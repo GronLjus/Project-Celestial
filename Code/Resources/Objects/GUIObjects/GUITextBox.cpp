@@ -1,7 +1,7 @@
-#include "stdafx.h"
+#include "../../../../stdafx.h"
 #include "GUITextBox.h"
-#include "CelestialMath.h"
-#include "KeyCodes.h"
+#include "../../../CelestialMath/CelestialMath.h"
+#include "../../../Input/KeyCodes.h"
 
 using namespace Input;
 using namespace std;

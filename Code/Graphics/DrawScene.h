@@ -1,10 +1,10 @@
 #pragma once
 
-#include "CelestialList.h"
-#include "MeshObject.h"
-#include "TerrainMesh.h"
-#include "ILight.h"
-#include "IParticleEmitter.h"
+#include "../CrossHandler-Tools/Container/CelestialList.h"
+#include "../Resources/Objects/MeshObject/MeshObject.h"
+#include "../Resources/Loaders/TerrainObjects/TerrainMesh.h"
+#include "../Resources/Objects/Lights/ILight.h"
+#include "../Resources/Objects/Particles/IParticleEmitter.h"
 
 namespace Graphics
 {

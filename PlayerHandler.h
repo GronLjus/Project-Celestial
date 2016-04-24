@@ -1,9 +1,9 @@
 #pragma once
-#include "ResourceObject.h"
-#include "InputHandler.h"
-#include "ILogicCamera.h"
-#include "TerrainObject.h"
-#include "IPlayerDebug.h"
+#include "Code/Resources/Objects/Container/ResourceObject.h"
+#include "Code/Input/InputHandler.h"
+#include "Code/Logic/ILogicCamera.h"
+#include "Code/Resources/Loaders/TerrainObjects/TerrainObject.h"
+#include "Code/Logic/IPlayerDebug.h"
 
 namespace Logic
 {

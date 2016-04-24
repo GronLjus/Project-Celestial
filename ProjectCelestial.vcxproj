@@ -70,8 +70,9 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
     <LibraryPath>C:\Program Files (x86)\Windows Kits\8.1\Lib\win8\um\x86;$(DXSDK_DIR)Lib\x86;$(LibraryPath)</LibraryPath>
-    <IncludePath>$(IncludePath);C:\Program Files (x86)\Windows Kits\8.1\Include\um;Code\*\*\*\*;$(DXSDK_DIR)Include</IncludePath>
+    <IncludePath>$(IncludePath);C:\Program Files (x86)\Windows Kits\8.1\Include\um;$(DXSDK_DIR)Include</IncludePath>
     <RunCodeAnalysis>false</RunCodeAnalysis>
+    <SourcePath>$(SourcePath)</SourcePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
@@ -223,7 +224,7 @@
     <ClInclude Include="Code\CrossHandler-Tools\Bounding\IBounding.h" />
     <ClInclude Include="Code\Graphics\Buffer\IBufferHandler.h" />
     <ClInclude Include="Code\CrossHandler-Tools\ICachableObject.h" />
-    <ClInclude Include="ICardDebug.h" />
+    <ClInclude Include="Code\Graphics\CardHandler\ICardDebug.h" />
     <ClInclude Include="Code\Resources\Objects\Container\IContainable.h" />
     <ClInclude Include="Code\CrossHandler-Tools\Texture\DX\IDXTexRead.h" />
     <ClInclude Include="Code\CrossHandler-Tools\Texture\DX\IDXTexWrite.h" />
@@ -265,7 +266,7 @@
     <ClInclude Include="Code\Resources\Objects\Particles\LightParticleEmitter.h" />
     <ClInclude Include="Code\Graphics\DrawScene.h" />
     <ClInclude Include="Code\Logic\LogicScene.h" />
-    <ClInclude Include="Code\CrossHandler-Tools\Container\ResourceContainer.h" />
+    <ClInclude Include="Code\Resources\Objects\Container\ResourceContainer.h" />
     <ClInclude Include="Code\CrossHandler-Tools\Container\CelestialList.h" />
     <ClInclude Include="Code\CrossHandler-Tools\Container\CelestialListNode.h" />
     <ClInclude Include="Code\Resources\Objects\MeshObject\MeshObject.h" />
@@ -360,7 +361,7 @@
     <ClCompile Include="Code\Graphics\Lights\ShadowMapConstants.cpp" />
     <ClCompile Include="Code\Resources\Objects\Particles\LightParticleEmitter.cpp" />
     <ClCompile Include="Code\Logic\LogicScene.cpp" />
-    <ClCompile Include="Code\CrossHandler-Tools\Container\ResourceContainer.cpp" />
+    <ClCompile Include="Code\Resources\Objects\Container\ResourceContainer.cpp" />
     <ClCompile Include="Code\Resources\Objects\MeshObject\MeshObject.cpp" />
     <ClCompile Include="Code\Resources\Loaders\FileLoaders\MTLFileLoader.cpp" />
     <ClCompile Include="Code\Resources\Loaders\FileLoaders\OBJFileLoader.cpp" />
@@ -405,6 +406,7 @@
     <None Include="..\d3dcompiler_46.dll">
       <FileType>Document</FileType>
     </None>
+    <None Include="ClassDiagram.cd" />
     <None Include="Content\Scripts\CameraScripts\CameraPanning.celsrc" />
     <None Include="Content\Scripts\CameraScripts\CameraRotation.celsrc" />
     <None Include="Content\Scripts\CameraScripts\CameraZoom.celsrc" />

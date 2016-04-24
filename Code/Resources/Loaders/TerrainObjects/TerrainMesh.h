@@ -1,7 +1,7 @@
 #pragma once
-#include "MeshObject.h"
-#include "ICachableObject.h"
-#include "BoxedBool.h"
+#include "../../Objects/MeshObject/MeshObject.h"
+#include "../../../CrossHandler-Tools/ICachableObject.h"
+#include "../../../CrossHandler-Tools/BoxedBool.h"
 
 namespace Resources
 {

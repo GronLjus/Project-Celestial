@@ -1,8 +1,8 @@
 #pragma once
 #include <string>
 #include "RunTimeOperations.h"
-#include "CelestialTree.h"
-#include "CelestialSlicedList.h"
+#include "../../../CrossHandler-Tools/Container/CelestialTree.h"
+#include "../../../CrossHandler-Tools/Container/CelestialSlicedList.h"
 
 namespace Logic
 {

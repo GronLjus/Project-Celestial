@@ -1,6 +1,6 @@
 #pragma once
-#include "IGraphicCamera.h"
-#include "ILogicCamera.h"
+#include "../../Graphics/IGraphicCamera.h"
+#include "../../Logic/ILogicCamera.h"
 #include "UnderCamera.h"
 
 namespace CrossHandlers

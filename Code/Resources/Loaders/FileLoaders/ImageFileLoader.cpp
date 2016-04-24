@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "../../../../stdafx.h"
 #include "ImageFileLoader.h"
 
 using namespace Resources;

@@ -1,9 +1,8 @@
 #pragma once
-#include "ResourceObject.h"
-#include "CelestialShader.h"
-#include "Celestial2DDrawer.h"
-#include "ICardDebug.h"
-#include "CelestialBufferHandler.h"
+#include "../Shaders/CelestialShader.h"
+#include "../2D/Celestial2DDrawer.h"
+#include "./ICardDebug.h"
+#include "../Buffer/CelestialBufferHandler.h"
 
 namespace Graphics
 {

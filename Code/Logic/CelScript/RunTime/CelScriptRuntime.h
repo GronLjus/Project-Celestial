@@ -1,7 +1,7 @@
 #pragma once
-#include "RunTimeOperations.h"
-#include "MemoryPool.h"
-#include "MessageQueue.h"
+#include "../KeyWords/RunTimeOperations.h"
+#include "../MemoryPool.h"
+#include "../../../CrossHandler-Tools/Messaging/MessageQueue.h"
 
 namespace Logic
 {

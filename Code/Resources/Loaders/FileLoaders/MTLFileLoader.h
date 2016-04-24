@@ -1,6 +1,6 @@
 #pragma once
-#include "IFileMaterialLoader.h"
-#include "TextureHandler.h"
+#include "Interfaces/IFileMaterialLoader.h"
+#include "../../TextureHandler.h"
 
 namespace Resources
 {

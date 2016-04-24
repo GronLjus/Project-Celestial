@@ -1,6 +1,6 @@
 #pragma once
-#include "Frustum.h"
-#include "BaseObject.h"
+#include "../../../CrossHandler-Tools/Frustum.h"
+#include "../BaseObject.h"
 
 namespace Resources
 {

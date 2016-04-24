@@ -1,6 +1,6 @@
-#include "stdafx.h"
+#include "../../../../stdafx.h"
 #include "CelScriptLexer.h"
-#include "CelestialDoubleList.h"
+#include "../../../CrossHandler-Tools/Container/CelestialDoubleList.h"
 
 using namespace Logic;
 using namespace CrossHandlers;
