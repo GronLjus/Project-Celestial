@@ -27,3 +27,8 @@ export 'debugLayer' debugLayout
 set out outTextBox
 set ui screenLayout
 hide debugLayout
+
+ignore input outTextBox
+ignore input screenLayout
+ignore input debugLayout
+decrement outTextBox

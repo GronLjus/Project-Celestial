@@ -16,7 +16,7 @@ namespace Resources
 
 		public:
 			GUIObject();
-
+			void UpdateScreenTarget();
 			virtual void SetId(unsigned int id);
 			virtual void Update(CrossHandlers::Message* mess);
 			///<summary>Gets how the object should snap horizontally</summary>

@@ -15,9 +15,9 @@ GUIEntityHandler::GUIEntityHandler() : IHandleMessages(20,MessageSource_GUIENTIT
 	keyMessage.type = MessageType_OBJECT;
 	keyMessage.mess = ObjectMess_HANDLEKEY;
 
-	screenTargets = new CelestialSlicedList<ScreenTarget*>(32, nullptr);
-	maxScreenTargets = 0;
 	dragTarget = nullptr;
+	lastTarget = nullptr;
+	screenLayout = nullptr;
 	
 }
 
@@ -139,60 +139,70 @@ void GUIEntityHandler::triggerScript(unsigned int script, unsigned int time, uns
 
 }
 
-ScreenTarget* GUIEntityHandler::getScreenTarget(unsigned int time, CelestialMath::vectorUI2 mouse)
+ScreenTarget* GUIEntityHandler::getScreenTarget(unsigned int time, CelestialMath::vectorUI2 mouse, Resources::GUILayout* base)
 {
 
 	ScreenTarget* firstTarget = nullptr;
-	unsigned char topLayer = 1;
 
-	for (unsigned int i = 0; i < maxScreenTargets; i++)
+	if (base != nullptr)
 	{
 
-		ScreenTarget* st = screenTargets->GetValue(i);
+		unsigned char topLayer = 0;
 
-		if (st != nullptr)
+		for (unsigned int i = 0; i < base->GetChildren() && firstTarget == nullptr; i++)
 		{
 
-			if (st->IsVisible() && !st->ShouldRemove() &&
-				(st->GetPosition().x <= mouse.x && st->GetPosition().x + st->GetScale().x >= mouse.x &&
-					st->GetPosition().y <= mouse.y && st->GetPosition().y + st->GetScale().y >= mouse.y) &&
-				(st->GetLayer() > topLayer))
+			GUIObject* object = base->GetChild(i);
+
+			if(object != nullptr)
 			{
 
-				topLayer = st->GetLayer();
-				firstTarget = st;
+				ScreenTarget* target = object->GetScreenTarget();
 
-			}
-			else if (st->ShouldRemove())
-			{
-
-				unsigned char tempBuff[]{ st->GetId() >> 0, st->GetId() >> 8, st->GetId() >> 16, st->GetId() >> 24 };
-				messageBuffer[this->currentMessage].SetParams(tempBuff, 0, 4);
-				messageBuffer[this->currentMessage].timeSent = time;
-				messageBuffer[this->currentMessage].destination = MessageSource_RESOURCES;
-				messageBuffer[this->currentMessage].type = MessageType_RESOURCES;
-				messageBuffer[this->currentMessage].mess = ResourceMess_UNLOADOBJECT;
-				messageBuffer[this->currentMessage].read = false;
-				outQueue->PushMessage(&messageBuffer[this->currentMessage]);
-				this->currentMessage = (this->currentMessage + 1) % outMessages;
-
-				screenTargets->Add(nullptr, i);
-
-			}
-			else if (st->IsHovering())
-			{
-
-				st->SetHovering(false);
-
-				if (st->GetExitScript() != 0)
+				if(target != nullptr)
 				{
 
-					unsigned int script = st->GetExitScript() - 1;
-					triggerScript(script, time, st->GetTargetId(), mouse);
+					float l = target->GetPosition().x;
+					float r = target->GetPosition().x + target->GetScale().x;
+					float t = target->GetPosition().y;
+					float b = target->GetPosition().y + target->GetScale().y;
+
+					if ((l<= mouse.x && r >= mouse.x &&
+							t <= mouse.y && b >= mouse.y) &&
+						target->GetLayer() > topLayer)
+					{
+
+						topLayer = target->GetLayer();
+						firstTarget = target;
+
+					}
+				}
+
+				if (firstTarget != nullptr && object->GetType() == GUIObjects_LAYOUT)
+				{
+
+					firstTarget = getScreenTarget(time, mouse, (GUILayout*)object);
 
 				}
 			}
 		}
+	}
+
+	if (firstTarget != nullptr && !firstTarget->IsVisible())
+	{
+
+		firstTarget = nullptr;
+
+	}
+	
+	if (firstTarget == nullptr 
+		&& base != nullptr &&
+		base->GetScreenTarget() != nullptr &&
+		!base->GetScreenTarget()->IsLocked())
+	{
+
+		return base->GetScreenTarget();
+
 	}
 
 	return firstTarget;
@@ -306,18 +316,22 @@ void GUIEntityHandler::Update(unsigned int time)
 
 	while (currentMessage->type != MessageType_NA)
 	{
-		if (currentMessage->mess == GUIMess_ADDSCREENTARGET)
+		
+		if (currentMessage->mess == GUIMess_SETUI)
 		{
-			
+
 			unsigned int param1 = currentMessage->params[0] | ((int)currentMessage->params[1] << 8) | ((int)currentMessage->params[2] << 16) | ((int)currentMessage->params[3] << 24);
-			unsigned int stId = screenTargets->Add((ScreenTarget*)gameObjects->GetValue(param1));
+			this->screenLayout = (GUILayout*)(gameObjects->GetValue(param1));
 
-			if (stId >= maxScreenTargets)
-			{
+			messageBuffer[this->currentMessage].timeSent = time;
+			messageBuffer[this->currentMessage].destination = MessageSource_GRAPHICS;
+			messageBuffer[this->currentMessage].type = MessageType_GRAPHICS;
+			messageBuffer[this->currentMessage].mess = GraphicMess_SETUI;
+			messageBuffer[this->currentMessage].SetParams(currentMessage->params, 0, 4);
+			messageBuffer[this->currentMessage].read = false;
+			outQueue->PushMessage(&messageBuffer[this->currentMessage]);
+			this->currentMessage = (this->currentMessage + 1) % outMessages;
 
-				maxScreenTargets = stId + 1;
-
-			}
 		}
 		else if (currentMessage->mess == GUIMess_CLICKOBJECT ||
 			currentMessage->mess == GUIMess_DRAGOBJECT ||
@@ -334,8 +348,21 @@ void GUIEntityHandler::Update(unsigned int time)
 			if (currentMessage->mess != GUIMess_DRAGOBJECT && currentMessage->mess != GUIMess_STOPDRAGGING)
 			{
 
-				target = getScreenTarget(time, CelestialMath::vectorUI2(mouseX, mouseY));
+				target = getScreenTarget(time, CelestialMath::vectorUI2(mouseX, mouseY),screenLayout);
 
+				if (target != lastTarget && lastTarget != nullptr && lastTarget->IsHovering())
+				{
+
+					target->SetHovering(false);
+
+					if (target->GetExitScript() != 0)
+					{
+
+						unsigned int script = target->GetExitScript() - 1;
+						triggerScript(script, time, target->GetTargetId(), CelestialMath::vectorUI2(mouseX, mouseY));
+
+					}
+				}
 			}
 
 			if (target != nullptr)
@@ -491,6 +518,5 @@ void GUIEntityHandler::Update(unsigned int time)
 GUIEntityHandler::~GUIEntityHandler()
 {
 
-	delete screenTargets;
 
 }

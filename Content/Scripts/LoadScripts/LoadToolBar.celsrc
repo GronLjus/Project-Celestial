@@ -8,6 +8,7 @@ $
 toolbarLY = load panel
 button1 = load panel
 button1Text = load textbox
+button1Click = load script 'Content\Scripts\ToolBarScripts\Button1Click.celsrc'
 
 add ui screenLayout toolbarLY
 snap toolbarLY 1 2
@@ -15,12 +16,16 @@ snap toolbarLY 0 1
 pos toolbarLY 0.0. -5.0
 size toolbarLY 850.0 105.0
 set border toolbarLY 0.0 1.0 0.0
+accept mouse toolbarLY
 set content toolbarLY 0.8 0.8 0.8
 
 add ui toolbarLY button1
 pos button1 10.0 5.0
 size button1 90.0 90.0
 set border button1 0.0 0.0 1.0
+accept mouse button1
+
+set leftclick button1 button1Click
 
 add ui button1 button1Text
 size button1Text 50.0 20.0
@@ -28,3 +33,6 @@ pos button1Text 0.0 35.0
 snap button1Text 0 1
 set content button1Text 0.0 0.0 0.0
 set text button1Text 'Button1'
+
+link target button1 button1Text
+increment layer toolbarLY

@@ -20,6 +20,24 @@ GUIObject::GUIObject() : PositionableObject()
 
 }
 
+void GUIObject::UpdateScreenTarget()
+{
+
+
+	if (killMessage == nullptr)
+	{
+
+		killMessage = new Message();
+		unsigned char tempBuff[]{ target->GetId() >> 0, target->GetId() >> 8, target->GetId() >> 16, target->GetId() >> 24 };
+		killMessage->SetParams(tempBuff, 0, 4);
+		killMessage->destination = MessageSource_RESOURCES;
+		killMessage->type = MessageType_RESOURCES;
+		killMessage->mess = ResourceMess_UNLOADOBJECT;
+		killMessage->read = false;
+
+	}
+}
+
 void GUIObject::ShouldPause()
 {
 
@@ -92,7 +110,7 @@ void GUIObject::Update(Message* mess)
 		unsigned char hor;
 		GUISnap snap;
 		unsigned char tempBuff[]{childId >> 0, childId >> 8, childId >> 16, childId >> 24};
-		Vector3 pos = GetPosition();
+		Vector2 pos = Vector2(GetPosition().x,GetPosition().y);
 		Vector3 scale = GetScale();
 
 		switch (mess->mess)
@@ -158,7 +176,7 @@ void GUIObject::Update(Message* mess)
 		case ObjectMess_POS:
 		case ObjectMess_SIZE:
 			PositionableObject::Update(mess);
-			pos = GetPosition();
+			pos = GetTopLeft();
 			scale = GetScale();
 			target->Refresh(Vector4(pos.x ,pos.y,scale.x,scale.y));
 			break;
@@ -171,6 +189,8 @@ void GUIObject::Update(Message* mess)
 		case ObjectMess_SETLDSCRPT:
 		case ObjectMess_SETMDSCRPT:
 		case ObjectMess_SETRDSCRPT:
+		case ObjectMess_SETWHLSCRPT:
+		case ObjectMess_SETSCRPTTRGT:
 			target->Update(mess);
 			break;
 		case ObjectMess_INCREMENTLAYER:
@@ -350,4 +370,10 @@ GUIObject::~GUIObject()
 
 	target->Remove();
 
+	if (killMessage != nullptr)
+	{
+
+		delete killMessage;
+
+	}
 }

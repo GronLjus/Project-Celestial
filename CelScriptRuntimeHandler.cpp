@@ -1944,6 +1944,34 @@ RunTimeError SetRightClickOperator(unsigned int returnVar, unsigned char* params
 
 }
 
+RunTimeError LinkTargetOperator(unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int mId, RunTimeCommons* rtc)
+{
+
+	if (paramSize < 8)
+	{
+
+		return RunTimeError_BADPARAMS;
+
+	}
+
+	unsigned int s = 4;
+	unsigned int var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
+	rtc->memory->ReadVariable(var - 1, rtc->intLoader, s);
+	unsigned int objectToMod = (rtc->intLoader[0] | ((int)rtc->intLoader[1] << 8) | ((int)rtc->intLoader[2] << 16) | ((int)rtc->intLoader[3] << 24));
+	BaseObject* object = rtc->gameObjects->GetValue(objectToMod);
+
+	Message mess;
+	unsigned int var2 = (params[4] | ((int)params[5] << 8) | ((int)params[6] << 16) | ((int)params[7] << 24));
+	rtc->memory->ReadVariable(var2 - 1, rtc->intLoader, s);
+	mess.destination = MessageSource_OBJECT;
+	mess.type = MessageType_OBJECT;
+	mess.mess = ObjectMess_SETSCRPTTRGT;
+	mess.SetParams(rtc->intLoader, 0, 4);
+	object->Update(&mess);
+	return RunTimeError_OK;
+
+}
+
 RunTimeError SetLeftDragOperator(unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int mId, RunTimeCommons* rtc)
 {
 
@@ -2150,9 +2178,9 @@ RunTimeError SetUIOperator(unsigned int returnVar, unsigned char* params, unsign
 	rtc->memory->ReadVariable(var - 1, rtc->intLoader, s);
 
 	Message mess;
-	mess.destination = MessageSource_GRAPHICS;
-	mess.type = MessageType_GRAPHICS;
-	mess.mess = GraphicMess_SETUI;
+	mess.destination = MessageSource_GUIENTITIES;
+	mess.type = MessageType_GUIENTITIES;
+	mess.mess = GUIMess_SETUI;
 	mess.SetParams(rtc->intLoader, 0, 4);
 	return sendMessageOut(mess, rtc);
 
@@ -2465,6 +2493,9 @@ CelScriptRuntimeHandler::CelScriptRuntimeHandler(MessageQueue* mQueue, Celestial
 	operators[opcode_SHW] = ShowOperator;
 
 	operators[opcode_LNKDBG] = LinkDBGOperator;
+	operators[opcode_LNKTRGT] = LinkTargetOperator;
+
+
 	operators[opcode_STXT] = SetTextOperator;
 	operators[opcode_ADDTXT] = AppendTextOperator;
 	operators[opcode_ADDLNE] = AddTextLineOperator;

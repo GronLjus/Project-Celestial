@@ -36,6 +36,9 @@ void ScreenTarget::Update(Message* mess)
 		case ObjectMess_SETHVRSCRPT:
 			hoverScript = mess->params[0] | ((int)mess->params[1] << 8) | ((int)mess->params[2] << 16) | ((int)mess->params[3] << 24);
 			break;
+		case ObjectMess_SETSCRPTTRGT:
+			targetId = mess->params[0] | ((int)mess->params[1] << 8) | ((int)mess->params[2] << 16) | ((int)mess->params[3] << 24);
+			break;
 		default:
 			PositionableObject::Update(mess);
 		}
@@ -97,6 +100,14 @@ bool ScreenTarget::IsVisible() const
 	return isVisible && !locked;
 
 }
+
+bool ScreenTarget::IsLocked() const
+{
+
+	return locked;
+
+}
+
 
 void ScreenTarget::SetVisible(bool vis)
 {

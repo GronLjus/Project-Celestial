@@ -8,6 +8,14 @@ void BaseObject::SetId(unsigned int id)
 
 	this->id = id;
 	lastUpdated = 0;
+	killMessage = nullptr;
+
+}
+
+CrossHandlers::Message* BaseObject::GetKillMessage() const
+{
+
+	return killMessage;
 
 }
 

@@ -413,6 +413,7 @@
     <None Include="Content\Scripts\LoadScripts\LoadToolBar.celsrc" />
     <None Include="Content\Scripts\PreLoad.celsrc" />
     <None Include="Content\Scripts\Root.celsrc" />
+    <None Include="Content\Scripts\ToolBarScripts\Button1Click.celsrc" />
     <None Include="ErrorTest.celsrc" />
     <None Include="Shaders_Registers.hlsli" />
     <None Include="Tennisboll.mtl">

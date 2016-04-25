@@ -23,6 +23,7 @@ namespace Resources
 			bool ShouldRemove() const;
 			void Lock();
 			void Unlock();
+			bool IsLocked() const;
 			void Remove();
 			void SetLayer(unsigned char layer);
 

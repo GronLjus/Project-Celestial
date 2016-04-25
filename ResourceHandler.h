@@ -20,6 +20,7 @@ namespace Resources
 		~ResourceHandler();
 
 	private:
+		void handleMess(CrossHandlers::Message* mess,unsigned int time);
 		unsigned int crossScript;
 		ResourceLoader* loader;
 		GameObject* loadGameObject(unsigned int meshId);

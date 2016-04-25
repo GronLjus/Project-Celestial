@@ -271,6 +271,9 @@
     <Filter Include="Resource Files\Content\Scripts\LoadScripts">
       <UniqueIdentifier>{1c755db6-df37-496d-a472-54f695ae5d51}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resource Files\Content\Scripts\ToolBarScripts">
+      <UniqueIdentifier>{10c9874e-a077-402e-8a33-ec46f840fae9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Project Celestial.h">
@@ -1072,6 +1075,9 @@
     </None>
     <None Include="Content\Scripts\LoadScripts\LoadGameBoard.celsrc">
       <Filter>Resource Files\Content\Scripts\LoadScripts</Filter>
+    </None>
+    <None Include="Content\Scripts\ToolBarScripts\Button1Click.celsrc">
+      <Filter>Resource Files\Content\Scripts\ToolBarScripts</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

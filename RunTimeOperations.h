@@ -51,7 +51,7 @@ namespace Logic
 		opcode_EXPRTCNST, opcode_EXPRTVAR, opcode_IMPRT,
 		opcode_HDE, opcode_SHW,
 
-		opcode_LNKDBG, 
+		opcode_LNKDBG, opcode_LNKTRGT,
 		opcode_STXT, opcode_ADDTXT, opcode_ADDLNE,
 		opcode_STCNTNT, opcode_STBRDR,
 

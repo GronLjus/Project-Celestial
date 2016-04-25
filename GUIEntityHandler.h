@@ -1,6 +1,6 @@
 #pragma once
 #include "IHandleMessages.h"
-#include "GUIObject.h"
+#include "GUILayout.h"
 #include "ResourceObject.h"
 #include "CelestialSlicedList.h"
 
@@ -18,10 +18,10 @@ namespace Entities
 
 	private:
 
-		Resources::ScreenTarget* getScreenTarget(unsigned int time, CelestialMath::vectorUI2 mouse);
+		Resources::GUILayout* screenLayout;
+		Resources::ScreenTarget* lastTarget;
 
-		CrossHandlers::CelestialSlicedList<Resources::ScreenTarget*>* screenTargets;
-		unsigned int maxScreenTargets;
+		Resources::ScreenTarget* getScreenTarget(unsigned int time, CelestialMath::vectorUI2 mouse, Resources::GUILayout* base);
 
 		CrossHandlers::CelestialSlicedList<Resources::BaseObject*>* gameObjects;
 		Resources::GUIObject* focusedObject;

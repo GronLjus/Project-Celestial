@@ -16,7 +16,7 @@ namespace CrossHandlers
 	};
 	enum EventMess{ EventMess_OBJECTADDED, EventMess_SCRIPTADDED, EventMess_GUIOBJECTADDED, EventMess_LNKDBG, EventMess_WAITFORFRAME, EventMess_NA };
 	enum GUIMess{
-		GUIMess_ADDSCREENTARGET, 
+		GUIMess_SETUI, 
 		GUIMess_CLICKOBJECT, GUIMess_MOVEMOUSE, GUIMess_STARTDRAGGING, GUIMess_DRAGOBJECT, GUIMess_STOPDRAGGING, GUIMess_WHEELOBJECT,
 		GUIMess_POST, GUIMess_APPEND, GUIMess_CLEAR, GUIMess_ERASE, GUIMess_FOCUS, 
 		GUIMess_HANDLECHAR, GUIMess_HANDLEKEY, GUIMess_NA };
@@ -38,6 +38,7 @@ namespace CrossHandlers
 		ObjectMess_SETLCSCRPT, ObjectMess_SETRCSCRPT, ObjectMess_SETMCSCRPT,
 		ObjectMess_SETLDSCRPT, ObjectMess_SETRDSCRPT, ObjectMess_SETMDSCRPT,
 		ObjectMess_SETWHLSCRPT,
+		ObjectMess_SETSCRPTTRGT,
 		ObjectMess_SETSNAP, ObjectMess_SETTEXT, ObjectMess_APPENDTEXT, ObjectMess_APPENDTEXTLINE,
 		ObjectMess_HANDLECHAR, ObjectMess_HANDLEKEY,
 		ObjectMess_STEPFRAME, ObjectMess_REMOVECHILD, ObjectMess_REMOVE,

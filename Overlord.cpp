@@ -92,6 +92,7 @@ HRESULT Overlord::Init(HWND hwnd)
 	CardHandler* tempCard = gH->GetCardHandler();
 	rH->Init(tempCard, dbgOut, vectorUI2(gQ.resolutionX, gQ.resolutionY),32,32*1.0f,maxInstances);
 	cH->Init(rH->GetObjectContainer(), rH->GetCrossScriptObject());
+	guiH->Init(rH->GetObjectContainer());
 
 	Message mess;
 	mess.source = MessageSource_NA;
@@ -122,6 +123,8 @@ HRESULT Overlord::Init(HWND hwnd)
 			updateMessages(MessageSource_CELSCRIPT);
 			rH->Update(0);
 			updateMessages(MessageSource_RESOURCES);
+			guiH->Update(0);
+			updateMessages(MessageSource_GUIENTITIES);
 			gH->Update(0);
 			updateMessages(MessageSource_GRAPHICS);
 
@@ -129,7 +132,6 @@ HRESULT Overlord::Init(HWND hwnd)
 	}
 
 	okToDraw = true;
-	guiH->Init(rH->GetObjectContainer());
 	gBH->Init(rH->GetObjectContainer());
 	iH->Init(rH->GetObjectContainer());
 

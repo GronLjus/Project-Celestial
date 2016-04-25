@@ -14,12 +14,14 @@ namespace Resources
 			virtual void Update(CrossHandlers::Message* mess) = 0;
 			unsigned int LastUpdated() const;
 			virtual unsigned int GetTargetId() const;
+			CrossHandlers::Message* GetKillMessage() const;
 			virtual ~BaseObject()
 			{
 			}
 
 		protected:
 			void setLastUpdated(unsigned int time);
+			CrossHandlers::Message* killMessage;
 
 		private:
 			unsigned int id;
