@@ -305,6 +305,13 @@ unsigned int GUIObject::GetParentID() const
 
 }
 
+unsigned int GUIObject::GetParentId() const
+{
+	
+	return GetParentID();
+
+}
+
 void GUIObject::SetParent(GUIObject* parent, unsigned int childId)
 { 
 	

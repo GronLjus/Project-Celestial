@@ -14,6 +14,7 @@ namespace Resources
 			virtual void Update(CrossHandlers::Message* mess) = 0;
 			unsigned int LastUpdated() const;
 			virtual unsigned int GetTargetId() const;
+			virtual unsigned int GetParentId() const;
 			CrossHandlers::Message* GetKillMessage() const;
 			virtual ~BaseObject()
 			{

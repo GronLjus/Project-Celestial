@@ -1407,6 +1407,32 @@ RunTimeError SumVarOperator(unsigned int returnVar, unsigned char* params, unsig
 
 }
 
+RunTimeError ParentOperator(unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int mId, RunTimeCommons* rtc)
+{
+
+	if (paramSize < 4 || returnVar == 0)
+	{
+
+		return RunTimeError_BADPARAMS;
+
+	}
+
+	unsigned int s = 4;
+	unsigned int var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
+	rtc->memory->ReadVariable(var - 1, rtc->intLoader, s);
+	unsigned int val = (rtc->intLoader[0] | ((int)rtc->intLoader[1] << 8) | ((int)rtc->intLoader[2] << 16) | ((int)rtc->intLoader[3] << 24));
+	unsigned int parent = rtc->gameObjects->GetValue(val)->GetParentId();
+
+	rtc->intLoader[0] = parent >> 0;
+	rtc->intLoader[1] = parent >> 8;
+	rtc->intLoader[2] = parent >> 16;
+	rtc->intLoader[3] = parent >> 24;
+	rtc->memory->AddVariable(returnVar - 1, rtc->intLoader, s);
+	rtc->varWaiting->Add(false, returnVar - 1);
+	return RunTimeError_OK;
+
+}
+
 RunTimeError SumFloatOperator(unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int mId, RunTimeCommons* rtc)
 {
 
@@ -2421,6 +2447,7 @@ CelScriptRuntimeHandler::CelScriptRuntimeHandler(MessageQueue* mQueue, Celestial
 
 	operators[opcode_GETSCRNX] = GetScreenWidthOperator;
 	operators[opcode_GETSCRNY] = GetScreenHeightOperator;
+	operators[opcode_PRNT] = ParentOperator;
 
 	operators[opcode_RESNAP] = ReSnapOperator;
 	operators[opcode_POS] = PosOperator;

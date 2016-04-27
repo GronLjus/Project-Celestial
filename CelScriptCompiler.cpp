@@ -582,25 +582,31 @@ CelScriptCompiler::CelScriptCompiler()
 			new bool[operators[OperatorTypes_GREATER].params[5]]{false, false}
 	};
 
-	operators[OperatorTypes_GET].keyword = "get";
-	operators[OperatorTypes_GET].enumAmount = 2;
-	operators[OperatorTypes_GET].enums = new std::string[operators[OperatorTypes_GET].enumAmount]; operators[OperatorTypes_GET].enums[0] = "screenX"; operators[OperatorTypes_GET].enums[1] = "screenY";
-	operators[OperatorTypes_GET].byteCodes = new unsigned char[operators[OperatorTypes_GET].enumAmount]{opcode_GETSCRNX, opcode_GETSCRNY};
-	operators[OperatorTypes_GET].params = new unsigned char[operators[OperatorTypes_GET].enumAmount]{0,0};
-	operators[OperatorTypes_GET].minParams = new unsigned char[operators[OperatorTypes_GET].enumAmount]{ 0,0 };
-	operators[OperatorTypes_GET].paramsyntax = new VarType*[operators[OperatorTypes_GET].enumAmount]{};
-	operators[OperatorTypes_GET].paramTypes = new ParamType*[operators[OperatorTypes_GET].enumAmount]{};
-	operators[OperatorTypes_GET].optionalPar = new bool*[operators[OperatorTypes_GET].enumAmount]{};
-	operators[OperatorTypes_GET].readParam = new unsigned char[operators[OperatorTypes_GET].enumAmount]{0, 0};
-	operators[OperatorTypes_GET].returns = new VarType[operators[OperatorTypes_GET].enumAmount]{VarType_NUMBER, VarType_NUMBER};
-	operators[OperatorTypes_GET].returnType = new ParamType[operators[OperatorTypes_GET].enumAmount]{ParamType_VAR, ParamType_VAR};
-	operators[OperatorTypes_GET].writeParam = new unsigned char[operators[OperatorTypes_GET].enumAmount]{0, 0};
-	operators[OperatorTypes_GET].priority = 0;
-	operators[OperatorTypes_GET].shortHandsAmounts = 0;
-	operators[OperatorTypes_GET].amountParOperators = new unsigned char[operators[OperatorTypes_GET].enumAmount]{0, 0};
-	operators[OperatorTypes_GET].parRepeatsMin = new unsigned char*[operators[OperatorTypes_GET].enumAmount]{};
-	operators[OperatorTypes_GET].parRepeatsMax = new unsigned char*[operators[OperatorTypes_GET].enumAmount]{};
-	operators[OperatorTypes_GET].parOperatorAppend = new bool*[operators[OperatorTypes_GET].enumAmount]{};
+	operators[OperatorTypes_PARENT].keyword = "parent";
+	operators[OperatorTypes_PARENT].enumAmount = 1;
+	operators[OperatorTypes_PARENT].enums = new std::string[operators[OperatorTypes_PARENT].enumAmount]; operators[OperatorTypes_PARENT].enums[0] = "";
+	operators[OperatorTypes_PARENT].byteCodes = new unsigned char[operators[OperatorTypes_PARENT].enumAmount]{opcode_PRNT};
+	operators[OperatorTypes_PARENT].params = new unsigned char[operators[OperatorTypes_PARENT].enumAmount]{1};
+	operators[OperatorTypes_PARENT].minParams = new unsigned char[operators[OperatorTypes_PARENT].enumAmount]{ 1 };
+	operators[OperatorTypes_PARENT].paramsyntax = new VarType*[operators[OperatorTypes_PARENT].enumAmount]{
+		new VarType[operators[OperatorTypes_PARENT].params[0]]{ VarType_NUMBER} };
+	operators[OperatorTypes_PARENT].paramTypes = new ParamType*[operators[OperatorTypes_PARENT].enumAmount]{
+		new ParamType[operators[OperatorTypes_PARENT].params[0]]{ ParamType_NA } };
+	operators[OperatorTypes_PARENT].optionalPar = new bool*[operators[OperatorTypes_PARENT].enumAmount]{
+		new bool[operators[OperatorTypes_PARENT].params[0]]{ false} };
+	operators[OperatorTypes_PARENT].readParam = new unsigned char[operators[OperatorTypes_PARENT].enumAmount]{0};
+	operators[OperatorTypes_PARENT].returns = new VarType[operators[OperatorTypes_PARENT].enumAmount]{VarType_NUMBER};
+	operators[OperatorTypes_PARENT].returnType = new ParamType[operators[OperatorTypes_PARENT].enumAmount]{ParamType_VAR};
+	operators[OperatorTypes_PARENT].writeParam = new unsigned char[operators[OperatorTypes_PARENT].enumAmount]{0};
+	operators[OperatorTypes_PARENT].priority = 0;
+	operators[OperatorTypes_PARENT].shortHandsAmounts = 0;
+	operators[OperatorTypes_PARENT].amountParOperators = new unsigned char[operators[OperatorTypes_PARENT].enumAmount]{0};
+	operators[OperatorTypes_PARENT].parRepeatsMin = new unsigned char*[operators[OperatorTypes_PARENT].enumAmount]{
+		new unsigned char[operators[OperatorTypes_PARENT].params[0]]{ 0 } };
+	operators[OperatorTypes_PARENT].parRepeatsMax = new unsigned char*[operators[OperatorTypes_PARENT].enumAmount]{
+		new unsigned char[operators[OperatorTypes_PARENT].params[0]]{ 0 } };
+	operators[OperatorTypes_PARENT].parOperatorAppend = new bool*[operators[OperatorTypes_PARENT].enumAmount]{
+		new bool[operators[OperatorTypes_PARENT].params[0]]{ false } };
 
 	operators[OperatorTypes_SNAP].keyword = "snap";
 	operators[OperatorTypes_SNAP].enumAmount = 1;

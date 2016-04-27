@@ -31,6 +31,7 @@ namespace Resources
 			GUIObjects GetType() const;
 			unsigned int GetParentID() const;
 
+			virtual unsigned int GetParentId() const;
 			virtual void SetParent(GUIObject* parent, unsigned int childId);
 			void ToggleVisibility(bool isOnScreen);
 			bool IsVisible();

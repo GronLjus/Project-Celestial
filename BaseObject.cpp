@@ -46,3 +46,10 @@ unsigned int BaseObject::GetTargetId() const
 	return id;
 
 }
+
+unsigned int BaseObject::GetParentId() const
+{
+	
+	return id;
+
+}

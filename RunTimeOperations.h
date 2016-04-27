@@ -22,6 +22,7 @@ namespace Logic
 		opcode_FCSUI,
 
 		opcode_GETSCRNX, opcode_GETSCRNY,
+		opcode_PRNT,
 
 		opcode_RESNAP, 
 		opcode_POS, opcode_MVE, opcode_PRPL,
