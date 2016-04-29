@@ -17,11 +17,11 @@ namespace Logic
 		opcode_SETGMEBRD, opcode_SETCMRA, 
 		opcode_SETLCLK, opcode_SETMCLK, opcode_SETRCLK,
 		opcode_SETLDRG, opcode_SETMDRG, opcode_SETRDRG,
-		opcode_SETMWHL,
+		opcode_SETMWHL, opcode_SETUD,
 		opcode_SETUI,
 		opcode_FCSUI,
 
-		opcode_GETSCRNX, opcode_GETSCRNY,
+		opcode_GETSCRNY,
 		opcode_PRNT,
 
 		opcode_RESNAP, 

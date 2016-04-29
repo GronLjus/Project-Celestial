@@ -305,6 +305,129 @@ void GUIEntityHandler::handleMouseDrag(Resources::ScreenTarget* target, unsigned
 	}
 }
 
+void GUIEntityHandler::handleMouseUpdown(ScreenTarget* target, unsigned int time, CelestialMath::vectorUI2 mouse, unsigned char key, bool up)
+{
+
+	if (target->GetUpdownScript() > 0)
+	{
+
+		unsigned int script = target->GetUpdownScript() -1;
+
+		if ((target->GetLeftClickScript() != 0 &&
+			key == Input::InputHandler::keyCodeMouseL)
+			|| (target->GetMiddleClickScript() != 0 &&
+			key == Input::InputHandler::keyCodeMouseM)
+			|| (target->GetRightClickScript() != 0 &&
+			key == Input::InputHandler::keyCodeMouseR))
+		{
+
+			triggerScript(script, time, target->GetTargetId(), mouse, up ? (unsigned int)1 : (unsigned int)0);
+
+		}
+	}
+}
+
+void GUIEntityHandler::handleMouseAction(Message* currentMessage, unsigned int time, CelestialMath::vectorUI2 mouse)
+{
+
+	ScreenTarget* target = dragTarget;
+
+	if (currentMessage->mess != GUIMess_DRAGOBJECT && currentMessage->mess != GUIMess_STOPDRAGGING)
+	{
+
+		target = getScreenTarget(time, mouse, screenLayout);
+
+		if (target != lastTarget && lastTarget != nullptr && lastTarget->IsHovering())
+		{
+
+			target->SetHovering(false);
+
+			if (target->GetExitScript() != 0)
+			{
+
+				unsigned int script = target->GetExitScript() - 1;
+				triggerScript(script, time, target->GetTargetId(), mouse);
+
+			}
+		}
+	}
+
+	if (target != nullptr)
+	{
+
+		if (currentMessage->mess == GUIMess_MOVEMOUSE)
+		{
+
+			handleMouseMovement(target, time, mouse);
+
+		}
+		else if (currentMessage->mess == GUIMess_MOUSEDOWN)
+		{
+			Input::InputHandler::keyCode code = Input::InputHandler::keyCode(currentMessage->params[8]);
+			handleMouseUpdown(target, time, mouse, code, false);
+		}
+		else if (currentMessage->mess == GUIMess_MOUSEUP)
+		{
+			Input::InputHandler::keyCode code = Input::InputHandler::keyCode(currentMessage->params[8]);
+			handleMouseUpdown(target, time, mouse, code, true);
+		}
+		else if (currentMessage->mess == GUIMess_CLICKOBJECT)
+		{
+
+			Input::InputHandler::keyCode code = Input::InputHandler::keyCode(currentMessage->params[8]);
+			handleMouseClick(target, time, mouse, code);
+
+		}
+		else if (currentMessage->mess == GUIMess_WHEELOBJECT)
+		{
+
+			short wheelDelta = currentMessage->params[8] | ((int)currentMessage->params[9] << 8);
+			handleMouseWheel(target, time, mouse, wheelDelta);
+
+		}
+		else
+		{
+
+			Input::InputHandler::keyCode code = Input::InputHandler::keyCode(currentMessage->params[8]);
+
+			if (currentMessage->mess == GUIMess_STARTDRAGGING)
+			{
+
+				dragTarget = target;
+
+			}
+
+			handleMouseDrag(target, time, mouse, code,
+				currentMessage->mess == GUIMess_STARTDRAGGING ? 0 :
+				currentMessage->mess == GUIMess_DRAGOBJECT ? 1 :
+				2);
+
+			if (currentMessage->mess == GUIMess_STOPDRAGGING)
+			{
+
+				dragTarget = nullptr;
+
+			}
+		}
+	}
+	else if (currentMessage->mess != GUIMess_MOVEMOUSE &&
+		currentMessage->mess != GUIMess_MOUSEDOWN && 
+		currentMessage->mess != GUIMess_MOUSEUP)
+	{
+
+		currentMessage->destination = MessageSource_ENTITIES;
+		currentMessage->type = MessageType_ENTITIES;
+		currentMessage->mess = currentMessage->mess == GUIMess_CLICKOBJECT ? GameBoardMess_CLICKOBJECT :
+			currentMessage->mess == GUIMess_DRAGOBJECT ? GameBoardMess_DRAGOBJECT :
+			currentMessage->mess == GUIMess_STARTDRAGGING ? GameBoardMess_STARTDRAGGING :
+			currentMessage->mess == GUIMess_STOPDRAGGING ? GameBoardMess_STOPDRAGGING :
+			GameBoardMess_WHEELOBJECT;
+
+		outQueue->PushMessage(currentMessage);
+
+	}
+}
+
 void GUIEntityHandler::Update(unsigned int time)
 {
 
@@ -338,95 +461,16 @@ void GUIEntityHandler::Update(unsigned int time)
 			currentMessage->mess == GUIMess_MOVEMOUSE ||
 			currentMessage->mess == GUIMess_STARTDRAGGING ||
 			currentMessage->mess == GUIMess_STOPDRAGGING ||
-			currentMessage->mess == GUIMess_WHEELOBJECT)
+			currentMessage->mess == GUIMess_WHEELOBJECT ||
+			currentMessage->mess == GUIMess_MOUSEDOWN||
+			currentMessage->mess == GUIMess_MOUSEUP)
 		{
 
-			ScreenTarget* target = dragTarget;
 			unsigned int mouseX = currentMessage->params[0] | ((int)currentMessage->params[1] << 8) | ((int)currentMessage->params[2] << 16) | ((int)currentMessage->params[3] << 24);
 			unsigned int mouseY = currentMessage->params[4] | ((int)currentMessage->params[5] << 8) | ((int)currentMessage->params[6] << 16) | ((int)currentMessage->params[7] << 24);
 			
-			if (currentMessage->mess != GUIMess_DRAGOBJECT && currentMessage->mess != GUIMess_STOPDRAGGING)
-			{
-
-				target = getScreenTarget(time, CelestialMath::vectorUI2(mouseX, mouseY),screenLayout);
-
-				if (target != lastTarget && lastTarget != nullptr && lastTarget->IsHovering())
-				{
-
-					target->SetHovering(false);
-
-					if (target->GetExitScript() != 0)
-					{
-
-						unsigned int script = target->GetExitScript() - 1;
-						triggerScript(script, time, target->GetTargetId(), CelestialMath::vectorUI2(mouseX, mouseY));
-
-					}
-				}
-			}
-
-			if (target != nullptr)
-			{
-
-				if (currentMessage->mess == GUIMess_MOVEMOUSE)
-				{
-
-					handleMouseMovement(target, time, CelestialMath::vectorUI2(mouseX, mouseY));
-
-				}
-				else if (currentMessage->mess == GUIMess_CLICKOBJECT)
-				{
-
-					Input::InputHandler::keyCode code = Input::InputHandler::keyCode(currentMessage->params[8]);
-					handleMouseClick(target, time, CelestialMath::vectorUI2(mouseX, mouseY), code);
-
-				}
-				else if (currentMessage->mess == GUIMess_WHEELOBJECT)
-				{
-
-					short wheelDelta = currentMessage->params[8] | ((int)currentMessage->params[9] << 8);
-					handleMouseWheel(target, time, CelestialMath::vectorUI2(mouseX, mouseY), wheelDelta);
-
-				}
-				else
-				{
-
-					Input::InputHandler::keyCode code = Input::InputHandler::keyCode(currentMessage->params[8]);
-
-					if (currentMessage->mess == GUIMess_STARTDRAGGING)
-					{
-
-						dragTarget = target;
-
-					}
-
-					handleMouseDrag(target, time, CelestialMath::vectorUI2(mouseX, mouseY), code,
-						currentMessage->mess == GUIMess_STARTDRAGGING ? 0 :
-						currentMessage->mess == GUIMess_DRAGOBJECT ? 1 :
-						2);
-
-					if (currentMessage->mess == GUIMess_STOPDRAGGING)
-					{
-
-						dragTarget = nullptr;
-
-					}
-				}
-			}
-			else if(currentMessage->mess != GUIMess_MOVEMOUSE)
-			{
-
-				currentMessage->destination = MessageSource_ENTITIES;
-				currentMessage->type = MessageType_ENTITIES;
-				currentMessage->mess = currentMessage->mess == GUIMess_CLICKOBJECT ? GameBoardMess_CLICKOBJECT :
-					currentMessage->mess == GUIMess_DRAGOBJECT ? GameBoardMess_DRAGOBJECT :
-					currentMessage->mess == GUIMess_STARTDRAGGING ? GameBoardMess_STARTDRAGGING :
-					currentMessage->mess == GUIMess_STOPDRAGGING ? GameBoardMess_STOPDRAGGING :
-					GameBoardMess_WHEELOBJECT;
-
-				outQueue->PushMessage(currentMessage);
-
-			}
+			handleMouseAction(currentMessage, time, CelestialMath::vectorUI2(mouseX, mouseY));
+			
 		}
 		else if ((currentMessage->mess == GUIMess_POST || 
 			currentMessage->mess == GUIMess_APPEND || 

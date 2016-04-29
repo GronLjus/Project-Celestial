@@ -9,6 +9,7 @@ toolbarLY = load panel
 button1 = load panel
 button1Text = load textbox
 button1Click = load script 'Content\Scripts\ToolBarScripts\Button1Click.celsrc'
+button1UD = load script 'Content\Scripts\ToolBarScripts\Button1UpDown.celsrc'
 
 add ui screenLayout toolbarLY
 snap toolbarLY 1 2
@@ -26,6 +27,7 @@ set border button1 0.0 0.0 1.0
 accept mouse button1
 
 set leftclick button1 button1Click
+set mouseupdown button1 button1UD
 
 add ui button1 button1Text
 size button1Text 50.0 20.0

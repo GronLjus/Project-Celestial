@@ -292,6 +292,8 @@ void InputHandler::Update(unsigned int time)
 			keyStates[param1].lastTime = keyStates[param1].thisTime;
 			keyStates[param1].thisTime = time;
 
+			sendMessage(keyStates[param1].state ? GUIMess_MOUSEUP : GUIMess_MOUSEDOWN, time, keyCode(param1));
+
 		}
 		else if (currentMessage->mess == InputMess_KEYDWN || currentMessage->mess == InputMess_KEYUP)
 		{

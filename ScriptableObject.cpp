@@ -17,6 +17,7 @@ ScriptableObject::ScriptableObject()
 	middleDragScript = 0;
 
 	wheelScript = 0;
+	upDownScript = 0;
 
 }
 
@@ -51,6 +52,9 @@ void ScriptableObject::Update(Message* mess)
 			break;
 		case ObjectMess_SETWHLSCRPT:
 			wheelScript = param1 + 1;
+			break;
+		case ObjectMess_SETUPDWNSCRPT:
+			upDownScript = param1 + 1;
 			break;
 		}
 	}
@@ -95,6 +99,13 @@ unsigned int Resources::ScriptableObject::GetMiddleDragScript() const
 {
 
 	return middleDragScript;
+
+}
+
+unsigned int ScriptableObject::GetUpdownScript() const
+{
+
+	return upDownScript;
 
 }
 

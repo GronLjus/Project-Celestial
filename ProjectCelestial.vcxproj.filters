@@ -1079,6 +1079,9 @@
     <None Include="Content\Scripts\ToolBarScripts\Button1Click.celsrc">
       <Filter>Resource Files\Content\Scripts\ToolBarScripts</Filter>
     </None>
+    <None Include="Content\Scripts\ToolBarScripts\Button1UpDown.celsrc">
+      <Filter>Resource Files\Content\Scripts\ToolBarScripts</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Project Celestial.rc">

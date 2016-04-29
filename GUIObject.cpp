@@ -190,6 +190,7 @@ void GUIObject::Update(Message* mess)
 		case ObjectMess_SETMDSCRPT:
 		case ObjectMess_SETRDSCRPT:
 		case ObjectMess_SETWHLSCRPT:
+		case ObjectMess_SETUPDWNSCRPT:
 		case ObjectMess_SETSCRPTTRGT:
 			target->Update(mess);
 			break;

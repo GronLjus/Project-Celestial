@@ -20,6 +20,8 @@ namespace Resources
 
 			unsigned int GetWheelScript() const;
 
+			unsigned int GetUpdownScript() const;
+
 			virtual ~ScriptableObject(){}
 
 		private:
@@ -32,6 +34,8 @@ namespace Resources
 			unsigned int middleDragScript;
 
 			unsigned int wheelScript;
+
+			unsigned int upDownScript;
 
 	};
 }

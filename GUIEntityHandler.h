@@ -28,6 +28,9 @@ namespace Entities
 		Message keyMessage;
 		Resources::ScreenTarget* dragTarget;
 
+		void handleMouseAction(CrossHandlers::Message* currentMessage, unsigned int time, CelestialMath::vectorUI2 mouse);
+		
+		void handleMouseUpdown(Resources::ScreenTarget* target, unsigned int time, CelestialMath::vectorUI2 mouse, unsigned char key, bool up);
 		void handleMouseMovement(Resources::ScreenTarget* target, unsigned int time, CelestialMath::vectorUI2 mouse);
 		void handleMouseClick(Resources::ScreenTarget* target, unsigned int time, CelestialMath::vectorUI2 mouse, unsigned char key);
 		void handleMouseWheel(Resources::ScreenTarget* target, unsigned int time, CelestialMath::vectorUI2 mouse, short delta);
