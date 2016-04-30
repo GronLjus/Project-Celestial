@@ -702,6 +702,9 @@
     <ClInclude Include="GridLoader.h">
       <Filter>Header Files\Resources\Loaders\ShapeLoaders</Filter>
     </ClInclude>
+    <ClInclude Include="CursorCodes.h">
+      <Filter>Header Files\Logic</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Camera.cpp">

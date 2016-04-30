@@ -5,15 +5,18 @@
 #include "Project Celestial.h"
 #include "Overlord.h"
 #include "KeyTranslation.h"
+#include "CursorCodes.h"
 #include <windowsx.h>
 #include <thread>
 #include <time.h>
 
 using namespace Logic;
+using namespace CrossHandlers;
 
 #define MAX_LOADSTRING 100
 
 // Global Variables:
+HCURSOR* cursors;
 HINSTANCE hInst;								// current instance
 TCHAR szTitle[MAX_LOADSTRING];					// The title bar text
 TCHAR szWindowClass[MAX_LOADSTRING];			// the main window class name
@@ -36,6 +39,42 @@ unsigned int lFrameRate = 0;
 unsigned int lLastTime = 0;
 
 HWND hWnd;
+
+void dealWithCEMessages()
+{
+
+	CrossHandlers::Message* mess = overlord->GetNextSystemMessage();
+
+	while (mess != nullptr)
+	{
+
+		if (mess->mess == SystemMess_SETCURSOR)
+		{
+
+			if (mess->params[0] == CursorCode_NONE)
+			{
+
+				ShowCursor(false);
+
+			}
+			else if (mess->params[0] == CursorCode_CARET)
+			{
+
+
+			}
+			else
+			{
+
+				ShowCursor(true);
+				SetCursor(cursors[mess->params[0]]);
+
+			}
+		}
+
+		mess = overlord->GetNextSystemMessage();
+
+	}
+}
 
 int runLogic(Overlord* lordie)
 {
@@ -111,6 +150,7 @@ int runGraphics(Overlord* lordie)
 
 }
 
+
 // Forward declarations of functions included in this code module:
 ATOM				MyRegisterClass(HINSTANCE hInstance);
 BOOL				InitInstance(HINSTANCE, int);
@@ -127,7 +167,7 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 	UNREFERENCED_PARAMETER(lpCmdLine);
 
  	// TODO: Place code here
-
+	cursors = nullptr;
 	messageBuffer = new Message[maxBuffer];
 
 	for (unsigned int i = 0; i < maxBuffer; i++)
@@ -158,10 +198,12 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 	}
 
 	hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_PROJECTCELESTIAL));
-
 	// Main message loop:
 	while(WM_QUIT != msg.message)
 	{
+
+		dealWithCEMessages();
+
 		if( PeekMessage( &msg, nullptr, 0, 0, PM_REMOVE) )
 		{
 			TranslateMessage( &msg );
@@ -178,6 +220,7 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 	lStop = true;
 
 	delete[] messageBuffer;
+	delete[] cursors;
 
 	while (!lHasStopped)
 	{
@@ -216,7 +259,7 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
 	wcex.cbWndExtra		= 0;
 	wcex.hInstance		= hInstance;
 	wcex.hIcon			= LoadIcon(hInstance, MAKEINTRESOURCE(IDI_PROJECTCELESTIAL));
-	wcex.hCursor		= nullptr;//LoadCursor(nullptr, IDC_ARROW);
+	wcex.hCursor		= LoadCursor(nullptr, IDC_ARROW);
 	wcex.hbrBackground	= (HBRUSH)(COLOR_WINDOW+1);
 	wcex.lpszMenuName	= MAKEINTRESOURCE(IDC_PROJECTCELESTIAL);
 	wcex.lpszClassName	= szWindowClass;
@@ -240,6 +283,7 @@ bool hasBorder = true;
 BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 {
    hInst = hInstance; // Store instance handle in our global variable
+   cursors = new HCURSOR[CursorCode_NA];
 
    if (hasBorder)
    {
@@ -278,7 +322,11 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 
    int x = (GetSystemMetrics(SM_CXSCREEN) - temp1) / 2;
    int y = (GetSystemMetrics(SM_CYSCREEN) - temp2) / 2;
-   /*SetWindowPos(hWnd, HWND_TOPMOST, x, y, temp1, temp2, SWP_NOSENDCHANGING);*/
+   /*SetWindowPos(hWnd, HWND_TOPMOST, x, y, temp1, temp2, SWP_NOSENDCHANGING);*/ 
+   cursors[CursorCode_HAND] = LoadCursor(NULL, IDC_HAND);
+   cursors[CursorCode_POINT] = LoadCursor(NULL, IDC_ARROW);
+   cursors[CursorCode_LOAD] = LoadCursor(NULL, IDC_WAIT);
+   cursors[CursorCode_CARET] = LoadCursor(NULL, IDC_IBEAM);
 
    return TRUE;
 
@@ -371,6 +419,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 	switch (message)
 	{
+	case WM_SETCURSOR:
+		break;
 	case WM_PAINT:
 		hdc = BeginPaint(hWnd, &ps);
 		// TODO: Add any drawing code here...

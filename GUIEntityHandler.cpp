@@ -2,6 +2,7 @@
 #include "GUIEntityHandler.h"
 #include "GUITextBox.h"
 #include "InputHandler.h"
+#include "CursorCodes.h"
 
 using namespace Entities;
 using namespace CrossHandlers;
@@ -229,6 +230,20 @@ void GUIEntityHandler::handleMouseMovement(Resources::ScreenTarget* target, unsi
 		triggerScript(hoverScript, time, target->GetTargetId(), mouse);
 
 	}
+
+	if (target->GetLeftClickScript() != 0)
+	{
+
+		unsigned char code = Logic::CursorCode_HAND;
+		messageBuffer[this->currentMessage].timeSent = time;
+		messageBuffer[this->currentMessage].destination = MessageSource_SYSTEM;
+		messageBuffer[this->currentMessage].type = MessageType_SYSTEM;
+		messageBuffer[this->currentMessage].mess = SystemMess_SETCURSOR;
+		messageBuffer[this->currentMessage].read = false;
+		messageBuffer[this->currentMessage].SetParams(&code, 0, 8);
+		outQueue->PushMessage(&messageBuffer[this->currentMessage]);
+		this->currentMessage = (this->currentMessage + 1) % outMessages;
+	}
 }
 
 void GUIEntityHandler::handleMouseClick(Resources::ScreenTarget* target, unsigned int time, CelestialMath::vectorUI2 mouse, unsigned char key)
@@ -337,10 +352,26 @@ void GUIEntityHandler::handleMouseAction(Message* currentMessage, unsigned int t
 
 		target = getScreenTarget(time, mouse, screenLayout);
 
+		if (target == nullptr || target->GetLeftClickScript() == 0)
+		{
+
+			unsigned char code = Logic::CursorCode_POINT;
+			messageBuffer[this->currentMessage].timeSent = time;
+			messageBuffer[this->currentMessage].destination = MessageSource_SYSTEM;
+			messageBuffer[this->currentMessage].type = MessageType_SYSTEM;
+			messageBuffer[this->currentMessage].mess = SystemMess_SETCURSOR;
+			messageBuffer[this->currentMessage].read = false;
+			messageBuffer[this->currentMessage].SetParams(&code, 0, 8);
+			outQueue->PushMessage(&messageBuffer[this->currentMessage]);
+			this->currentMessage = (this->currentMessage + 1) % outMessages;
+
+		}
+
 		if (target != lastTarget && lastTarget != nullptr && lastTarget->IsHovering())
 		{
 
 			target->SetHovering(false);
+
 
 			if (target->GetExitScript() != 0)
 			{

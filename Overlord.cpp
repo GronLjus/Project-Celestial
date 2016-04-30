@@ -51,6 +51,7 @@ Overlord::Overlord(void)
 
 	dbgOut = new TextContainer();
 	inQueue = new MessageQueue();
+	outQueue = new MessageQueue();
 
 }
 
@@ -175,6 +176,21 @@ void Overlord::SendMsg(Message* msg)
 	}
 }
 
+Message* Overlord::GetNextSystemMessage()
+{
+	Message* mess = outQueue->PopMessage();
+
+	if (mess != nullptr && mess->type != MessageType_NA)
+	{
+
+		return mess;
+
+	}
+
+	return nullptr;
+
+}
+
 void Overlord::Kill()
 {
 
@@ -269,7 +285,13 @@ void Overlord::updateMessages(MessageSource handler)
 		while (currentMessage->type != MessageType_NA)
 		{
 
-			if (currentMessage->destination != MessageSource_NA &&currentMessage->destination != MessageSource_MASTER && messageHandlers[currentMessage->destination] != nullptr)
+			if (currentMessage->destination == MessageSource_SYSTEM)
+			{
+
+				outQueue->PushMessage(currentMessage);
+
+			}
+			else if (currentMessage->destination != MessageSource_NA &&currentMessage->destination != MessageSource_MASTER && messageHandlers[currentMessage->destination] != nullptr)
 			{
 
 				messageHandlers[currentMessage->destination]->HandleMessage(currentMessage);
@@ -361,6 +383,7 @@ Overlord::~Overlord()
 	okToDraw = false;
 
 	delete inQueue;
+	delete outQueue;
 	delete[] messageHandlers;
 	delete gBH;
 	delete iH;

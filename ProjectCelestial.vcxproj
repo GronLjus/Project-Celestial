@@ -188,6 +188,7 @@
     <ClInclude Include="CrossHandlerHeader.h" />
     <ClInclude Include="CelscriptHandler.h" />
     <ClInclude Include="CrossScriptMemoryObject.h" />
+    <ClInclude Include="CursorCodes.h" />
     <ClInclude Include="DrawingBoard.h" />
     <ClInclude Include="DXBufferObject.h" />
     <ClInclude Include="CelestialBufferHandler.h" />

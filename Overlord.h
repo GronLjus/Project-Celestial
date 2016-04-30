@@ -29,13 +29,15 @@ namespace Logic
 			///<summary>Send a message to be handled and forwarded to the right underobject</summary>
 			///<param name='msg'>[in]The message chain to process</param>
 			void SendMsg(CrossHandlers::Message* msg);
-
+			CrossHandlers::Message* GetNextSystemMessage();
 			void Kill();
 			virtual ~Overlord();
 
 		private:
+
 			void updateMessages(MessageSource handler);
 			CrossHandlers::MessageQueue* inQueue;
+			CrossHandlers::MessageQueue* outQueue;
 			bool die;
 			bool okToDraw;
 			void processCommand(std::string* command, int nrParam);

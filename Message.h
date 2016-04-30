@@ -4,7 +4,7 @@
 namespace CrossHandlers
 {
 
-	enum MessageSource{ MessageSource_RESOURCES, MessageSource_ENTITIES, MessageSource_GUIENTITIES, MessageSource_CELSCRIPT, MessageSource_GRAPHICS, MessageSource_INPUT, MessageSource_MASTER, MessageSource_OBJECT, MessageSource_NA };
+	enum MessageSource{ MessageSource_RESOURCES, MessageSource_ENTITIES, MessageSource_GUIENTITIES, MessageSource_CELSCRIPT, MessageSource_GRAPHICS, MessageSource_INPUT, MessageSource_SYSTEM, MessageSource_MASTER, MessageSource_OBJECT, MessageSource_NA };
 	enum MessageType{ MessageType_INPUT, MessageType_SCRIPT, MessageType_RESOURCES, MessageType_ENTITIES, MessageType_GUIENTITIES, MessageType_GRAPHICS, MessageType_EVENT, MessageType_SYSTEM, MessageType_OBJECT, MessageType_NA };
 
 	enum InputMess{ InputMess_MOUSEMOVE,InputMess_MOUSEDWN, InputMess_MOUSEUP, InputMess_MOUSEWHEEL, InputMess_KEYDWN, InputMess_KEYUP, InputMess_CHAR, InputMess_NA };
@@ -29,7 +29,7 @@ namespace CrossHandlers
 	enum GameBoardMess{ GameBoardMess_ADDMESH, GameBoardMess_SETBOARDOBJECT, GameBoardMess_SETCAM, GameBoardMess_ADDOBJECT, GameBoardMess_SETGAMEBOARD, 
 		GameBoardMess_CLICKOBJECT, GameBoardMess_WHEELOBJECT, GameBoardMess_STARTDRAGGING, GameBoardMess_DRAGOBJECT, GameBoardMess_STOPDRAGGING,
 		GameBoardMess_ORBITOBJECT, GameBoardMess_NA };
-	enum SystemMess{SystemMess_GETSCREENRES,SystemMesss_NA};
+	enum SystemMess{SystemMess_GETSCREENRES, SystemMess_SETCURSOR,SystemMesss_NA};
 
 	enum ObjectMess{
 		ObjectMess_MOVE, ObjectMess_POS, ObjectMess_PROPEL,
