@@ -80,7 +80,7 @@ void GameBoard::Update(CrossHandlers::Message* mess)
 	}
 }
 
-void GameBoard::FillInstanceBuffer()
+void GameBoard::FillInstanceBuffer(GameObject* trackingObject)
 {
 
 	if (camera != nullptr)
@@ -89,12 +89,20 @@ void GameBoard::FillInstanceBuffer()
 		camera->GetView()->ResetInstances();
 		drawingBoard->StartAddingInstances();
 
+		if (trackingObject != nullptr)
+		{
+
+			drawingBoard->AddInstance(trackingObject);
+
+		}
+
 		if (boardObject != nullptr)
 		{
 
 			drawingBoard->AddInstance(boardObject);
 
 		}
+
 
 		unsigned int checkedBoxes = objectRoot->AddInstance(camera->GetView(), drawingBoard);
 		drawingBoard->FinalizeInstances(camera->GetView());

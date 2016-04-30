@@ -100,7 +100,8 @@ void CelscriptHandler::Update(unsigned int time)
 			unsigned int param2 = currentMessage->params[4] | ((int)currentMessage->params[5] << 8) | ((int)currentMessage->params[6] << 16) | ((int)currentMessage->params[7] << 24);
 			unsigned int param3 = currentMessage->params[8] | ((int)currentMessage->params[9] << 8) | ((int)currentMessage->params[10] << 16) | ((int)currentMessage->params[11] << 24);
 			runTime->SetWaitingScriptVar(param1, param2, param3);
-			unsigned int val1 = reverseStacks->GetValue(param1);
+			unsigned int globalId = runTime->GetGlobalId(param1);
+			unsigned int val1 = reverseStacks->GetValue(globalId);
 			scriptStacks->GetValue(val1)->status = stackStatus_PREPPED;
 
 		}
@@ -137,29 +138,36 @@ void CelscriptHandler::Update(unsigned int time)
 		if (stack->sleep == 0 && stack->status == stackStatus_PREPPED)
 		{
 
-			stack->status = stackStatus_RUNNING;
-			RunTimeError rt = runTime->RunScript(stack->stack->PeekElement(), i, time);
-			stack->status = rt == RunTimeError_OK || rt == RunTimeError_ABORT ? stackStatus_STOPPED : 
-				rt == RunTimeError_MSGFULL || rt == RunTimeError_WAITINGFORWAR || rt == RunTimeError_HALT ? stackStatus_PAUSED :
-				stackStatus_CHRASHED;
-			stack->sleep += rt == RunTimeError_MSGFULL ? 5 : 0;
+			unsigned int id = stack->stack->PeekElement();
 
-			if (stack->status == stackStatus_STOPPED)
+			if (id != 0)
 			{
-				
-				unsigned int lastScript = stack->stack->PopElement();
 
-				if (stack->stack->GetCount() == 0)
+				stack->status = stackStatus_RUNNING;
+
+				RunTimeError rt = runTime->RunScript(id, i, time);
+				stack->status = rt == RunTimeError_OK || rt == RunTimeError_ABORT ? stackStatus_STOPPED : 
+					rt == RunTimeError_MSGFULL || rt == RunTimeError_WAITINGFORWAR || rt == RunTimeError_HALT ? stackStatus_PAUSED :
+					stackStatus_CHRASHED;
+				stack->sleep += rt == RunTimeError_MSGFULL ? 5 : 0;
+
+				if (stack->status == stackStatus_STOPPED)
 				{
 
-					takenStacks->Remove(i);
+					unsigned int lastScript = stack->stack->PopElement();
 
-				}
-				else
-				{
+					if (stack->stack->GetCount() == 0)
+					{
 
-					stack->status = stackStatus_PREPPED;
+						takenStacks->Remove(i);
 
+					}
+					else
+					{
+
+						stack->status = stackStatus_PREPPED;
+
+					}
 				}
 			}
 		}

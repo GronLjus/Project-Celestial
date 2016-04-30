@@ -53,7 +53,7 @@ namespace Logic
 		RunTimeError AddScriptStrParam(int scriptId, std::string value);
 
 		void SetWaitingScriptVar(unsigned int scriptId, unsigned int scriptVar, int value);
-
+		unsigned int GetGlobalId(unsigned int localId) const;
 		void KillExecutions();
 		~CelScriptRuntimeHandler();
 

@@ -14,7 +14,7 @@ namespace Resources
 			void AddObject(GameObject* object);
 			void SetBoardObject(GameObject* object);
 			GameObject* GetBoardObject() const;
-			void FillInstanceBuffer();
+			void FillInstanceBuffer(GameObject* trackingObj);
 			void SetCamera(Resources::CameraObject* cam);
 			Resources::CameraObject* GetCam() const;
 			Entities::DrawingBoard* GetDrawingBoard() const;

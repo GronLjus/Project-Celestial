@@ -1199,6 +1199,70 @@ CelScriptCompiler::CelScriptCompiler()
 		nullptr
 	};
 
+	operators[OperatorTypes_TRACK].keyword = "track";
+	operators[OperatorTypes_TRACK].enumAmount = 1;
+	operators[OperatorTypes_TRACK].enums = new std::string[operators[OperatorTypes_TRACK].enumAmount]; operators[OperatorTypes_TRACK].enums[0] = "";
+	operators[OperatorTypes_TRACK].byteCodes = new unsigned char[operators[OperatorTypes_TRACK].enumAmount]{ opcode_TRCK };
+	operators[OperatorTypes_TRACK].params = new unsigned char[operators[OperatorTypes_TRACK].enumAmount]{ 1 };
+	operators[OperatorTypes_TRACK].minParams = new unsigned char[operators[OperatorTypes_TRACK].enumAmount]{ 1 };
+	operators[OperatorTypes_TRACK].paramsyntax = new VarType*[operators[OperatorTypes_TRACK].enumAmount]{
+		new VarType[operators[OperatorTypes_TRACK].params[0]]{ VarType_NUMBER }
+	};
+	operators[OperatorTypes_TRACK].paramTypes = new ParamType*[operators[OperatorTypes_TRACK].enumAmount]{
+		new ParamType[operators[OperatorTypes_TRACK].params[0]]{ ParamType_NA }
+	};
+	operators[OperatorTypes_TRACK].optionalPar = new bool*[operators[OperatorTypes_TRACK].enumAmount]{
+		new bool[operators[OperatorTypes_TRACK].params[0]]{ false }
+	};
+	operators[OperatorTypes_TRACK].readParam = new unsigned char[operators[OperatorTypes_TRACK].enumAmount]{ 0};
+	operators[OperatorTypes_TRACK].returns = new VarType[operators[OperatorTypes_TRACK].enumAmount]{ VarType_NA };
+	operators[OperatorTypes_TRACK].returnType = new ParamType[operators[OperatorTypes_TRACK].enumAmount]{ ParamType_NA };
+	operators[OperatorTypes_TRACK].writeParam = new unsigned char[operators[OperatorTypes_TRACK].enumAmount]{ 0 };
+	operators[OperatorTypes_TRACK].priority = 0;
+	operators[OperatorTypes_TRACK].shortHandsAmounts = 0;
+	operators[OperatorTypes_TRACK].amountParOperators = new unsigned char[operators[OperatorTypes_TRACK].enumAmount]{ 0 };
+	operators[OperatorTypes_TRACK].parRepeatsMin = new unsigned char*[operators[OperatorTypes_TRACK].enumAmount]{
+		new unsigned char[operators[OperatorTypes_TRACK].params[0]]{ 0 }
+	};
+	operators[OperatorTypes_TRACK].parRepeatsMax = new unsigned char*[operators[OperatorTypes_TRACK].enumAmount]{
+		new unsigned char[operators[OperatorTypes_TRACK].params[0]]{ 0 }
+	};
+	operators[OperatorTypes_TRACK].parOperatorAppend = new bool*[operators[OperatorTypes_TRACK].enumAmount]{
+		new bool[operators[OperatorTypes_TRACK].params[0]]{ false }
+	};
+
+	operators[OperatorTypes_CLEAR].keyword = "clear";
+	operators[OperatorTypes_CLEAR].enumAmount = 1;
+	operators[OperatorTypes_CLEAR].enums = new std::string[operators[OperatorTypes_CLEAR].enumAmount]; operators[OperatorTypes_CLEAR].enums[0] = "tracking";
+	operators[OperatorTypes_CLEAR].byteCodes = new unsigned char[operators[OperatorTypes_CLEAR].enumAmount]{ opcode_CRLTRCK };
+	operators[OperatorTypes_CLEAR].params = new unsigned char[operators[OperatorTypes_CLEAR].enumAmount]{ 0 };
+	operators[OperatorTypes_CLEAR].minParams = new unsigned char[operators[OperatorTypes_CLEAR].enumAmount]{ 0 };
+	operators[OperatorTypes_CLEAR].paramsyntax = new VarType*[operators[OperatorTypes_CLEAR].enumAmount]{
+		nullptr
+	};
+	operators[OperatorTypes_CLEAR].paramTypes = new ParamType*[operators[OperatorTypes_CLEAR].enumAmount]{
+		nullptr
+	};
+	operators[OperatorTypes_CLEAR].optionalPar = new bool*[operators[OperatorTypes_CLEAR].enumAmount]{
+		nullptr
+	};
+	operators[OperatorTypes_CLEAR].readParam = new unsigned char[operators[OperatorTypes_CLEAR].enumAmount]{ 0,};
+	operators[OperatorTypes_CLEAR].returns = new VarType[operators[OperatorTypes_CLEAR].enumAmount]{ VarType_NA };
+	operators[OperatorTypes_CLEAR].returnType = new ParamType[operators[OperatorTypes_CLEAR].enumAmount]{ ParamType_NA };
+	operators[OperatorTypes_CLEAR].writeParam = new unsigned char[operators[OperatorTypes_CLEAR].enumAmount]{ 0 };
+	operators[OperatorTypes_CLEAR].priority = 0;
+	operators[OperatorTypes_CLEAR].shortHandsAmounts = 0;
+	operators[OperatorTypes_CLEAR].amountParOperators = new unsigned char[operators[OperatorTypes_CLEAR].enumAmount]{ 0 };
+	operators[OperatorTypes_CLEAR].parRepeatsMin = new unsigned char*[operators[OperatorTypes_CLEAR].enumAmount]{
+		nullptr
+	};
+	operators[OperatorTypes_CLEAR].parRepeatsMax = new unsigned char*[operators[OperatorTypes_CLEAR].enumAmount]{
+		nullptr
+	};
+	operators[OperatorTypes_CLEAR].parOperatorAppend = new bool*[operators[OperatorTypes_CLEAR].enumAmount]{
+		nullptr
+	};
+
 	operators[OperatorTypes_INCREMENT].keyword = "increment";
 	operators[OperatorTypes_INCREMENT].enumAmount = 1;
 	operators[OperatorTypes_INCREMENT].enums = new std::string[operators[OperatorTypes_INCREMENT].enumAmount]; operators[OperatorTypes_INCREMENT].enums[0] = "layer";

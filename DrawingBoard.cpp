@@ -63,9 +63,9 @@ void DrawingBoard::AddInstance(GameObject* object)
 	if (!object->IsFlipBuffered(bufflip))
 	{
 
-		Matrix invTranW = MatrixTranspose(object->GetInvTrnMatrix());
-		Matrix oW = MatrixTranspose(object->GetLastTransformation());
-		Matrix w = MatrixTranspose(object->GetMatrix());
+		Matrix invTranW = object->GetInvTrnMatrix();
+		Matrix oW = object->GetLastTransformation();
+		Matrix w = object->GetMatrix();
 
 		if (!(hasInstance->GetValue(object->GetMeshId())))
 		{

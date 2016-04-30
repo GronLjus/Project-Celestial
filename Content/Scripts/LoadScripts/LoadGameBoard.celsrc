@@ -12,3 +12,5 @@ set mousewheel localGameboard cameraZoomScript
 
 export 'board' localGameboard
 set gameboard localGameboard
+
+export 'baseTile' tile

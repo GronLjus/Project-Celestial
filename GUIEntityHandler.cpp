@@ -441,7 +441,7 @@ void GUIEntityHandler::handleMouseAction(Message* currentMessage, unsigned int t
 			}
 		}
 	}
-	else if (currentMessage->mess != GUIMess_MOVEMOUSE &&
+	else if (
 		currentMessage->mess != GUIMess_MOUSEDOWN && 
 		currentMessage->mess != GUIMess_MOUSEUP)
 	{
@@ -452,7 +452,8 @@ void GUIEntityHandler::handleMouseAction(Message* currentMessage, unsigned int t
 			currentMessage->mess == GUIMess_DRAGOBJECT ? GameBoardMess_DRAGOBJECT :
 			currentMessage->mess == GUIMess_STARTDRAGGING ? GameBoardMess_STARTDRAGGING :
 			currentMessage->mess == GUIMess_STOPDRAGGING ? GameBoardMess_STOPDRAGGING :
-			GameBoardMess_WHEELOBJECT;
+			currentMessage->mess == GUIMess_WHEELOBJECT ? GameBoardMess_WHEELOBJECT :
+			GameBoardMess_MOUSEMOVE;
 
 		outQueue->PushMessage(currentMessage);
 

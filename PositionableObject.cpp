@@ -41,7 +41,8 @@ void PositionableObject::createMatrix()
 	Matrix s = MatrixScaling(scale.x, scale.y, scale.z);
 	Matrix t = MatrixTranslation(position.x, position.y, position.z);
 	Matrix r = MatrixRotationYawPitchRoll(rotation.y, rotation.x, rotation.z);
-	transformMatrix = MatrixMultiply(MatrixMultiply(r, t), s);
+	Matrix tr = MatrixMultiply(r , s);
+	transformMatrix = MatrixMultiply(tr, t);
 	transformInvTrMatrix = MatrixInverse(MatrixTranspose(transformMatrix));
 	direction = VectorTransform(Vector3(0.0f, 0.0f, 1.0f), MatrixInverse(MatrixTranspose(r)));
 

@@ -1,4 +1,13 @@
+$
+{
+	
+	tile = import 'baseTile'
+	runwayGhost = load object tile
+	size runwayGhost 2.0 0.5 2.0
 
+}
+
+track runwayGhost
 par = parent ?0
 post par
 post ?0

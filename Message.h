@@ -22,12 +22,17 @@ namespace CrossHandlers
 		GUIMess_WHEELOBJECT, GUIMess_MOUSEDOWN, GUIMess_MOUSEUP,
 		GUIMess_POST, GUIMess_APPEND, GUIMess_CLEAR, GUIMess_ERASE, GUIMess_FOCUS, 
 		GUIMess_HANDLECHAR, GUIMess_HANDLEKEY, GUIMess_NA };
-	enum GraphicMess{ GraphicMess_GETSCREEN, GraphicMess_SETGAMEBOARD, GraphicMess_SETUI, GraphicMess_SETCAMERA, GraphicMess_UPDATEGAMEBOARDBUFFERS,
+	enum GraphicMess{ GraphicMess_GETSCREEN, 
+		GraphicMess_SETGAMEBOARD, GraphicMess_SETUI, GraphicMess_SETCAMERA, 
+		GraphicMess_UPDATEGAMEBOARDBUFFERS,
 		GraphicMess_SETCONTENTBRUSH, GraphicMess_SETBORDERBRUSH, GraphicMess_NA
 	};
 
-	enum GameBoardMess{ GameBoardMess_ADDMESH, GameBoardMess_SETBOARDOBJECT, GameBoardMess_SETCAM, GameBoardMess_ADDOBJECT, GameBoardMess_SETGAMEBOARD, 
-		GameBoardMess_CLICKOBJECT, GameBoardMess_WHEELOBJECT, GameBoardMess_STARTDRAGGING, GameBoardMess_DRAGOBJECT, GameBoardMess_STOPDRAGGING,
+	enum GameBoardMess{ GameBoardMess_SETBOARDOBJECT, GameBoardMess_SETCAM, GameBoardMess_SETGAMEBOARD,GameBoardMess_SETTRACKING,
+		GameBoardMess_ADDOBJECT, GameBoardMess_ADDMESH,  
+		GameBoardMess_CLICKOBJECT, GameBoardMess_WHEELOBJECT, 
+		GameBoardMess_STARTDRAGGING, GameBoardMess_DRAGOBJECT, GameBoardMess_STOPDRAGGING,
+		GameBoardMess_MOUSEMOVE, GameBoardMess_CLEARTRACK,
 		GameBoardMess_ORBITOBJECT, GameBoardMess_NA };
 	enum SystemMess{SystemMess_GETSCREENRES, SystemMess_SETCURSOR, SystemMess_HIDECURSOR, SystemMess_SHOWCURSOR,SystemMesss_NA};
 

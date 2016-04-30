@@ -2285,6 +2285,40 @@ RunTimeError SetUIOperator(unsigned int returnVar, unsigned char* params, unsign
 
 }
 
+RunTimeError TrackObjectOperator(unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int mId, RunTimeCommons* rtc)
+{
+
+	if (paramSize < 4)
+	{
+
+		return RunTimeError_BADPARAMS;
+
+	}
+
+	unsigned int s = 4;
+	unsigned int var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
+	rtc->memory->ReadVariable(var - 1, rtc->intLoader, s);
+
+	Message mess;
+	mess.destination = MessageSource_ENTITIES;
+	mess.type = MessageType_ENTITIES;
+	mess.mess = GameBoardMess_SETTRACKING;
+	mess.SetParams(rtc->intLoader, 0, 4);
+	return sendMessageOut(mess, rtc);
+
+}
+
+RunTimeError ClearTrackingOperator(unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int mId, RunTimeCommons* rtc)
+{
+
+	Message mess;
+	mess.destination = MessageSource_ENTITIES;
+	mess.type = MessageType_ENTITIES;
+	mess.mess = GameBoardMess_CLEARTRACK;
+	return sendMessageOut(mess, rtc);
+
+}
+
 RunTimeError FocusUIOperator(unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int mId, RunTimeCommons* rtc)
 {
 
@@ -2605,6 +2639,9 @@ CelScriptRuntimeHandler::CelScriptRuntimeHandler(MessageQueue* mQueue, Celestial
 	operators[opcode_STCNTNT] = SetContentOperator;
 	operators[opcode_STBRDR] = SetBorderOperator;
 
+	operators[opcode_TRCK] = TrackObjectOperator;
+	operators[opcode_CRLTRCK] = ClearTrackingOperator;
+
 	operators[opcode_JMPINVVAR] = JumpInv;
 	operators[opcode_JMPNOW] = JumpNow;
 
@@ -2622,6 +2659,21 @@ CelScriptRuntimeHandler::CelScriptRuntimeHandler(MessageQueue* mQueue, Celestial
 	scriptInited = new CelestialSlicedList<bool>(20);
 	scriptIds = 0;
 
+}
+
+unsigned int CelScriptRuntimeHandler::GetGlobalId(unsigned int localId) const
+{
+
+	RunTimeCommons* rt = rtc->GetValue(localId);
+
+	if (rt != nullptr)
+	{
+
+		return rt->boundObject;
+
+	}
+
+	return 0;
 }
 
 RunTimeError CelScriptRuntimeHandler::initScript(Resources::CelScriptCompiled* script, unsigned int id)
@@ -2817,6 +2869,7 @@ RunTimeError CelScriptRuntimeHandler::RunScript(int id,unsigned int stackId, uns
 	{
 
 		return er;
+
 	}
 
 	RunTimeCommons* thisRtc = rtc->GetValue(script->GetScriptId()-1);
@@ -2869,7 +2922,6 @@ void CelScriptRuntimeHandler::SetWaitingScriptVar(unsigned int scriptId, unsigne
 	commandVal[5] = value >> 8;
 	commandVal[6] = value >> 16;
 	commandVal[7] = value >> 24;
-
 
 	while (thisRtc->status == scriptStatus_RUNNING)
 	{
