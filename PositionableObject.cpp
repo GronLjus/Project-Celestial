@@ -116,7 +116,18 @@ void PositionableObject::Update(Message* mess)
 
 		switch (mess->mess)
 		{
-
+		case ObjectMess_COPY:
+			memcpy(&position.x, &mess->params[0], 4);
+			memcpy(&position.y, &mess->params[4], 4);
+			memcpy(&position.z, &mess->params[8], 4);
+			memcpy(&scale.x, &mess->params[12], 4);
+			memcpy(&scale.y, &mess->params[16], 4);
+			memcpy(&scale.z, &mess->params[20], 4);
+			memcpy(&rotation.x, &mess->params[24], 4);
+			memcpy(&rotation.y, &mess->params[28], 4);
+			memcpy(&rotation.z, &mess->params[32], 4);
+			createMatrix();
+			break;
 		case ObjectMess_MOVE:
 			memcpy(&newVec.x, mess->params, 4);
 			memcpy(&newVec.y, &mess->params[4], 4);

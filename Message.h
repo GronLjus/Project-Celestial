@@ -11,6 +11,7 @@ namespace CrossHandlers
 	enum ScriptMess{ ScriptMess_RUN, ScriptMess_RUNFROM, ScriptMess_ADDPARNUM, ScriptMess_ADDPARASTR, ScriptMess_ADDPARFLOAT, ScriptMess_RESUME, ScriptMess_CATCHUP, ScriptMess_NA };
 	enum ResourceMess{
 		ResourceMess_LOADCAMERA, ResourceMess_LOADOBJECT,
+		ResourceMess_LOADCOPYOBJECT,
 		ResourceMess_LOADGAMEBOARD, ResourceMess_LOADMESH, ResourceMess_LOADLIGHT, ResourceMess_LOADCHARKEYTRIGGER, ResourceMess_LOADKEYTRIGGER, ResourceMess_LOADSCRIPT,
 		ResourceMess_LOADGUI, ResourceMess_UNLOADOBJECT, ResourceMess_NA
 	};
@@ -39,6 +40,7 @@ namespace CrossHandlers
 	enum ObjectMess{
 		ObjectMess_MOVE, ObjectMess_POS, ObjectMess_PROPEL,
 		ObjectMess_SCALE, ObjectMess_SIZE, ObjectMess_POINT,
+		ObjectMess_COPY,
 		ObjectMess_ORBIT, ObjectMess_ROTATE,
 		ObjectMess_HIDE, ObjectMess_SHOW,
 		ObjectMess_SETHVRSCRPT, ObjectMess_SETENTRSCRPT, ObjectMess_SETEXTSCRPT, 

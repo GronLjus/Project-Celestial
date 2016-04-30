@@ -1,2 +1,4 @@
 clear tracking
 show cursor
+obj = load copyobject ?0
+add obj

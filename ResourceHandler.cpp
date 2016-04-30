@@ -98,6 +98,38 @@ void ResourceHandler::handleMess(Message* currentMessage, unsigned int time)
 		outId = obj->GetId();
 
 	}
+	else if (currentMessage->mess == ResourceMess_LOADCOPYOBJECT)
+	{
+
+		GameObject* oldObj = (GameObject*)gameObjects->GetValue(currentMessage->params[0] | ((int)currentMessage->params[1] << 8) | ((int)currentMessage->params[2] << 16) | ((int)currentMessage->params[3] << 24));
+
+		GameObject* obj = loadGameObject(oldObj->GetMeshId());
+		outId = obj->GetId();
+
+		Vector3 oldPos = oldObj->GetPosition();
+		Vector3 oldScale = oldObj->GetScale();
+		Vector3 oldRotation = oldObj->GetRotation();
+
+		unsigned char tempBuff[36];
+		memcpy(&tempBuff[0], &oldPos.x, 4);
+		memcpy(&tempBuff[4], &oldPos.y, 4);
+		memcpy(&tempBuff[8], &oldPos.z, 4);
+		memcpy(&tempBuff[12], &oldScale.x, 4);
+		memcpy(&tempBuff[16], &oldScale.y, 4);
+		memcpy(&tempBuff[20], &oldScale.z, 4);
+		memcpy(&tempBuff[24], &oldRotation.x, 4);
+		memcpy(&tempBuff[28], &oldRotation.y, 4);
+		memcpy(&tempBuff[32], &oldRotation.z, 4);
+
+		messageBuffer[this->currentMessage].timeSent = time;
+		messageBuffer[this->currentMessage].destination = MessageSource_OBJECT;
+		messageBuffer[this->currentMessage].type = MessageType_OBJECT;
+		messageBuffer[this->currentMessage].mess = ObjectMess_COPY;
+		messageBuffer[this->currentMessage].SetParams(tempBuff, 0, 36);
+		messageBuffer[this->currentMessage].read = false;
+		obj->Update(&messageBuffer[this->currentMessage]);
+
+	}
 	else if (currentMessage->mess == ResourceMess_LOADSCRIPT)
 	{
 
