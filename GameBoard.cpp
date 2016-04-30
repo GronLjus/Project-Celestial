@@ -17,7 +17,7 @@ GameBoard::GameBoard(unsigned int cells, MeshObject* gridObject, unsigned char m
 
 }
 
-bool GameBoard::GetBoardPosition(Vector3 origin, Vector3 unitDirection, Vector3 &position) const
+bool GameBoard::GetBoardPosition(Vector3 origin, Vector3 unitDirection, Vector3 &position, float floor) const
 {
 
 	if (VectorDot(unitDirection, boardNormal) > 0)
@@ -27,7 +27,7 @@ bool GameBoard::GetBoardPosition(Vector3 origin, Vector3 unitDirection, Vector3 
 
 	}
 
-	Vector3 point(0, 0, 0);
+	Vector3 point(0, 0.5f + floor, 0);
 
 	Vector3 toLineOrigin = point - origin;
 	float scalar = VectorDot(toLineOrigin, boardNormal);
@@ -53,6 +53,13 @@ bool GameBoard::GetBoardPosition(Vector3 origin, Vector3 unitDirection, Vector3 
 
 	position = origin + unitDirection*distance;
 	return true;
+
+}
+
+bool GameBoard::GetBoardPosition(Vector3 origin, Vector3 unitDirection, Vector3 &position) const
+{
+
+	return GetBoardPosition(origin, unitDirection, position, 0);
 
 }
 

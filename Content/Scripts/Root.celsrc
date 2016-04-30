@@ -20,4 +20,3 @@ pos cam 0.0 15.0 0.0
 hide splashImage
 remove splashImage
 unload splashImage
-show debugLayout

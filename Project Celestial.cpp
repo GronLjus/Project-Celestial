@@ -83,12 +83,13 @@ void dealWithCEMessages()
 		{
 
 			bool newShow = mess->mess == SystemMess_SHOWCURSOR;
+			int state = 0;
 
 			if (newShow != showCursor)
 			{
 
 				showCursor = newShow;
-				ShowCursor(showCursor);
+				state = ShowCursor(showCursor);
 
 			}
 		}

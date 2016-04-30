@@ -501,6 +501,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Text Include="Content\Scripts\ToolBarScripts\RunwayGhostClick.celsrc" />
     <Text Include="Content\Tile.obj">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
       <FileType>Document</FileType>

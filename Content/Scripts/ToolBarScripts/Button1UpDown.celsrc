@@ -4,7 +4,6 @@ if ?3 : 0
 
 	set content ?0 1.0 0.0 0.0
 	set border parent ?0, 1.0 0.0 0.0
-	hide cursor
 
 }
 else
@@ -12,6 +11,5 @@ else
 
 	set content ?0 0.0 0.0 0.0
 	set border parent ?0, 0.0 0.0 1.0
-	show cursor
 
 }

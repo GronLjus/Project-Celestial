@@ -1100,5 +1100,8 @@
     <Text Include="Content\Tile.obj">
       <Filter>Resource Files\Content</Filter>
     </Text>
+    <Text Include="Content\Scripts\ToolBarScripts\RunwayGhostClick.celsrc">
+      <Filter>Resource Files\Content\Scripts\ToolBarScripts</Filter>
+    </Text>
   </ItemGroup>
 </Project>

@@ -181,6 +181,13 @@ Vector3 GameBoardHandler::getMouseWorldLine(unsigned int mouseX, unsigned int mo
 ScriptableObject* GameBoardHandler::getMouseObject(CelestialMath::Vector3 direction) const
 {
 
+	if (trackedObject != nullptr)
+	{
+
+		return trackedObject;
+
+	}
+
 	CameraObject* cam = localGameBoard->GetCam();
 	float minDist = 0;
 	unsigned int selectedObject = localGameBoard->GetClosestObject(cam->GetPosition(), direction, minDist);
@@ -426,8 +433,11 @@ void GameBoardHandler::UpdateMessages(unsigned int time)
 			unsigned int mouseY = currentMessage->params[4] | ((int)currentMessage->params[5] << 8) | ((int)currentMessage->params[6] << 16) | ((int)currentMessage->params[7] << 24);
 
 			Vector3 direction = getMouseWorldLine(mouseX, mouseY);
-			localGameBoard->GetBoardPosition(localGameBoard->GetCam()->GetPosition(), direction, boardPos);
-			boardPos.y = 1 + (trackedObject->GetScale().y / 2);
+			float halfHeight = trackedObject->GetScale().y / 2;
+			localGameBoard->GetBoardPosition(localGameBoard->GetCam()->GetPosition(), direction, boardPos, halfHeight);
+			boardPos.x = floor(boardPos.x);
+			boardPos.y = 0.5f +(halfHeight);
+			boardPos.z = floor(boardPos.z);
 			unsigned char tempBuff[12];
 			memcpy(&tempBuff[0], &boardPos.x, 4);
 			memcpy(&tempBuff[4], &boardPos.y, 4);
