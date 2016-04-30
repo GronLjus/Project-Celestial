@@ -1191,6 +1191,28 @@ RunTimeError HideOperator(unsigned int returnVar, unsigned char* params, unsigne
 
 }
 
+RunTimeError HideCursorOperator(unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int mId, RunTimeCommons* rtc)
+{
+
+	Message mess;
+	mess.destination = MessageSource_SYSTEM;
+	mess.type = MessageType_SYSTEM;
+	mess.mess = SystemMess_HIDECURSOR;
+	return sendMessageOut(mess, rtc);
+
+}
+
+RunTimeError ShowCursorOperator(unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int mId, RunTimeCommons* rtc)
+{
+
+	Message mess;
+	mess.destination = MessageSource_SYSTEM;
+	mess.type = MessageType_SYSTEM;
+	mess.mess = SystemMess_SHOWCURSOR;
+	return sendMessageOut(mess, rtc);
+
+}
+
 RunTimeError ShowOperator(unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int mId, RunTimeCommons* rtc)
 {
 
@@ -1914,6 +1936,29 @@ RunTimeError SetLeftClickOperator(unsigned int returnVar, unsigned char* params,
 
 }
 
+RunTimeError SetMouseCursor(unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int mId, RunTimeCommons* rtc)
+{
+
+	if (paramSize < 4)
+	{
+
+		return RunTimeError_BADPARAMS;
+
+	}
+
+	unsigned int s = 4;
+	unsigned int var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
+	rtc->memory->ReadVariable(var - 1, rtc->intLoader, s);
+
+	Message mess;
+	mess.destination = MessageSource_SYSTEM;
+	mess.type = MessageType_SYSTEM;
+	mess.mess = SystemMess_SETCURSOR;
+	mess.SetParams(rtc->intLoader, 0, 4);
+	return sendMessageOut(mess, rtc);
+
+}
+
 RunTimeError SetMiddleClickOperator(unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int mId, RunTimeCommons* rtc)
 {
 
@@ -2472,6 +2517,7 @@ CelScriptRuntimeHandler::CelScriptRuntimeHandler(MessageQueue* mQueue, Celestial
 	operators[opcode_SETUD] = SetMouseUpDownOperator;
 
 	operators[opcode_SETUI] = SetUIOperator;
+	operators[opcode_SETCRS] = SetMouseCursor;
 	operators[opcode_FCSUI] = FocusUIOperator;
 
 	operators[opcode_GETSCRNY] = GetScreenHeightOperator;
@@ -2546,6 +2592,8 @@ CelScriptRuntimeHandler::CelScriptRuntimeHandler(MessageQueue* mQueue, Celestial
 
 	operators[opcode_HDE] = HideOperator;
 	operators[opcode_SHW] = ShowOperator;
+	operators[opcode_HDECRS] = HideCursorOperator;
+	operators[opcode_SHWCRS] = ShowCursorOperator;
 
 	operators[opcode_LNKDBG] = LinkDBGOperator;
 	operators[opcode_LNKTRGT] = LinkTargetOperator;

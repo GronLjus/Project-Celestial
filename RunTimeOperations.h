@@ -19,6 +19,7 @@ namespace Logic
 		opcode_SETLDRG, opcode_SETMDRG, opcode_SETRDRG,
 		opcode_SETMWHL, opcode_SETUD,
 		opcode_SETUI,
+		opcode_SETCRS,
 		opcode_FCSUI,
 
 		opcode_GETSCRNY,
@@ -51,6 +52,7 @@ namespace Logic
 
 		opcode_EXPRTCNST, opcode_EXPRTVAR, opcode_IMPRT,
 		opcode_HDE, opcode_SHW,
+		opcode_HDECRS, opcode_SHWCRS,
 
 		opcode_LNKDBG, opcode_LNKTRGT,
 		opcode_STXT, opcode_ADDTXT, opcode_ADDLNE,

@@ -37,6 +37,8 @@ std::thread lThread;
 
 unsigned int lFrameRate = 0;
 unsigned int lLastTime = 0;
+bool showCursor = true;
+bool currentCursShow = true;
 
 HWND hWnd;
 
@@ -54,19 +56,39 @@ void dealWithCEMessages()
 			if (mess->params[0] == CursorCode_NONE)
 			{
 
-				ShowCursor(false);
+				if (currentCursShow && showCursor)
+				{
 
-			}
-			else if (mess->params[0] == CursorCode_CARET)
-			{
+					currentCursShow = false;
+					ShowCursor(currentCursShow);
 
-
+				}
 			}
 			else
 			{
 
-				ShowCursor(true);
 				SetCursor(cursors[mess->params[0]]);
+
+				if (!currentCursShow)
+				{
+
+					currentCursShow = true;
+					ShowCursor(currentCursShow);
+
+				}
+
+			}
+		}
+		else if (mess->mess == SystemMess_SHOWCURSOR || mess->mess == SystemMess_HIDECURSOR)
+		{
+
+			bool newShow = mess->mess == SystemMess_SHOWCURSOR;
+
+			if (newShow != showCursor)
+			{
+
+				showCursor = newShow;
+				ShowCursor(showCursor);
 
 			}
 		}

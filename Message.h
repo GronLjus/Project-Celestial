@@ -29,7 +29,7 @@ namespace CrossHandlers
 	enum GameBoardMess{ GameBoardMess_ADDMESH, GameBoardMess_SETBOARDOBJECT, GameBoardMess_SETCAM, GameBoardMess_ADDOBJECT, GameBoardMess_SETGAMEBOARD, 
 		GameBoardMess_CLICKOBJECT, GameBoardMess_WHEELOBJECT, GameBoardMess_STARTDRAGGING, GameBoardMess_DRAGOBJECT, GameBoardMess_STOPDRAGGING,
 		GameBoardMess_ORBITOBJECT, GameBoardMess_NA };
-	enum SystemMess{SystemMess_GETSCREENRES, SystemMess_SETCURSOR,SystemMesss_NA};
+	enum SystemMess{SystemMess_GETSCREENRES, SystemMess_SETCURSOR, SystemMess_HIDECURSOR, SystemMess_SHOWCURSOR,SystemMesss_NA};
 
 	enum ObjectMess{
 		ObjectMess_MOVE, ObjectMess_POS, ObjectMess_PROPEL,
