@@ -2346,6 +2346,17 @@ RunTimeError ClearTrackingOperator(unsigned int returnVar, unsigned char* params
 
 }
 
+RunTimeError HockTrackingOperator(unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int mId, RunTimeCommons* rtc)
+{
+
+	Message mess;
+	mess.destination = MessageSource_ENTITIES;
+	mess.type = MessageType_ENTITIES;
+	mess.mess = GameBoardMess_HOOKTRACK;
+	return sendMessageOut(mess, rtc);
+
+}
+
 RunTimeError FocusUIOperator(unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int mId, RunTimeCommons* rtc)
 {
 
@@ -2669,6 +2680,7 @@ CelScriptRuntimeHandler::CelScriptRuntimeHandler(MessageQueue* mQueue, Celestial
 
 	operators[opcode_TRCK] = TrackObjectOperator;
 	operators[opcode_CRLTRCK] = ClearTrackingOperator;
+	operators[opcode_HCKTRCK] = HockTrackingOperator;
 
 	operators[opcode_JMPINVVAR] = JumpInv;
 	operators[opcode_JMPNOW] = JumpNow;

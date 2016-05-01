@@ -1270,6 +1270,38 @@ CelScriptCompiler::CelScriptCompiler()
 		nullptr
 	};
 
+	operators[OperatorTypes_HOOK].keyword = "hook";
+	operators[OperatorTypes_HOOK].enumAmount = 1;
+	operators[OperatorTypes_HOOK].enums = new std::string[operators[OperatorTypes_HOOK].enumAmount]; operators[OperatorTypes_HOOK].enums[0] = "tracking";
+	operators[OperatorTypes_HOOK].byteCodes = new unsigned char[operators[OperatorTypes_HOOK].enumAmount]{ opcode_HCKTRCK};
+	operators[OperatorTypes_HOOK].params = new unsigned char[operators[OperatorTypes_HOOK].enumAmount]{ 0 };
+	operators[OperatorTypes_HOOK].minParams = new unsigned char[operators[OperatorTypes_HOOK].enumAmount]{ 0 };
+	operators[OperatorTypes_HOOK].paramsyntax = new VarType*[operators[OperatorTypes_HOOK].enumAmount]{
+		nullptr
+	};
+	operators[OperatorTypes_HOOK].paramTypes = new ParamType*[operators[OperatorTypes_HOOK].enumAmount]{
+		nullptr
+	};
+	operators[OperatorTypes_HOOK].optionalPar = new bool*[operators[OperatorTypes_HOOK].enumAmount]{
+		nullptr
+	};
+	operators[OperatorTypes_HOOK].readParam = new unsigned char[operators[OperatorTypes_HOOK].enumAmount]{ 0, };
+	operators[OperatorTypes_HOOK].returns = new VarType[operators[OperatorTypes_HOOK].enumAmount]{ VarType_NA };
+	operators[OperatorTypes_HOOK].returnType = new ParamType[operators[OperatorTypes_HOOK].enumAmount]{ ParamType_NA };
+	operators[OperatorTypes_HOOK].writeParam = new unsigned char[operators[OperatorTypes_HOOK].enumAmount]{ 0 };
+	operators[OperatorTypes_HOOK].priority = 0;
+	operators[OperatorTypes_HOOK].shortHandsAmounts = 0;
+	operators[OperatorTypes_HOOK].amountParOperators = new unsigned char[operators[OperatorTypes_HOOK].enumAmount]{ 0 };
+	operators[OperatorTypes_HOOK].parRepeatsMin = new unsigned char*[operators[OperatorTypes_HOOK].enumAmount]{
+		nullptr
+	};
+	operators[OperatorTypes_HOOK].parRepeatsMax = new unsigned char*[operators[OperatorTypes_HOOK].enumAmount]{
+		nullptr
+	};
+	operators[OperatorTypes_HOOK].parOperatorAppend = new bool*[operators[OperatorTypes_HOOK].enumAmount]{
+		nullptr
+	};
+
 	operators[OperatorTypes_INCREMENT].keyword = "increment";
 	operators[OperatorTypes_INCREMENT].enumAmount = 1;
 	operators[OperatorTypes_INCREMENT].enums = new std::string[operators[OperatorTypes_INCREMENT].enumAmount]; operators[OperatorTypes_INCREMENT].enums[0] = "layer";

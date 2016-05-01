@@ -12,6 +12,7 @@ GameBoardHandler::GameBoardHandler() : IHandleMessages(200, MessageSource_ENTITI
 	trackedObject = nullptr;
 	filter = MessageType_ENTITIES;
 	dragScript = 0;
+	hookObject = false;
 
 }
 
@@ -423,32 +424,43 @@ void GameBoardHandler::UpdateMessages(unsigned int time)
 		else if (currentMessage->mess == GameBoardMess_CLEARTRACK)
 		{
 
+			trackedObject->SetPosition(hookPos);
+			trackedObject->SetScale(hookScale);
+			trackedObject->SetRotation(hookRot);
 			trackedObject = nullptr;
+			hookObject = false;
 
+		}
+		else if ((currentMessage->mess == GameBoardMess_HOOKTRACK || currentMessage->mess == GameBoardMess_UNHOOKTRACK ) 
+			&& trackedObject != nullptr)
+		{
+
+			hookObject = currentMessage->mess == GameBoardMess_HOOKTRACK;
+
+			if (hookObject)
+			{
+
+				hookPos = trackedObject->GetPosition();
+				hookScale = trackedObject->GetScale();
+				hookRot = trackedObject->GetRotation();
+
+			}
+			else
+			{
+
+				trackedObject->SetPosition(hookPos);
+				trackedObject->SetScale(hookScale);
+				trackedObject->SetRotation(hookRot);
+
+			}
 		}
 		else if (currentMessage->mess == GameBoardMess_MOUSEMOVE && trackedObject != nullptr &&
 			localGameBoard != nullptr && localGameBoard->GetCam() != nullptr)
 		{
+
 			unsigned int mouseX = currentMessage->params[0] | ((int)currentMessage->params[1] << 8) | ((int)currentMessage->params[2] << 16) | ((int)currentMessage->params[3] << 24);
 			unsigned int mouseY = currentMessage->params[4] | ((int)currentMessage->params[5] << 8) | ((int)currentMessage->params[6] << 16) | ((int)currentMessage->params[7] << 24);
-
-			Vector3 direction = getMouseWorldLine(mouseX, mouseY);
-			float halfHeight = trackedObject->GetScale().y / 2;
-			localGameBoard->GetBoardPosition(localGameBoard->GetCam()->GetPosition(), direction, boardPos, halfHeight);
-			boardPos.x = floor(boardPos.x);
-			boardPos.y = 0.5f +(halfHeight);
-			boardPos.z = floor(boardPos.z);
-			unsigned char tempBuff[12];
-			memcpy(&tempBuff[0], &boardPos.x, 4);
-			memcpy(&tempBuff[4], &boardPos.y, 4);
-			memcpy(&tempBuff[8], &boardPos.z, 4);
-
-			Message mess;
-			mess.destination = MessageSource_OBJECT;
-			mess.mess = ObjectMess_POS;
-			mess.type = MessageType_OBJECT;
-			mess.SetParams(tempBuff, 0, 12);
-			trackedObject->Update(&mess);
+			handleMouseMovement(mouseX, mouseY);
 
 		}
 		else if (currentMessage->mess == GameBoardMess_SETCAM && localGameBoard != nullptr)
@@ -500,6 +512,60 @@ void GameBoardHandler::UpdateMessages(unsigned int time)
 
 		currentMessage->read = true;
 		currentMessage = inQueue->PopMessage();
+
+	}
+}
+
+void GameBoardHandler::handleMouseMovement(unsigned int mouseX, unsigned int mouseY)
+{
+
+	Vector3 direction = getMouseWorldLine(mouseX, mouseY);
+	float halfHeight = trackedObject->GetScale().y / 2;
+	localGameBoard->GetBoardPosition(localGameBoard->GetCam()->GetPosition(), direction, boardPos, halfHeight);
+	boardPos.x = floor(boardPos.x);
+	boardPos.z = floor(boardPos.z);
+	unsigned char tempBuff[12];
+	Message mess;
+
+	if (!hookObject)
+	{
+
+		memcpy(&tempBuff[0], &boardPos.x, 4);
+		memcpy(&tempBuff[4], &boardPos.y, 4);
+		memcpy(&tempBuff[8], &boardPos.z, 4);
+
+		mess.destination = MessageSource_OBJECT;
+		mess.mess = ObjectMess_POS;
+		mess.type = MessageType_OBJECT;
+		mess.SetParams(tempBuff, 0, 12);
+		trackedObject->Update(&mess);
+
+	}
+	else
+	{
+
+		Vector3 dist = boardPos - hookPos;
+		Vector3 scale = trackedObject->GetScale();
+		scale.z = hookScale.z + sqrt(VectorDot(dist,dist));
+		trackedObject->SetScale(scale);
+
+		if (scale.z - hookScale.z > 0)
+		{
+
+			Vector3 forward = Vector3(0.0f, 0.0f, 1.0f);
+			float dotProduct = VectorDot(forward, dist);
+			float yAngle = acos(dotProduct / (scale.z - hookScale.z));
+			float sideDot = VectorDot(Vector3(1.0f, 0.0f, 0.0f), dist);
+			yAngle *= sideDot >= CELESTIAL_EPSILON ? 1.0 : -1.0;
+			Vector3 rot = Vector3(hookRot.x, yAngle, hookRot.z);
+			trackedObject->SetRotation(rot);
+
+		}
+
+		dist /= 2;
+		boardPos = hookPos + dist;
+		trackedObject->SetPosition(boardPos);
+		trackedObject->UpdateMatrix();
 
 	}
 }

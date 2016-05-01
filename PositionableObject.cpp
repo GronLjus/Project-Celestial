@@ -27,6 +27,27 @@ PositionableObject::PositionableObject(Vector3 position, Vector3 scale) : Script
 
 }
 
+void PositionableObject::SetPosition(Vector3 pos)
+{
+
+	this->position = pos;
+
+}
+
+void PositionableObject::SetScale(Vector3 scale)
+{
+
+	this->scale = scale;
+
+}
+
+void PositionableObject::SetRotation(Vector3 rotation)
+{
+
+	this->rotation = rotation;
+
+}
+
 void PositionableObject::refresh(Vector3 position, Vector3 scale)
 {
 
@@ -41,7 +62,7 @@ void PositionableObject::createMatrix()
 	Matrix s = MatrixScaling(scale.x, scale.y, scale.z);
 	Matrix t = MatrixTranslation(position.x, position.y, position.z);
 	Matrix r = MatrixRotationYawPitchRoll(rotation.y, rotation.x, rotation.z);
-	Matrix tr = MatrixMultiply(r , s);
+	Matrix tr = MatrixMultiply(s , r);
 	transformMatrix = MatrixMultiply(tr, t);
 	transformInvTrMatrix = MatrixInverse(MatrixTranspose(transformMatrix));
 	direction = VectorTransform(Vector3(0.0f, 0.0f, 1.0f), MatrixInverse(MatrixTranspose(r)));
@@ -203,6 +224,13 @@ void PositionableObject::Update(Message* mess)
 
 		}
 	}
+}
+
+void PositionableObject::UpdateMatrix()
+{
+
+	createMatrix();
+
 }
 
 void PositionableObject::setLayer(unsigned char layer)

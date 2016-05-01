@@ -12,12 +12,16 @@ namespace Resources
 			PositionableObject();
 			PositionableObject(CelestialMath::Vector3 position, CelestialMath::Vector3 scale);
 			virtual void Update(CrossHandlers::Message* mess);
+			void SetPosition(CelestialMath::Vector3 pos);
+			void SetScale(CelestialMath::Vector3 scsal);
+			void SetRotation(CelestialMath::Vector3 rotation);
 			CelestialMath::Vector3 GetPosition() const;
 			CelestialMath::Vector3 GetRotation() const;
 			CelestialMath::Vector3 GetScale() const;
 			CelestialMath::Vector3 GetDirection() const;
 			CelestialMath::Matrix GetMatrix() const;
 			CelestialMath::Matrix GetInvTrnMatrix() const;
+			void UpdateMatrix();
 			unsigned char GetLayer() const;
 
 		protected:

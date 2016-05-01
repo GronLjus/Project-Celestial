@@ -17,6 +17,10 @@ namespace Entities
 			~GameBoardHandler();
 
 		private:
+			CelestialMath::Vector3 hookPos;
+			CelestialMath::Vector3 hookScale;
+			CelestialMath::Vector3 hookRot;
+			bool hookObject;
 			CrossHandlers::CelestialSlicedList<Resources::BaseObject*>* gameObjects;
 			Resources::GameBoard* localGameBoard;
 			Resources::GameObject* trackedObject;
@@ -27,7 +31,7 @@ namespace Entities
 
 			CelestialMath::Vector3 getMouseWorldLine(unsigned int mouseX, unsigned int mouseY) const;
 			Resources::ScriptableObject* getMouseObject(CelestialMath::Vector3 direction) const;
-			Resources::ScriptableObject* checkScriptOnObject(CelestialMath::Vector3 direction) const;
+			void handleMouseMovement(unsigned int mouseX, unsigned int mouseY);
 			unsigned int dragScript;
 			unsigned int dragId;
 			CelestialMath::Vector3 boardPos;

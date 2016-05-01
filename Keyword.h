@@ -55,6 +55,7 @@ namespace Logic
 		OperatorTypes_INCREMENT, OperatorTypes_DECREMENT, 
 		OperatorTypes_IGNORE, OperatorTypes_ACCEPT,
 		OperatorTypes_TRACK, OperatorTypes_CLEAR,
+		OperatorTypes_HOOK,
 		OperatorTypes_LINK,
 		OperatorTypes_NA
 	};

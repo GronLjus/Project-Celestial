@@ -34,6 +34,7 @@ namespace CrossHandlers
 		GameBoardMess_CLICKOBJECT, GameBoardMess_WHEELOBJECT, 
 		GameBoardMess_STARTDRAGGING, GameBoardMess_DRAGOBJECT, GameBoardMess_STOPDRAGGING,
 		GameBoardMess_MOUSEMOVE, GameBoardMess_CLEARTRACK,
+		GameBoardMess_HOOKTRACK, GameBoardMess_UNHOOKTRACK,
 		GameBoardMess_ORBITOBJECT, GameBoardMess_NA };
 	enum SystemMess{SystemMess_GETSCREENRES, SystemMess_SETCURSOR, SystemMess_HIDECURSOR, SystemMess_SHOWCURSOR,SystemMesss_NA};
 
