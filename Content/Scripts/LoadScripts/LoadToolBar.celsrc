@@ -7,8 +7,11 @@ $
 
 toolbarLY = load panel
 button1 = load panel
+button2 = load panel
+button2Text = load textbox
 button1Text = load textbox
 button1Click = load script 'Content\Scripts\ToolBarScripts\Button1Click.celsrc'
+button2Click = load script 'Content\Scripts\ToolBarScripts\Button2Click.celsrc'
 button1UD = load script 'Content\Scripts\ToolBarScripts\Button1UpDown.celsrc'
 
 add ui screenLayout toolbarLY
@@ -36,4 +39,23 @@ set content button1Text 0.0 0.0 0.0
 set text button1Text 'Button1'
 
 link target button1 button1Text
+link target button2 button2Text
+
+add ui toolbarLY button2
+pos button2 110.0 5.0
+size button2 90.0 90.0
+set border button2 0.0 0.0 1.0
+accept mouse button2
+
+set leftclick button2 button2Click
+set mouseupdown button2 button1UD
+
+add ui button2 button2Text
+size button2Text 55.0 20.0
+pos button2Text 0.0 35.0
+snap button2Text 0 1
+set content button2Text 0.0 0.0 0.0
+set text button2Text 'Button2'
+
+
 increment layer toolbarLY

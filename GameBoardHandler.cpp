@@ -522,14 +522,15 @@ void GameBoardHandler::handleMouseMovement(unsigned int mouseX, unsigned int mou
 	Vector3 direction = getMouseWorldLine(mouseX, mouseY);
 	float halfHeight = trackedObject->GetScale().y / 2;
 	localGameBoard->GetBoardPosition(localGameBoard->GetCam()->GetPosition(), direction, boardPos, halfHeight);
-	boardPos.x = floor(boardPos.x);
-	boardPos.z = floor(boardPos.z);
+	Vector3 scale = trackedObject->GetScale();
 	unsigned char tempBuff[12];
 	Message mess;
 
 	if (!hookObject)
 	{
 
+		boardPos.x = floor(boardPos.x) + scale.x / 2;
+		boardPos.z = floor(boardPos.z) + scale.z / 2;
 		memcpy(&tempBuff[0], &boardPos.x, 4);
 		memcpy(&tempBuff[4], &boardPos.y, 4);
 		memcpy(&tempBuff[8], &boardPos.z, 4);
@@ -544,8 +545,9 @@ void GameBoardHandler::handleMouseMovement(unsigned int mouseX, unsigned int mou
 	else
 	{
 
+		boardPos.x = floor(boardPos.x) + hookScale.x / 2;
+		boardPos.z = floor(boardPos.z) + hookScale.z / 2;
 		Vector3 dist = boardPos - hookPos;
-		Vector3 scale = trackedObject->GetScale();
 		scale.z = hookScale.z + sqrt(VectorDot(dist,dist));
 		trackedObject->SetScale(scale);
 
