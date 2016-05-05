@@ -1088,6 +1088,9 @@
     <None Include="Content\Scripts\ToolBarScripts\Button2Click.celsrc">
       <Filter>Resource Files\Content\Scripts\ToolBarScripts</Filter>
     </None>
+    <None Include="Content\EndTile.obj">
+      <Filter>Resource Files\Content</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Project Celestial.rc">

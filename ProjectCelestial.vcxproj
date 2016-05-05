@@ -506,7 +506,11 @@
     <Text Include="Content\Tile.obj">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
       <FileType>Document</FileType>
+      <SubType>Designer</SubType>
     </Text>
+    <None Include="Content\EndTile.obj">
+      <FileType>Document</FileType>
+    </None>
     <Object Include="Tile.obj">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </Object>

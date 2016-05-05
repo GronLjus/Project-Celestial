@@ -29,7 +29,8 @@ namespace Logic
 		opcode_RESNAP, 
 		opcode_POS, opcode_MVE, opcode_PRPL,
 		opcode_RTE, opcode_ORB,
-		opcode_SIZE, opcode_2DADDCHLD,
+		opcode_SIZE, opcode_SCL, 
+		opcode_2DADDCHLD,
 
 		opcode_POSTSTR, opcode_POSTNMBR, opcode_POSTFLOAT,
 

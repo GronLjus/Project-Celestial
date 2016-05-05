@@ -869,6 +869,36 @@ CelScriptCompiler::CelScriptCompiler()
 		new bool[operators[OperatorTypes_SIZE].params[0]]{false, false, false, false}
 	};
 
+	operators[OperatorTypes_SCALE].keyword = "scale";
+	operators[OperatorTypes_SCALE].enumAmount = 1;
+	operators[OperatorTypes_SCALE].enums = new std::string[operators[OperatorTypes_SCALE].enumAmount]; operators[OperatorTypes_SCALE].enums[0] = "";
+	operators[OperatorTypes_SCALE].byteCodes = new unsigned char[operators[OperatorTypes_SCALE].enumAmount]{ opcode_SCL };
+	operators[OperatorTypes_SCALE].params = new unsigned char[operators[OperatorTypes_SCALE].enumAmount]{ 4 };
+	operators[OperatorTypes_SCALE].minParams = new unsigned char[operators[OperatorTypes_SCALE].enumAmount]{ 3 };
+	operators[OperatorTypes_SCALE].paramsyntax = new VarType*[operators[OperatorTypes_SCALE].enumAmount]{
+		new VarType[operators[OperatorTypes_SCALE].params[0]]{ VarType_NUMBER, VarType_FLOAT, VarType_FLOAT, VarType_FLOAT } };
+	operators[OperatorTypes_SCALE].paramTypes = new ParamType*[operators[OperatorTypes_SCALE].enumAmount]{
+		new ParamType[operators[OperatorTypes_SCALE].params[0]]{ ParamType_NA, ParamType_NA, ParamType_NA, ParamType_NA } };
+	operators[OperatorTypes_SCALE].optionalPar = new bool*[operators[OperatorTypes_SCALE].enumAmount]{
+		new bool[operators[OperatorTypes_SCALE].params[0]]{ false, false, false, true }
+	};
+	operators[OperatorTypes_SCALE].readParam = new unsigned char[operators[OperatorTypes_SCALE].enumAmount]{ 0 };
+	operators[OperatorTypes_SCALE].returns = new VarType[operators[OperatorTypes_SCALE].enumAmount]{ VarType_NA };
+	operators[OperatorTypes_SCALE].returnType = new ParamType[operators[OperatorTypes_SCALE].enumAmount]{ ParamType_NA };
+	operators[OperatorTypes_SCALE].writeParam = new unsigned char[operators[OperatorTypes_SCALE].enumAmount]{ 0 };
+	operators[OperatorTypes_SCALE].priority = 0;
+	operators[OperatorTypes_SCALE].shortHandsAmounts = 0;
+	operators[OperatorTypes_SCALE].amountParOperators = new unsigned char[operators[OperatorTypes_SCALE].enumAmount]{ 0 };
+	operators[OperatorTypes_SCALE].parRepeatsMin = new unsigned char*[operators[OperatorTypes_SCALE].enumAmount]{
+		new unsigned char[operators[OperatorTypes_SCALE].params[0]]{ 0, 0, 0, 0 }
+	};
+	operators[OperatorTypes_SCALE].parRepeatsMax = new unsigned char*[operators[OperatorTypes_SCALE].enumAmount]{
+		new unsigned char[operators[OperatorTypes_SCALE].params[0]]{ 0, 0, 0, 0 }
+	};
+	operators[OperatorTypes_SCALE].parOperatorAppend = new bool*[operators[OperatorTypes_SCALE].enumAmount]{
+		new bool[operators[OperatorTypes_SCALE].params[0]]{ false, false, false, false }
+	};
+
 	operators[OperatorTypes_RUN].keyword = "run";
 	operators[OperatorTypes_RUN].enumAmount = 1;
 	operators[OperatorTypes_RUN].enums = new std::string[operators[OperatorTypes_RUN].enumAmount]; operators[OperatorTypes_RUN].enums[0] = "script";

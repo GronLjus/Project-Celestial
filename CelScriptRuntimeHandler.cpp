@@ -1049,6 +1049,50 @@ RunTimeError SizeOperator(unsigned int returnVar, unsigned char* params, unsigne
 
 }
 
+RunTimeError ScaleOperator(unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int mId, RunTimeCommons* rtc)
+{
+
+	if (paramSize < 12)
+	{
+
+		return RunTimeError_BADPARAMS;
+
+	}
+
+	unsigned int s = 4;
+	unsigned int var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
+	rtc->memory->ReadVariable(var - 1, rtc->intLoader, s);
+	unsigned int objectToMod = (rtc->intLoader[0] | ((int)rtc->intLoader[1] << 8) | ((int)rtc->intLoader[2] << 16) | ((int)rtc->intLoader[3] << 24));
+	BaseObject* object = rtc->gameObjects->GetValue(objectToMod);
+
+	Message mess;
+	mess.destination = MessageSource_OBJECT;
+	mess.type = MessageType_OBJECT;
+	mess.mess = ObjectMess_SCALE;
+
+	unsigned int xVar = (params[4] | ((int)params[5] << 8) | ((int)params[6] << 16) | ((int)params[7] << 24));
+	rtc->memory->ReadVariable(xVar - 1, rtc->intLoader, s);
+	mess.SetParams(rtc->intLoader, 0, 4);
+
+	unsigned int yVar = (params[8] | ((int)params[9] << 8) | ((int)params[10] << 16) | ((int)params[11] << 24));
+	rtc->memory->ReadVariable(yVar - 1, rtc->intLoader, s);
+	mess.SetParams(rtc->intLoader, 4, 4);
+
+	if (paramSize == 16)
+	{
+
+		unsigned int zVar = (params[12] | ((int)params[13] << 8) | ((int)params[14] << 16) | ((int)params[15] << 24));
+		rtc->memory->ReadVariable(zVar - 1, rtc->intLoader, s);
+		mess.SetParams(rtc->intLoader, 8, 4);
+
+	}
+
+	object->Update(&mess);
+
+	return RunTimeError_OK;
+
+}
+
 RunTimeError Add2DOperator(unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int mId, RunTimeCommons* rtc)
 {
 
@@ -2603,6 +2647,7 @@ CelScriptRuntimeHandler::CelScriptRuntimeHandler(MessageQueue* mQueue, Celestial
 	operators[opcode_RTE] = RotateOperator;
 	operators[opcode_ORB] = OrbitOperator;
 	operators[opcode_SIZE] = SizeOperator;
+	operators[opcode_SCL] = ScaleOperator;
 	operators[opcode_2DADDCHLD] = Add2DOperator;
 
 	operators[opcode_POSTSTR] = PostStrOperator;

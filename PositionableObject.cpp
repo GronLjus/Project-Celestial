@@ -192,6 +192,7 @@ void PositionableObject::Update(Message* mess)
 		case ObjectMess_PROPEL:
 			memcpy(&factor, mess->params, 4);
 			position += direction*factor;
+			createMatrix();
 			break;
 		case ObjectMess_ROTATE:
 			memcpy(&newVec.x, mess->params, 4);
