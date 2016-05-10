@@ -146,47 +146,45 @@ void CelestialBufferHandler::UpdateMeshBuffers(DrawingBoard* db, ID3D11DeviceCon
 
 	}
 
-	if (vertices == nullptr)
+	if (vertices != nullptr)
 	{
 
-		D3D11_BUFFER_DESC bd;
-		bd.Usage = D3D11_USAGE_DYNAMIC;
-		bd.ByteWidth = strides[BufferTypes_VERTEX] * db->GetVertexBuffers()->GetBufferSize(); //total size of buffer in bytes
-		bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-		bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-		bd.MiscFlags = 0;
-		D3D11_SUBRESOURCE_DATA initData;
-		initData.pSysMem = db->GetVertexBuffers()->GetBuffer();
-		initData.SysMemPitch = 0;
-		initData.SysMemSlicePitch = 0;
-		HRESULT hr = card->CreateBuffer(&bd, &initData, &vertices);
-
-		bd.Usage = D3D11_USAGE_DYNAMIC;
-		bd.ByteWidth = sizeof(unsigned int) * db->GetIndexBuffers()->GetBufferSize(); //total size of buffer in bytes
-		bd.BindFlags = D3D11_BIND_INDEX_BUFFER;
-		bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-		bd.MiscFlags = 0;
-
-		initData.pSysMem = db->GetIndexBuffers()->GetBuffer();
-		initData.SysMemPitch = 0;
-		initData.SysMemSlicePitch = 0;
-		hr = card->CreateBuffer(&bd, &initData, &indices);
+		vertices->Release();
+		vertices = nullptr;
 
 	}
-	else
+
+	if (indices != nullptr)
 	{
 
-		BufferVertex* mapped1 = nullptr;
-		D3D11_MAPPED_SUBRESOURCE mapped = D3D11_MAPPED_SUBRESOURCE();
-		context->Map(vertices, 0, D3D11_MAP_WRITE_DISCARD, 0, &mapped);
-		memcpy(mapped.pData, db->GetVertexBuffers()->GetBuffer(), sizeof(BufferVertex)*db->GetVertexBuffers()->GetBufferSize());
-		context->Unmap(vertices, 0);
-
-		context->Map(indices, 0, D3D11_MAP_WRITE_DISCARD, 0, &mapped);
-		memcpy(mapped.pData, db->GetIndexBuffers()->GetBuffer(), sizeof(unsigned int)*db->GetIndexBuffers()->GetBufferSize());
-		context->Unmap(indices, 0);
+		indices->Release();
+		indices = nullptr;
 
 	}
+
+	D3D11_BUFFER_DESC bd;
+	bd.Usage = D3D11_USAGE_IMMUTABLE;
+	bd.ByteWidth = strides[BufferTypes_VERTEX] * db->GetVertexBuffers()->GetBufferSize(); //total size of buffer in bytes
+	bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	bd.CPUAccessFlags = 0;
+	bd.MiscFlags = 0;
+	D3D11_SUBRESOURCE_DATA initData;
+	initData.pSysMem = db->GetVertexBuffers()->GetBuffer();
+	initData.SysMemPitch = 0;
+	initData.SysMemSlicePitch = 0;
+	HRESULT hr = card->CreateBuffer(&bd, &initData, &vertices);
+
+	bd.Usage = D3D11_USAGE_IMMUTABLE;
+	bd.ByteWidth = sizeof(unsigned int) * db->GetIndexBuffers()->GetBufferSize(); //total size of buffer in bytes
+	bd.BindFlags = D3D11_BIND_INDEX_BUFFER;
+	bd.CPUAccessFlags = 0;
+	bd.MiscFlags = 0;
+
+	initData.pSysMem = db->GetIndexBuffers()->GetBuffer();
+	initData.SysMemPitch = 0;
+	initData.SysMemSlicePitch = 0;
+	hr = card->CreateBuffer(&bd, &initData, &indices);
+
 }
 
 void CelestialBufferHandler::UpdateInstanceBuffer(DrawingBoard* db, ID3D11DeviceContext* context, unsigned int flip, unsigned int chain)

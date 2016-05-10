@@ -77,6 +77,8 @@ void PositionableObject::SetObjectParent(PositionableObject* parent, unsigned in
 	this->parent = parent;
 	this->childId = childId;
 	this->relativePosition = relativePosition;
+	position = Vector3(0.0f, 0.0f, 0.0f);
+	rotateObjectToPoint(relativePosition);
 
 }
 
@@ -149,7 +151,7 @@ void PositionableObject::rotateObjectToPoint(Vector3 point)
 		if (projectedMagnitude > CELESTIAL_EPSILON)
 		{
 
-			float yAngle = acos(VectorDot(projectedLine, Vector3(0.0f, 1.0f, 0.0f)) / projectedMagnitude);
+			float yAngle = acos(VectorDot(projectedLine, Vector3(0.0f, 0.0f, 1.0f)) / projectedMagnitude);
 			yAngle *= VectorDot(projectedLine, Vector3(0, 0, 1)) >= 0 ? 1 : -1;
 			rotation.y = yAngle;
 
