@@ -5,25 +5,24 @@ using namespace Resources;
 using namespace CelestialMath;
 using namespace CrossHandlers;
 
-PositionableObject::PositionableObject() : ScriptableObject()
+PositionableObject::PositionableObject() : PositionableObject(Vector3(0.0f, 0.0f, 0.0f), Vector3(1.0f, 1.0f, 1.0f))
 {
 
-	scale = Vector3(1.0f, 1.0f, 1.0f);
-	position = Vector3(0.0f, 0.0f, 0.0f);
-	rotation = Vector3(0.0f, 0.0f, 0.0f);
-	direction = Vector3(0.0f, 0.0f, 1.0f);
-	layer = 0;
 
 }
 
 PositionableObject::PositionableObject(Vector3 position, Vector3 scale) : ScriptableObject()
 {
 
+	parent = nullptr;
 	this->position = position;
 	this->scale = scale;
 	rotation = Vector3(0.0f, 0.0f, 0.0f);
 	direction = Vector3(0.0f, 0.0f, 1.0f);
 	layer = 0;
+	subObjects = new CelestialSlicedList<PositionableObject*>(32, nullptr);
+	subObjectAmount = 0;
+	childId = 0;
 
 }
 
@@ -56,12 +55,72 @@ void PositionableObject::refresh(Vector3 position, Vector3 scale)
 
 }
 
+
+void PositionableObject::AddSubObject(PositionableObject* object, Vector3 relativePosition)
+{
+
+	unsigned int subId = subObjects->Add(object);
+	object->SetObjectParent(this,subId,relativePosition);
+	object->UpdateMatrix();
+
+	if (subId >= subObjectAmount)
+	{
+
+		subObjectAmount = subId + 1;
+
+	}
+}
+
+void PositionableObject::SetObjectParent(PositionableObject* parent, unsigned int childId, Vector3 relativePosition)
+{
+
+	this->parent = parent;
+	this->childId = childId;
+	this->relativePosition = relativePosition;
+
+}
+
 void PositionableObject::createMatrix()
 {
 
+	Matrix t;
+
+	if (parent != nullptr)
+	{
+
+		Vector3 parentalPosition = parent->GetPosition();
+		Vector3 relativePlace = (parent->GetScale()/2 + scale/2) * relativePosition;
+		Vector3 parentRotation = parent->GetRotation();
+
+		Matrix relativePlaceMat = MatrixTranslation(relativePlace.x, relativePlace.y, relativePlace.z);
+		Matrix parentRotMat = MatrixRotationYawPitchRoll(parentRotation.y, parentRotation.x, parentRotation.z);
+		Matrix parentalPlaceMat = MatrixTranslation(parentalPosition.x, parentalPosition.y, parentalPosition.z);
+
+		t = MatrixMultiply(MatrixMultiply(relativePlaceMat, parentRotMat), parentalPlaceMat);
+
+	}
+	else
+	{
+
+		t = MatrixTranslation(position.x, position.y, position.z);
+
+		for (unsigned int i = 0; i < subObjectAmount; i++)
+		{
+
+			PositionableObject* subObject = subObjects->GetValue(i);
+
+			if (subObject != nullptr)
+			{
+
+				subObject->UpdateMatrix();
+
+			}
+		}
+	}
+
 	Matrix s = MatrixScaling(scale.x, scale.y, scale.z);
-	Matrix t = MatrixTranslation(position.x, position.y, position.z);
 	Matrix r = MatrixRotationYawPitchRoll(rotation.y, rotation.x, rotation.z);
+
 	Matrix tr = MatrixMultiply(s , r);
 	transformMatrix = MatrixMultiply(tr, t);
 	transformInvTrMatrix = MatrixInverse(MatrixTranspose(transformMatrix));
@@ -131,6 +190,7 @@ void PositionableObject::Update(Message* mess)
 	if (mess->type == MessageType_OBJECT)
 	{
 
+		unsigned char tempBuff[]{ childId >> 0, childId >> 8, childId >> 16, childId >> 24 };
 		unsigned int param1 = mess->params[0] | ((int)mess->params[1] << 8) | ((int)mess->params[2] << 16) | ((int)mess->params[3] << 24);
 		Vector3 newVec;
 		float factor;
@@ -220,6 +280,24 @@ void PositionableObject::Update(Message* mess)
 		case ObjectMess_SETLAYER:
 			layer = mess->params[0];
 			break;
+		case ObjectMess_REMOVE:
+			if (parent != nullptr)
+			{
+
+				mess->mess = ObjectMess_REMOVECHILD;
+				mess->SetParams(tempBuff, 0, 4);
+				parent->Update(mess);
+
+			}
+			break;
+		case ObjectMess_REMOVECHILD:
+			if (subObjects->GetValue(param1) != nullptr)
+			{
+
+				subObjects->Remove(param1);
+
+			}
+			break;
 		default:
 			ScriptableObject::Update(mess);
 
@@ -287,5 +365,12 @@ Matrix PositionableObject::GetInvTrnMatrix() const
 {
 
 	return transformInvTrMatrix;
+
+}
+
+PositionableObject::~PositionableObject()
+{
+
+	delete subObjects;
 
 }

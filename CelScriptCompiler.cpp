@@ -1332,6 +1332,38 @@ CelScriptCompiler::CelScriptCompiler()
 		nullptr
 	};
 
+	operators[OperatorTypes_GLUE].keyword = "glue";
+	operators[OperatorTypes_GLUE].enumAmount = 1;
+	operators[OperatorTypes_GLUE].enums = new std::string[operators[OperatorTypes_GLUE].enumAmount]; operators[OperatorTypes_GLUE].enums[0] = "";
+	operators[OperatorTypes_GLUE].byteCodes = new unsigned char[operators[OperatorTypes_GLUE].enumAmount]{ opcode_GLUOBJCT };
+	operators[OperatorTypes_GLUE].params = new unsigned char[operators[OperatorTypes_GLUE].enumAmount]{ 5 };
+	operators[OperatorTypes_GLUE].minParams = new unsigned char[operators[OperatorTypes_GLUE].enumAmount]{ 5 };
+	operators[OperatorTypes_GLUE].paramsyntax = new VarType*[operators[OperatorTypes_GLUE].enumAmount]{
+		new VarType[operators[OperatorTypes_GLUE].params[0]]{ VarType_NUMBER, VarType_NUMBER, VarType_FLOAT, VarType_FLOAT, VarType_FLOAT }
+	};
+	operators[OperatorTypes_GLUE].paramTypes = new ParamType*[operators[OperatorTypes_GLUE].enumAmount]{
+		new ParamType[operators[OperatorTypes_GLUE].params[0]]{ ParamType_NA, ParamType_NA, ParamType_NA, ParamType_NA, ParamType_NA }
+	};
+	operators[OperatorTypes_GLUE].optionalPar = new bool*[operators[OperatorTypes_GLUE].enumAmount]{
+		new bool[operators[OperatorTypes_GLUE].params[0]]{ false, false, false, false, false }
+	};
+	operators[OperatorTypes_GLUE].readParam = new unsigned char[operators[OperatorTypes_GLUE].enumAmount]{ 0, };
+	operators[OperatorTypes_GLUE].returns = new VarType[operators[OperatorTypes_GLUE].enumAmount]{ VarType_NA };
+	operators[OperatorTypes_GLUE].returnType = new ParamType[operators[OperatorTypes_GLUE].enumAmount]{ ParamType_NA };
+	operators[OperatorTypes_GLUE].writeParam = new unsigned char[operators[OperatorTypes_GLUE].enumAmount]{ 0 };
+	operators[OperatorTypes_GLUE].priority = 0;
+	operators[OperatorTypes_GLUE].shortHandsAmounts = 0;
+	operators[OperatorTypes_GLUE].amountParOperators = new unsigned char[operators[OperatorTypes_GLUE].enumAmount]{ 0 };
+	operators[OperatorTypes_GLUE].parRepeatsMin = new unsigned char*[operators[OperatorTypes_GLUE].enumAmount]{
+		new unsigned char[operators[OperatorTypes_GLUE].params[0]]{ 0, 0, 0, 0, 0 }
+	};
+	operators[OperatorTypes_GLUE].parRepeatsMax = new unsigned char*[operators[OperatorTypes_GLUE].enumAmount]{
+		new unsigned char[operators[OperatorTypes_GLUE].params[0]]{ 0, 0, 0, 0, 0 }
+	};
+	operators[OperatorTypes_GLUE].parOperatorAppend = new bool*[operators[OperatorTypes_GLUE].enumAmount]{
+		new bool[operators[OperatorTypes_GLUE].params[0]]{ false, false, false, false, false }
+	};
+
 	operators[OperatorTypes_INCREMENT].keyword = "increment";
 	operators[OperatorTypes_INCREMENT].enumAmount = 1;
 	operators[OperatorTypes_INCREMENT].enums = new std::string[operators[OperatorTypes_INCREMENT].enumAmount]; operators[OperatorTypes_INCREMENT].enums[0] = "layer";

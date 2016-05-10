@@ -1309,8 +1309,8 @@ void CelestialShader::DrawScene(ViewObject* scene, GraphicalMesh* meshes, ID3D11
 			lastChain = fragment.buffer;
 
 		}
-		context->DrawIndexedInstanced(mesh.GetIndexLength(), fragment.length, mesh.GetIndexStart(), 0, fragment.start);
 
+		context->DrawIndexedInstanced(mesh.GetIndexLength(), fragment.length, mesh.GetIndexStart(), 0, fragment.start);
 		unsigned int max = D3D11_REQ_DRAW_VERTEX_COUNT_2_TO_EXP;
 
 	}
