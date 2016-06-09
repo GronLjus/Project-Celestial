@@ -541,6 +541,18 @@ void GameBoardHandler::handleMouseMovement(unsigned int mouseX, unsigned int mou
 		mess.SetParams(tempBuff, 0, 12);
 		trackedObject->Update(&mess);
 
+		unsigned int collidedObj = localGameBoard->GetCollidedObject(trackedObject);
+
+		if (collidedObj > 0)
+		{
+
+			PositionableObject* obj = (PositionableObject*)gameObjects->GetValue(collidedObj);
+			Vector3 newPos = obj->GetObjectCenterLine(boardPos);
+			trackedObject->SetPosition(newPos);
+			trackedObject->UpdateMatrix();
+
+		}
+
 	}
 	else
 	{

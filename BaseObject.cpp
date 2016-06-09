@@ -3,12 +3,18 @@
 
 using namespace Resources;
 
+BaseObject::BaseObject()
+{
+
+	killMessage = nullptr;
+
+}
+
 void BaseObject::SetId(unsigned int id)
 {
 
 	this->id = id;
 	lastUpdated = 0;
-	killMessage = nullptr;
 
 }
 

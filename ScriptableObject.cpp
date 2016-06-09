@@ -5,7 +5,7 @@ using namespace Resources;
 using namespace CrossHandlers;
 
 
-ScriptableObject::ScriptableObject()
+ScriptableObject::ScriptableObject() : BaseObject()
 {
 
 	rightClickScript = 0;

@@ -18,6 +18,7 @@ namespace Resources
 			void SetRotation(CelestialMath::Vector3 rotation);
 			void AddSubObject(PositionableObject* object, CelestialMath::Vector3 relativePosition);
 			void SetObjectParent(PositionableObject* parent, unsigned int childId, CelestialMath::Vector3 relativePosition);
+			CelestialMath::Vector3 GetObjectCenterLine(CelestialMath::Vector3 startPoint);
 			CelestialMath::Vector3 GetPosition() const;
 			CelestialMath::Vector3 GetRotation() const;
 			CelestialMath::Vector3 GetScale() const;
@@ -31,6 +32,7 @@ namespace Resources
 		protected:
 			void refresh(CelestialMath::Vector3 position, CelestialMath::Vector3 scale);
 			void setLayer(unsigned char layer);
+			bool hasMatrixChanged();
 
 		private:
 			CelestialMath::Vector3 relativePosition;
@@ -51,5 +53,6 @@ namespace Resources
 			unsigned char layer;
 			PositionableObject* parent;
 			unsigned int childId;
+			bool matrixChanged;
 	};
 }

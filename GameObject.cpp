@@ -98,15 +98,31 @@ unsigned int GameObject::GetScriptId() const
 
 }
 
-BoundingBox* GameObject::GetBox() const
+BoundingBox* GameObject::GetBox()
 {
+
+	if (hasMatrixChanged())
+	{
+
+		box->Transform(GetMatrix());
+		sphere->Transform(GetMatrix());
+
+	}
 
 	return box;
 
 }
 
-BoundingSphere* GameObject::GetSphere() const
+BoundingSphere* GameObject::GetSphere()
 {
+
+	if (hasMatrixChanged())
+	{
+
+		box->Transform(GetMatrix());
+		sphere->Transform(GetMatrix());
+
+	}
 
 	return sphere;
 

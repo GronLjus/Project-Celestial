@@ -14,6 +14,7 @@ BoundingBox::BoundingBox(float width,float heigth,float depth,float centerX,floa
 {
 
 	dimensions = Vector3(width*0.5f,heigth*0.5f,depth*0.5f);
+	startDimensions = dimensions;
 	pos = Vector3(centerX,centerY,centerZ);
 
 	Vector3 x1(pos + Vector3(dimensions.x,0,0));
@@ -381,113 +382,46 @@ Intersection BoundingBox::IntersectsBetweenPlanes(BoundingPlane* p1, BoundingPla
 Intersection BoundingBox::IntersectsBounding(IBounding* bounding,Shape shape)
 {
 
-	if(shape == Shape_SPHERE)
+	Intersection interX = bounding->IntersectsBetweenPlanes(&rightPlane, &leftPlane);
+
+	if (interX == Intersection_BACK)
 	{
-
-		BoundingSphere* sph = (BoundingSphere*)bounding;
-		Vector3 localSpherePoint = Vector3(sph->GetX()-pos.x,sph->GetY()-pos.y,sph->GetZ()-pos.z);
-		float distance = 0;
-
-		if(localSpherePoint.x > dimensions.x)
-		{
-
-			distance += (localSpherePoint.x - dimensions.x)*(localSpherePoint.x - dimensions.x);
-
-		}
-		else if(localSpherePoint.x < -dimensions.x)
-		{
-		
-			distance += (localSpherePoint.x + dimensions.x)*(localSpherePoint.x + dimensions.x);
-		}
-
-		if(localSpherePoint.y > dimensions.y)
-		{
-
-			distance += (localSpherePoint.y - dimensions.y)*(localSpherePoint.y - dimensions.y);
-
-		}
-		else if(localSpherePoint.y < -dimensions.y)
-		{
-		
-			distance += (localSpherePoint.y + dimensions.y)*(localSpherePoint.y + dimensions.y);
-		}
-
-		if(localSpherePoint.z > dimensions.z)
-		{
-
-			distance += (localSpherePoint.z - dimensions.z)*(localSpherePoint.z - dimensions.z);
-
-		}
-		else if(localSpherePoint.z < -dimensions.z)
-		{
-		
-			distance += (localSpherePoint.z + dimensions.z)*(localSpherePoint.z + dimensions.z);
-		}
-
-		if(distance-sph->GetRadi()*sph->GetRadi() < epsilon && distance-sph->GetRadi()*sph->GetRadi() > -epsilon)
-		{
-
-			return Intersection_ON;
-
-		}
-		else if(distance < sph->GetRadi()*sph->GetRadi())
-		{
-
-			return Intersection_THROUGH;
-
-		}
-		else
-		{
-
-			return Intersection_FRONT;
-
-		}
-	}
-	else if (shape == Shape_BOX)
-	{
-
-		BoundingBox* box = (BoundingBox*)bounding;
-		Intersection interX = box->IntersectsBetweenPlanes(&rightPlane, &leftPlane);
-
-		if (interX == Intersection_BACK)
-		{
 			
-			return Intersection_BACK;
+		return Intersection_BACK;
 
-		}
+	}
 
-		Intersection interY = box->IntersectsBetweenPlanes(&topPlane, &bottomPlane);
+	Intersection interY = bounding->IntersectsBetweenPlanes(&topPlane, &bottomPlane);
 
-		if (interY == Intersection_BACK)
-		{
+	if (interY == Intersection_BACK)
+	{
 
-			return Intersection_BACK;
+		return Intersection_BACK;
 
-		}
+	}
 
-		Intersection interZ = box->IntersectsBetweenPlanes(&rearPlane, &frontPlane);
+	Intersection interZ = bounding->IntersectsBetweenPlanes(&rearPlane, &frontPlane);
 
-		if (interZ == Intersection_BACK)
-		{
+	if (interZ == Intersection_BACK)
+	{
 
-			return Intersection_BACK;
+		return Intersection_BACK;
 
-		}
+	}
 
-		if ((interX == Intersection_FRONT || interX == Intersection_ON) &&
-			(interY == Intersection_FRONT || interY == Intersection_ON) &&
-			(interZ == Intersection_FRONT || interZ == Intersection_ON))
-		{
+	if ((interX == Intersection_FRONT || interX == Intersection_ON) &&
+		(interY == Intersection_FRONT || interY == Intersection_ON) &&
+		(interZ == Intersection_FRONT || interZ == Intersection_ON))
+	{
 
-			return Intersection_FRONT;
+		return Intersection_FRONT;
 
-		}
-		else
-		{
+	}
+	else
+	{
 
-			return Intersection_THROUGH;
+		return Intersection_THROUGH;
 
-		}
 	}
 
 	return Intersection_NA;
@@ -499,13 +433,13 @@ void BoundingBox::Transform(Matrix mat)
 
 	pos = VectorTransform(Vector3(0,0,0),mat);
 
-	Vector3 x1 = VectorTransform(Vector3(dimensions.x, 0, 0), mat);
-	Vector3 y1 = VectorTransform(Vector3(0, dimensions.y, 0), mat);
-	Vector3 z1 = VectorTransform(Vector3(0, 0, dimensions.z), mat);
+	Vector3 x1 = VectorTransform(Vector3(startDimensions.x, 0, 0), mat);
+	Vector3 y1 = VectorTransform(Vector3(0, startDimensions.y, 0), mat);
+	Vector3 z1 = VectorTransform(Vector3(0, 0, startDimensions.z), mat);
 
-	Vector3 x2 = VectorTransform(Vector3(-dimensions.x, 0, 0), mat);
-	Vector3 y2 = VectorTransform(Vector3(0, -dimensions.y, 0), mat);
-	Vector3 z2 = VectorTransform(Vector3(0, 0, -dimensions.z), mat);
+	Vector3 x2 = VectorTransform(Vector3(-startDimensions.x, 0, 0), mat);
+	Vector3 y2 = VectorTransform(Vector3(0, -startDimensions.y, 0), mat);
+	Vector3 z2 = VectorTransform(Vector3(0, 0, -startDimensions.z), mat);
 
 	constructBox(x1, x2, y1, y2, z1, z2);
 	dimensions = Vector3(leftPlane.GetNormalLength(), topPlane.GetNormalLength(), frontPlane.GetNormalLength());

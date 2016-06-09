@@ -26,6 +26,7 @@ namespace Resources
 			bool IsLocked() const;
 			void Remove();
 			void SetLayer(unsigned char layer);
+			~ScreenTarget();
 
 		private:
 			unsigned int hoverScript;

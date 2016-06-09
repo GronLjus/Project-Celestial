@@ -16,6 +16,8 @@ namespace CrossHandlers
 			CelestialMath::Vector3 pos;
 			///<summary>The dimensions of the box</summary>
 			CelestialMath::Vector3 dimensions;
+			///<summary>The dimensions of the box</summary>
+			CelestialMath::Vector3 startDimensions;
 
 			BoundingPlane topPlane;
 			BoundingPlane bottomPlane;

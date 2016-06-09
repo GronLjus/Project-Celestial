@@ -390,13 +390,24 @@ CelestialSlicedList<T>::~CelestialSlicedList()
 	for (unsigned int i = 0; i < maxSlices; i++)
 	{
 
-		delete[] list[i];
+		if (list[i] != nullptr)
+		{
 
+			delete[] list[i];
+
+		}
 	}
 	
 	delete[] sliceSize;
 	delete[] list;
-	delete[] base;
+
+	if (base != nullptr)
+	{
+
+		delete[] base;
+
+	}
+
 	delete holes;
 
 }

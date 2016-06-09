@@ -9,6 +9,7 @@ namespace Resources
 	{
 
 		public:
+			BaseObject();
 			virtual void SetId(unsigned int id);
 			unsigned int GetId() const;
 			virtual void Update(CrossHandlers::Message* mess) = 0;
@@ -18,6 +19,7 @@ namespace Resources
 			CrossHandlers::Message* GetKillMessage() const;
 			virtual ~BaseObject()
 			{
+				if (killMessage != nullptr){ delete killMessage; }
 			}
 
 		protected:

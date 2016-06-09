@@ -22,8 +22,8 @@ namespace Resources
 			///<returns>A matrix that describes the objects old transformation</returns>
 			CelestialMath::Matrix GetLastTransformation() const;
 
-			CrossHandlers::BoundingBox* GetBox() const;
-			CrossHandlers::BoundingSphere* GetSphere() const;
+			CrossHandlers::BoundingBox* GetBox();
+			CrossHandlers::BoundingSphere* GetSphere();
 			virtual ~GameObject();
 
 		private:

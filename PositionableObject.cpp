@@ -20,9 +20,31 @@ PositionableObject::PositionableObject(Vector3 position, Vector3 scale) : Script
 	rotation = Vector3(0.0f, 0.0f, 0.0f);
 	direction = Vector3(0.0f, 0.0f, 1.0f);
 	layer = 0;
-	subObjects = new CelestialSlicedList<PositionableObject*>(32, nullptr);
+	subObjects = new CelestialSlicedList<PositionableObject*>(32);
 	subObjectAmount = 0;
 	childId = 0;
+
+}
+
+Vector3 PositionableObject::GetObjectCenterLine(Vector3 point3)
+{
+
+	Vector3 point1 = position;
+	Vector3 point2 = point1 + direction;
+
+	Vector3 line1 = point1 - point2;
+	Vector3 line2 = point1 - point3;
+
+	Vector3 plane1 = VectorCross(line1, line2);
+
+	Vector3 point4 = point1 + plane1;
+	Vector3 line3 = point1 - point4;
+
+	Vector3 plane2 = VectorCross(line1, line3);
+	float vd1 = VectorDot(line2, plane2);
+	float vd2 = VectorDot(plane2, plane2);
+	Vector3 projectedLine = plane2 * (vd1 / vd2);
+	return point3 + projectedLine;
 
 }
 
@@ -127,6 +149,16 @@ void PositionableObject::createMatrix()
 	transformMatrix = MatrixMultiply(tr, t);
 	transformInvTrMatrix = MatrixInverse(MatrixTranspose(transformMatrix));
 	direction = VectorTransform(Vector3(0.0f, 0.0f, 1.0f), MatrixInverse(MatrixTranspose(r)));
+	matrixChanged = true;
+
+}
+
+bool PositionableObject::hasMatrixChanged()
+{
+
+	bool old = matrixChanged;
+	matrixChanged = false;
+	return old;
 
 }
 

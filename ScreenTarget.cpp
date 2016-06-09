@@ -17,6 +17,15 @@ ScreenTarget::ScreenTarget(Vector4 target) : PositionableObject(Vector3(target.x
 	remove = false;
 	targetId = 0;
 
+	killMessage = new Message();
+	killMessage->destination = MessageSource_RESOURCES;
+	killMessage->mess = ResourceMess_UNLOADOBJECT;
+
+	unsigned char tempBuff[]{ targetId >> 0, targetId >> 8, targetId >> 16, targetId >> 24
+	};
+
+	killMessage->SetParams(tempBuff,0,4);
+
 }
 
 void ScreenTarget::Update(Message* mess)
@@ -63,6 +72,11 @@ void ScreenTarget::SetTargetId(unsigned int id)
 {
 
 	targetId = id;
+
+	unsigned char tempBuff[]{ targetId >> 0, targetId >> 8, targetId >> 16, targetId >> 24
+	};
+
+	killMessage->SetParams(tempBuff, 0, 4);
 
 }
 
@@ -156,4 +170,16 @@ void ScreenTarget::SetHovering(bool val)
 
 	isHovering = val;
 
+}
+
+ScreenTarget::~ScreenTarget()
+{
+
+	if (killMessage != nullptr)
+	{
+
+		delete killMessage;
+		killMessage = nullptr;
+
+	}
 }

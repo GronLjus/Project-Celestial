@@ -9,7 +9,7 @@ using namespace Entities;
 ObjectTree::ObjectTree(unsigned int cells, unsigned int minCells, Vector2 position, unsigned int mesh)
 {
 
-	box = new BoundingBox(cells, 1.0f, cells, position.x, 0, position.y);
+	box = new BoundingBox(cells, 100.0f, cells, position.x, 0, position.y);
 	subTrees = nullptr;
 	objects = nullptr;
 
@@ -79,6 +79,64 @@ bool ObjectTree::RemoveObject(unsigned int id)
 	}
 
 	return found;
+
+}
+
+unsigned int ObjectTree::GetCollidedObject(GameObject* obj) const
+{
+
+	unsigned int closedObject = 0;
+
+	if (objects != nullptr)
+	{
+
+		for (unsigned int i = 0; i < objectAmountMax; i++)
+		{
+
+			GameObject* localObj = objects->GetValue(i);
+
+			if (localObj->GetId() != obj->GetId())
+			{
+
+				Intersection inter = localObj->GetBox()->IntersectsBounding(obj->GetBox(), Shape_BOX);
+
+				if (inter != Intersection_BACK)
+				{
+
+					closedObject = localObj->GetId();
+
+				}
+			}
+		}
+	}
+	else
+	{
+
+		for (unsigned int i = 0; i < 4; i++)
+		{
+
+			float dist = 0;
+
+			if (subTrees[i]->GetObjects() > 0)
+			{
+
+				if (subTrees[i]->GetBox()->IntersectsBounding(obj->GetBox(), Shape_BOX) != Intersection_BACK)
+				{
+
+					unsigned int closestObject = subTrees[i]->GetCollidedObject(obj);
+
+					if (closestObject != 0)
+					{
+
+						closedObject = closestObject;
+
+					}
+				}
+			}
+		}
+	}
+
+	return closedObject;
 
 }
 
@@ -162,10 +220,10 @@ void ObjectTree::AddObject(GameObject* object)
 		for (unsigned int i = 0; i < 4; i++)
 		{
 
-			if (subTrees[i]->GetBox()->IntersectsBounding(object->GetSphere(), Shape_SPHERE) != Intersection_FRONT)
+			if (subTrees[i]->GetBox()->IntersectsBounding(object->GetSphere(), Shape_SPHERE) != Intersection_BACK)
 			{
 
-				if (subTrees[i]->GetBox()->IntersectsBounding(object->GetBox(), Shape_BOX) != Intersection_FRONT)
+				if (subTrees[i]->GetBox()->IntersectsBounding(object->GetBox(), Shape_BOX) != Intersection_BACK)
 				{
 
 					subTrees[i]->AddObject(object);

@@ -238,18 +238,23 @@ void ResourceHandler::handleMess(Message* currentMessage, unsigned int time)
 
 		unsigned int param1 = currentMessage->params[0] | ((int)currentMessage->params[1] << 8) | ((int)currentMessage->params[2] << 16) | ((int)currentMessage->params[3] << 24);
 		BaseObject* object = gameObjects->GetValue(param1);
-		gameObjects->Remove(param1);
-		Message* killMess = object->GetKillMessage();
 
-		if (killMess != nullptr)
+		if (object != nullptr)
 		{
 
-			handleMess(killMess, time);
+			gameObjects->Remove(param1);
+			Message* killMess = object->GetKillMessage();
+
+			if (killMess != nullptr)
+			{
+
+				handleMess(killMess, time);
+
+			}
+
+			delete object;
 
 		}
-
-		delete object;
-
 	}
 
 	if (currentMessage->source == MessageSource_CELSCRIPT && outId > 0)

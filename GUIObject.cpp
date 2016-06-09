@@ -376,12 +376,12 @@ void GUIObject::SetBorderBrush(unsigned int brush)
 GUIObject::~GUIObject()
 { 
 
-	target->Remove();
-
 	if (killMessage != nullptr)
 	{
 
 		delete killMessage;
+		killMessage = nullptr;
 
 	}
+
 }
