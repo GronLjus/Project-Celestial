@@ -444,6 +444,10 @@ void GameBoardHandler::UpdateMessages(unsigned int time)
 				hookScale = trackedObject->GetScale();
 				hookRot = trackedObject->GetRotation();
 
+				unsigned int amountOfCollidedObjects = 0;
+				unsigned int* collidedObjects = localGameBoard->GetCollidedObject(trackedObject, amountOfCollidedObjects);
+				hookedTarget = amountOfCollidedObjects > 0 ? collidedObjects[0] : 0;
+
 			}
 			else
 			{
@@ -451,6 +455,7 @@ void GameBoardHandler::UpdateMessages(unsigned int time)
 				trackedObject->SetPosition(hookPos);
 				trackedObject->SetScale(hookScale);
 				trackedObject->SetRotation(hookRot);
+				hookedTarget = 0;
 
 			}
 		}
@@ -531,27 +536,25 @@ void GameBoardHandler::handleMouseMovement(unsigned int mouseX, unsigned int mou
 
 		boardPos.x = floor(boardPos.x) + scale.x / 2;
 		boardPos.z = floor(boardPos.z) + scale.z / 2;
-		memcpy(&tempBuff[0], &boardPos.x, 4);
-		memcpy(&tempBuff[4], &boardPos.y, 4);
-		memcpy(&tempBuff[8], &boardPos.z, 4);
+		trackedObject->SetPosition(boardPos);
+		trackedObject->UpdateMatrix();
+		
+		unsigned int amountOfCollidedObjects = 0;
+		unsigned int* collidedObjects = localGameBoard->GetCollidedObject(trackedObject, amountOfCollidedObjects);
 
-		mess.destination = MessageSource_OBJECT;
-		mess.mess = ObjectMess_POS;
-		mess.type = MessageType_OBJECT;
-		mess.SetParams(tempBuff, 0, 12);
-		trackedObject->Update(&mess);
-
-		unsigned int collidedObj = localGameBoard->GetCollidedObject(trackedObject);
-
-		if (collidedObj > 0)
+		if (amountOfCollidedObjects > 0)
 		{
 
-			PositionableObject* obj = (PositionableObject*)gameObjects->GetValue(collidedObj);
+			PositionableObject* obj = (PositionableObject*)gameObjects->GetValue(collidedObjects[0]);
 			Vector3 newPos = obj->GetObjectCenterLine(boardPos);
-			trackedObject->SetPosition(newPos);
-			trackedObject->UpdateMatrix();
+			boardPos.x = newPos.x;
+			boardPos.y = newPos.y;
+			boardPos.z = newPos.z;
 
 		}
+
+		trackedObject->SetPosition(boardPos);
+		trackedObject->UpdateMatrix();
 
 	}
 	else
@@ -559,6 +562,24 @@ void GameBoardHandler::handleMouseMovement(unsigned int mouseX, unsigned int mou
 
 		boardPos.x = floor(boardPos.x) + hookScale.x / 2;
 		boardPos.z = floor(boardPos.z) + hookScale.z / 2;
+		trackedObject->SetPosition(boardPos);
+		trackedObject->UpdateMatrix();
+
+		unsigned int amountOfCollidedObjects = 0;
+		unsigned int* collidedObjects = localGameBoard->GetCollidedObject(trackedObject, amountOfCollidedObjects);
+
+		if (amountOfCollidedObjects > (hookedTarget > 0 ? 1 : 0))
+		{
+
+			PositionableObject* obj = (PositionableObject*)gameObjects->GetValue(collidedObjects[0] == hookedTarget ? 
+				collidedObjects[1] : collidedObjects[0]);
+			Vector3 newPos = obj->GetObjectCenterLine(boardPos);
+			boardPos.x = newPos.x;
+			boardPos.y = newPos.y;
+			boardPos.z = newPos.z;
+
+		}
+
 		Vector3 dist = boardPos - hookPos;
 		scale.z = hookScale.z + sqrt(VectorDot(dist,dist));
 		trackedObject->SetScale(scale);

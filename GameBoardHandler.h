@@ -25,6 +25,8 @@ namespace Entities
 			Resources::GameBoard* localGameBoard;
 			Resources::GameObject* trackedObject;
 
+			unsigned int hookedTarget;
+
 			void triggerMouseScript(unsigned int script, unsigned int objectId, unsigned int time, int mouseX, int mouseY);
 			void triggerMouseScript(unsigned int script, unsigned int objectId, unsigned int time, int mouseX, int mouseY, short delta);
 			void triggerMouseScript(unsigned int script, unsigned int objectId, unsigned int time, int mouseX, int mouseY, unsigned int dragStatus);

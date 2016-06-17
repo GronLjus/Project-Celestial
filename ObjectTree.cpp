@@ -9,6 +9,9 @@ using namespace Entities;
 ObjectTree::ObjectTree(unsigned int cells, unsigned int minCells, Vector2 position, unsigned int mesh)
 {
 
+	collidedObjectAmounts = 10;
+	collidedObjects = new unsigned int[collidedObjectAmounts];
+
 	box = new BoundingBox(cells, 100.0f, cells, position.x, 0, position.y);
 	subTrees = nullptr;
 	objects = nullptr;
@@ -82,10 +85,26 @@ bool ObjectTree::RemoveObject(unsigned int id)
 
 }
 
-unsigned int ObjectTree::GetCollidedObject(GameObject* obj) const
+void ObjectTree::expandCollidedArray()
 {
 
-	unsigned int closedObject = 0;
+	unsigned int* newColl = new unsigned int[collidedObjectAmounts + 10];
+	memcpy(newColl, collidedObjects, (collidedObjectAmounts + 10) * sizeof(unsigned int));
+	delete[] collidedObjects;
+	collidedObjects = newColl;
+
+}
+unsigned int* ObjectTree::GetCollidedObject(GameObject* obj, unsigned int &objectsAmount) const
+{
+
+	return GetCollidedObject(obj, nullptr, 0, objectsAmount);
+
+}
+
+unsigned int* ObjectTree::GetCollidedObject(GameObject* obj, unsigned int* alreadyCollided, unsigned int aca, unsigned int &objectsAmount) const
+{
+
+	unsigned int objcts = 0;
 
 	if (objects != nullptr)
 	{
@@ -94,16 +113,32 @@ unsigned int ObjectTree::GetCollidedObject(GameObject* obj) const
 		{
 
 			GameObject* localObj = objects->GetValue(i);
+			bool dbl = false;
 
-			if (localObj->GetId() != obj->GetId())
+			for (unsigned k = 0; k < aca && !dbl && alreadyCollided != nullptr; k++)
+			{
+
+				dbl = alreadyCollided[k] == localObj->GetTargetId();
+
+			}
+			
+			for (unsigned k = 0; k < objcts && !dbl; k++)
+			{
+
+				dbl = collidedObjects[k] == localObj->GetTargetId();
+
+			}
+
+			if (localObj->GetTargetId() != obj->GetTargetId() && !dbl)
 			{
 
 				Intersection inter = localObj->GetBox()->IntersectsBounding(obj->GetBox(), Shape_BOX);
 
-				if (inter != Intersection_BACK)
+				if (inter != Intersection_BACK && objcts < collidedObjectAmounts)
 				{
 
-					closedObject = localObj->GetTargetId();
+					collidedObjects[objcts] = localObj->GetTargetId();
+					objcts++;
 
 				}
 			}
@@ -123,12 +158,17 @@ unsigned int ObjectTree::GetCollidedObject(GameObject* obj) const
 				if (subTrees[i]->GetBox()->IntersectsBounding(obj->GetBox(), Shape_BOX) != Intersection_BACK)
 				{
 
-					unsigned int closestObject = subTrees[i]->GetCollidedObject(obj);
+					unsigned int objectAmounts = 0;
+					unsigned int* closestObjects = subTrees[i]->GetCollidedObject(obj,collidedObjects,objcts, objectAmounts);
 
-					if (closestObject != 0)
+					if (objectAmounts > 0 && objcts < collidedObjectAmounts)
 					{
 
-						closedObject = closestObject;
+						objectAmounts = min(collidedObjectAmounts - objcts, objectAmounts);
+						memcpy(&collidedObjects[objcts],
+							closestObjects,
+							objectAmounts*sizeof(unsigned int));
+						objcts += objectAmounts;
 
 					}
 				}
@@ -136,7 +176,8 @@ unsigned int ObjectTree::GetCollidedObject(GameObject* obj) const
 		}
 	}
 
-	return closedObject;
+	objectsAmount = objcts;
+	return collidedObjects;
 
 }
 
@@ -321,4 +362,7 @@ ObjectTree::~ObjectTree()
 		delete[] subTrees;
 
 	}
+
+	delete[] collidedObjects;
+
 }

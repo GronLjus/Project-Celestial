@@ -185,10 +185,10 @@ unsigned int GameBoard::GetClosestObject(Vector3 origin, Vector3 unitDirection, 
 
 }
 
-unsigned int GameBoard::GetCollidedObject(GameObject* object) const
+unsigned int* GameBoard::GetCollidedObject(GameObject* object,unsigned int &amount) const
 {
 
-	return objectRoot->GetCollidedObject(object);
+	return objectRoot->GetCollidedObject(object,amount);
 
 }
 
