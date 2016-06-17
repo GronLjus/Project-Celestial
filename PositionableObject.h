@@ -20,11 +20,17 @@ namespace Resources
 			void SetObjectParent(PositionableObject* parent, unsigned int childId, CelestialMath::Vector3 relativePosition);
 			CelestialMath::Vector3 GetObjectCenterLine(CelestialMath::Vector3 startPoint);
 			CelestialMath::Vector3 GetPosition() const;
+			CelestialMath::Vector3 GetRelativePosition() const;
 			CelestialMath::Vector3 GetRotation() const;
 			CelestialMath::Vector3 GetScale() const;
 			CelestialMath::Vector3 GetDirection() const;
 			CelestialMath::Matrix GetMatrix() const;
 			CelestialMath::Matrix GetInvTrnMatrix() const;
+			virtual unsigned int GetTargetId() const;
+			
+			unsigned int GetSubobjects() const;
+			PositionableObject* GetSubobject(unsigned int object) const;
+
 			void UpdateMatrix();
 			unsigned char GetLayer() const;
 			virtual ~PositionableObject();
@@ -33,6 +39,7 @@ namespace Resources
 			void refresh(CelestialMath::Vector3 position, CelestialMath::Vector3 scale);
 			void setLayer(unsigned char layer);
 			bool hasMatrixChanged();
+			CelestialMath::Matrix GetBoundingMatrix() const;
 
 		private:
 			CelestialMath::Vector3 relativePosition;
@@ -40,6 +47,7 @@ namespace Resources
 			CelestialMath::Vector3 rotation;
 			CelestialMath::Vector3 scale;
 			CelestialMath::Vector3 direction;
+			CelestialMath::Matrix boundingMatrix;
 			CelestialMath::Matrix transformMatrix;
 			CelestialMath::Matrix transformInvTrMatrix;
 

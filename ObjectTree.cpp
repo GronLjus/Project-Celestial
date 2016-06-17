@@ -103,7 +103,7 @@ unsigned int ObjectTree::GetCollidedObject(GameObject* obj) const
 				if (inter != Intersection_BACK)
 				{
 
-					closedObject = localObj->GetId();
+					closedObject = localObj->GetTargetId();
 
 				}
 			}
@@ -162,7 +162,7 @@ unsigned int ObjectTree::GetClosestObject(Vector3 origin, Vector3 unitDirection,
 				{
 
 					smallestDistance = smallDistance;
-					closedObject = obj->GetId();
+					closedObject = obj->GetTargetId();
 
 				}
 			}

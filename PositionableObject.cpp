@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "PositionableObject.h"
+#include "BoundingSphere.h"
 
 using namespace Resources;
 using namespace CelestialMath;
@@ -83,7 +84,6 @@ void PositionableObject::AddSubObject(PositionableObject* object, Vector3 relati
 
 	unsigned int subId = subObjects->Add(object);
 	object->SetObjectParent(this,subId,relativePosition);
-	object->UpdateMatrix();
 
 	if (subId >= subObjectAmount)
 	{
@@ -91,6 +91,9 @@ void PositionableObject::AddSubObject(PositionableObject* object, Vector3 relati
 		subObjectAmount = subId + 1;
 
 	}
+
+	object->UpdateMatrix();
+
 }
 
 void PositionableObject::SetObjectParent(PositionableObject* parent, unsigned int childId, Vector3 relativePosition)
@@ -104,10 +107,18 @@ void PositionableObject::SetObjectParent(PositionableObject* parent, unsigned in
 
 }
 
+Vector3 PositionableObject::GetRelativePosition() const
+{
+
+	return relativePosition;
+
+}
+
 void PositionableObject::createMatrix()
 {
 
 	Matrix t;
+	Vector3 boundingScale(0, 0, 0);
 
 	if (parent != nullptr)
 	{
@@ -150,6 +161,34 @@ void PositionableObject::createMatrix()
 	transformInvTrMatrix = MatrixInverse(MatrixTranspose(transformMatrix));
 	direction = VectorTransform(Vector3(0.0f, 0.0f, 1.0f), MatrixInverse(MatrixTranspose(r)));
 	matrixChanged = true;
+
+}
+
+unsigned int PositionableObject::GetTargetId() const
+{
+
+	return parent == nullptr ? GetId() : parent->GetId();
+
+}
+
+unsigned int PositionableObject::GetSubobjects() const
+{
+
+	return subObjectAmount;
+
+}
+
+PositionableObject* PositionableObject::GetSubobject(unsigned int object) const
+{
+
+	return subObjects->GetValue(object);
+
+}
+
+Matrix PositionableObject::GetBoundingMatrix() const
+{
+
+	return boundingMatrix;
 
 }
 

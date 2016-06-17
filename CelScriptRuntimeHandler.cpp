@@ -636,11 +636,19 @@ RunTimeError GlueObjectOperator(unsigned int returnVar, unsigned char* params, u
 	unsigned int var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
 	rtc->memory->ReadVariable(var - 1, rtc->intLoader, s);
 	unsigned int objectToMod = (rtc->intLoader[0] | ((int)rtc->intLoader[1] << 8) | ((int)rtc->intLoader[2] << 16) | ((int)rtc->intLoader[3] << 24));
+
+	
 	PositionableObject* parent = (PositionableObject*)rtc->gameObjects->GetValue(objectToMod);
 
 	var = (params[4] | ((int)params[5] << 8) | ((int)params[6] << 16) | ((int)params[7] << 24));
 	rtc->memory->ReadVariable(var - 1, rtc->intLoader, s);
 	objectToMod = (rtc->intLoader[0] | ((int)rtc->intLoader[1] << 8) | ((int)rtc->intLoader[2] << 16) | ((int)rtc->intLoader[3] << 24));
+
+	Message mess;
+	mess.destination = MessageSource_ENTITIES;
+	mess.type = MessageType_ENTITIES;
+	mess.mess = GameBoardMess_ADDOBJECT;
+	mess.SetParams(rtc->intLoader, 0, 4);
 
 	PositionableObject* child = (PositionableObject*)rtc->gameObjects->GetValue(objectToMod);
 	CelestialMath::Vector3 pos;
@@ -658,7 +666,8 @@ RunTimeError GlueObjectOperator(unsigned int returnVar, unsigned char* params, u
 	memcpy(&pos.z, rtc->intLoader, 4);
 
 	parent->AddSubObject(child, pos);
-	return RunTimeError_OK;
+
+	return sendMessageOut(mess, rtc);
 
 }
 
