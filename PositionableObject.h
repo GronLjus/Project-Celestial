@@ -46,6 +46,8 @@ namespace Resources
 			CelestialMath::Vector3 position;
 			CelestialMath::Vector3 rotation;
 			CelestialMath::Vector3 scale;
+			CelestialMath::Vector3 absScale;
+			CelestialMath::Vector3 absOffset;
 			CelestialMath::Vector3 direction;
 			CelestialMath::Matrix boundingMatrix;
 			CelestialMath::Matrix transformMatrix;
@@ -54,6 +56,7 @@ namespace Resources
 			void createMatrix();
 			void rotateObjectToPoint(CelestialMath::Vector3 point);
 			void orbitAroundPoint(CelestialMath::Vector3 point, float arc);
+			void figureOutAbsoluteSize();
 
 			CrossHandlers::CelestialSlicedList<PositionableObject*>* subObjects;
 			unsigned int subObjectAmount;

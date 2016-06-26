@@ -45,7 +45,22 @@ Vector3 PositionableObject::GetObjectCenterLine(Vector3 point3)
 	float vd1 = VectorDot(line2, plane2);
 	float vd2 = VectorDot(plane2, plane2);
 	Vector3 projectedLine = plane2 * (vd1 / vd2);
-	return point3 + projectedLine;
+
+	Vector3 centerPoint = point3 + projectedLine;
+
+	Vector3 centerLine = centerPoint - (position + absOffset);
+	float distSqr = VectorDot(centerLine, centerLine);
+
+	if (distSqr > (absScale.z / 2 - 0.5f)*(absScale.z / 2 - 0.5f))
+	{
+
+		return VectorDot(centerLine,direction) > 0 ? 
+			(position + absOffset) + (direction * (absScale.z / 2 - 0.5f)) :
+			(position + absOffset) - (direction * (absScale.z / 2 - 0.5f));
+
+	}
+
+	return centerPoint;
 
 }
 
@@ -93,6 +108,7 @@ void PositionableObject::AddSubObject(PositionableObject* object, Vector3 relati
 	}
 
 	object->UpdateMatrix();
+	figureOutAbsoluteSize();
 
 }
 
@@ -111,6 +127,89 @@ Vector3 PositionableObject::GetRelativePosition() const
 {
 
 	return relativePosition;
+
+}
+
+void PositionableObject::figureOutAbsoluteSize()
+{
+
+	absOffset = Vector3(0, 0, 0);
+
+	float leftest = -scale.x/2;
+	float rightest = scale.x/2;
+	float toppest = scale.y/2;
+	float bottomest = -scale.y/2;
+	float nearest = scale.z/2;
+	float furthest = -scale.z/2;
+
+	for (unsigned int i = 0; i < subObjectAmount; i++)
+	{
+
+		PositionableObject* sub = subObjects->GetValue(i);
+
+		if (sub != nullptr)
+		{
+
+			Vector3 subScale = sub->GetScale() / 2;
+			Vector3 subPos = (scale/2 + subScale)*sub->GetRelativePosition();
+
+			leftest = min(leftest, subPos.x - subScale.x);
+			rightest = max(rightest, subPos.x + subScale.x);
+			
+			bottomest = min(bottomest, subPos.y - subScale.y);
+			toppest = max(toppest, subPos.y + subScale.y);
+
+			nearest = max(nearest, subPos.z + subScale.z);
+			furthest = min(furthest, subPos.z - subScale.z);
+
+		}
+	}
+
+	if (leftest < -scale.x / 2)
+	{
+
+		absOffset.x -= abs(leftest) - (scale.x / 2);
+
+	}
+
+	if (rightest > scale.x / 2)
+	{
+
+		absOffset.x += rightest - (scale.x / 2);
+
+	}
+
+	if (bottomest < -scale.y / 2)
+	{
+
+		absOffset.y -= abs(bottomest) - (scale.y / 2);
+
+	}
+
+	if (toppest > scale.y / 2)
+	{
+
+		absOffset.y += toppest - (scale.y / 2);
+
+	}
+
+	if (furthest < -scale.z / 2)
+	{
+
+		absOffset.z -= abs(furthest) - (scale.z / 2);
+
+	}
+
+	if (nearest > scale.z / 2)
+	{
+
+		absOffset.z += nearest - (scale.z / 2);
+
+	}
+
+	absScale.x = rightest - leftest;
+	absScale.y = toppest - bottomest;
+	absScale.z = nearest - furthest;
 
 }
 
@@ -368,6 +467,7 @@ void PositionableObject::Update(Message* mess)
 			{
 
 				subObjects->Remove(param1);
+				figureOutAbsoluteSize();
 
 			}
 			break;
