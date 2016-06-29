@@ -28,6 +28,7 @@ namespace CelestialMath
 
 		bool operator > (const float& val) const{ return x > val && y > val; }
 		bool operator < (const float& val) const{ return x < val && y < val; }
+		float operator [] (const int& val) const {return val == 0 ? x : y;}
 
 	} Vector2;
 
@@ -55,6 +56,7 @@ namespace CelestialMath
 
 		bool operator > (const unsigned int& val) const{ return x > val && y > val; }
 		bool operator < (const unsigned int& val) const{ return x < val && y < val; }
+		unsigned int operator [] (const int& val) const { return val == 0 ? x : y; }
 
 	} vectorUI2;
 
@@ -86,6 +88,7 @@ namespace CelestialMath
 		bool operator > (const float& val) const{ return x > val && y > val && z > val; }
 		bool operator < (const float& val) const{ return x < val && y < val && z < val; }
 
+		float operator [] (const int& val) const { return val == 0 ? x : val == 1 ? y : z; }
 
 	} Vector3;
 
@@ -118,6 +121,8 @@ namespace CelestialMath
 
 		bool operator > (const float& val) const{ return x > val && y > val && z > val && w > val; }
 		bool operator < (const float& val) const{ return x < val && y < val && z < val && w < val; }
+
+		float operator [] (const int& val) const { return val == 0 ? x : val == 1 ? y : val == 2 ? z : w; }
 
 	} Vector4;
 

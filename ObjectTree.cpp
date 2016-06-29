@@ -249,14 +249,18 @@ unsigned int ObjectTree::GetClosestObject(Vector3 origin, Vector3 unitDirection,
 void ObjectTree::AddObject(GameObject* object)
 {
 
+	bool hit = false;
+
 	if (objects != nullptr)
 	{
 
 		objects->Add(object);
+		hit = true;
 
 	}
 	else
 	{
+
 
 		for (unsigned int i = 0; i < 4; i++)
 		{
@@ -268,6 +272,7 @@ void ObjectTree::AddObject(GameObject* object)
 				{
 
 					subTrees[i]->AddObject(object);
+					hit = true;
 
 				}
 			}

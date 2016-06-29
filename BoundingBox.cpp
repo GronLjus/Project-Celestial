@@ -8,9 +8,15 @@
 using namespace CrossHandlers;
 using namespace CelestialMath;
 
-BoundingBox::BoundingBox(){epsilon = 0.00002f;}
+BoundingBox::BoundingBox()
+{
+
+	epsilon = 0.00002f;
+	cornerPoints = new Vector3[8];
+
+}
 		
-BoundingBox::BoundingBox(float width,float heigth,float depth,float centerX,float centerY,float centerZ)
+BoundingBox::BoundingBox(float width,float heigth,float depth,float centerX,float centerY,float centerZ) : BoundingBox()
 {
 
 	dimensions = Vector3(width*0.5f,heigth*0.5f,depth*0.5f);
@@ -28,6 +34,13 @@ BoundingBox::BoundingBox(float width,float heigth,float depth,float centerX,floa
 
 	constructBox(x1, x2, y1, y2, z1, z2);
 	epsilon = 0.00002f;//Small epsilon value 
+
+}
+
+Vector3 BoundingBox::GetPosition() const
+{
+
+	return pos;
 
 }
 
@@ -84,6 +97,13 @@ IBounding* BoundingBox::GetCopy() const
 {
 
 	return new BoundingBox(dimensions.x*2,dimensions.y*2,dimensions.z*2,pos.x,pos.y,pos.z);
+
+}
+
+Vector3 BoundingBox::GetPlaneNormal(unsigned char i) const
+{
+
+	return i == 0 ? leftPlane.GetUnitNormal() : i == 1 ? bottomPlane.GetUnitNormal(): frontPlane.GetUnitNormal();
 
 }
 
@@ -379,8 +399,103 @@ Intersection BoundingBox::IntersectsBetweenPlanes(BoundingPlane* p1, BoundingPla
 	}
 }
 
+Intersection BoundingBox::checkSATEdges(Vector3 &b, Vector3 &D, Vector3* A, Vector3* B, float C[][3])
+{
+
+	Vector3 a = dimensions*2;
+	float vda0 = VectorDot(A[0], D);
+	float vda1 = VectorDot(A[1], D);
+	float vda2 = VectorDot(A[2], D);
+
+	 //Perform the nine checks on the edges of the boxes with a complicated formula found on the interner, I hope it works since I can't understand it.
+	if ((a[1] * C[2][0] + a[2] * C[1][0]) + (b[1] * C[0][2] + b[2] * C[0][1]) < abs(C[1][0] * vda2 - C[2][0] * vda1) ||
+		(a[1] * C[2][1] + a[2] * C[1][1]) + (b[0] * C[0][2] + b[2] * C[0][0]) < abs(C[1][1] * vda2 - C[2][1] * vda1) ||
+		(a[1] * C[2][2] + a[2] * C[1][2]) + (b[0] * C[0][1] + b[1] * C[0][0]) < abs(C[1][2] * vda2 - C[2][2] * vda1) ||
+		
+		(a[0] * C[2][0] + a[2] * C[0][0]) + (b[1] * C[1][2] + b[2] * C[1][1]) < abs(C[2][0] * vda0 - C[0][0] * vda2) ||
+		(a[0] * C[2][1] + a[2] * C[0][1]) + (b[0] * C[1][2] + b[2] * C[1][0]) < abs(C[2][1] * vda0 - C[0][1] * vda2) ||
+		(a[0] * C[2][2] + a[2] * C[0][2]) + (b[0] * C[1][1] + b[1] * C[1][0]) < abs(C[2][2] * vda0 - C[0][2] * vda2) ||
+
+		(a[0] * C[1][0] + a[1] * C[0][0]) + (b[1] * C[2][2] + b[2] * C[2][1]) < abs(C[0][0] * vda1 - C[1][0] * vda0) ||
+		(a[0] * C[1][1] + a[1] * C[0][1]) + (b[0] * C[2][2] + b[2] * C[2][0]) < abs(C[0][1] * vda1 - C[1][1] * vda0) ||
+		(a[0] * C[1][2] + a[1] * C[0][2]) + (b[0] * C[2][1] + b[1] * C[2][0]) < abs(C[0][2] * vda1 - C[1][2] * vda0))
+	{
+
+		return Intersection_BACK;
+
+	}
+
+	return Intersection_FRONT;
+
+}
+
 Intersection BoundingBox::IntersectsBounding(IBounding* bounding,Shape shape)
 {
+
+	if (shape == Shape_BOX)
+	{
+
+		//Use SAT to find a collison
+		BoundingBox* otherBox = (BoundingBox*)bounding;
+		Vector3 otherDim = otherBox->GetDimensions();
+		Vector3 D = otherBox->GetPosition() - pos;
+
+		Vector3 A[] = { leftPlane.GetUnitNormal(),
+			bottomPlane.GetUnitNormal(),
+			frontPlane.GetUnitNormal() };
+
+		Vector3 B[] = { otherBox->GetPlaneNormal(0),
+			otherBox->GetPlaneNormal(1),
+			otherBox->GetPlaneNormal(2) };
+
+		float C[3][3];
+
+		//Check the first three axis
+		for (char i = 0; i < 3;i++)
+		{ 
+	
+			float R = abs(VectorDot(A[i], D));
+			float r0 = dimensions[i];
+
+			C[i][0] = abs(VectorDot(A[i], B[0]));
+			C[i][1] = abs(VectorDot(A[i], B[1]));
+			C[i][2] = abs(VectorDot(A[i], B[2]));
+			float r1 = otherDim.x * C[i][0] +
+				otherDim.y * C[i][1] +
+				otherDim.z * C[i][2];
+
+			if (R > r0 + r1)
+			{
+
+				return Intersection_BACK;
+
+			}
+		
+		}
+
+		//Check the second three axises
+		for (char i = 0; i < 3; i++)
+		{
+
+			float R = abs(VectorDot(B[i], D));
+			float r1 = otherDim[i];
+
+			float r0 = dimensions.x * C[0][i] +
+				dimensions.y * C[1][i] +
+				dimensions.z * C[2][i];
+
+			if (R > r0 + r1)
+			{
+
+				return Intersection_BACK;
+
+			}
+
+		}
+
+		return checkSATEdges(otherDim, D, A, B, C);
+
+	}
 
 	Intersection interX = bounding->IntersectsBetweenPlanes(&rightPlane, &leftPlane);
 
@@ -477,10 +592,34 @@ void BoundingBox::constructBox(Vector3 x1, Vector3 x2, Vector3 y1, Vector3 y2, V
 	frontPlane = BoundingPlane(-zNormal,
 		-(VectorDot(z2, -zNormal)), rearPlane.GetNormalLength());
 
+
+	float upCache = bottomPlane.unitNormals.y * dimensions.y;
+	float downCache = -upCache;
+	float frontCache = rearPlane.unitNormals.z * dimensions.z;
+	float rearCache = -frontCache;
+
+	cornerPoints[0] = leftPoint + Vector3(0, upCache, frontCache);
+	cornerPoints[1] = leftPoint + Vector3(0, upCache, rearCache);
+	cornerPoints[2] = leftPoint + Vector3(0, downCache, frontCache);
+	cornerPoints[3] = leftPoint + Vector3(0, downCache, rearCache);
+
+	cornerPoints[4] = rightPoint + Vector3(0, upCache, frontCache);
+	cornerPoints[5] = rightPoint + Vector3(0, upCache, rearCache);
+	cornerPoints[6] = rightPoint + Vector3(0, downCache, frontCache);
+	cornerPoints[7] = rightPoint + Vector3(0, downCache, rearCache);
+
+}
+
+Vector3 BoundingBox::GetDimensions() const
+{
+
+	return dimensions;
+
 }
 
 BoundingBox::~BoundingBox()
 {
 
+	delete[] cornerPoints;
 
 }

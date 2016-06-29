@@ -517,6 +517,34 @@ void GameBoardHandler::UpdateMessages(unsigned int time)
 	}
 }
 
+void GameBoardHandler::transformHookedObject(Vector3 mousePos)
+{
+
+	Vector3 scale = trackedObject->GetScale();
+	Vector3 dist = mousePos - hookPos;
+	scale.z = hookScale.z + sqrt(VectorDot(dist, dist));
+	trackedObject->SetScale(scale);
+
+	if (scale.z - hookScale.z > 0)
+	{
+
+		Vector3 forward = Vector3(0.0f, 0.0f, 1.0f);
+		float dotProduct = VectorDot(forward, dist);
+		float yAngle = acos(dotProduct / (scale.z - hookScale.z));
+		float sideDot = VectorDot(Vector3(1.0f, 0.0f, 0.0f), dist);
+		yAngle *= sideDot >= CELESTIAL_EPSILON ? 1.0 : -1.0;
+		Vector3 rot = Vector3(hookRot.x, yAngle, hookRot.z);
+		trackedObject->SetRotation(rot);
+
+	}
+
+	dist /= 2;
+	mousePos = hookPos + dist;
+	trackedObject->SetPosition(mousePos);
+	trackedObject->UpdateMatrix();
+
+}
+
 void GameBoardHandler::handleMouseMovement(unsigned int mouseX, unsigned int mouseY)
 {
 
@@ -566,8 +594,7 @@ void GameBoardHandler::handleMouseMovement(unsigned int mouseX, unsigned int mou
 
 		boardPos.x = floor(boardPos.x) + hookScale.x / 2;
 		boardPos.z = floor(boardPos.z) + hookScale.z / 2;
-		trackedObject->SetPosition(boardPos);
-		trackedObject->UpdateMatrix();
+		transformHookedObject(boardPos);
 
 		unsigned int amountOfCollidedObjects = 0;
 		unsigned int* collidedObjects = localGameBoard->GetCollidedObject(trackedObject, amountOfCollidedObjects);
@@ -581,31 +608,9 @@ void GameBoardHandler::handleMouseMovement(unsigned int mouseX, unsigned int mou
 			boardPos.x = newPos.x;
 			boardPos.y = newPos.y;
 			boardPos.z = newPos.z;
+			transformHookedObject(boardPos);
 
 		}
-
-		Vector3 dist = boardPos - hookPos;
-		scale.z = hookScale.z + sqrt(VectorDot(dist,dist));
-		trackedObject->SetScale(scale);
-
-		if (scale.z - hookScale.z > 0)
-		{
-
-			Vector3 forward = Vector3(0.0f, 0.0f, 1.0f);
-			float dotProduct = VectorDot(forward, dist);
-			float yAngle = acos(dotProduct / (scale.z - hookScale.z));
-			float sideDot = VectorDot(Vector3(1.0f, 0.0f, 0.0f), dist);
-			yAngle *= sideDot >= CELESTIAL_EPSILON ? 1.0 : -1.0;
-			Vector3 rot = Vector3(hookRot.x, yAngle, hookRot.z);
-			trackedObject->SetRotation(rot);
-
-		}
-
-		dist /= 2;
-		boardPos = hookPos + dist;
-		trackedObject->SetPosition(boardPos);
-		trackedObject->UpdateMatrix();
-
 	}
 }
 

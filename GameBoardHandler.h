@@ -25,6 +25,7 @@ namespace Entities
 			Resources::GameBoard* localGameBoard;
 			Resources::GameObject* trackedObject;
 
+			void transformHookedObject(CelestialMath::Vector3 mousePos);
 			unsigned int hookedTarget;
 
 			void triggerMouseScript(unsigned int script, unsigned int objectId, unsigned int time, int mouseX, int mouseY);

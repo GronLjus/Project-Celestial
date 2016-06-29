@@ -33,9 +33,12 @@ namespace CrossHandlers
 			CelestialMath::Vector3 frontPoint;
 			CelestialMath::Vector3 rearPoint;
 
+			CelestialMath::Vector3* cornerPoints;
+
 			Intersection getPlaneDistSquare(CelestialMath::Vector3 &point1, CelestialMath::Vector3 &point2, BoundingPlane &plane); 
 			Intersection getPlaneDistSquare(CelestialMath::Vector3 &origin, CelestialMath::Vector3 &direction, BoundingPlane &plane, float& distSquare);
 			void constructBox(CelestialMath::Vector3 x1, CelestialMath::Vector3 x2, CelestialMath::Vector3 y1, CelestialMath::Vector3 y2, CelestialMath::Vector3 z1, CelestialMath::Vector3 z2);
+			Intersection checkSATEdges(CelestialMath::Vector3 &b, CelestialMath::Vector3 &D, CelestialMath::Vector3* A, CelestialMath::Vector3* B, float C[][3]);
 
 		public:
 			BoundingBox();
@@ -47,6 +50,9 @@ namespace CrossHandlers
 			///<param name='centerX'>[in]The z-coordinate of the centerposition</param>
 			BoundingBox(float width,float heigth,float depth,float centerX,float centerY,float centerZ);
 
+			virtual CelestialMath::Vector3 GetPosition() const;
+			CelestialMath::Vector3 GetDimensions() const;
+			CelestialMath::Vector3 GetPlaneNormal(unsigned char i) const;
 			///<summary>Gets the x-coordinate of the box's center</summary>
 			///<returns>A value representing the x-coordinate of the center</returns>
 			virtual float GetX() const;
