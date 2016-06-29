@@ -44,12 +44,26 @@ Vector3 PositionableObject::GetObjectCenterLine(Vector3 point3)
 	Vector3 plane2 = VectorCross(line1, line3);
 	float vd1 = VectorDot(line2, plane2);
 	float vd2 = VectorDot(plane2, plane2);
-	Vector3 projectedLine = plane2 * (vd1 / vd2);
+	Vector3 centerPoint = point3;
 
-	Vector3 centerPoint = point3 + projectedLine;
+	if (vd2 > CELESTIAL_EPSILON)
+	{
+
+
+		Vector3 projectedLine = plane2 * (vd1 / vd2);
+		centerPoint = point3 + projectedLine;
+	
+	}
 
 	Vector3 centerLine = centerPoint - (position + absOffset);
 	float distSqr = VectorDot(centerLine, centerLine);
+
+	if (distSqr != distSqr)
+	{
+
+		int brk = 0;
+
+	}
 
 	if (distSqr > (absScale.z / 2 - 0.5f)*(absScale.z / 2 - 0.5f))
 	{

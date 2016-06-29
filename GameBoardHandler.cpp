@@ -602,12 +602,39 @@ void GameBoardHandler::handleMouseMovement(unsigned int mouseX, unsigned int mou
 		if (amountOfCollidedObjects > (hookedTarget > 0 ? 1 : 0))
 		{
 
-			PositionableObject* obj = (PositionableObject*)gameObjects->GetValue(collidedObjects[0] == hookedTarget ? 
-				collidedObjects[1] : collidedObjects[0]);
-			Vector3 newPos = obj->GetObjectCenterLine(boardPos);
-			boardPos.x = newPos.x;
-			boardPos.y = newPos.y;
-			boardPos.z = newPos.z;
+			float smallest = -1.0f;
+			Vector3 smallestVect = boardPos;
+
+			for (unsigned int i = 0; i < amountOfCollidedObjects; i++)
+			{
+
+				if (collidedObjects[i] != hookedTarget)
+				{
+					
+					PositionableObject* obj = (PositionableObject*)gameObjects->GetValue(collidedObjects[i]);
+
+					Vector3 newPos = obj->GetObjectCenterLine(boardPos);
+					Vector3 distVect = newPos - hookPos;
+					float dist = VectorDot(distVect, distVect);
+
+					if (dist != dist)
+					{
+
+						int brk = 0;
+
+					}
+
+					if (smallest < 0 || dist < smallest)
+					{
+
+						smallest = dist;
+						smallestVect = newPos;
+
+					}
+				}
+			}
+
+			boardPos = smallestVect;
 			transformHookedObject(boardPos);
 
 		}

@@ -94,14 +94,8 @@ void ObjectTree::expandCollidedArray()
 	collidedObjects = newColl;
 
 }
+
 unsigned int* ObjectTree::GetCollidedObject(GameObject* obj, unsigned int &objectsAmount) const
-{
-
-	return GetCollidedObject(obj, nullptr, 0, objectsAmount);
-
-}
-
-unsigned int* ObjectTree::GetCollidedObject(GameObject* obj, unsigned int* alreadyCollided, unsigned int aca, unsigned int &objectsAmount) const
 {
 
 	unsigned int objcts = 0;
@@ -114,13 +108,6 @@ unsigned int* ObjectTree::GetCollidedObject(GameObject* obj, unsigned int* alrea
 
 			GameObject* localObj = objects->GetValue(i);
 			bool dbl = false;
-
-			for (unsigned k = 0; k < aca && !dbl && alreadyCollided != nullptr; k++)
-			{
-
-				dbl = alreadyCollided[k] == localObj->GetTargetId();
-
-			}
 			
 			for (unsigned k = 0; k < objcts && !dbl; k++)
 			{
@@ -159,17 +146,27 @@ unsigned int* ObjectTree::GetCollidedObject(GameObject* obj, unsigned int* alrea
 				{
 
 					unsigned int objectAmounts = 0;
-					unsigned int* closestObjects = subTrees[i]->GetCollidedObject(obj,collidedObjects,objcts, objectAmounts);
+					unsigned int* closestObjects = subTrees[i]->GetCollidedObject(obj, objectAmounts);
 
-					if (objectAmounts > 0 && objcts < collidedObjectAmounts)
+					for (unsigned int k = 0; k < objectAmounts; k++)
 					{
 
-						objectAmounts = min(collidedObjectAmounts - objcts, objectAmounts);
-						memcpy(&collidedObjects[objcts],
-							closestObjects,
-							objectAmounts*sizeof(unsigned int));
-						objcts += objectAmounts;
+						bool dbl = false;
 
+						for (unsigned int j = 0; j < objcts && !dbl; j++)
+						{
+
+							dbl = collidedObjects[j] == closestObjects[k];
+
+						}
+
+						if (objcts < collidedObjectAmounts && !dbl)
+						{
+
+							collidedObjects[objcts] = closestObjects[k];
+							objcts++;
+
+						}
 					}
 				}
 			}

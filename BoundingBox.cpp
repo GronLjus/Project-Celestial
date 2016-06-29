@@ -402,23 +402,23 @@ Intersection BoundingBox::IntersectsBetweenPlanes(BoundingPlane* p1, BoundingPla
 Intersection BoundingBox::checkSATEdges(Vector3 &b, Vector3 &D, Vector3* A, Vector3* B, float C[][3])
 {
 
-	Vector3 a = dimensions*2;
+	Vector3 a = dimensions;
 	float vda0 = VectorDot(A[0], D);
 	float vda1 = VectorDot(A[1], D);
 	float vda2 = VectorDot(A[2], D);
 
 	 //Perform the nine checks on the edges of the boxes with a complicated formula found on the interner, I hope it works since I can't understand it.
-	if ((a[1] * C[2][0] + a[2] * C[1][0]) + (b[1] * C[0][2] + b[2] * C[0][1]) < abs(C[1][0] * vda2 - C[2][0] * vda1) ||
-		(a[1] * C[2][1] + a[2] * C[1][1]) + (b[0] * C[0][2] + b[2] * C[0][0]) < abs(C[1][1] * vda2 - C[2][1] * vda1) ||
-		(a[1] * C[2][2] + a[2] * C[1][2]) + (b[0] * C[0][1] + b[1] * C[0][0]) < abs(C[1][2] * vda2 - C[2][2] * vda1) ||
+	if ((a[1] * abs(C[2][0]) + a[2] * abs(C[1][0])) + (b[1] * abs(C[0][2]) + b[2] * abs(C[0][1])) < abs(C[1][0] * vda2 - C[2][0] * vda1) ||
+		(a[1] * abs(C[2][1]) + a[2] * abs(C[1][1])) + (b[0] * abs(C[0][2]) + b[2] * abs(C[0][0])) < abs(C[1][1] * vda2 - C[2][1] * vda1) ||
+		(a[1] * abs(C[2][2]) + a[2] * abs(C[1][2])) + (b[0] * abs(C[0][1]) + b[1] * abs(C[0][0])) < abs(C[1][2] * vda2 - C[2][2] * vda1) ||
 		
-		(a[0] * C[2][0] + a[2] * C[0][0]) + (b[1] * C[1][2] + b[2] * C[1][1]) < abs(C[2][0] * vda0 - C[0][0] * vda2) ||
-		(a[0] * C[2][1] + a[2] * C[0][1]) + (b[0] * C[1][2] + b[2] * C[1][0]) < abs(C[2][1] * vda0 - C[0][1] * vda2) ||
-		(a[0] * C[2][2] + a[2] * C[0][2]) + (b[0] * C[1][1] + b[1] * C[1][0]) < abs(C[2][2] * vda0 - C[0][2] * vda2) ||
+		(a[0] * abs(C[2][0]) + a[2] * abs(C[0][0])) + (b[1] * abs(C[1][2]) + b[2] * abs(C[1][1])) < abs(C[2][0] * vda0 - C[0][0] * vda2) ||
+		(a[0] * abs(C[2][1]) + a[2] * abs(C[0][1])) + (b[0] * abs(C[1][2]) + b[2] * abs(C[1][0])) < abs(C[2][1] * vda0 - C[0][1] * vda2) ||
+		(a[0] * abs(C[2][2]) + a[2] * abs(C[0][2])) + (b[0] * abs(C[1][1]) + b[1] * abs(C[1][0])) < abs(C[2][2] * vda0 - C[0][2] * vda2) ||
 
-		(a[0] * C[1][0] + a[1] * C[0][0]) + (b[1] * C[2][2] + b[2] * C[2][1]) < abs(C[0][0] * vda1 - C[1][0] * vda0) ||
-		(a[0] * C[1][1] + a[1] * C[0][1]) + (b[0] * C[2][2] + b[2] * C[2][0]) < abs(C[0][1] * vda1 - C[1][1] * vda0) ||
-		(a[0] * C[1][2] + a[1] * C[0][2]) + (b[0] * C[2][1] + b[1] * C[2][0]) < abs(C[0][2] * vda1 - C[1][2] * vda0))
+		(a[0] * abs(C[1][0]) + a[1] * abs(C[0][0])) + (b[1] * abs(C[2][2]) + b[2] * abs(C[2][1])) < abs(C[0][0] * vda1 - C[1][0] * vda0) ||
+		(a[0] * abs(C[1][1]) + a[1] * abs(C[0][1])) + (b[0] * abs(C[2][2]) + b[2] * abs(C[2][0])) < abs(C[0][1] * vda1 - C[1][1] * vda0) ||
+		(a[0] * abs(C[1][2]) + a[1] * abs(C[0][2])) + (b[0] * abs(C[2][1]) + b[1] * abs(C[2][0])) < abs(C[0][2] * vda1 - C[1][2] * vda0))
 	{
 
 		return Intersection_BACK;
@@ -457,12 +457,12 @@ Intersection BoundingBox::IntersectsBounding(IBounding* bounding,Shape shape)
 			float R = abs(VectorDot(A[i], D));
 			float r0 = dimensions[i];
 
-			C[i][0] = abs(VectorDot(A[i], B[0]));
-			C[i][1] = abs(VectorDot(A[i], B[1]));
-			C[i][2] = abs(VectorDot(A[i], B[2]));
-			float r1 = otherDim.x * C[i][0] +
-				otherDim.y * C[i][1] +
-				otherDim.z * C[i][2];
+			C[i][0] = VectorDot(A[i], B[0]);
+			C[i][1] = VectorDot(A[i], B[1]);
+			C[i][2] = VectorDot(A[i], B[2]);
+			float r1 = otherDim.x * abs(C[i][0]) +
+				otherDim.y * abs(C[i][1]) +
+				otherDim.z * abs(C[i][2]);
 
 			if (R > r0 + r1)
 			{
@@ -480,9 +480,9 @@ Intersection BoundingBox::IntersectsBounding(IBounding* bounding,Shape shape)
 			float R = abs(VectorDot(B[i], D));
 			float r1 = otherDim[i];
 
-			float r0 = dimensions.x * C[0][i] +
-				dimensions.y * C[1][i] +
-				dimensions.z * C[2][i];
+			float r0 = dimensions.x * abs(C[0][i]) +
+				dimensions.y * abs(C[1][i]) +
+				dimensions.z * abs(C[2][i]);
 
 			if (R > r0 + r1)
 			{
