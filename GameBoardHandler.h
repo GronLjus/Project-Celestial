@@ -25,6 +25,9 @@ namespace Entities
 			Resources::GameBoard* localGameBoard;
 			Resources::GameObject* trackedObject;
 
+			CelestialMath::Vector2 mouseCell;
+			bool resetMouse;
+
 			void transformHookedObject(CelestialMath::Vector3 mousePos);
 			unsigned int hookedTarget;
 
@@ -34,7 +37,7 @@ namespace Entities
 
 			CelestialMath::Vector3 getMouseWorldLine(unsigned int mouseX, unsigned int mouseY) const;
 			Resources::ScriptableObject* getMouseObject(CelestialMath::Vector3 direction) const;
-			void handleMouseMovement(unsigned int mouseX, unsigned int mouseY);
+			void handleMouseMovement(unsigned int mouseX, unsigned int mouseY, unsigned int time);
 			unsigned int dragScript;
 			unsigned int dragId;
 			CelestialMath::Vector3 boardPos;

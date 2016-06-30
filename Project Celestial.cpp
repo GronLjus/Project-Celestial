@@ -93,6 +93,17 @@ void dealWithCEMessages()
 
 			}
 		}
+		else if (mess->mess == SystemMess_MOVECURSOR)
+		{
+
+			short xPar = mess->params[0] | ((short)mess->params[1] << 8);
+			short yPar = mess->params[2] | ((short)mess->params[3] << 8);
+			RECT window;
+			GetWindowRect(hWnd, &window);
+
+			SetCursorPos(window.left + xPar,window.top+ yPar);
+
+		}
 
 		mess = overlord->GetNextSystemMessage();
 

@@ -461,7 +461,7 @@ void GameBoardHandler::UpdateMessages(unsigned int time)
 
 			unsigned int mouseX = currentMessage->params[0] | ((int)currentMessage->params[1] << 8) | ((int)currentMessage->params[2] << 16) | ((int)currentMessage->params[3] << 24);
 			unsigned int mouseY = currentMessage->params[4] | ((int)currentMessage->params[5] << 8) | ((int)currentMessage->params[6] << 16) | ((int)currentMessage->params[7] << 24);
-			handleMouseMovement(mouseX, mouseY);
+			handleMouseMovement(mouseX, mouseY,time);
 
 		}
 		else if (currentMessage->mess == GameBoardMess_SETCAM && localGameBoard != nullptr)
@@ -545,7 +545,7 @@ void GameBoardHandler::transformHookedObject(Vector3 mousePos)
 
 }
 
-void GameBoardHandler::handleMouseMovement(unsigned int mouseX, unsigned int mouseY)
+void GameBoardHandler::handleMouseMovement(unsigned int mouseX, unsigned int mouseY, unsigned int time)
 {
 
 	Vector3 direction = getMouseWorldLine(mouseX, mouseY);
@@ -555,89 +555,123 @@ void GameBoardHandler::handleMouseMovement(unsigned int mouseX, unsigned int mou
 	unsigned char tempBuff[12];
 	Message mess;
 
-
-	if (!hookObject)
+	if (abs(floor(boardPos.x) - mouseCell.x) > CELESTIAL_EPSILON ||
+		abs(floor(boardPos.z) - mouseCell.y) > CELESTIAL_EPSILON ||
+		resetMouse)
 	{
 
-		boardPos.x = floor(boardPos.x) + scale.x / 2;
-		boardPos.z = floor(boardPos.z) + scale.z / 2;
-		trackedObject->SetPosition(boardPos);
-		trackedObject->UpdateMatrix();
+		resetMouse = false;
+		mouseCell.x = floor(boardPos.x);
+		mouseCell.y = floor(boardPos.z);
 
-		unsigned int amountOfCollidedObjects = 0;
-		unsigned int* collidedObjects = localGameBoard->GetCollidedObject(trackedObject, amountOfCollidedObjects);
-
-		if (amountOfCollidedObjects > 0)
+		if (!hookObject)
 		{
 
-			hookedTarget = collidedObjects[0];
-			PositionableObject* obj = (PositionableObject*)gameObjects->GetValue(collidedObjects[0]);
-			Vector3 newPos = obj->GetObjectCenterLine(boardPos);
-			boardPos.x = newPos.x;
-			boardPos.y = newPos.y;
-			boardPos.z = newPos.z;
+			boardPos.x = floor(boardPos.x) + scale.x / 2;
+			boardPos.z = floor(boardPos.z) + scale.z / 2;
+			trackedObject->SetPosition(boardPos);
+			trackedObject->UpdateMatrix();
 
-		}
-		else 
-		{
+			unsigned int amountOfCollidedObjects = 0;
+			unsigned int* collidedObjects = localGameBoard->GetCollidedObject(trackedObject, amountOfCollidedObjects);
 
-			hookedTarget = 0;
-
-		}
-
-		trackedObject->SetPosition(boardPos);
-		trackedObject->UpdateMatrix();
-
-	}
-	else
-	{
-
-		boardPos.x = floor(boardPos.x) + hookScale.x / 2;
-		boardPos.z = floor(boardPos.z) + hookScale.z / 2;
-		transformHookedObject(boardPos);
-
-		unsigned int amountOfCollidedObjects = 0;
-		unsigned int* collidedObjects = localGameBoard->GetCollidedObject(trackedObject, amountOfCollidedObjects);
-
-		if (amountOfCollidedObjects > (hookedTarget > 0 ? 1 : 0))
-		{
-
-			float smallest = -1.0f;
-			Vector3 smallestVect = boardPos;
-
-			for (unsigned int i = 0; i < amountOfCollidedObjects; i++)
+			if (amountOfCollidedObjects > 0)
 			{
 
-				if (collidedObjects[i] != hookedTarget)
-				{
-					
-					PositionableObject* obj = (PositionableObject*)gameObjects->GetValue(collidedObjects[i]);
+				hookedTarget = collidedObjects[0];
+				PositionableObject* obj = (PositionableObject*)gameObjects->GetValue(collidedObjects[0]);
+				Vector3 newPos = obj->GetObjectCenterLine(boardPos);
+				boardPos.x = newPos.x;
+				boardPos.y = newPos.y;
+				boardPos.z = newPos.z;
 
-					Vector3 newPos = obj->GetObjectCenterLine(boardPos);
-					Vector3 distVect = newPos - hookPos;
-					float dist = VectorDot(distVect, distVect);
+			}
+			else 
+			{
 
-					if (dist != dist)
-					{
+				hookedTarget = 0;
 
-						int brk = 0;
-
-					}
-
-					if (smallest < 0 || dist < smallest)
-					{
-
-						smallest = dist;
-						smallestVect = newPos;
-
-					}
-				}
 			}
 
-			boardPos = smallestVect;
-			transformHookedObject(boardPos);
+			trackedObject->SetPosition(boardPos);
+			trackedObject->UpdateMatrix();
 
 		}
+		else
+		{
+
+			boardPos.x = floor(boardPos.x) + hookScale.x / 2;
+			boardPos.z = floor(boardPos.z) + hookScale.z / 2;
+			transformHookedObject(boardPos);
+
+			unsigned int amountOfCollidedObjects = 0;
+			unsigned int* collidedObjects = localGameBoard->GetCollidedObject(trackedObject, amountOfCollidedObjects);
+
+			if (amountOfCollidedObjects > (hookedTarget > 0 ? 1 : 0))
+			{
+
+				Vector3 distVect1 = boardPos - hookPos;
+				float currentDist = VectorDot(distVect1, distVect1);
+
+				float smallest = -1.0f;
+				Vector3 smallestVect = boardPos;
+
+				for (unsigned int i = 0; i < amountOfCollidedObjects; i++)
+				{
+
+					if (collidedObjects[i] != hookedTarget)
+					{
+					
+						PositionableObject* obj = (PositionableObject*)gameObjects->GetValue(collidedObjects[i]);
+
+						Vector3 newPos = obj->GetObjectCenterLine(boardPos);
+						Vector3 distVect = newPos - hookPos;
+						float dist = VectorDot(distVect, distVect);
+
+						if (dist != dist)
+						{
+
+							int brk = 0;
+
+						}
+
+						if (smallest < 0 || dist < smallest)
+						{
+
+							smallest = dist;
+							smallestVect = newPos;
+
+						}
+					}
+				}
+
+				boardPos = smallestVect;
+				transformHookedObject(boardPos);
+
+				if (smallest < currentDist)
+				{
+
+					boardPos.z -= 0.5f;
+					CameraObject* cam = localGameBoard->GetCam();
+					Vector3 onScreen = VectorTransform(boardPos,
+						cam->GetView()->GetViewProjection(cam->GetFlip()));
+					short mouseX = ((onScreen.x + 1) / 2) * cam->GetView()->GetPort().width;
+					short mouseY = ((-onScreen.y + 1) / 2) * cam->GetView()->GetPort().height;
+
+					unsigned char tempBuff[]{ mouseX >> 0, mouseX >> 8, mouseY >> 0, mouseY >> 8 };
+					messageBuffer[this->currentMessage].timeSent = time;
+					messageBuffer[this->currentMessage].destination = MessageSource_SYSTEM;
+					messageBuffer[this->currentMessage].type = MessageType_SYSTEM;
+					messageBuffer[this->currentMessage].mess = SystemMess_MOVECURSOR;
+					messageBuffer[this->currentMessage].read = false;
+					messageBuffer[this->currentMessage].SetParams(tempBuff, 0, 4);
+					outQueue->PushMessage(&messageBuffer[this->currentMessage]);
+					this->currentMessage = (this->currentMessage + 1) % outMessages;
+
+				}
+			}
+		}
+
 	}
 }
 
