@@ -40,6 +40,10 @@ unsigned int lLastTime = 0;
 bool showCursor = true;
 bool currentCursShow = true;
 
+bool ignoreMouse = false;
+short iMouseX;
+short iMouseY;
+
 HWND hWnd;
 
 void dealWithCEMessages()
@@ -96,12 +100,15 @@ void dealWithCEMessages()
 		else if (mess->mess == SystemMess_MOVECURSOR)
 		{
 
-			short xPar = mess->params[0] | ((short)mess->params[1] << 8);
-			short yPar = mess->params[2] | ((short)mess->params[3] << 8);
-			RECT window;
-			GetWindowRect(hWnd, &window);
+			ignoreMouse = true;
+			iMouseX = mess->params[0] | ((short)mess->params[1] << 8);
+			iMouseY = mess->params[2] | ((short)mess->params[3] << 8);
+			POINT pt;
+			pt.x = iMouseX;
+			pt.y = iMouseY;
+			ClientToScreen(hWnd, &pt);
 
-			SetCursorPos(window.left + xPar,window.top+ yPar);
+			SetCursorPos(pt.x, pt.y);
 
 		}
 
@@ -604,6 +611,15 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		}
 		break;
 	case WM_MOUSEMOVE:
+
+		if (ignoreMouse && iMouseX == xPar && iMouseY == yPar)
+		{
+
+			ignoreMouse = false;
+			break;
+
+		}
+
 		if (xPar >= 0 && yPar >= 0)
 		{
 

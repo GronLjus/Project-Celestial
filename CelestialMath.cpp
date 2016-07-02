@@ -363,6 +363,27 @@ float CelestialMath::VectorDot(Vector2 &vecA, Vector2 &vecB)
 
 }
 
+float CelestialMath::VectorDot(const Vector4 &vecA)
+{
+
+	return vecA.x*vecA.x + vecA.y*vecA.y + vecA.z*vecA.z + vecA.w*vecA.w;
+
+}
+
+float CelestialMath::VectorDot(const Vector3 &vecA)
+{
+
+	return vecA.x*vecA.x + vecA.y*vecA.y + vecA.z*vecA.z;
+
+}
+
+float CelestialMath::VectorDot(const Vector2 &vecA)
+{
+
+	return vecA.x*vecA.x + vecA.y*vecA.y;
+
+}
+
 Vector3 CelestialMath::VectorNormal(Vector3 &vecA)
 {
 

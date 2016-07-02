@@ -239,12 +239,31 @@ void GameBoardHandler::UpdateMessages(unsigned int time)
 		{
 
 			CameraObject* cam = localGameBoard->GetCam();
-			unsigned int mouseX = currentMessage->params[0] | ((int)currentMessage->params[1] << 8) | ((int)currentMessage->params[2] << 16) | ((int)currentMessage->params[3] << 24);
-			unsigned int mouseY = currentMessage->params[4] | ((int)currentMessage->params[5] << 8) | ((int)currentMessage->params[6] << 16) | ((int)currentMessage->params[7] << 24);
+			unsigned int mouseX = trackedObject != nullptr && hookObject ?
+				trackedMX :
+				currentMessage->params[0] | ((int)currentMessage->params[1] << 8) | ((int)currentMessage->params[2] << 16) | ((int)currentMessage->params[3] << 24);
+			unsigned int mouseY = trackedObject != nullptr && hookObject ?
+				trackedMY : 
+				currentMessage->params[4] | ((int)currentMessage->params[5] << 8) | ((int)currentMessage->params[6] << 16) | ((int)currentMessage->params[7] << 24);
 			
 			Vector3 direction = getMouseWorldLine(mouseX, mouseY);
 			ScriptableObject* obj = getMouseObject(direction);
 			unsigned int script = 0;
+
+			if (obj == trackedObject && hookObject)
+			{
+
+				unsigned char tempBuff[]{ mouseX >> 0, mouseX >> 8, mouseY >> 0, mouseY >> 8 };
+				messageBuffer[this->currentMessage].timeSent = time;
+				messageBuffer[this->currentMessage].destination = MessageSource_SYSTEM;
+				messageBuffer[this->currentMessage].type = MessageType_SYSTEM;
+				messageBuffer[this->currentMessage].mess = SystemMess_MOVECURSOR;
+				messageBuffer[this->currentMessage].read = false;
+				messageBuffer[this->currentMessage].SetParams(tempBuff, 0, 4);
+				outQueue->PushMessage(&messageBuffer[this->currentMessage]);
+				this->currentMessage = (this->currentMessage + 1) % outMessages;
+
+			}
 
 			if (obj != nullptr)
 			{
@@ -553,6 +572,7 @@ void GameBoardHandler::handleMouseMovement(unsigned int mouseX, unsigned int mou
 	localGameBoard->GetBoardPosition(localGameBoard->GetCam()->GetPosition(), direction, boardPos, halfHeight);
 	Vector3 scale = trackedObject->GetScale();
 	unsigned char tempBuff[12];
+	Vector3 mouse = boardPos;
 	Message mess;
 
 	if (abs(floor(boardPos.x) - mouseCell.x) > CELESTIAL_EPSILON ||
@@ -615,6 +635,7 @@ void GameBoardHandler::handleMouseMovement(unsigned int mouseX, unsigned int mou
 
 				float smallest = -1.0f;
 				Vector3 smallestVect = boardPos;
+				float cellToMouse = 0.0f;
 
 				for (unsigned int i = 0; i < amountOfCollidedObjects; i++)
 				{
@@ -624,7 +645,7 @@ void GameBoardHandler::handleMouseMovement(unsigned int mouseX, unsigned int mou
 					
 						PositionableObject* obj = (PositionableObject*)gameObjects->GetValue(collidedObjects[i]);
 
-						Vector3 newPos = obj->GetObjectCenterLine(boardPos);
+						Vector3 newPos = obj->GetObjectCenterLine(boardPos, distVect1);
 						Vector3 distVect = newPos - hookPos;
 						float dist = VectorDot(distVect, distVect);
 
@@ -640,6 +661,8 @@ void GameBoardHandler::handleMouseMovement(unsigned int mouseX, unsigned int mou
 
 							smallest = dist;
 							smallestVect = newPos;
+							Vector3 mToC = mouse - newPos;
+							cellToMouse = VectorDot(mToC);
 
 						}
 					}
@@ -648,17 +671,17 @@ void GameBoardHandler::handleMouseMovement(unsigned int mouseX, unsigned int mou
 				boardPos = smallestVect;
 				transformHookedObject(boardPos);
 
-				if (smallest < currentDist)
+				CameraObject* cam = localGameBoard->GetCam();
+				Vector3 onScreen = VectorTransform(boardPos,
+					cam->GetView()->GetViewProjection(cam->GetFlip()));
+				trackedMX = ((onScreen.x + 1) / 2) * cam->GetView()->GetPort().width;
+				trackedMY = ((-onScreen.y + 1) / 2) * cam->GetView()->GetPort().height;
+
+				if (smallest < currentDist && cellToMouse >= 2.0f)
 				{
 
-					boardPos.z -= 0.5f;
-					CameraObject* cam = localGameBoard->GetCam();
-					Vector3 onScreen = VectorTransform(boardPos,
-						cam->GetView()->GetViewProjection(cam->GetFlip()));
-					short mouseX = ((onScreen.x + 1) / 2) * cam->GetView()->GetPort().width;
-					short mouseY = ((-onScreen.y + 1) / 2) * cam->GetView()->GetPort().height;
 
-					unsigned char tempBuff[]{ mouseX >> 0, mouseX >> 8, mouseY >> 0, mouseY >> 8 };
+					unsigned char tempBuff[]{ trackedMX >> 0, trackedMX >> 8, trackedMY >> 0, trackedMY >> 8 };
 					messageBuffer[this->currentMessage].timeSent = time;
 					messageBuffer[this->currentMessage].destination = MessageSource_SYSTEM;
 					messageBuffer[this->currentMessage].type = MessageType_SYSTEM;
@@ -668,10 +691,22 @@ void GameBoardHandler::handleMouseMovement(unsigned int mouseX, unsigned int mou
 					outQueue->PushMessage(&messageBuffer[this->currentMessage]);
 					this->currentMessage = (this->currentMessage + 1) % outMessages;
 
+					mouseCell.x = floor(boardPos.x);
+					mouseCell.y = floor(boardPos.z);
+
 				}
 			}
-		}
+			else
+			{
 
+				CameraObject* cam = localGameBoard->GetCam();
+				Vector3 onScreen = VectorTransform(boardPos,
+					cam->GetView()->GetViewProjection(cam->GetFlip()));
+				trackedMX = ((onScreen.x + 1) / 2) * cam->GetView()->GetPort().width;
+				trackedMY = ((-onScreen.y + 1) / 2) * cam->GetView()->GetPort().height;
+
+			}
+		}
 	}
 }
 

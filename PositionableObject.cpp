@@ -27,21 +27,49 @@ PositionableObject::PositionableObject(Vector3 position, Vector3 scale) : Script
 
 }
 
-Vector3 PositionableObject::GetObjectCenterLine(Vector3 point3)
+Vector3 PositionableObject::getPlane(Vector3 point)
 {
 
 	Vector3 point1 = position;
 	Vector3 point2 = point1 + direction;
 
 	Vector3 line1 = point1 - point2;
-	Vector3 line2 = point1 - point3;
+	Vector3 line2 = point1 - point;
 
 	Vector3 plane1 = VectorCross(line1, line2);
 
 	Vector3 point4 = point1 + plane1;
 	Vector3 line3 = point1 - point4;
 
-	Vector3 plane2 = VectorCross(line1, line3);
+	return VectorCross(line1, line3);
+
+}
+
+Vector3 PositionableObject::GetObjectCenterLine(Vector3 startPoint, Vector3 direction)
+{
+
+	Vector3 plane = getPlane(startPoint);
+	float d = -VectorDot(plane, position);
+
+	float vn = VectorDot(direction, plane);
+
+	if (abs(vn) <= CELESTIAL_EPSILON)
+	{
+
+		return startPoint;
+
+	}
+
+	float t = -(VectorDot(startPoint, plane) + d) / vn;
+	return capLine(startPoint + direction*t);
+
+}
+
+Vector3 PositionableObject::GetObjectCenterLine(Vector3 point3)
+{
+
+	Vector3 plane2 = getPlane(point3);
+	Vector3 line2 = position - point3;
 	float vd1 = VectorDot(line2, plane2);
 	float vd2 = VectorDot(plane2, plane2);
 	Vector3 centerPoint = point3;
@@ -55,26 +83,26 @@ Vector3 PositionableObject::GetObjectCenterLine(Vector3 point3)
 	
 	}
 
-	Vector3 centerLine = centerPoint - (position + absOffset);
+	return capLine(centerPoint);
+
+}
+
+Vector3 PositionableObject::capLine(Vector3 point)
+{
+
+	Vector3 centerLine = point - (position + absOffset);
 	float distSqr = VectorDot(centerLine, centerLine);
-
-	if (distSqr != distSqr)
-	{
-
-		int brk = 0;
-
-	}
 
 	if (distSqr > (absScale.z / 2 - 0.5f)*(absScale.z / 2 - 0.5f))
 	{
 
-		return VectorDot(centerLine,direction) > 0 ? 
+		return VectorDot(centerLine, direction) > 0 ?
 			(position + absOffset) + (direction * (absScale.z / 2 - 0.5f)) :
 			(position + absOffset) - (direction * (absScale.z / 2 - 0.5f));
 
 	}
 
-	return centerPoint;
+	return point;
 
 }
 

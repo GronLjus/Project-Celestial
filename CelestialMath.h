@@ -28,6 +28,10 @@ namespace CelestialMath
 	float VectorDot(Vector4 &vecA, Vector4 &vecB);
 	float VectorDot(const Vector3 &vecA,const Vector3 &vecB);
 	float VectorDot(Vector2 &vecA, Vector2 &vecB);
+
+	float VectorDot(const Vector4 &vecA);
+	float VectorDot(const Vector3 &vecA);
+	float VectorDot(const Vector2 &vecA);
 	Vector3 VectorNormal(Vector3 &vecA);
 
 }

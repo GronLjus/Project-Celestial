@@ -25,6 +25,9 @@ namespace Entities
 			Resources::GameBoard* localGameBoard;
 			Resources::GameObject* trackedObject;
 
+			short trackedMX;
+			short trackedMY;
+
 			CelestialMath::Vector2 mouseCell;
 			bool resetMouse;
 

@@ -18,7 +18,10 @@ namespace Resources
 			void SetRotation(CelestialMath::Vector3 rotation);
 			void AddSubObject(PositionableObject* object, CelestialMath::Vector3 relativePosition);
 			void SetObjectParent(PositionableObject* parent, unsigned int childId, CelestialMath::Vector3 relativePosition);
+
+			CelestialMath::Vector3 GetObjectCenterLine(CelestialMath::Vector3 startPoint, CelestialMath::Vector3 direction);
 			CelestialMath::Vector3 GetObjectCenterLine(CelestialMath::Vector3 startPoint);
+
 			CelestialMath::Vector3 GetPosition() const;
 			CelestialMath::Vector3 GetRelativePosition() const;
 			CelestialMath::Vector3 GetRotation() const;
@@ -52,6 +55,9 @@ namespace Resources
 			CelestialMath::Matrix boundingMatrix;
 			CelestialMath::Matrix transformMatrix;
 			CelestialMath::Matrix transformInvTrMatrix;
+
+			CelestialMath::Vector3 getPlane(CelestialMath::Vector3 point);
+			CelestialMath::Vector3 capLine(CelestialMath::Vector3 point);
 
 			void createMatrix();
 			void rotateObjectToPoint(CelestialMath::Vector3 point);
