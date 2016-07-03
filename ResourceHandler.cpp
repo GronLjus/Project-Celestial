@@ -3,6 +3,7 @@
 #include "GameBoard.h"
 #include "CameraObject.h"
 #include "CrossScriptMemoryObject.h"
+#include "GameRouteObject.h"
 
 using namespace Resources;
 using namespace CrossHandlers;
@@ -47,7 +48,7 @@ CelestialSlicedList<BaseObject*>* ResourceHandler::GetObjectContainer() const
 
 }
 
-GameObject* ResourceHandler::loadGameObject(unsigned int param1)
+GameObject* ResourceHandler::loadGameObject(unsigned int param1, GameObjectType type)
 {
 
 	BaseObject* mesh = gameObjects->GetValue(param1);
@@ -65,7 +66,20 @@ GameObject* ResourceHandler::loadGameObject(unsigned int param1)
 
 	}
 
-	GameObject* obj = new GameObject(baseBox, baseSphere, meshId);
+	GameObject* obj;
+	
+	if (type == GameObjectType_ROUTE) 
+	{
+
+		obj = new GameRouteObject(baseBox, baseSphere, meshId);
+
+	}
+	else
+	{
+
+		obj = new GameObject(baseBox, baseSphere, meshId);
+
+	}
 	obj->SetId(gameObjects->Add(obj));
 	return obj;
 
@@ -86,7 +100,7 @@ void ResourceHandler::handleMess(Message* currentMessage, unsigned int time)
 		if (currentMessage->params[4] == 1)
 		{
 
-			GameObject* obj = loadGameObject(currentMessage->params[5] | ((int)currentMessage->params[6] << 8) | ((int)currentMessage->params[7] << 16) | ((int)currentMessage->params[8] << 24));
+			GameObject* obj = loadGameObject(currentMessage->params[5] | ((int)currentMessage->params[6] << 8) | ((int)currentMessage->params[7] << 16) | ((int)currentMessage->params[8] << 24), GameObjectType_SCENERY);
 			bo->SetBoardObject(obj);
 
 		}
@@ -94,7 +108,7 @@ void ResourceHandler::handleMess(Message* currentMessage, unsigned int time)
 	else if (currentMessage->mess == ResourceMess_LOADOBJECT)
 	{
 
-		GameObject* obj = loadGameObject(currentMessage->params[0] | ((int)currentMessage->params[1] << 8) | ((int)currentMessage->params[2] << 16) | ((int)currentMessage->params[3] << 24));
+		GameObject* obj = loadGameObject(currentMessage->params[0] | ((int)currentMessage->params[1] << 8) | ((int)currentMessage->params[2] << 16) | ((int)currentMessage->params[3] << 24), GameObjectType(currentMessage->params[4]));
 		outId = obj->GetId();
 
 	}
@@ -103,7 +117,7 @@ void ResourceHandler::handleMess(Message* currentMessage, unsigned int time)
 
 		GameObject* oldObj = (GameObject*)gameObjects->GetValue(currentMessage->params[0] | ((int)currentMessage->params[1] << 8) | ((int)currentMessage->params[2] << 16) | ((int)currentMessage->params[3] << 24));
 
-		GameObject* obj = loadGameObject(oldObj->GetMeshId());
+		GameObject* obj = loadGameObject(oldObj->GetMeshId(),oldObj->GetType());
 		outId = obj->GetId();
 
 		Vector3 oldPos = oldObj->GetPosition();

@@ -202,6 +202,7 @@
     <ClInclude Include="GameBoard.h" />
     <ClInclude Include="GameBoardHandler.h" />
     <ClInclude Include="GameObject.h" />
+    <ClInclude Include="GameRouteObject.h" />
     <ClInclude Include="GraphicalMesh.h" />
     <ClInclude Include="GridLoader.h" />
     <ClInclude Include="GUIEntityHandler.h" />
@@ -259,6 +260,8 @@
     <ClInclude Include="PositionableObject.h" />
     <ClInclude Include="ResourceHandler.h" />
     <ClInclude Include="ResourceHeader.h" />
+    <ClInclude Include="RouteNodeObject.h" />
+    <ClInclude Include="RoutingManager.h" />
     <ClInclude Include="RunTimeOperations.h" />
     <ClInclude Include="ScreenTarget.h" />
     <ClInclude Include="ScriptableObject.h" />
@@ -336,6 +339,7 @@
     <ClCompile Include="GameBoard.cpp" />
     <ClCompile Include="GameBoardHandler.cpp" />
     <ClCompile Include="GameObject.cpp" />
+    <ClCompile Include="GameRouteObject.cpp" />
     <ClCompile Include="GraphicalMesh.cpp" />
     <ClCompile Include="GridLoader.cpp" />
     <ClCompile Include="GUIEntityHandler.cpp" />
@@ -356,6 +360,8 @@
     <ClCompile Include="ObjectTree.cpp" />
     <ClCompile Include="PositionableObject.cpp" />
     <ClCompile Include="ResourceHandler.cpp" />
+    <ClCompile Include="RouteNodeObject.cpp" />
+    <ClCompile Include="RoutingManager.cpp" />
     <ClCompile Include="ScreenTarget.cpp" />
     <ClCompile Include="ScriptableObject.cpp" />
     <ClCompile Include="ShadowMapConstants.cpp" />

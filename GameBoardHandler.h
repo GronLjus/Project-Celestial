@@ -2,6 +2,7 @@
 #include "GameBoard.h"
 #include "IHandleMessages.h"
 #include "CelestialSlicedList.h"
+#include "RoutingManager.h"
 
 namespace Entities
 {
@@ -17,6 +18,7 @@ namespace Entities
 			~GameBoardHandler();
 
 		private:
+			RoutingManager* routing;
 			CelestialMath::Vector3 hookPos;
 			CelestialMath::Vector3 hookScale;
 			CelestialMath::Vector3 hookRot;

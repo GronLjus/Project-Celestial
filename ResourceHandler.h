@@ -23,7 +23,7 @@ namespace Resources
 		void handleMess(CrossHandlers::Message* mess,unsigned int time);
 		unsigned int crossScript;
 		ResourceLoader* loader;
-		GameObject* loadGameObject(unsigned int meshId);
+		GameObject* loadGameObject(unsigned int meshId, GameObjectType type);
 		CrossHandlers::CelestialSlicedList<BaseObject*>* gameObjects;
 		CelestialMath::vectorUI2 screen;
 		unsigned int bufferFlips;

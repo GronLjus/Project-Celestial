@@ -23,6 +23,13 @@ void GameObject::SetParent(BaseObject* parent)
 
 }
 
+GameObjectType GameObject::GetType() const
+{
+	
+	return GameObjectType_SCENERY;
+
+}
+
 void GameObject::Update(Message* mess)
 {
 

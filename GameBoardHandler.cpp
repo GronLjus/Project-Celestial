@@ -13,6 +13,7 @@ GameBoardHandler::GameBoardHandler() : IHandleMessages(200, MessageSource_ENTITI
 	filter = MessageType_ENTITIES;
 	dragScript = 0;
 	hookObject = false;
+	routing = new RoutingManager();
 
 }
 
@@ -20,6 +21,7 @@ void GameBoardHandler::Init(CelestialSlicedList<BaseObject*>* gameObjects)
 {
 
 	this->gameObjects = gameObjects;
+	routing->Init(gameObjects);
 
 }
 
@@ -725,5 +727,7 @@ void GameBoardHandler::Update(unsigned int time)
 
 GameBoardHandler::~GameBoardHandler()
 {
+
+	delete routing;
 
 }

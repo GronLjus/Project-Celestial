@@ -173,7 +173,6 @@ RunTimeError LoadObjectOperator(unsigned int returnVar, unsigned char* params, u
 	unsigned int s = 4;
 	unsigned int var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
 	rtc->memory->ReadVariable(var - 1, rtc->intLoader, s);
-	unsigned int meshId = (rtc->intLoader[0] | ((int)rtc->intLoader[1] << 8) | ((int)rtc->intLoader[2] << 16) | ((int)rtc->intLoader[3] << 24));
 
 	Message mess;
 	mess.returnParam = returnVar;
@@ -181,6 +180,14 @@ RunTimeError LoadObjectOperator(unsigned int returnVar, unsigned char* params, u
 	mess.type = MessageType_RESOURCES;
 	mess.mess = ResourceMess_LOADOBJECT;
 	mess.SetParams(rtc->intLoader, 0, 4);
+
+
+	var = (params[4] | ((int)params[5] << 8) | ((int)params[6] << 16) | ((int)params[7] << 24));
+	rtc->memory->ReadVariable(var - 1, rtc->intLoader, s);
+	unsigned int type = (rtc->intLoader[0] | ((int)rtc->intLoader[1] << 8) | ((int)rtc->intLoader[2] << 16) | ((int)rtc->intLoader[3] << 24));
+	unsigned char tpe = type;
+	mess.SetParams(&tpe, 4, 1);
+
 	rtc->varWaiting->Add(true, returnVar - 1);
 
 	return sendMessageOut(mess, rtc);

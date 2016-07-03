@@ -3,7 +3,7 @@ $
 	
 	objClick = load script  'Content\Scripts\ToolBarScripts\RunwayGhostClick.celsrc'
 	tile = import 'baseTile'
-	runwayGhost = load object tile
+	runwayGhost = load object tile 0
 	size runwayGhost 2.0 0.5 2.0
 	set leftclick runwayGhost objClick
 

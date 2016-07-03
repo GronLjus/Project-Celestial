@@ -3,10 +3,11 @@ $
 	
 	objClick = load script  'Content\Scripts\ToolBarScripts\RunwayGhostClick.celsrc'
 	tile = import 'baseTile'
-	roadGhost = load object tile
+	roadGhost = load object tile 0
 	size roadGhost 1.0 0.5 1.0
 	set leftclick roadGhost objClick
 
 }
 
 track roadGhost
+hide cursor

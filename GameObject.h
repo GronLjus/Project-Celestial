@@ -5,6 +5,8 @@
 
 namespace Resources
 {
+	enum GameObjectType{ GameObjectType_ROUTE, GameObjectType_SCENERY, GameObjectType_TRAVELING};
+
 	class GameObject : public PositionableObject
 	{
 		public:
@@ -14,6 +16,7 @@ namespace Resources
 			unsigned int GetScriptId() const;
 			bool IsFlipBuffered(unsigned char flip);
 			void SetParent(BaseObject* parent);
+			virtual GameObjectType GetType() const;
 
 			///<summary>Gets the transformation matrix of the object and stores it internally as the last transformation used</summary>
 			///<returns>A matrix that describes the objects transformation</returns>

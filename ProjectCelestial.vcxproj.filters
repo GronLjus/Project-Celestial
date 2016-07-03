@@ -274,6 +274,18 @@
     <Filter Include="Resource Files\Content\Scripts\ToolBarScripts">
       <UniqueIdentifier>{10c9874e-a077-402e-8a33-ec46f840fae9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Entities\Routing">
+      <UniqueIdentifier>{12b71fb5-7c2a-4948-8ece-a33961ca3e27}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Resources\Objects\GameObjects">
+      <UniqueIdentifier>{4e9b13aa-98f9-4026-bd67-6053cf01af54}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Resources\Objects\GameObjects">
+      <UniqueIdentifier>{d8e35b3a-f6dd-4f35-8431-98f257c17a0d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Entities\Routing">
+      <UniqueIdentifier>{7ddf6b8a-6598-4238-a92b-b2c09cef6e5c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Project Celestial.h">
@@ -645,9 +657,6 @@
     <ClInclude Include="GameBoardHandler.h">
       <Filter>Header Files\Entities\Handlers</Filter>
     </ClInclude>
-    <ClInclude Include="GameObject.h">
-      <Filter>Header Files\Resources\Objects</Filter>
-    </ClInclude>
     <ClInclude Include="DrawingBoard.h">
       <Filter>Header Files\Entities\Objects</Filter>
     </ClInclude>
@@ -704,6 +713,18 @@
     </ClInclude>
     <ClInclude Include="CursorCodes.h">
       <Filter>Header Files\Logic</Filter>
+    </ClInclude>
+    <ClInclude Include="RouteNodeObject.h">
+      <Filter>Header Files\Resources\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="RoutingManager.h">
+      <Filter>Header Files\Entities\Routing</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject.h">
+      <Filter>Header Files\Resources\Objects\GameObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="GameRouteObject.h">
+      <Filter>Header Files\Resources\Objects\GameObjects</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -920,9 +941,6 @@
     <ClCompile Include="DrawingBoard.cpp">
       <Filter>Source Files\Entities\Objects</Filter>
     </ClCompile>
-    <ClCompile Include="GameBoard.cpp">
-      <Filter>Source Files\Resources\Objects</Filter>
-    </ClCompile>
     <ClCompile Include="GUIEntityHandler.cpp">
       <Filter>Source Files\Entities\Handlers</Filter>
     </ClCompile>
@@ -961,6 +979,18 @@
     </ClCompile>
     <ClCompile Include="GridLoader.cpp">
       <Filter>Source Files\Resources\Loaders\ShapeLoaders</Filter>
+    </ClCompile>
+    <ClCompile Include="RouteNodeObject.cpp">
+      <Filter>Source Files\Resources\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="GameBoard.cpp">
+      <Filter>Source Files\Resources\Objects\GameObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="GameRouteObject.cpp">
+      <Filter>Source Files\Resources\Objects\GameObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="RoutingManager.cpp">
+      <Filter>Source Files\Entities\Routing</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
