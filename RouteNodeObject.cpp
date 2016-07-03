@@ -16,6 +16,7 @@ RouteNodeObject::RouteNodeObject(Vector3 position, unsigned int width)
 	this->position = position;
 	width = width;
 	routes = new CelestialSlicedList<route>(32);
+	objId = 0;
 
 }
 
@@ -49,6 +50,13 @@ void RouteNodeObject::SetPosition(Vector3 pos)
 {
 
 	position = pos;
+
+}
+
+void RouteNodeObject::SetObjId(unsigned int id)
+{
+
+	this->objId = id;
 
 }
 
@@ -87,6 +95,13 @@ unsigned int RouteNodeObject::GetRoutes() const
 {
 
 	return maxRoutes;
+
+}
+
+unsigned int RouteNodeObject::GetWidth() const
+{
+
+	return width;
 
 }
 

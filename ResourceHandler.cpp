@@ -112,6 +112,15 @@ void ResourceHandler::handleMess(Message* currentMessage, unsigned int time)
 		outId = obj->GetId();
 
 	}
+	else if (currentMessage->mess == ResourceMess_LOADROUTEOBJ)
+	{
+
+		unsigned int width = (currentMessage->params[0] | ((int)currentMessage->params[1] << 8) | ((int)currentMessage->params[2] << 16) | ((int)currentMessage->params[3] << 24));
+		RouteNodeObject* obj = new RouteNodeObject(Vector3(0.0f,0.0f,0.0f), width);
+		obj->SetId(gameObjects->Add(obj));
+		outId = obj->GetId();
+
+	}
 	else if (currentMessage->mess == ResourceMess_LOADCOPYOBJECT)
 	{
 

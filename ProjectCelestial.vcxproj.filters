@@ -932,9 +932,6 @@
     <ClCompile Include="BaseObject.cpp">
       <Filter>Source Files\Resources\Objects</Filter>
     </ClCompile>
-    <ClCompile Include="GameObject.cpp">
-      <Filter>Source Files\Resources\Objects</Filter>
-    </ClCompile>
     <ClCompile Include="ObjectTree.cpp">
       <Filter>Source Files\CrossHandler-Tools\Container</Filter>
     </ClCompile>
@@ -983,14 +980,17 @@
     <ClCompile Include="RouteNodeObject.cpp">
       <Filter>Source Files\Resources\Objects</Filter>
     </ClCompile>
-    <ClCompile Include="GameBoard.cpp">
-      <Filter>Source Files\Resources\Objects\GameObjects</Filter>
-    </ClCompile>
     <ClCompile Include="GameRouteObject.cpp">
       <Filter>Source Files\Resources\Objects\GameObjects</Filter>
     </ClCompile>
     <ClCompile Include="RoutingManager.cpp">
       <Filter>Source Files\Entities\Routing</Filter>
+    </ClCompile>
+    <ClCompile Include="GameObject.cpp">
+      <Filter>Source Files\Resources\Objects\GameObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="GameBoard.cpp">
+      <Filter>Source Files\Resources\Objects</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

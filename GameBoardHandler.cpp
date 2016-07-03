@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "GameBoardHandler.h"
+#include "GameRouteObject.h"
 
 using namespace Entities;
 using namespace Resources;
@@ -530,6 +531,37 @@ void GameBoardHandler::UpdateMessages(unsigned int time)
 
 			localGameBoard = gB;
 
+		}
+		else if (currentMessage->mess == GameBoardMess_ADDROUTE && localGameBoard != nullptr)
+		{
+
+			RouteNodeObject* rno = (RouteNodeObject*)(gameObjects->GetValue(param1));
+			Vector3 pos;
+			memcpy(&(pos.x), &(currentMessage->params[4]), 4);
+			memcpy(&(pos.y), &(currentMessage->params[8]), 4);
+			memcpy(&(pos.z), &(currentMessage->params[12]), 4);
+			rno->SetPosition(pos);
+			float width = ((float)rno->GetWidth()) / 2;
+
+			BoundingSphere sphere = BoundingSphere(pos.x, pos.y, pos.z, width);
+			unsigned int amount = 0;
+
+			unsigned int* collided = localGameBoard->GetCollidedObject(&sphere, GameObjectType_ROUTE, amount);
+
+			for (unsigned int i = 0; i < amount; i++)
+			{
+
+				if (i == 0 && rno->GetObjId() == 0)
+				{
+
+					rno->SetObjId(collided[i]);
+
+				}
+
+				GameRouteObject* parentObject = (GameRouteObject*)gameObjects->GetValue(collided[i]);
+				parentObject->AddRouteNode(rno);
+
+			}
 		}
 
 		currentMessage->read = true;

@@ -243,6 +243,89 @@ unsigned int ObjectTree::GetClosestObject(Vector3 origin, Vector3 unitDirection,
 
 }
 
+unsigned int* ObjectTree::GetCollidedObject(BoundingSphere* sphere, GameObjectType filter, unsigned int &objectsAmount) const
+{
+
+	unsigned int objcts = 0;
+
+	if (objects != nullptr)
+	{
+
+		for (unsigned int i = 0; i < objectAmountMax; i++)
+		{
+
+			GameObject* localObj = objects->GetValue(i);
+			bool dbl = false;
+
+			for (unsigned k = 0; k < objcts && !dbl; k++)
+			{
+
+				dbl = collidedObjects[k] == localObj->GetTargetId();
+
+			}
+
+			if (localObj->GetType() == filter && !dbl)
+			{
+
+				Intersection inter = localObj->GetBox()->IntersectsBounding(sphere, Shape_SPHERE);
+
+				if (inter != Intersection_BACK && objcts < collidedObjectAmounts)
+				{
+
+					collidedObjects[objcts] = localObj->GetTargetId();
+					objcts++;
+
+				}
+			}
+		}
+	}
+	else
+	{
+
+		for (unsigned int i = 0; i < 4; i++)
+		{
+
+			float dist = 0;
+
+			if (subTrees[i]->GetObjects() > 0)
+			{
+
+				if (subTrees[i]->GetBox()->IntersectsBounding(sphere, Shape_SPHERE) != Intersection_BACK)
+				{
+
+					unsigned int objectAmounts = 0;
+					unsigned int* closestObjects = subTrees[i]->GetCollidedObject(sphere, filter, objectAmounts);
+
+					for (unsigned int k = 0; k < objectAmounts; k++)
+					{
+
+						bool dbl = false;
+
+						for (unsigned int j = 0; j < objcts && !dbl; j++)
+						{
+
+							dbl = collidedObjects[j] == closestObjects[k];
+
+						}
+
+						if (objcts < collidedObjectAmounts && !dbl)
+						{
+
+							collidedObjects[objcts] = closestObjects[k];
+							objcts++;
+
+						}
+					}
+				}
+			}
+		}
+	}
+
+	objectsAmount = objcts;
+	return collidedObjects;
+
+}
+
 void ObjectTree::AddObject(GameObject* object)
 {
 

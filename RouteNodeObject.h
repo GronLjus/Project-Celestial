@@ -20,7 +20,9 @@ namespace Resources
 		unsigned int GetObjId() const;
 		RouteNodeObject* GetRoute(unsigned int localId, float &dist);
 		unsigned int GetRoutes() const;
+		unsigned int GetWidth() const;
 
+		void SetObjId(unsigned int id);
 		void LinkObj(unsigned int objId);
 		void AddRoute(RouteNodeObject* node);
 		void RemoveRoute(unsigned int goalId);

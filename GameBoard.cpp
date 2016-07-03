@@ -192,6 +192,13 @@ unsigned int* GameBoard::GetCollidedObject(GameObject* object,unsigned int &amou
 
 }
 
+unsigned int* GameBoard::GetCollidedObject(BoundingSphere* sphere, GameObjectType filter, unsigned int &amount) const
+{
+
+	return objectRoot->GetCollidedObject(sphere, filter, amount);
+
+}
+
 GameBoard::~GameBoard()
 {
 
