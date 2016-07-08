@@ -2,6 +2,7 @@
 #include "GameRouteObject.h"
 
 using namespace Resources;
+using namespace Entities;
 using namespace CrossHandlers;
 using namespace CelestialMath;
 
@@ -31,6 +32,43 @@ RouteNodeObject* GameRouteObject::GetRouteNode(unsigned int localId) const
 {
 
 	return nodes->GetValue(localId);
+
+}
+
+RouteNodeObject* GameRouteObject::GetRouteNode(Vector3 position) const
+{
+
+	RouteNodeObject* retval = nullptr;
+
+	for (unsigned int i = 0; i < routeNodes && retval == nullptr;i++)
+	{
+	
+		RouteNodeObject* val = nodes->GetValue(i);
+		float dist = VectorDot(position, val->GetPosition());
+
+		if (dist <= 1.0f)
+		{
+
+			retval = val;
+
+		}
+	}
+
+	return retval;
+
+}
+
+unsigned int GameRouteObject::GetWidth() const
+{
+
+	return width;
+
+}
+
+void GameRouteObject::SetWidth(unsigned int width)
+{
+
+	this->width = width;
 
 }
 
@@ -92,10 +130,10 @@ void GameRouteObject::AddRouteNode(RouteNodeObject* node)
 
 	unsigned int newId = nodes->Add(node);
 
-	if (newId > routeNodes)
+	if (newId+1 > routeNodes)
 	{
 
-		routeNodes = newId;
+		routeNodes = newId+1;
 
 	}
 }

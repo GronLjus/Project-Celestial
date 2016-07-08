@@ -194,32 +194,6 @@ RunTimeError LoadObjectOperator(unsigned int returnVar, unsigned char* params, u
 
 }
 
-RunTimeError LoadRouteObjectOperator(unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int mId, RunTimeCommons* rtc)
-{
-
-	if (paramSize < 4)
-	{
-
-		return RunTimeError_BADPARAMS;
-
-	}
-
-	unsigned int s = 4;
-	unsigned int var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
-	rtc->memory->ReadVariable(var - 1, rtc->intLoader, s);
-
-	Message mess;
-	mess.returnParam = returnVar;
-	mess.destination = MessageSource_RESOURCES;
-	mess.type = MessageType_RESOURCES;
-	mess.mess = ResourceMess_LOADROUTEOBJ;
-	mess.SetParams(rtc->intLoader, 0, 4);
-	rtc->varWaiting->Add(true, returnVar - 1);
-
-	return sendMessageOut(mess, rtc);
-
-}
-
 RunTimeError LoadObjectCopyOperator(unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int mId, RunTimeCommons* rtc)
 {
 
@@ -461,6 +435,7 @@ RunTimeError AddRouteObjectOperator(unsigned int returnVar, unsigned char* param
 	unsigned int s = 4;
 
 	Message mess;
+	mess.returnParam = returnVar;
 	mess.destination = MessageSource_ENTITIES;
 	mess.type = MessageType_ENTITIES;
 	mess.mess = GameBoardMess_ADDROUTE;
@@ -477,6 +452,13 @@ RunTimeError AddRouteObjectOperator(unsigned int returnVar, unsigned char* param
 	var1 = (params[12] | ((int)params[13] << 8) | ((int)params[14] << 16) | ((int)params[15] << 24));
 	rtc->memory->ReadVariable(var1 - 1, rtc->intLoader, s);
 	mess.SetParams(rtc->intLoader, 12, 4);
+
+	if (returnVar > 0)
+	{
+
+		rtc->varWaiting->Add(true, returnVar - 1);
+
+	}
 
 	return sendMessageOut(mess, rtc);
 
@@ -2728,7 +2710,6 @@ CelScriptRuntimeHandler::CelScriptRuntimeHandler(MessageQueue* mQueue, Celestial
 	operators[opcode_LOADGMBRD] = LoadGameBoardOperator;
 	operators[opcode_LOADCAM] = LoadCameraOperator;
 	operators[opcode_LOADOBJCT] = LoadObjectOperator;
-	operators[opcode_LOADRTOBJ] = LoadRouteObjectOperator;
 	operators[opcode_LOADCPY] = LoadObjectCopyOperator;
 
 	operators[opcode_UNLOAD] = UnLoadOperator;

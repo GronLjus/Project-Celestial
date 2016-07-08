@@ -2,7 +2,7 @@
 #include "RouteNodeObject.h"
 
 using namespace CrossHandlers;
-using namespace Resources;
+using namespace Entities;
 using namespace CelestialMath;
 
 RouteNodeObject::RouteNodeObject() : RouteNodeObject(Vector3(0,0,0),0)
@@ -17,33 +17,8 @@ RouteNodeObject::RouteNodeObject(Vector3 position, unsigned int width)
 	width = width;
 	routes = new CelestialSlicedList<route>(32);
 	objId = 0;
+	maxRoutes = 0;
 
-}
-
-void RouteNodeObject::Update(Message* mess)
-{
-
-	if (mess->type == MessageType_OBJECT)
-	{
-
-		Vector3 newVec;
-
-		switch (mess->mess)
-		{
-		case ObjectMess_MOVE:
-			memcpy(&newVec.x, mess->params, 4);
-			memcpy(&newVec.y, &mess->params[4], 4);
-			memcpy(&newVec.z, &mess->params[8], 4);
-			position += newVec;
-			break;
-		case ObjectMess_POS:
-			memcpy(&position.x, mess->params, 4);
-			memcpy(&position.y, &mess->params[4], 4);
-			memcpy(&position.z, &mess->params[8], 4);
-			break;
-
-		}
-	}
 }
 
 void RouteNodeObject::SetPosition(Vector3 pos)
@@ -122,12 +97,26 @@ void RouteNodeObject::AddRoute(RouteNodeObject* node)
 
 	unsigned int x = routes->Add(rte);
 
-	if (x >= maxRoutes)
+	if (x+1 >= maxRoutes)
 	{
 
-		maxRoutes = x;
+		maxRoutes = x+1;
 
 	}
+}
+
+unsigned int RouteNodeObject::GetId() const
+{
+
+	return id;
+
+}
+
+void RouteNodeObject::SetId(unsigned int id)
+{
+
+	this->id = id;
+
 }
 
 void RouteNodeObject::RemoveRoute(unsigned int id)
@@ -144,9 +133,6 @@ void RouteNodeObject::RemoveRoute(unsigned int id)
 		if (rte.goal->GetId() == id && !rte.deleted)
 		{
 
-			rte.deleted = true;
-			rte.goal->RemoveRoute(GetId());
-			routes->Add(rte, i);
 			routes->Remove(i);
 
 		}

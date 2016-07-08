@@ -13,8 +13,7 @@ namespace CrossHandlers
 		ResourceMess_LOADCAMERA, ResourceMess_LOADOBJECT,
 		ResourceMess_LOADCOPYOBJECT,
 		ResourceMess_LOADGAMEBOARD, ResourceMess_LOADMESH, ResourceMess_LOADLIGHT, ResourceMess_LOADCHARKEYTRIGGER, ResourceMess_LOADKEYTRIGGER, ResourceMess_LOADSCRIPT,
-		ResourceMess_LOADGUI, ResourceMess_UNLOADOBJECT,
-		ResourceMess_LOADROUTEOBJ, ResourceMess_NA
+		ResourceMess_LOADGUI, ResourceMess_UNLOADOBJECT, ResourceMess_NA
 	};
 	enum EventMess{ EventMess_OBJECTADDED, EventMess_SCRIPTADDED, EventMess_GUIOBJECTADDED, EventMess_LNKDBG, EventMess_WAITFORFRAME, EventMess_NA };
 	enum GUIMess{

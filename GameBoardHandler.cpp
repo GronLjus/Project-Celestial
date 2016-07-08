@@ -535,31 +535,33 @@ void GameBoardHandler::UpdateMessages(unsigned int time)
 		else if (currentMessage->mess == GameBoardMess_ADDROUTE && localGameBoard != nullptr)
 		{
 
-			RouteNodeObject* rno = (RouteNodeObject*)(gameObjects->GetValue(param1));
 			Vector3 pos;
-			memcpy(&(pos.x), &(currentMessage->params[4]), 4);
-			memcpy(&(pos.y), &(currentMessage->params[8]), 4);
-			memcpy(&(pos.z), &(currentMessage->params[12]), 4);
-			rno->SetPosition(pos);
-			float width = ((float)rno->GetWidth()) / 2;
+			memcpy(&(pos.x), &(currentMessage->params[0]), 4);
+			memcpy(&(pos.y), &(currentMessage->params[4]), 4);
+			memcpy(&(pos.z), &(currentMessage->params[8]), 4);
+			float width = 1.0f;
 
 			BoundingSphere sphere = BoundingSphere(pos.x, pos.y, pos.z, width);
 			unsigned int amount = 0;
 
 			unsigned int* collided = localGameBoard->GetCollidedObject(&sphere, GameObjectType_ROUTE, amount);
+			unsigned int retVal = routing->AddNode(pos,collided,amount);
 
-			for (unsigned int i = 0; i < amount; i++)
+			if (currentMessage->source == MessageSource_CELSCRIPT && currentMessage->returnParam > 0)
 			{
 
-				if (i == 0 && rno->GetObjId() == 0)
-				{
-
-					rno->SetObjId(collided[i]);
-
-				}
-
-				GameRouteObject* parentObject = (GameRouteObject*)gameObjects->GetValue(collided[i]);
-				parentObject->AddRouteNode(rno);
+				messageBuffer[this->currentMessage].timeSent = time;
+				messageBuffer[this->currentMessage].destination = MessageSource_CELSCRIPT;
+				messageBuffer[this->currentMessage].type = MessageType_SCRIPT;
+				messageBuffer[this->currentMessage].mess = ScriptMess_RESUME;
+				unsigned char tempBuff[]{ currentMessage->senderId >> 0, currentMessage->senderId >> 8, currentMessage->senderId >> 16, currentMessage->senderId >> 24,
+					currentMessage->returnParam >> 0, currentMessage->returnParam >> 8, currentMessage->returnParam >> 16, currentMessage->returnParam >> 24,
+					retVal >> 0, retVal >> 8, retVal >> 16, retVal >> 24
+				};
+				messageBuffer[this->currentMessage].SetParams(tempBuff, 0, 12);
+				messageBuffer[this->currentMessage].read = false;
+				outQueue->PushMessage(&messageBuffer[this->currentMessage]);
+				this->currentMessage = (this->currentMessage + 1) % outMessages;
 
 			}
 		}

@@ -1,19 +1,17 @@
 #pragma once
 
-#include "BaseObject.h"
 #include "CelestialMath.h"
 #include "CelestialSlicedList.h"
 
-namespace Resources
+namespace Entities
 {
 
-	class RouteNodeObject : public BaseObject
+	class RouteNodeObject
 	{
 
 	public:
 		RouteNodeObject();
 		RouteNodeObject(CelestialMath::Vector3 position, unsigned int width);
-		virtual void Update(CrossHandlers::Message* mess);
 		void SetPosition(CelestialMath::Vector3 pos);
 
 		CelestialMath::Vector3 GetPosition() const;
@@ -26,6 +24,8 @@ namespace Resources
 		void LinkObj(unsigned int objId);
 		void AddRoute(RouteNodeObject* node);
 		void RemoveRoute(unsigned int goalId);
+		unsigned int GetId() const;
+		void SetId(unsigned int id);
 
 		virtual ~RouteNodeObject();
 
@@ -45,6 +45,7 @@ namespace Resources
 
 		};
 
+		unsigned int id;
 		unsigned int objId;
 		
 		CelestialMath::Vector3 position;

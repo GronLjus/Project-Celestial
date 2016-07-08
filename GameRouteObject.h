@@ -13,14 +13,18 @@ namespace Resources
 			virtual GameObjectType GetType() const;
 
 			unsigned int GetRoutenodes() const;
-			RouteNodeObject* GetRouteNode(unsigned int localId) const;
-			void AddRouteNode(RouteNodeObject* node);
+			Entities::RouteNodeObject* GetRouteNode(unsigned int localId) const;
+			Entities::RouteNodeObject* GetRouteNode(CelestialMath::Vector3 position) const;
+			unsigned int GetWidth() const;
 
+			void SetWidth(unsigned int width);
+			void AddRouteNode(Entities::RouteNodeObject* node);
 			virtual ~GameRouteObject();
 
 		private:
-			CrossHandlers::CelestialSlicedList<RouteNodeObject*>* nodes;
+			CrossHandlers::CelestialSlicedList<Entities::RouteNodeObject*>* nodes;
 			unsigned int routeNodes;
+			unsigned int width;
 
 	};
 }

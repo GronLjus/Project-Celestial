@@ -9,7 +9,6 @@ namespace Logic
 		opcode_LOADLIGHT, opcode_LOADMESH, opcode_LOADSCRIPT, 
 		opcode_LOADTXTBX, opcode_LOADPANEL, opcode_LOADIMAGE,
 		opcode_LOADGMBRD, opcode_LOADCAM, opcode_LOADOBJCT,
-		opcode_LOADRTOBJ,
 		opcode_LOADCPY,
 
 		opcode_UNLOAD,

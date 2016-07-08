@@ -3,7 +3,6 @@ $
 
 	endTile = import 'endTile'
 	hcktrck = 0
-	hckrte = 0
 	hckX = 0.0
 	hckY = 0.0
 	hckZ = 0.0
@@ -16,7 +15,6 @@ if hcktrck : 0
 	hook tracking
 	hcktrck = 1
 	
-	hckrte = load routegoal 1
 	hckX = ?f0
 	hckY = ?f1
 	hckZ = ?f2
@@ -42,8 +40,7 @@ else
 	clear tracking
 	hcktrck = 0
 	
-	rteObj = load routegoal 1
-	add routegoal rteObj ?f0 ?f1 ?f2
-	add routegoal hckrte hckX hckY hckZ
+	add routegoal ?f0 ?f1 ?f2 1
+	add routegoal hckX hckY hckZ 1
 
 }
