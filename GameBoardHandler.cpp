@@ -565,6 +565,36 @@ void GameBoardHandler::UpdateMessages(unsigned int time)
 
 			}
 		}
+		else if (currentMessage->mess == GameBoardMess_TRAVEL)
+		{
+
+			unsigned int param2 = currentMessage->params[4] |
+				((int)currentMessage->params[5] << 8) |
+				((int)currentMessage->params[6] << 16) |
+				((int)currentMessage->params[7] << 24);
+
+			if (param2 > 0)
+			{
+
+				routing->Travel((GameTravelObject*)gameObjects->GetValue(param1), param2-1, time);
+
+			}
+		}
+		else if (currentMessage->mess == GameBoardMess_SPAWN)
+		{
+
+			unsigned int param2 = currentMessage->params[4] |
+				((int)currentMessage->params[5] << 8) |
+				((int)currentMessage->params[6] << 16) |
+				((int)currentMessage->params[7] << 24);
+
+			if (param2 > 0)
+			{
+
+				routing->Spawn((GameTravelObject*)gameObjects->GetValue(param1), param2-1);
+
+			}
+		}
 
 		currentMessage->read = true;
 		currentMessage = inQueue->PopMessage();
@@ -757,6 +787,9 @@ void GameBoardHandler::Update(unsigned int time)
 		localGameBoard->FillInstanceBuffer(trackedObject);
 
 	}
+
+	routing->Update(time);
+
 }
 
 GameBoardHandler::~GameBoardHandler()

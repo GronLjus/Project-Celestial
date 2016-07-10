@@ -398,6 +398,14 @@ void PositionableObject::orbitAroundPoint(Vector3 point, float arc)
 	}
 }
 
+void PositionableObject::Point(CelestialMath::Vector3 point)
+{
+
+	rotateObjectToPoint(point);
+	createMatrix();
+
+}
+
 void PositionableObject::Update(Message* mess)
 {
 

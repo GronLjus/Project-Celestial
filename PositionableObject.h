@@ -34,6 +34,8 @@ namespace Resources
 			unsigned int GetSubobjects() const;
 			PositionableObject* GetSubobject(unsigned int object) const;
 
+			void Point(CelestialMath::Vector3 point);
+
 			void UpdateMatrix();
 			unsigned char GetLayer() const;
 			virtual ~PositionableObject();

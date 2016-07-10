@@ -483,7 +483,7 @@ void MeshObject::OptimizeLevels(bool convertFacesToTriangles)
 						int iValue = facesPerIndex[i][k]->GetIndexAt(indices[j]);
 
 						//Go through each face with the edgeindex
-						for(int h=0;h<faceIndices[iValue] && !foundEdge;h++)
+						for(int h=0;iValue >= 0 && h<faceIndices[iValue] && !foundEdge;h++)
 						{
 							
 							//Make sure the second face is not the first face

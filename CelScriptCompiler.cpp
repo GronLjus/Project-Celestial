@@ -1569,6 +1569,70 @@ CelScriptCompiler::CelScriptCompiler()
 		new bool[operators[OperatorTypes_LINK].params[1]]{ false }
 	};
 
+	operators[OperatorTypes_SPAWN].keyword = "spawn";
+	operators[OperatorTypes_SPAWN].enumAmount = 1;
+	operators[OperatorTypes_SPAWN].enums = new std::string[operators[OperatorTypes_SPAWN].enumAmount]; operators[OperatorTypes_SPAWN].enums[0] = "object";
+	operators[OperatorTypes_SPAWN].byteCodes = new unsigned char[operators[OperatorTypes_SPAWN].enumAmount]{ opcode_SPWN };
+	operators[OperatorTypes_SPAWN].params = new unsigned char[operators[OperatorTypes_SPAWN].enumAmount]{ 2 };
+	operators[OperatorTypes_SPAWN].minParams = new unsigned char[operators[OperatorTypes_SPAWN].enumAmount]{ 2 };
+	operators[OperatorTypes_SPAWN].paramsyntax = new VarType*[operators[OperatorTypes_SPAWN].enumAmount]{
+		new VarType[operators[OperatorTypes_SPAWN].params[0]]{ VarType_NUMBER, VarType_NUMBER }
+	};
+	operators[OperatorTypes_SPAWN].paramTypes = new ParamType*[operators[OperatorTypes_SPAWN].enumAmount]{
+		new ParamType[operators[OperatorTypes_SPAWN].params[0]]{ ParamType_NA, ParamType_NA }
+	};
+	operators[OperatorTypes_SPAWN].optionalPar = new bool*[operators[OperatorTypes_SPAWN].enumAmount]{
+		new bool[operators[OperatorTypes_SPAWN].params[0]]{ false, false }
+	};
+	operators[OperatorTypes_SPAWN].readParam = new unsigned char[operators[OperatorTypes_SPAWN].enumAmount]{ 0 };
+	operators[OperatorTypes_SPAWN].returns = new VarType[operators[OperatorTypes_SPAWN].enumAmount]{ VarType_NA };
+	operators[OperatorTypes_SPAWN].returnType = new ParamType[operators[OperatorTypes_SPAWN].enumAmount]{ ParamType_NA };
+	operators[OperatorTypes_SPAWN].writeParam = new unsigned char[operators[OperatorTypes_SPAWN].enumAmount]{ 0 };
+	operators[OperatorTypes_SPAWN].priority = 0;
+	operators[OperatorTypes_SPAWN].shortHandsAmounts = 0;
+	operators[OperatorTypes_SPAWN].amountParOperators = new unsigned char[operators[OperatorTypes_SPAWN].enumAmount]{ 0 };
+	operators[OperatorTypes_SPAWN].parRepeatsMin = new unsigned char*[operators[OperatorTypes_SPAWN].enumAmount]{
+		new unsigned char[operators[OperatorTypes_SPAWN].params[0]]{ 0,0 }
+	};
+	operators[OperatorTypes_SPAWN].parRepeatsMax = new unsigned char*[operators[OperatorTypes_SPAWN].enumAmount]{
+		new unsigned char[operators[OperatorTypes_SPAWN].params[0]]{ 0,0 }
+	};
+	operators[OperatorTypes_SPAWN].parOperatorAppend = new bool*[operators[OperatorTypes_SPAWN].enumAmount]{
+		new bool[operators[OperatorTypes_SPAWN].params[0]]{ false, false }
+	};
+
+	operators[OperatorTypes_TRAVEL].keyword = "travel";
+	operators[OperatorTypes_TRAVEL].enumAmount = 1;
+	operators[OperatorTypes_TRAVEL].enums = new std::string[operators[OperatorTypes_TRAVEL].enumAmount]; operators[OperatorTypes_TRAVEL].enums[0] = "object";
+	operators[OperatorTypes_TRAVEL].byteCodes = new unsigned char[operators[OperatorTypes_TRAVEL].enumAmount]{ opcode_TRVL };
+	operators[OperatorTypes_TRAVEL].params = new unsigned char[operators[OperatorTypes_TRAVEL].enumAmount]{ 2 };
+	operators[OperatorTypes_TRAVEL].minParams = new unsigned char[operators[OperatorTypes_TRAVEL].enumAmount]{ 2 };
+	operators[OperatorTypes_TRAVEL].paramsyntax = new VarType*[operators[OperatorTypes_TRAVEL].enumAmount]{
+		new VarType[operators[OperatorTypes_TRAVEL].params[0]]{ VarType_NUMBER, VarType_NUMBER }
+	};
+	operators[OperatorTypes_TRAVEL].paramTypes = new ParamType*[operators[OperatorTypes_TRAVEL].enumAmount]{
+		new ParamType[operators[OperatorTypes_TRAVEL].params[0]]{ ParamType_NA, ParamType_NA }
+	};
+	operators[OperatorTypes_TRAVEL].optionalPar = new bool*[operators[OperatorTypes_TRAVEL].enumAmount]{
+		new bool[operators[OperatorTypes_TRAVEL].params[0]]{ false, false }
+	};
+	operators[OperatorTypes_TRAVEL].readParam = new unsigned char[operators[OperatorTypes_TRAVEL].enumAmount]{ 0 };
+	operators[OperatorTypes_TRAVEL].returns = new VarType[operators[OperatorTypes_TRAVEL].enumAmount]{ VarType_NA };
+	operators[OperatorTypes_TRAVEL].returnType = new ParamType[operators[OperatorTypes_TRAVEL].enumAmount]{ ParamType_NA };
+	operators[OperatorTypes_TRAVEL].writeParam = new unsigned char[operators[OperatorTypes_TRAVEL].enumAmount]{ 0 };
+	operators[OperatorTypes_TRAVEL].priority = 0;
+	operators[OperatorTypes_TRAVEL].shortHandsAmounts = 0;
+	operators[OperatorTypes_TRAVEL].amountParOperators = new unsigned char[operators[OperatorTypes_TRAVEL].enumAmount]{ 0 };
+	operators[OperatorTypes_TRAVEL].parRepeatsMin = new unsigned char*[operators[OperatorTypes_TRAVEL].enumAmount]{
+		new unsigned char[operators[OperatorTypes_TRAVEL].params[0]]{ 0,0 }
+	};
+	operators[OperatorTypes_TRAVEL].parRepeatsMax = new unsigned char*[operators[OperatorTypes_TRAVEL].enumAmount]{
+		new unsigned char[operators[OperatorTypes_TRAVEL].params[0]]{ 0,0 }
+	};
+	operators[OperatorTypes_TRAVEL].parOperatorAppend = new bool*[operators[OperatorTypes_TRAVEL].enumAmount]{
+		new bool[operators[OperatorTypes_TRAVEL].params[0]]{ false, false }
+	};
+
 
 	flowOps = new FlowController[FlowOperator_NA];
 

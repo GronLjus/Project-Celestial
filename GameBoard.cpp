@@ -3,6 +3,7 @@
 
 using namespace Resources;
 using namespace Entities;
+using namespace CrossHandlers;
 
 GameBoard::GameBoard(unsigned int cells, MeshObject* gridObject, unsigned char maxFlips, unsigned int maxInstances) : ScriptableObject()
 {
@@ -11,9 +12,11 @@ GameBoard::GameBoard(unsigned int cells, MeshObject* gridObject, unsigned char m
 	drawingBoard = new DrawingBoard(maxFlips,maxInstances);
 	drawingBoard->AddMesh(gridObject);
 	objectRoot = new ObjectTree(cells, 32, CelestialMath::Vector2(0.0f, 0.0f), ((BaseObject*)gridObject)->GetId());
+	travelObjects = new CelestialSlicedList<GameObject*>(32, nullptr);
 	camera = nullptr;
 	boardObject = nullptr;
 	boardNormal = Vector3(0.0f, 1.0f, 0.0f);
+	travelObjectsAmounts = 0;
 
 }
 
@@ -78,7 +81,28 @@ void GameBoard::Update(CrossHandlers::Message* mess)
 
 		case ObjectMess_REMOVECHILD:
 			param1 = mess->params[0] | ((int)mess->params[1] << 8) | ((int)mess->params[2] << 16) | ((int)mess->params[3] << 24);
-			objectRoot->RemoveObject(param1);
+			found = false;
+
+			for (i = 0; i < travelObjectsAmounts && !found; i++)
+			{
+
+				found = travelObjects->GetValue(i) != nullptr && travelObjects->GetValue(i)->GetId() == param1;
+
+				if (found)
+				{
+
+					travelObjects->Remove(i);
+
+				}
+			}
+			
+			if (!found)
+			{
+
+				objectRoot->RemoveObject(param1);
+
+			}
+
 			break;
 		default:
 			ScriptableObject::Update(mess);
@@ -103,13 +127,25 @@ void GameBoard::FillInstanceBuffer(GameObject* trackingObject)
 
 		}
 
+		for (unsigned int i = 0; i < travelObjectsAmounts; i++)
+		{
+
+			GameObject* go = travelObjects->GetValue(i);
+
+			if (go != nullptr)
+			{
+
+				drawingBoard->AddInstance(go);
+
+			}
+		}
+
 		if (boardObject != nullptr)
 		{
 
 			drawingBoard->AddInstance(boardObject);
 
 		}
-
 
 		unsigned int checkedBoxes = objectRoot->AddInstance(camera->GetView(), drawingBoard);
 		drawingBoard->FinalizeInstances(camera->GetView());
@@ -120,7 +156,20 @@ void GameBoard::FillInstanceBuffer(GameObject* trackingObject)
 void GameBoard::AddObject(GameObject* object)
 {
 
-	objectRoot->AddObject(object);
+	if (object->GetType() != GameObjectType_TRAVELING)
+	{
+
+		objectRoot->AddObject(object);
+
+	}
+	else
+	{
+
+		unsigned int id = travelObjects->Add(object);
+		travelObjectsAmounts = id + 1 > travelObjectsAmounts ? id + 1 : travelObjectsAmounts;
+
+	}
+
 	object->SetParent(this);
 
 }
@@ -170,7 +219,6 @@ CameraObject* GameBoard::GetCam() const
 
 }
 
-
 DrawingBoard* GameBoard::GetDrawingBoard() const
 {
 
@@ -204,5 +252,6 @@ GameBoard::~GameBoard()
 
 	delete drawingBoard;
 	delete objectRoot;
+	delete travelObjects;
 
 }

@@ -23,8 +23,8 @@ if hcktrck : 0
 else
 {
 
-	endObj = load object endTile 1
-	endObj2 = load object endTile 1
+	endObj = load object endTile 0
+	endObj2 = load object endTile 0
 	obj = load copyobject ?0
 
 	show cursor
@@ -40,7 +40,7 @@ else
 	clear tracking
 	hcktrck = 0
 	
-	add routegoal ?f0 ?f1 ?f2 1
 	add routegoal hckX hckY hckZ 1
+	add routegoal ?f0 ?f1 ?f2 1
 
 }

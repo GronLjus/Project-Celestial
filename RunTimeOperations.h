@@ -63,6 +63,7 @@ namespace Logic
 		opcode_STCNTNT, opcode_STBRDR,
 
 		opcode_TRCK, opcode_CRLTRCK, opcode_HCKTRCK, 
+		opcode_SPWN, opcode_TRVL,
 		opcode_GLUOBJCT,
 
 		opcode_JMPINVVAR,opcode_JMPNOW,opCode_WTFRVR,

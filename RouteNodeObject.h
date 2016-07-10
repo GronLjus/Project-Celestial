@@ -19,6 +19,10 @@ namespace Entities
 		RouteNodeObject* GetRoute(unsigned int localId, float &dist);
 		unsigned int GetRoutes() const;
 		unsigned int GetWidth() const;
+		unsigned int GetParent() const;
+		unsigned char GetOpenSet() const;
+		unsigned char GetClosedSet() const;
+		unsigned int GetStep() const;
 
 		void SetObjId(unsigned int id);
 		void LinkObj(unsigned int objId);
@@ -26,6 +30,10 @@ namespace Entities
 		void RemoveRoute(unsigned int goalId);
 		unsigned int GetId() const;
 		void SetId(unsigned int id);
+		void SetParent(unsigned int parent);
+		void SetOpenset(unsigned char open);
+		void SetClosedset(unsigned char closed);
+		void SetStep(unsigned int step);
 
 		virtual ~RouteNodeObject();
 
@@ -53,6 +61,11 @@ namespace Entities
 
 		CrossHandlers::CelestialSlicedList<route>* routes;
 		unsigned int maxRoutes;
+
+		unsigned char closedSet;
+		unsigned char openSet;
+		unsigned int parent;
+		unsigned int step;
 
 	};
 }

@@ -203,6 +203,7 @@
     <ClInclude Include="GameBoardHandler.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="GameRouteObject.h" />
+    <ClInclude Include="GameTravelObject.h" />
     <ClInclude Include="GraphicalMesh.h" />
     <ClInclude Include="GridLoader.h" />
     <ClInclude Include="GUIEntityHandler.h" />
@@ -340,6 +341,7 @@
     <ClCompile Include="GameBoardHandler.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="GameRouteObject.cpp" />
+    <ClCompile Include="GameTravelObject.cpp" />
     <ClCompile Include="GraphicalMesh.cpp" />
     <ClCompile Include="GridLoader.cpp" />
     <ClCompile Include="GUIEntityHandler.cpp" />

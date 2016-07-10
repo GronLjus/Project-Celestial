@@ -4,6 +4,7 @@
 #include "CameraObject.h"
 #include "CrossScriptMemoryObject.h"
 #include "GameRouteObject.h"
+#include "GameTravelObject.h"
 
 using namespace Resources;
 using namespace CrossHandlers;
@@ -72,6 +73,12 @@ GameObject* ResourceHandler::loadGameObject(unsigned int param1, GameObjectType 
 	{
 
 		obj = new GameRouteObject(baseBox, baseSphere, meshId);
+
+	}
+	else if (type == GameObjectType_TRAVELING)
+	{
+
+		obj = new GameTravelObject(baseBox, baseSphere, meshId);
 
 	}
 	else

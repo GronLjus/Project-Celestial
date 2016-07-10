@@ -1,13 +1,12 @@
 $
 {
 	
-	objClick = load script  'Content\Scripts\ToolBarScripts\RunwayGhostClick.celsrc'
-	tile = import 'baseTile'
-	runwayGhost = load object tile 0
-	size runwayGhost 2.0 0.5 2.0
-	set leftclick runwayGhost objClick
+	plane1Mesh = import 'baseTile'
 
 }
 
-track runwayGhost
-hide cursor
+plane = load object plane1Mesh 2
+size plane 1.0 0.195 0.932
+add plane
+spawn plane 1
+travel plane 5

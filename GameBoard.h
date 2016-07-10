@@ -28,6 +28,9 @@ namespace Resources
 
 		private:
 			CrossHandlers::ObjectTree* objectRoot;
+			CrossHandlers::CelestialSlicedList<GameObject*>* travelObjects;
+			unsigned int travelObjectsAmounts;
+
 			Entities::DrawingBoard* drawingBoard;
 			Resources::CameraObject* camera;
 			GameObject* boardObject;

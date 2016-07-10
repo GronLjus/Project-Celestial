@@ -44,7 +44,7 @@ RouteNodeObject* GameRouteObject::GetRouteNode(Vector3 position) const
 	{
 	
 		RouteNodeObject* val = nodes->GetValue(i);
-		float dist = VectorDot(position, val->GetPosition());
+		float dist = VectorDot(position - val->GetPosition());
 
 		if (dist <= 1.0f)
 		{
@@ -75,9 +75,12 @@ void GameRouteObject::SetWidth(unsigned int width)
 void GameRouteObject::AddRouteNode(RouteNodeObject* node)
 {
 
-	bool stop = false;
+	unsigned int left = 0;
+	unsigned int right = 0;
+	float distLeft = -1.0f;
+	float distRight = -1.0f;
 
-	for (unsigned int i = 0; i < routeNodes && !stop; i++)
+	for (unsigned int i = 0; i < routeNodes; i++)
 	{
 
 		RouteNodeObject* nodeHere = nodes->GetValue(i);
@@ -87,45 +90,91 @@ void GameRouteObject::AddRouteNode(RouteNodeObject* node)
 
 			Vector3 vect = node->GetPosition() - nodeHere->GetPosition();
 			float distSQR = VectorDot(vect);
+			float vD = VectorDot(vect, this->GetDirection());
+
+			if (vD >= 0 && (distSQR < distRight || distRight < 0))
+			{
+
+				distRight = distSQR;
+				right = i;
+
+			}
+			else if (vD < 0 && (distSQR < distLeft || distLeft < 0))
+			{
+
+				distLeft = distSQR;
+				left = i;
+
+			}
+
 			float dist2 = -1.0f;
 			bool isOnSame = false;
 
-			for (unsigned int k = 0; k < nodeHere->GetRoutes() && !stop; k++)
+		}
+
+	}
+
+	RouteNodeObject* leftNode = nodes->GetValue(left);
+	RouteNodeObject* rightNode = nodes->GetValue(right);
+
+	if (distLeft < 0 && distRight >= 0)
+	{
+
+		node->AddRoute(rightNode);
+		rightNode->AddRoute(node);
+
+	}
+	else if (distRight < 0 && distLeft >= 0)
+	{
+
+		node->AddRoute(leftNode);
+		leftNode->AddRoute(node);
+
+	}
+	else if (distRight >= 0 && distLeft >= 0)
+	{
+
+		bool stop = false;
+
+		for (unsigned int i = 0; i < leftNode->GetRoutes() && !stop; i++)
+		{
+
+			float dist;
+			RouteNodeObject* nodeHere = leftNode->GetRoute(i, dist);
+
+			if (nodeHere != nullptr && nodeHere->GetId() == right)
 			{
 
-				RouteNodeObject* routeNode = nodeHere->GetRoute(k, dist2);
+				leftNode->RemoveRoute(i);
+				stop = true;
 
-				if (routeNode->GetObjId() == GetId())
-				{
-
-					Vector3 dir = routeNode->GetPosition() - nodeHere->GetPosition();
-
-					if (VectorDot(dir, vect) > 0)
-					{
-
-						isOnSame = true;
-
-						if (dist2 > distSQR)
-						{
-
-							stop = true;
-							nodeHere->RemoveRoute(routeNode->GetId());
-							nodeHere->AddRoute(node);
-							routeNode->AddRoute(node);
-
-						}
-					}
-				}
 			}
 
-			if (!isOnSame)
+		}
+
+		stop = false;
+
+		for (unsigned int i = 0; i < rightNode->GetRoutes() && !stop; i++)
+		{
+
+			float dist;
+			RouteNodeObject* nodeHere = rightNode->GetRoute(i, dist);
+
+			if (nodeHere != nullptr && nodeHere->GetId() == left)
 			{
 
+				rightNode->RemoveRoute(i);
 				stop = true;
-				nodeHere->AddRoute(node);
 
 			}
 		}
+
+		leftNode->AddRoute(node);
+		rightNode->AddRoute(node);
+
+		node->AddRoute(leftNode);
+		node->AddRoute(rightNode);
+
 	}
 
 	unsigned int newId = nodes->Add(node);

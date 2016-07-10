@@ -2576,6 +2576,58 @@ RunTimeError ExportVarOperator(unsigned int returnVar, unsigned char* params, un
 
 }
 
+RunTimeError SpawnObjectOperator(unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int mId, RunTimeCommons* rtc)
+{
+
+	if (paramSize < 8)
+	{
+
+		return RunTimeError_BADPARAMS;
+
+	}
+
+	unsigned int s = 4;
+	unsigned int var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
+	rtc->memory->ReadVariable(var - 1, rtc->intLoader, s);
+
+	Message mess;
+	mess.destination = MessageSource_ENTITIES;
+	mess.type = MessageType_ENTITIES;
+	mess.mess = GameBoardMess_SPAWN;
+	mess.SetParams(rtc->intLoader, 0, 4); 
+	var = (params[4] | ((int)params[5] << 8) | ((int)params[6] << 16) | ((int)params[7] << 24));
+	rtc->memory->ReadVariable(var - 1, rtc->intLoader, s);
+	mess.SetParams(rtc->intLoader, 4, 4);
+	return sendMessageOut(mess, rtc);
+
+}
+
+RunTimeError TravelObjectOperator(unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int mId, RunTimeCommons* rtc)
+{
+
+	if (paramSize < 8)
+	{
+
+		return RunTimeError_BADPARAMS;
+
+	}
+
+	unsigned int s = 4;
+	unsigned int var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
+	rtc->memory->ReadVariable(var - 1, rtc->intLoader, s);
+
+	Message mess;
+	mess.destination = MessageSource_ENTITIES;
+	mess.type = MessageType_ENTITIES;
+	mess.mess = GameBoardMess_TRAVEL;
+	mess.SetParams(rtc->intLoader, 0, 4);
+	var = (params[4] | ((int)params[5] << 8) | ((int)params[6] << 16) | ((int)params[7] << 24));
+	rtc->memory->ReadVariable(var - 1, rtc->intLoader, s);
+	mess.SetParams(rtc->intLoader, 4, 4);
+	return sendMessageOut(mess, rtc);
+
+}
+
 RunTimeError LinkDBGOperator(unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int mId, RunTimeCommons* rtc)
 {
 
@@ -2825,6 +2877,8 @@ CelScriptRuntimeHandler::CelScriptRuntimeHandler(MessageQueue* mQueue, Celestial
 	operators[opcode_TRCK] = TrackObjectOperator;
 	operators[opcode_CRLTRCK] = ClearTrackingOperator;
 	operators[opcode_HCKTRCK] = HockTrackingOperator;
+	operators[opcode_SPWN] = SpawnObjectOperator;
+	operators[opcode_TRVL] = TravelObjectOperator;
 	operators[opcode_GLUOBJCT] = GlueObjectOperator;
 
 	operators[opcode_JMPINVVAR] = JumpInv;

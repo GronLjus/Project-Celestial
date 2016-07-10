@@ -726,6 +726,9 @@
     <ClInclude Include="RouteNodeObject.h">
       <Filter>Header Files\Entities\Routing</Filter>
     </ClInclude>
+    <ClInclude Include="GameTravelObject.h">
+      <Filter>Header Files\Resources\Objects\GameObjects</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Camera.cpp">
@@ -991,6 +994,9 @@
     </ClCompile>
     <ClCompile Include="RouteNodeObject.cpp">
       <Filter>Source Files\Entities\Routing</Filter>
+    </ClCompile>
+    <ClCompile Include="GameTravelObject.cpp">
+      <Filter>Source Files\Resources\Objects\GameObjects</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

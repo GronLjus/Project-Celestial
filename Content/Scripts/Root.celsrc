@@ -15,6 +15,7 @@ endTile = load mesh 'Content\EndTile.obj'
 run toolbarLoad
 
 export 'endTile' endTile
+export 'plane1' load mesh 'Content\Plane1.obj'
 set camera cam
 
 pos cam 0.0 15.0 0.0

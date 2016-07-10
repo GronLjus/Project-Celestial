@@ -18,6 +18,9 @@ RouteNodeObject::RouteNodeObject(Vector3 position, unsigned int width)
 	routes = new CelestialSlicedList<route>(32);
 	objId = 0;
 	maxRoutes = 0;
+	openSet = 0;
+	closedSet = 0;
+	parent = 0;
 
 }
 
@@ -80,10 +83,66 @@ unsigned int RouteNodeObject::GetWidth() const
 
 }
 
+unsigned int RouteNodeObject::GetParent() const
+{
+
+	return parent;
+
+}
+
+unsigned char RouteNodeObject::GetOpenSet() const
+{
+
+	return openSet;
+
+}
+
+unsigned char RouteNodeObject::GetClosedSet() const
+{
+
+	return closedSet;
+
+}
+
+unsigned int RouteNodeObject::GetStep() const
+{
+
+	return step;
+
+}
+
 void RouteNodeObject::LinkObj(unsigned int objId)
 {
 
 	this->objId = objId;
+
+}
+
+void RouteNodeObject::SetParent(unsigned int parent)
+{
+
+	this->parent = parent;
+
+}
+
+void RouteNodeObject::SetOpenset(unsigned char open)
+{
+
+	this->openSet = open;
+
+}
+
+void RouteNodeObject::SetClosedset(unsigned char closed)
+{
+
+	this->closedSet = closed;
+
+}
+
+void RouteNodeObject::SetStep(unsigned int step)
+{
+
+	this->step = step;
 
 }
 
