@@ -10,7 +10,7 @@ namespace Resources
 
 		public:
 
-			virtual MeshObject* LoadShape(MeshObject::Material* mat);
+			virtual CelMesh* LoadShape();
 			virtual ~PlaneLoader();
 
 	};

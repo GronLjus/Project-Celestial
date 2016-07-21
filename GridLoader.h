@@ -10,8 +10,8 @@ namespace Resources
 
 	public:
 
-		MeshObject* LoadGrid(unsigned int cells, float gridSize) const;
-		virtual MeshObject* LoadShape(MeshObject::Material* mat);
+		CelMesh* LoadGrid(unsigned int cells, float gridSize) const;
+		virtual CelMesh* LoadShape();
 		virtual ~GridLoader();
 
 	};

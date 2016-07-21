@@ -56,14 +56,16 @@ GameObject* ResourceHandler::loadGameObject(unsigned int param1, GameObjectType 
 	BoundingBox* baseBox = nullptr;
 	BoundingSphere* baseSphere = nullptr;
 	unsigned int meshId = 0;
+	Vector3 baseScale = Vector3(1.0f,1.0f,1.0f);
 
 	if (mesh != nullptr)
 	{
 
 		meshId = mesh->GetId();
-		MeshObject* meshObj = (MeshObject*)mesh;
+		CelMesh* meshObj = (CelMesh*)mesh;
 		baseBox = (BoundingBox*)meshObj->GetBoundingObjectCopy(Shape_BOX);
 		baseSphere = (BoundingSphere*)meshObj->GetBoundingObjectCopy(Shape_SPHERE);
+		baseScale = meshObj->GetScale();
 
 	}
 
@@ -87,6 +89,9 @@ GameObject* ResourceHandler::loadGameObject(unsigned int param1, GameObjectType 
 		obj = new GameObject(baseBox, baseSphere, meshId);
 
 	}
+
+	obj->SetScale(baseScale);
+	obj->UpdateMatrix();
 	obj->SetId(gameObjects->Add(obj));
 	return obj;
 
@@ -197,19 +202,24 @@ void ResourceHandler::handleMess(Message* currentMessage, unsigned int time)
 
 		std::string stringParam((char*)(&currentMessage->params[0]));
 		BaseObject* bo = loader->LoadMeshFromFile(stringParam);
-		bo->SetId(gameObjects->Add(bo));
-		outId = bo->GetId();
 
-		messageBuffer[this->currentMessage].timeSent = time;
-		messageBuffer[this->currentMessage].destination = MessageSource_ENTITIES;
-		messageBuffer[this->currentMessage].type = MessageType_ENTITIES;
-		messageBuffer[this->currentMessage].mess = GameBoardMess_ADDMESH;
-		unsigned char tempBuff[]{ outId >> 0, outId >> 8, outId >> 16, outId >> 24 };
-		messageBuffer[this->currentMessage].SetParams(tempBuff, 0, 4);
-		messageBuffer[this->currentMessage].read = false;
-		outQueue->PushMessage(&messageBuffer[this->currentMessage]);
-		this->currentMessage = (this->currentMessage + 1) % outMessages;
+		if (bo != nullptr)
+		{
 
+			bo->SetId(gameObjects->Add(bo));
+			outId = bo->GetId();
+
+			messageBuffer[this->currentMessage].timeSent = time;
+			messageBuffer[this->currentMessage].destination = MessageSource_ENTITIES;
+			messageBuffer[this->currentMessage].type = MessageType_ENTITIES;
+			messageBuffer[this->currentMessage].mess = GameBoardMess_ADDMESH;
+			unsigned char tempBuff[]{ outId >> 0, outId >> 8, outId >> 16, outId >> 24 };
+			messageBuffer[this->currentMessage].SetParams(tempBuff, 0, 4);
+			messageBuffer[this->currentMessage].read = false;
+			outQueue->PushMessage(&messageBuffer[this->currentMessage]);
+			this->currentMessage = (this->currentMessage + 1) % outMessages;
+
+		}
 	}
 	else if (currentMessage->mess == ResourceMess_LOADGUI)
 	{

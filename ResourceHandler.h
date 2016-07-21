@@ -27,7 +27,7 @@ namespace Resources
 		CrossHandlers::CelestialSlicedList<BaseObject*>* gameObjects;
 		CelestialMath::vectorUI2 screen;
 		unsigned int bufferFlips;
-		MeshObject* gameBoardGridMesh;
+		CelMesh* gameBoardGridMesh;
 		unsigned int maxInstances;
 
 	};

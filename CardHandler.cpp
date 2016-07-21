@@ -59,6 +59,9 @@ CardHandler::CardHandler(int flips, bool useText)
 	dtd = 0;
 	out = RT_SUM;
 
+	defDiff = nullptr;
+	defAmb = nullptr;
+
 }
 
 HRESULT CardHandler::initBackBuffer()
@@ -167,8 +170,11 @@ HRESULT CardHandler::Init(HWND hwnd, GraphicQuality gQ, DrawingStyle dS)
 HRESULT CardHandler::InitShader(TextContainer* errorOut, unsigned int maxInstances)
 {
 
+	defAmb = CreateTexture(128, 128, 128);
+	defDiff = CreateTexture(180, 180, 180);
+
 	errorOut->AddTextLine("Creating shaders");
-	HRESULT hr = shader->Init(card, quality, dStyle, backBuffer, errorOut, maxInstances);
+	HRESULT hr = shader->Init(card, quality, dStyle, backBuffer, errorOut, maxInstances, defAmb->GetDXT()->GetShaderView(), defDiff->GetDXT()->GetShaderView());
 	if (FAILED(hr)){ return hr; }
 	bH = (CelestialBufferHandler*)(shader->GetBufferHandler());
 	shader->ToggleWireFrameMode(wireFrame, dStyle.enlighten);
@@ -529,6 +535,12 @@ void CardHandler::Release()
 	releaseBackBuffer();
 	swapChain->Release();
 	card->Release();
+
+	delete defAmb;
+	delete defDiff;
+
+	defAmb = nullptr;
+	defDiff = nullptr;
 
 }
 

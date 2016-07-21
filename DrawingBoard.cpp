@@ -118,41 +118,18 @@ void DrawingBoard::FinalizeInstances(ViewObject* onView)
 	}
 }
 
-unsigned int DrawingBoard::addObjectToVertexBuffer(Resources::MeshObject* mesh)
+unsigned int DrawingBoard::addObjectToVertexBuffer(CelMesh* mesh)
 {
 
 	unsigned int offset = vertexBuffer->GetBufferSize();
+	unsigned int vertices = 0;
+	CelMesh::Vertex* vertexB = mesh->GetVertexBuffer(vertices);
 
-	for (unsigned int i = 0; i < mesh->GetVertices(); i++)
+	for (unsigned int i = 0; i < vertices; i++)
 	{
-		Vector3 pos;
-		Vector2 tex;
-		Vector3 norm;
-		Resources::MeshObject::Vertex* temp = mesh->GetVertex(i);
 
-		if (temp->getVM() >= 3)
-		{
-
-			pos = Vector3(temp->getV()[0], temp->getV()[1], temp->getV()[2]);
-
-		}
-
-		if (temp->getVTM() >= 2)
-		{
-
-			tex = Vector2((temp->getVT())[0], 1 - (temp->getVT())[1]);
-
-		}
-
-		if (temp->getVNM() >= 3)
-		{
-
-			norm = Vector3((temp->getVN())[0], (temp->getVN())[1], (temp->getVN())[2]);
-
-		}
-
-
-		vertexBuffer->Add(BufferVertex(pos, tex, norm));
+		CelMesh::Vertex v = vertexB[i];
+		vertexBuffer->Add(BufferVertex(v.pos, v.uv, v.norm));
 
 	}
 
@@ -160,43 +137,21 @@ unsigned int DrawingBoard::addObjectToVertexBuffer(Resources::MeshObject* mesh)
 
 }
 
-void DrawingBoard::addObjectToIndexBuffer(Resources::MeshObject* mesh, unsigned int offset)
+void DrawingBoard::addObjectToIndexBuffer(CelMesh* mesh, unsigned int offset)
 {
 
-	Resources::MeshObject::Face* face = mesh->GetFirstFace();
+	unsigned int indices = 0;
+	unsigned int* iBuffer = mesh->GetIndexBuffer(indices);
 
-	while (face != nullptr)//Go through each face in the mesh
+	for (unsigned int i = 0; i < indices; i++)
 	{
 
-		for (int k = 0; k<face->getSize(); k++)//Go through each index in the face
-		{
-
-			indexBuffer->Add(offset + face->GetIndexAt(k));
-
-			if (!mesh->IsWireFrame())
-			{
-
-				if (face->GetAdjIndexAt(k) == -1)
-				{
-
-					indexBuffer->Add(offset + face->GetIndexAt(k));
-
-				}
-				else
-				{
-
-					indexBuffer->Add(offset + face->GetAdjIndexAt(k));
-
-				}
-			}
-		}
-
-		face = face->getNext();
+		indexBuffer->Add(offset + iBuffer[i]);
 
 	}
 }
 
-unsigned int DrawingBoard::AddMesh(MeshObject* mesh)
+unsigned int DrawingBoard::AddMesh(CelMesh* mesh)
 {
 
 	unsigned int indexStart = indexBuffer->GetBufferSize();
@@ -228,23 +183,12 @@ unsigned int DrawingBoard::AddMesh(MeshObject* mesh)
 	DXTextureResource* diff = nullptr;
 	DXTextureResource* norm = nullptr;
 
-	MeshObject::Material** mats = mesh->getMaterials();
-
-	if (mats != nullptr)
-	{
-
-		amb = mats[0]->GetAmbient() == nullptr ? nullptr : mesh->getMaterials()[0]->GetAmbient()->GetDXT();
-		diff = mats[0]->GetDiffuse() == nullptr ? nullptr : mesh->getMaterials()[0]->GetDiffuse()->GetDXT();
-		norm = mats[0]->GetNormal() == nullptr ? nullptr : mesh->getMaterials()[0]->GetNormal()->GetDXT();
-
-	}
-
 	GraphicalMesh meshRep(amb,
 		diff,
 		norm,
 		indexStart,
 		indexBuffer->GetBufferSize()-indexStart,
-		mesh->IsWireFrame() ? MeshType_WF : MeshType_SOLID);
+		mesh->IsWireframe() ? MeshType_WF : MeshType_SOLID);
 
 	meshesArr[localMesh] = meshRep;
 

@@ -25,7 +25,9 @@ namespace Graphics
 			HRESULT Init(ID3D11Device* card, GraphicQuality gQ, DrawingStyle dS, 
 				CrossHandlers::TextureResourceObject* backBuffer,
 				CrossHandlers::TextContainer* errorOut, 
-				unsigned int maxInstances);
+				unsigned int maxInstances,
+				ID3D11ShaderResourceView* dAmb,
+				ID3D11ShaderResourceView* dDiff);
 
 			void SetVertexBuffers(ID3D11Buffer* vertices, ID3D11Buffer* indices, ID3D11DeviceContext* context);
 			void ToggleWireFrameMode(bool val,bool light);
@@ -131,6 +133,8 @@ namespace Graphics
 			void transferRenderConstants(ID3D11DeviceContext* context);
 			void transferFrameConstants(ID3D11DeviceContext* context);
 			void transferLightConstants(ID3D11DeviceContext* context);
+			ID3D11ShaderResourceView* defaultAmbText;
+			ID3D11ShaderResourceView* defaultDiffText;
 		
 			///<summary>Wireframe-toogle</summary>
 			bool wf;

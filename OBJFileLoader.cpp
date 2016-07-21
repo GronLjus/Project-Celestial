@@ -18,9 +18,11 @@ OBJFileLoader::OBJFileLoader()
 
 }
 
-MeshObject* OBJFileLoader::Load(std::string text)
+CelMesh* OBJFileLoader::Load(std::string text)
 {
 
+	return nullptr;
+	/*
 	MeshObject* retVal= new MeshObject(ResourceLoader::MatID());//The object to load data into
 	retVal->AddMaterial(colLoader->LoadMaterial(255,255,255,"default",0.8f,0.2f));//Adds a default material
 	bool hasDef = false;
@@ -535,11 +537,11 @@ MeshObject* OBJFileLoader::Load(std::string text)
 				}
 			}
 		}
-	}*/
+	}
 
 	retVal->CalculateShapes();
 	fileIn.close();
-	return retVal;
+	return retVal;*/
 
 }
 

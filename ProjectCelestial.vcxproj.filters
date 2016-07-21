@@ -729,6 +729,12 @@
     <ClInclude Include="GameTravelObject.h">
       <Filter>Header Files\Resources\Objects\GameObjects</Filter>
     </ClInclude>
+    <ClInclude Include="CelMesh.h">
+      <Filter>Header Files\Resources\Objects\MeshObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="CLMSHFileLoader.h">
+      <Filter>Header Files\Resources\Loaders\FileLoaders</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Camera.cpp">
@@ -998,6 +1004,12 @@
     <ClCompile Include="GameTravelObject.cpp">
       <Filter>Source Files\Resources\Objects\GameObjects</Filter>
     </ClCompile>
+    <ClCompile Include="CLMSHFileLoader.cpp">
+      <Filter>Source Files\Resources\Loaders\FileLoaders</Filter>
+    </ClCompile>
+    <ClCompile Include="CelMesh.cpp">
+      <Filter>Source Files\Resources\Objects\MeshObject</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico">
@@ -1124,7 +1136,10 @@
     <None Include="Content\Scripts\ToolBarScripts\Button2Click.celsrc">
       <Filter>Resource Files\Content\Scripts\ToolBarScripts</Filter>
     </None>
-    <None Include="Content\EndTile.obj">
+    <None Include="Content\EndTile.clmsh">
+      <Filter>Resource Files\Content</Filter>
+    </None>
+    <None Include="Content\Tile.clmsh">
       <Filter>Resource Files\Content</Filter>
     </None>
   </ItemGroup>
@@ -1139,9 +1154,6 @@
     </Object>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="Content\Tile.obj">
-      <Filter>Resource Files\Content</Filter>
-    </Text>
     <Text Include="Content\Scripts\ToolBarScripts\RunwayGhostClick.celsrc">
       <Filter>Resource Files\Content\Scripts\ToolBarScripts</Filter>
     </Text>

@@ -1,5 +1,5 @@
 #pragma once
-#include "MeshObject.h"
+#include "CelMesh.h"
 
 namespace Resources
 {
@@ -12,7 +12,7 @@ namespace Resources
 			///<summary>Loads the shape into a meshobject</summary>
 			///<param name='mat'>[in]A pointer to the material this shape should use</param>
 			///<returns>A pointer to the meshobject created by the loader</returns>
-			virtual MeshObject* LoadShape(MeshObject::Material* mat) = 0;
+			virtual CelMesh* LoadShape() = 0;
 			virtual ~IShapeLoader(){}
 
 	};

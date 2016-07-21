@@ -1,6 +1,7 @@
 #pragma once
 
 #include "IFileLoader.h"
+#include "CelMesh.h"
 #include <string>
 
 namespace Resources
@@ -14,7 +15,7 @@ namespace Resources
 			///<summary>Loads a mesh</summary>
 			///<param name='text'>[in]The name of the file containing the mesh</param>
 			///<returns>A meshobject containing the mesh-data</returns>
-			virtual MeshObject* Load(std::string text) = 0;
+			virtual CelMesh* Load(std::string text) = 0;
 			virtual ~IFileMeshLoader(){}
 
 	};

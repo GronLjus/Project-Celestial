@@ -11,11 +11,10 @@ toolbarLoad = load script 'Content\Scripts\LoadScripts\LoadToolBar.celsrc'
 cam = load camera
 export 'cmra' cam
 run gameBoardLoad
-endTile = load mesh 'Content\EndTile.obj'
+endTile = load mesh 'Content\EndTile.clmsh'
 run toolbarLoad
 
 export 'endTile' endTile
-export 'plane1' load mesh 'Content\Plane1.obj'
 set camera cam
 
 pos cam 0.0 15.0 0.0

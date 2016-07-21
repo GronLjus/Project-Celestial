@@ -69,14 +69,14 @@ namespace Resources
 			///<summary>Loads a mesh from a file</summary>
 			///<param val='file'>[in]The path of the file</param>
 			///<returns>The id for the mesh</returns>
-			MeshObject* LoadMeshFromFile(std::string file);
+			CelMesh* LoadMeshFromFile(std::string file);
 			///<summary>Loads a basic shape</summary>
 			///<param val='shape'>[in]The shape to load</param>
 			///<param val='material'>[in]The material to use</param>
 			///<returns>The id for the mesh</returns>
-			MeshObject* LoadBasicShape(Shape shape, MeshObject::Material* material);
+			CelMesh* LoadBasicShape(Shape shape, MeshObject::Material* material);
 
-			MeshObject* LoadGrid(unsigned int cells, float gridSize) const;
+			CelMesh* LoadGrid(unsigned int cells, float gridSize) const;
 
 			///<summary>Loads a particlesystem from a file</summary>
 			///<param val='system'>[in]The type of system to load</param>

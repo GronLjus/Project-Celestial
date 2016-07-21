@@ -143,5 +143,7 @@ namespace Graphics
 			///<summary>Which rendertarget to draw out to screen</summary>
 			RT out;
 
+			TextureResourceObject* defAmb;
+			TextureResourceObject* defDiff;
 	};
 }

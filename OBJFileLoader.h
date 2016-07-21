@@ -16,7 +16,7 @@ namespace Resources
 			///<summary>Loads a mesh</summary>
 			///<param name='text'>[in]The name of the file containing the mesh</param>
 			///<returns>A meshobject containing the mesh-data</returns>
-			virtual MeshObject* Load(std::string text);
+			virtual CelMesh* Load(std::string text);
 			///<summary>Ges an aray of all extensions this reader can handle</summary>
 			///<returns>An array of strings</returns>
 			virtual std::string* Extension() const;

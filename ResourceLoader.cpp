@@ -13,6 +13,7 @@
 #include "CelScriptBinLoader.h"
 #include "CelScriptSourceLoader.h"
 #include "GridLoader.h"
+#include "CLMSHFileLoader.h"
 
 using namespace std;
 using namespace Resources;
@@ -69,7 +70,7 @@ void ResourceLoader::Init(Graphics::CardHandler* &card, TextContainer* outText)
 ResourceLoader::ResourceLoader()
 {
 
-	meshLoaders = 1;
+	meshLoaders = 2;
 	terrainLoaders = 1;
 	fileMatLoaders = 2;
 	fileTexLoaders = 1;
@@ -88,6 +89,7 @@ ResourceLoader::ResourceLoader()
 
 	objectFileLoaders = new IFileMeshLoader*[meshLoaders];
 	objectFileLoaders[0] = new OBJFileLoader();
+	objectFileLoaders[1] = new CLMSHFileLoader();
 
 	terrainFileLoaders = new IFileTerrainLoader*[terrainLoaders];
 	terrainFileLoaders[0] = new TRNFileLoader();
@@ -146,7 +148,7 @@ string ResourceLoader::getExtension(string file)
 
 }
 
-MeshObject* ResourceLoader::LoadMeshFromFile(string file)
+CelMesh* ResourceLoader::LoadMeshFromFile(string file)
 {
 
 	bool found = false;
@@ -169,8 +171,7 @@ MeshObject* ResourceLoader::LoadMeshFromFile(string file)
 	if(found)
 	{
 	
-		MeshObject* obj = objectFileLoaders[i - 1]->Load(file);
-		obj->OptimizeLevels(true);
+		CelMesh* obj = objectFileLoaders[i - 1]->Load(file);
 		return obj;
 
 	}
@@ -210,16 +211,16 @@ ImageResourceObject** ResourceLoader::LoadBitMapesFromFile(std::string file, uns
 
 }
 
-MeshObject* ResourceLoader::LoadGrid(unsigned int cells, float gridSize) const
+CelMesh* ResourceLoader::LoadGrid(unsigned int cells, float gridSize) const
 {
 
-	MeshObject* obj = ((GridLoader*)shapeLoads[Shape_GRID])->LoadGrid(cells,gridSize);
+	CelMesh* obj = ((GridLoader*)shapeLoads[Shape_GRID])->LoadGrid(cells,gridSize);
 	//obj->OptimizeLevels(false);
 	return obj;
 
 }
 
-MeshObject* ResourceLoader::LoadBasicShape(Resources::Shape shape, MeshObject::Material* material)
+CelMesh* ResourceLoader::LoadBasicShape(Resources::Shape shape, MeshObject::Material* material)
 {
 
 	if (material == nullptr)
@@ -232,8 +233,7 @@ MeshObject* ResourceLoader::LoadBasicShape(Resources::Shape shape, MeshObject::M
 	if(shape < Shape_NA)
 	{
 
-		MeshObject* obj = shapeLoads[shape]->LoadShape(material);
-		obj->OptimizeLevels(true);
+		CelMesh* obj = shapeLoads[shape]->LoadShape();
 		return obj;
 
 	}

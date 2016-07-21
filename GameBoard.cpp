@@ -5,7 +5,7 @@ using namespace Resources;
 using namespace Entities;
 using namespace CrossHandlers;
 
-GameBoard::GameBoard(unsigned int cells, MeshObject* gridObject, unsigned char maxFlips, unsigned int maxInstances) : ScriptableObject()
+GameBoard::GameBoard(unsigned int cells, CelMesh* gridObject, unsigned char maxFlips, unsigned int maxInstances) : ScriptableObject()
 {
 
 	this->cells = cells;
@@ -184,23 +184,8 @@ GameObject* GameBoard::GetBoardObject() const
 void GameBoard::SetBoardObject(GameObject* object)
 {
 
-	Message mess = Message();
-	mess.type = MessageType_OBJECT;
-	mess.mess = ObjectMess_SCALE;
-
-	float scaleX = cells;
-	float scaleY = 1.0f;
-	float scaleZ = cells;
-
-	unsigned char tempBuff[12];
-
-	memcpy(&tempBuff, &scaleX, 4);
-	memcpy(&tempBuff[4], &scaleY, 4);
-	memcpy(&tempBuff[8], &scaleZ, 4);
-
-	mess.SetParams(tempBuff, 0, 12);
-	object->Update(&mess);
-
+	object->SetScale(Vector3(cells, 0.1f, cells));
+	object->UpdateMatrix();
 	boardObject = object;
 
 }

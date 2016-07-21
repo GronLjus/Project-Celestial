@@ -43,6 +43,8 @@ ObjectTree::ObjectTree(unsigned int cells, unsigned int minCells, Vector2 positi
 	gridMeshId = mesh;
 
 	gridMatrix = MatrixTranslation(position.x, 0.6f, position.y);
+	Matrix scaleMatrix = MatrixScaling(1.0f, 1.0f, 1.0f);
+	gridMatrix = MatrixMultiply(scaleMatrix, gridMatrix);
 	gridInvTrMatrix = MatrixInverse(gridMatrix);
 	gridInvTrMatrix = MatrixTranspose(gridInvTrMatrix);
 

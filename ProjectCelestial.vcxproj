@@ -173,6 +173,7 @@
     <ClInclude Include="CelestialStack.h" />
     <ClInclude Include="CelestialTree.h" />
     <ClInclude Include="CelestialTreeNode.h" />
+    <ClInclude Include="CelMesh.h" />
     <ClInclude Include="CelScriptAnalyzer.h" />
     <ClInclude Include="CelScriptBinLoader.h" />
     <ClInclude Include="CelScriptCodeGenerator.h" />
@@ -183,6 +184,7 @@
     <ClInclude Include="CelScriptRuntime.h" />
     <ClInclude Include="CelScriptRunTimeHandler.h" />
     <ClInclude Include="CelScriptSource.h" />
+    <ClInclude Include="CLMSHFileLoader.h" />
     <ClInclude Include="ColourLoader.h" />
     <ClInclude Include="CommonParticle.h" />
     <ClInclude Include="CrossHandlerHeader.h" />
@@ -318,6 +320,7 @@
     <ClCompile Include="CelestialMath.cpp" />
     <ClCompile Include="CelestialShader.cpp" />
     <ClCompile Include="Celestial2DDrawer.cpp" />
+    <ClCompile Include="CelMesh.cpp" />
     <ClCompile Include="CelScriptAnalyzer.cpp" />
     <ClCompile Include="CelScriptBinLoader.cpp" />
     <ClCompile Include="CelScriptCodeGenerator.cpp" />
@@ -328,6 +331,7 @@
     <ClCompile Include="CelScriptRuntimeHandler.cpp" />
     <ClCompile Include="CelScriptSource.cpp" />
     <ClCompile Include="CelScriptSourceLoader.cpp" />
+    <ClCompile Include="CLMSHFileLoader.cpp" />
     <ClCompile Include="ColourLoader.cpp" />
     <ClCompile Include="CommonParticle.cpp" />
     <ClCompile Include="CelscriptHandler.cpp" />
@@ -415,6 +419,7 @@
       <FileType>Document</FileType>
     </None>
     <None Include="ClassDiagram.cd" />
+    <None Include="Content\EndTile.clmsh" />
     <None Include="Content\Scripts\CameraScripts\CameraPanning.celsrc" />
     <None Include="Content\Scripts\CameraScripts\CameraRotation.celsrc" />
     <None Include="Content\Scripts\CameraScripts\CameraZoom.celsrc" />
@@ -425,6 +430,7 @@
     <None Include="Content\Scripts\ToolBarScripts\Button1Click.celsrc" />
     <None Include="Content\Scripts\ToolBarScripts\Button1UpDown.celsrc" />
     <None Include="Content\Scripts\ToolBarScripts\Button2Click.celsrc" />
+    <None Include="Content\Tile.clmsh" />
     <None Include="ErrorTest.celsrc" />
     <None Include="Shaders_Registers.hlsli" />
     <None Include="Tennisboll.mtl">
@@ -511,14 +517,6 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="Content\Scripts\ToolBarScripts\RunwayGhostClick.celsrc" />
-    <Text Include="Content\Tile.obj">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
-      <FileType>Document</FileType>
-      <SubType>Designer</SubType>
-    </Text>
-    <None Include="Content\EndTile.obj">
-      <FileType>Document</FileType>
-    </None>
     <Object Include="Tile.obj">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </Object>

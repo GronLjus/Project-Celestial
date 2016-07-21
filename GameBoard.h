@@ -9,7 +9,7 @@ namespace Resources
 	{
 
 		public:
-			GameBoard(unsigned int cells, MeshObject* GridObject, unsigned char maxFlip, unsigned int maxInstances);
+			GameBoard(unsigned int cells, CelMesh* GridObject, unsigned char maxFlip, unsigned int maxInstances);
 			virtual void Update(CrossHandlers::Message* mess);
 			void AddObject(GameObject* object);
 			void SetBoardObject(GameObject* object);

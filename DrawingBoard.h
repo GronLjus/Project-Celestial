@@ -6,6 +6,7 @@
 #include "CelestialSlicedList.h"
 #include "CelestialStack.h"
 #include "ViewObject.h"
+#include "CelMesh.h"
 #include "GraphicalMesh.h"
 
 namespace Entities
@@ -16,7 +17,7 @@ namespace Entities
 	
 		public:
 			DrawingBoard(unsigned char maxFlips, unsigned int maxInstances);
-			unsigned int AddMesh(Resources::MeshObject* mesh);
+			unsigned int AddMesh(Resources::CelMesh* mesh);
 			Graphics::GraphicalMesh* GetMeshes() const;
 			void StartAddingInstances();
 			void AddInstance(Resources::GameObject* object);
@@ -34,8 +35,8 @@ namespace Entities
 			unsigned char bufflip;
 			unsigned int meshes;
 			Graphics::GraphicalMesh* meshesArr;
-			unsigned int addObjectToVertexBuffer(Resources::MeshObject* mesh);
-			void addObjectToIndexBuffer(Resources::MeshObject* mesh, unsigned int offset);
+			unsigned int addObjectToVertexBuffer(Resources::CelMesh* mesh);
+			void addObjectToIndexBuffer(Resources::CelMesh* mesh, unsigned int offset);
 			CrossHandlers::BufferObject2<CrossHandlers::BufferVertex>* vertexBuffer;
 			CrossHandlers::BufferObject2<unsigned int>* indexBuffer;
 			CrossHandlers::BufferObject2<CrossHandlers::Instance>* instanceBuffer;

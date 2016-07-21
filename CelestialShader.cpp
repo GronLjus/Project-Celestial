@@ -1024,7 +1024,7 @@ HRESULT CelestialShader::releaseShadowMap()
 
 }
 
-HRESULT CelestialShader::Init(ID3D11Device* card, GraphicQuality gQ, DrawingStyle dS, TextureResourceObject* backBuffer,TextContainer* errorOut, unsigned int maxInstances)
+HRESULT CelestialShader::Init(ID3D11Device* card, GraphicQuality gQ, DrawingStyle dS, TextureResourceObject* backBuffer,TextContainer* errorOut, unsigned int maxInstances, ID3D11ShaderResourceView* dAmb, ID3D11ShaderResourceView* dDiff)
 {
 
 	quality = gQ;
@@ -1033,6 +1033,8 @@ HRESULT CelestialShader::Init(ID3D11Device* card, GraphicQuality gQ, DrawingStyl
 	this->card = card;
 	bH = new CelestialBufferHandler(card,2,maxInstances);
 	sMC = new ShadowMapConstants(gQ.shadows);
+	this->defaultAmbText = dAmb;
+	this->defaultDiffText = dDiff;
 
 	HRESULT hr = initBuffers(errorOut);
 	errorOut->AddTextLine("Creating shaders");
@@ -1267,7 +1269,6 @@ void CelestialShader::DrawScene(ViewObject* scene, GraphicalMesh* meshes, ID3D11
 					context->PSSetShader(techs[Technique_GEOMETRY][rendCode]->GetPixelShader(), nullptr, 0);
 					break;
 				case MeshType_WF:
-					//context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST_ADJ);
 					context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_LINELIST);
 					context->RSSetState(rastStates[RastState_WIREFRAME]);
 					context->VSSetShader(techs[Technique_GEOMETRY][GeometryCode_GEOWIREFRAME]->GetVertexShader(), nullptr, 0);
@@ -1280,8 +1281,8 @@ void CelestialShader::DrawScene(ViewObject* scene, GraphicalMesh* meshes, ID3D11
 
 		}
 
-		srvs[0] = mesh.GetAmbientTexture() == nullptr ? nullptr : mesh.GetAmbientTexture()->GetShaderView();
-		srvs[1] = mesh.GetDiffuseTexture() == nullptr ? nullptr : mesh.GetDiffuseTexture()->GetShaderView();
+		srvs[0] = mesh.GetAmbientTexture() == nullptr ? thisType == MeshType_SOLID ? defaultAmbText : nullptr : mesh.GetAmbientTexture()->GetShaderView();
+		srvs[1] = mesh.GetDiffuseTexture() == nullptr ? thisType == MeshType_SOLID ? defaultDiffText : nullptr : mesh.GetDiffuseTexture()->GetShaderView();
 
 		int size = 2;
 
@@ -2093,7 +2094,7 @@ void CelestialShader::Release()
 	rcb->Release();
 	fcb->Release();
 	plcb->Release();
-	
+
 }
 		
 CelestialShader::~CelestialShader()

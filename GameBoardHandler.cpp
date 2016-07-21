@@ -220,7 +220,7 @@ void GameBoardHandler::UpdateMessages(unsigned int time)
 		if (currentMessage->mess == GameBoardMess_ADDMESH && localGameBoard != nullptr)
 		{
 
-			localGameBoard->GetDrawingBoard()->AddMesh((MeshObject*)(gameObjects->GetValue(param1)));
+			localGameBoard->GetDrawingBoard()->AddMesh((CelMesh*)(gameObjects->GetValue(param1)));
 
 			messageBuffer[this->currentMessage].timeSent = time;
 			messageBuffer[this->currentMessage].destination = MessageSource_GRAPHICS;
@@ -518,7 +518,7 @@ void GameBoardHandler::UpdateMessages(unsigned int time)
 			if (gB->GetBoardObject() != nullptr)
 			{
 
-				gB->GetDrawingBoard()->AddMesh((MeshObject*)(gameObjects->GetValue(gB->GetBoardObject()->GetMeshId())));
+				gB->GetDrawingBoard()->AddMesh((CelMesh*)(gameObjects->GetValue(gB->GetBoardObject()->GetMeshId())));
 				messageBuffer[this->currentMessage].timeSent = time;
 				messageBuffer[this->currentMessage].destination = MessageSource_GRAPHICS;
 				messageBuffer[this->currentMessage].type = MessageType_GRAPHICS;
