@@ -1,0 +1,16 @@
+﻿<Window x:Class="CelestialFileConverter.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:CelestialFileConverter"
+        mc:Ignorable="d"
+        Title="MeshConverter" Height="500" Width="720">
+    <Grid Background="#FFAFAFAF">
+        <ProgressBar x:Name="Progress" HorizontalAlignment="Left" Height="23" Margin="10,394,0,0" VerticalAlignment="Top" Width="294"/>
+        <Button x:Name="SelectButton" Content="Select File" HorizontalAlignment="Left" Margin="10,431,0,0" VerticalAlignment="Top" Width="90" Click="SelectButton_Click"/>
+        <Button x:Name="ConvertButton" Content="Convert" HorizontalAlignment="Left" Margin="118,431,0,0" VerticalAlignment="Top" Width="75" IsEnabled="False" Click="ConvertButton_Click"/>
+        <TextBlock x:Name="StatusBlock" HorizontalAlignment="Left" Margin="309,10,0,0" TextWrapping="Wrap" Text="Select File" VerticalAlignment="Top" Height="451" Width="394" Background="#FFEAEAEA" IsEnabled="False"/>
+
+    </Grid>
+</Window>
