@@ -23,6 +23,10 @@ namespace Entities
 			CelestialMath::Vector3 hookScale;
 			CelestialMath::Vector3 hookRot;
 			bool hookObject;
+
+			unsigned int hookTargets;
+			unsigned int* hookColl;
+
 			CrossHandlers::CelestialSlicedList<Resources::BaseObject*>* gameObjects;
 			Resources::GameBoard* localGameBoard;
 			Resources::GameObject* trackedObject;
@@ -34,7 +38,6 @@ namespace Entities
 			bool resetMouse;
 
 			void transformHookedObject(CelestialMath::Vector3 mousePos);
-			unsigned int hookedTarget;
 
 			void triggerMouseScript(unsigned int script, unsigned int objectId, unsigned int time, int mouseX, int mouseY);
 			void triggerMouseScript(unsigned int script, unsigned int objectId, unsigned int time, int mouseX, int mouseY, short delta);

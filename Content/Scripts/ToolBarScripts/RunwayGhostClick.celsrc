@@ -25,6 +25,8 @@ else
 
 	endObj = load object endTile 0
 	endObj2 = load object endTile 0
+	size endObj 0.8 0.2 1.0
+	size endObj2 0.8 0.2 1.0
 	obj = load copyobject ?0
 
 	show cursor

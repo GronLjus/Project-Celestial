@@ -15,6 +15,7 @@ GameBoardHandler::GameBoardHandler() : IHandleMessages(200, MessageSource_ENTITI
 	dragScript = 0;
 	hookObject = false;
 	routing = new RoutingManager();
+	hookColl = new unsigned int[128];
 
 }
 
@@ -473,7 +474,6 @@ void GameBoardHandler::UpdateMessages(unsigned int time)
 				trackedObject->SetPosition(hookPos);
 				trackedObject->SetScale(hookScale);
 				trackedObject->SetRotation(hookRot);
-				hookedTarget = 0;
 
 			}
 		}
@@ -539,6 +539,9 @@ void GameBoardHandler::UpdateMessages(unsigned int time)
 			memcpy(&(pos.x), &(currentMessage->params[0]), 4);
 			memcpy(&(pos.y), &(currentMessage->params[4]), 4);
 			memcpy(&(pos.z), &(currentMessage->params[8]), 4);
+
+			pos.x = floor(pos.x) + 0.5f;
+			pos.z = floor(pos.z) + 0.5f;
 			float width = 1.0f;
 
 			BoundingSphere sphere = BoundingSphere(pos.x, pos.y, pos.z, width);
@@ -653,29 +656,29 @@ void GameBoardHandler::handleMouseMovement(unsigned int mouseX, unsigned int mou
 		if (!hookObject)
 		{
 
-			boardPos.x = floor(boardPos.x) + scale.x / 2;
-			boardPos.z = floor(boardPos.z) + scale.z / 2;
+			boardPos.x = floor(boardPos.x) + 0.5f;
+			boardPos.z = floor(boardPos.z) + 0.5f;
 			trackedObject->SetPosition(boardPos);
 			trackedObject->UpdateMatrix();
 
-			unsigned int amountOfCollidedObjects = 0;
-			unsigned int* collidedObjects = localGameBoard->GetCollidedObject(trackedObject, amountOfCollidedObjects);
+			hookTargets = 0;
+			unsigned int* collidedObjects = localGameBoard->GetCollidedObject(trackedObject, hookTargets);
 
-			if (amountOfCollidedObjects > 0)
+			if (hookTargets > 0)
 			{
 
-				hookedTarget = collidedObjects[0];
-				PositionableObject* obj = (PositionableObject*)gameObjects->GetValue(collidedObjects[0]);
-				Vector3 newPos = obj->GetObjectCenterLine(boardPos);
-				boardPos.x = newPos.x;
-				boardPos.y = newPos.y;
-				boardPos.z = newPos.z;
+				memcpy(hookColl, collidedObjects, min(hookTargets, 128) * sizeof(unsigned int));
 
-			}
-			else 
-			{
+				for (unsigned int i = 0; i < hookTargets; i++)
+				{
+				
+					PositionableObject* obj = (PositionableObject*)gameObjects->GetValue(collidedObjects[i]);
+					Vector3 newPos = obj->GetObjectCenterLine(boardPos);
+					boardPos.x = newPos.x;
+					boardPos.y = newPos.y;
+					boardPos.z = newPos.z;
 
-				hookedTarget = 0;
+				}
 
 			}
 
@@ -686,14 +689,14 @@ void GameBoardHandler::handleMouseMovement(unsigned int mouseX, unsigned int mou
 		else
 		{
 
-			boardPos.x = floor(boardPos.x) + hookScale.x / 2;
-			boardPos.z = floor(boardPos.z) + hookScale.z / 2;
+			boardPos.x = floor(boardPos.x) + 0.5f;
+			boardPos.z = floor(boardPos.z) + 0.5f;
 			transformHookedObject(boardPos);
 
 			unsigned int amountOfCollidedObjects = 0;
 			unsigned int* collidedObjects = localGameBoard->GetCollidedObject(trackedObject, amountOfCollidedObjects);
 
-			if (amountOfCollidedObjects > (hookedTarget > 0 ? 1 : 0))
+			if (amountOfCollidedObjects > hookTargets)
 			{
 
 				Vector3 distVect1 = boardPos - hookPos;
@@ -706,7 +709,16 @@ void GameBoardHandler::handleMouseMovement(unsigned int mouseX, unsigned int mou
 				for (unsigned int i = 0; i < amountOfCollidedObjects; i++)
 				{
 
-					if (collidedObjects[i] != hookedTarget)
+					bool safe = true;
+
+					for (unsigned int k = 0; k < hookTargets && safe; k++)
+					{
+
+						safe = !(collidedObjects[i] == hookColl[k]);
+
+					}
+
+					if (safe)
 					{
 					
 						PositionableObject* obj = (PositionableObject*)gameObjects->GetValue(collidedObjects[i]);
@@ -796,5 +808,6 @@ GameBoardHandler::~GameBoardHandler()
 {
 
 	delete routing;
+	delete[] hookColl;
 
 }
