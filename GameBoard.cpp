@@ -156,6 +156,15 @@ void GameBoard::FillInstanceBuffer(GameObject* trackingObject)
 void GameBoard::AddObject(GameObject* object)
 {
 
+	if (object->GetScale().x <= CELESTIAL_EPSILON ||
+		object->GetScale().y <= CELESTIAL_EPSILON ||
+		object->GetScale().z <= CELESTIAL_EPSILON)
+	{
+
+		return;
+
+	}
+
 	if (object->GetType() != GameObjectType_TRAVELING)
 	{
 

@@ -46,7 +46,7 @@ RouteNodeObject* GameRouteObject::GetRouteNode(Vector3 position) const
 		RouteNodeObject* val = nodes->GetValue(i);
 		float dist = VectorDot(position - val->GetPosition());
 
-		if (dist <= 1.0f)
+		if (dist < 0.5f)
 		{
 
 			retval = val;

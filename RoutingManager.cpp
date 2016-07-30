@@ -158,13 +158,28 @@ unsigned int RoutingManager::AddNode(Vector3 position, unsigned int* objects, un
 	{
 
 		RouteNodeObject* preExist = nullptr;
+		GameRouteObject* lastObject = nullptr;
 
 		for (unsigned int i = 0; i < amounts && preExist == nullptr; i++)
 		{
 
 			GameRouteObject* obj = ((GameRouteObject*)this->gameObjects->GetValue(objects[i]));
+			
+			if (lastObject == nullptr)
+			{
+
+				position = obj->GetObjectCenterLine(position);
+
+			}
+			else
+			{ 
+
+				position = obj->GetObjectCenterLine(position,lastObject->GetDirection());
+			
+			}
 			position.y = obj->GetPosition().y + obj->GetScale().y / 2;
 			preExist = obj->GetRouteNode(position);
+			lastObject = obj;
 
 		}
 
@@ -202,6 +217,13 @@ unsigned int RoutingManager::AddNode(Vector3 position, unsigned int* objects, un
 
 unsigned int RoutingManager::pathFind(RouteNodeObject* start, RouteNodeObject* end)
 {
+
+	if (end == nullptr)
+	{
+
+		return 0;
+
+	}
 
 	prio_queue openSet;
 	prio_queue::nodeVal startNode;
@@ -255,7 +277,7 @@ unsigned int RoutingManager::pathFind(RouteNodeObject* start, RouteNodeObject* e
 							if (openSet.oVect[j].index != neigh->GetId())
 							{
 
-								newOpenSet.push(newOpenSet.oVect[j]);
+								newOpenSet.push(openSet.oVect[j]);
 
 							}
 

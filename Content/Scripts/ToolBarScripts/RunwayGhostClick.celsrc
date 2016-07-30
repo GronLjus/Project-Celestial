@@ -31,7 +31,7 @@ else
 
 	show cursor
 
-	scale obj 0.0 0.0 -2.0
+	scale obj 0.0 0.0 -1.8
 	glue obj endObj 0.0 0.0 1.0
 	glue obj endObj2 0.0 0.0 -1.0
 

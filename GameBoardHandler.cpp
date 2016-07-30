@@ -540,9 +540,10 @@ void GameBoardHandler::UpdateMessages(unsigned int time)
 			memcpy(&(pos.y), &(currentMessage->params[4]), 4);
 			memcpy(&(pos.z), &(currentMessage->params[8]), 4);
 
+			float width = 0.49f;
+
 			pos.x = floor(pos.x) + 0.5f;
 			pos.z = floor(pos.z) + 0.5f;
-			float width = 1.0f;
 
 			BoundingSphere sphere = BoundingSphere(pos.x, pos.y, pos.z, width);
 			unsigned int amount = 0;
@@ -610,16 +611,18 @@ void GameBoardHandler::transformHookedObject(Vector3 mousePos)
 
 	Vector3 scale = trackedObject->GetScale();
 	Vector3 dist = mousePos - hookPos;
-	scale.z = hookScale.z + sqrt(VectorDot(dist, dist));
+	float distL = sqrt(VectorDot(dist, dist));
+	Vector3 normalDist = dist / distL;
+	scale.z = hookScale.z + distL;
 	trackedObject->SetScale(scale);
 
 	if (scale.z - hookScale.z > 0)
 	{
 
 		Vector3 forward = Vector3(0.0f, 0.0f, 1.0f);
-		float dotProduct = VectorDot(forward, dist);
-		float yAngle = acos(dotProduct / (scale.z - hookScale.z));
-		float sideDot = VectorDot(Vector3(1.0f, 0.0f, 0.0f), dist);
+		float dotProduct = VectorDot(forward, normalDist);
+		float yAngle = acos(dotProduct);
+		float sideDot = VectorDot(Vector3(1.0f, 0.0f, 0.0f), normalDist);
 		yAngle *= sideDot >= CELESTIAL_EPSILON ? 1.0 : -1.0;
 		Vector3 rot = Vector3(hookRot.x, yAngle, hookRot.z);
 		trackedObject->SetRotation(rot);
@@ -627,8 +630,7 @@ void GameBoardHandler::transformHookedObject(Vector3 mousePos)
 	}
 
 	dist /= 2;
-	mousePos = hookPos + dist;
-	trackedObject->SetPosition(mousePos);
+	trackedObject->SetPosition(hookPos + dist);
 	trackedObject->UpdateMatrix();
 
 }
@@ -668,18 +670,22 @@ void GameBoardHandler::handleMouseMovement(unsigned int mouseX, unsigned int mou
 			{
 
 				memcpy(hookColl, collidedObjects, min(hookTargets, 128) * sizeof(unsigned int));
+				PositionableObject* lastObj = nullptr;
 
 				for (unsigned int i = 0; i < hookTargets; i++)
 				{
 				
 					PositionableObject* obj = (PositionableObject*)gameObjects->GetValue(collidedObjects[i]);
-					Vector3 newPos = obj->GetObjectCenterLine(boardPos);
+					Vector3 newPos = lastObj == nullptr ?
+						obj->GetObjectCenterLine(boardPos) :
+						obj->GetObjectCenterLine(boardPos, lastObj->GetDirection());
+
 					boardPos.x = newPos.x;
 					boardPos.y = newPos.y;
 					boardPos.z = newPos.z;
+					lastObj = obj;
 
 				}
-
 			}
 
 			trackedObject->SetPosition(boardPos);

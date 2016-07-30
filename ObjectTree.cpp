@@ -257,7 +257,9 @@ unsigned int* ObjectTree::GetCollidedObject(BoundingSphere* sphere, GameObjectTy
 		{
 
 			GameObject* localObj = objects->GetValue(i);
-			bool dbl = false;
+			bool dbl = localObj->GetScale().x <= CELESTIAL_EPSILON ||
+				localObj->GetScale().y <= CELESTIAL_EPSILON ||
+				localObj->GetScale().z <= CELESTIAL_EPSILON;
 
 			for (unsigned k = 0; k < objcts && !dbl; k++)
 			{
@@ -387,10 +389,19 @@ unsigned int ObjectTree::AddInstance(ViewObject* view, DrawingBoard* board)
 
 			GameObject* obj = objects->GetValue(i);
 
-			if (obj != nullptr)
+			if (obj != nullptr && !(
+				obj->GetScale().x <= CELESTIAL_EPSILON ||
+				obj->GetScale().y <= CELESTIAL_EPSILON ||
+				obj->GetScale().z <= CELESTIAL_EPSILON))
 			{
 
 				board->AddInstance(obj);
+
+			}
+			else
+			{
+
+				int dbg = 0;
 
 			}
 		}
