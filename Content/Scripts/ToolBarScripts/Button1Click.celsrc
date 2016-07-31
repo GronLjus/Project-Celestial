@@ -1,7 +1,7 @@
 $
 {
 	
-	plane1Mesh = import 'baseTile'
+	plane1Mesh = import 'planeMesh'
 
 }
 
@@ -9,4 +9,4 @@ plane = load object plane1Mesh 2
 size plane 1.0 0.195 0.932
 add plane
 spawn plane 1
-travel plane 5
+travel plane 3

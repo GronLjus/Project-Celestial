@@ -15,6 +15,7 @@ endTile = load mesh 'Content\EndTile.clmsh'
 run toolbarLoad
 
 export 'endTile' endTile
+export 'planeMesh' load mesh 'Content\Plane1.clmsh'
 set camera cam
 
 pos cam 0.0 15.0 0.0

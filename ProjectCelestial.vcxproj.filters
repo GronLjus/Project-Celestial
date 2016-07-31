@@ -1142,6 +1142,9 @@
     <None Include="Content\Tile.clmsh">
       <Filter>Resource Files\Content</Filter>
     </None>
+    <None Include="Content\Plane1.clmsh">
+      <Filter>Resource Files\Content</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Project Celestial.rc">

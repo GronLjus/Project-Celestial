@@ -358,13 +358,12 @@ void PositionableObject::rotateObjectToPoint(Vector3 point)
 
 		Vector3 projectedLine = Vector3(targetToObject.x, 0, targetToObject.z);
 		float projectedMagnitude = sqrt(VectorDot(projectedLine, projectedLine));
-		projectedLine /= projectedMagnitude;
 
 		if (projectedMagnitude > CELESTIAL_EPSILON)
 		{
 
 			float yAngle = acos(VectorDot(projectedLine, Vector3(0.0f, 0.0f, 1.0f)) / projectedMagnitude);
-			yAngle *= VectorDot(projectedLine, Vector3(0, 0, 1)) >= 0 ? 1 : -1;
+			yAngle *= VectorDot(projectedLine, Vector3(1.0f, 0, 0)) >= 0 ? 1 : -1;
 			rotation.y = yAngle;
 
 		}

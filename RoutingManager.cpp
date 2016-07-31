@@ -357,7 +357,8 @@ void RoutingManager::Travel(GameTravelObject* object, unsigned int goal, unsigne
 
 		object->Time(time);
 		object->SetGoalNode(path);
-		object->Point(routeNodes->GetValue(goal)->GetPosition());
+		RouteNodeObject* nextStop = routeNodes->GetValue(object->GetGoalNode());
+		object->Point(nextStop->GetPosition() + Vector3(0.0f, object->GetScale().y / 2, 0.0f));
 		travelObjects->PushElement(object);
 
 	}

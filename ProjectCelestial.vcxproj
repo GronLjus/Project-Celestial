@@ -420,6 +420,7 @@
     </None>
     <None Include="ClassDiagram.cd" />
     <None Include="Content\EndTile.clmsh" />
+    <None Include="Content\Plane1.clmsh" />
     <None Include="Content\Scripts\CameraScripts\CameraPanning.celsrc" />
     <None Include="Content\Scripts\CameraScripts\CameraRotation.celsrc" />
     <None Include="Content\Scripts\CameraScripts\CameraZoom.celsrc" />
