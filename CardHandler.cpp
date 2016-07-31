@@ -117,7 +117,7 @@ HRESULT CardHandler::Init(HWND hwnd, GraphicQuality gQ, DrawingStyle dS)
 	sd.Windowed = true;
 	bool stop = false;
 
-	hr = D3D11CreateDeviceAndSwapChain(nullptr, D3D_DRIVER_TYPE_HARDWARE, nullptr,  D3D11_CREATE_DEVICE_BGRA_SUPPORT, nullptr, 0, 
+	hr = D3D11CreateDeviceAndSwapChain(nullptr, D3D_DRIVER_TYPE_HARDWARE, nullptr,  D3D11_CREATE_DEVICE_BGRA_SUPPORT | D3D11_CREATE_DEVICE_DEBUG, nullptr, 0,
 		D3D11_SDK_VERSION, &sd, &swapChain, &card, nullptr, &context1);
 
 	if( FAILED(hr) )
@@ -201,7 +201,13 @@ void CardHandler::UpdateMeshBuffers(DrawingBoard* db)
 	context1->IASetVertexBuffers(0, 1, &vertices, &vStride, &offset);//Set buffers
 	context1->IASetIndexBuffer(indices, DXGI_FORMAT_R32_UINT, 0);//Set the index buffer
 
+	if (vertices == nullptr ||
+		indices == nullptr)
+	{
 
+		int dbg = 0;
+
+	}
 }
 
 void CardHandler::UpdateInstanceBuffers(DrawingBoard* db, unsigned int flip)

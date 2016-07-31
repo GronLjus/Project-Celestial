@@ -46,6 +46,8 @@ namespace Graphics
 			///<summary>Gets the style in use</summary>
 			///<returns>The style in use</returns>
 			DrawingStyle GetStyle();
+
+			void Toggle3D();
 	
 			virtual void ToggleWireFrame(bool enabled);
 			virtual void ToggleGrid(bool enabled);
@@ -71,6 +73,8 @@ namespace Graphics
 
 			bool stoppedDrawing;
 			bool stopDrawing;
+
+			std::mutex renderLock;
 
 			Resources::GameBoard* gameBoard;
 			CrossHandlers::CelestialSlicedList<Resources::BaseObject*>* gameObjects;

@@ -568,7 +568,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				messag->mess = up ? InputMess_KEYUP : InputMess_KEYDWN;
 				tempBuff[0] = keyCat;
 				tempBuff[1] = translatedKeys[wParam];
-				messag->SetParams(tempBuff, 0, 4);
+				messag->SetParams(tempBuff, 0, 2);
 				overlord->SendMsg(messag);
 
 			}

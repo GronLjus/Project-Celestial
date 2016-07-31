@@ -168,6 +168,15 @@ HRESULT Overlord::Init(HWND hwnd)
 void Overlord::SendMsg(Message* msg)
 {
 
+	if (msg->type == MessageType_INPUT &&
+		msg->mess == InputMess_KEYDWN &&
+		msg->params[1] == CelestialSpecKeyCodes_F10)
+	{
+
+		gH->Toggle3D();
+
+	}
+
 	if(messageHandlers[msg->destination] != nullptr)
 	{
 

@@ -174,6 +174,13 @@ void CelestialBufferHandler::UpdateMeshBuffers(DrawingBoard* db, ID3D11DeviceCon
 	initData.SysMemSlicePitch = 0;
 	HRESULT hr = card->CreateBuffer(&bd, &initData, &vertices);
 
+	if (hr != S_OK)
+	{
+
+		int dbg = 0;
+
+	}
+
 	bd.Usage = D3D11_USAGE_IMMUTABLE;
 	bd.ByteWidth = sizeof(unsigned int) * db->GetIndexBuffers()->GetBufferSize(); //total size of buffer in bytes
 	bd.BindFlags = D3D11_BIND_INDEX_BUFFER;
@@ -184,6 +191,13 @@ void CelestialBufferHandler::UpdateMeshBuffers(DrawingBoard* db, ID3D11DeviceCon
 	initData.SysMemPitch = 0;
 	initData.SysMemSlicePitch = 0;
 	hr = card->CreateBuffer(&bd, &initData, &indices);
+	
+	if (hr != S_OK)
+	{
+
+		int dbg = 0;
+
+	}
 
 }
 

@@ -39,19 +39,15 @@ GraphicHandler::GraphicHandler(unsigned int flips) : IHandleMessages(200,Message
 void GraphicHandler::pauseRendering()
 {
 
+	renderLock.lock();
 	stopDrawing = true;
 
-	while (!stoppedDrawing && isDrawing && isInited)
-	{
-
-		this_thread::yield();
-
-	}
 }
 
 void GraphicHandler::resumeRendering()
 {
 
+	renderLock.unlock();
 	stopDrawing = false;
 
 }
@@ -125,10 +121,16 @@ void GraphicHandler::Kill()
 
 	isInited = false;//Stop all operations
 	canDraw = false;//Stop rendering
+
+	if (!stopDrawing)
+	{
+
+		pauseRendering();
+
+	}
+
 	cardHandler->Kill();
-	while (isDrawing){
-		this_thread::yield();;
-	}//Wait until objects aren't being read and we aren't rendering
+	resumeRendering();
 
 }
 
@@ -257,21 +259,13 @@ unsigned int GraphicHandler::GetRenderFlip() const
 void GraphicHandler::Draw(unsigned int time)
 {
 
-	while (stopDrawing && canDraw)
-	{
-
-		stoppedDrawing = true;
-		this_thread::yield();
-
-	}
-
-	stoppedDrawing = false;
+	renderLock.lock();
 
 	if (!canDraw)
 	{
 
 		isDrawing = false;
-		this_thread::yield();
+		renderLock.unlock();
 		return;
 
 	}
@@ -318,6 +312,15 @@ void GraphicHandler::Draw(unsigned int time)
 	int cTime = dTime - sTime;
 
 	cardHandler->Present();//Show what we have drawn
+
+	renderLock.unlock();
+
+}
+
+void GraphicHandler::Toggle3D()
+{
+
+	isInited = !isInited;
 
 }
 
@@ -384,10 +387,16 @@ void GraphicHandler::Release()
 	
 	isInited = false;
 	canDraw = false;
-	while (isDrawing){
-		this_thread::yield();;
-	}//Wait until objects aren't being read and we aren't rendering
+
+	if (!stopDrawing)
+	{
+
+		pauseRendering();
+
+	}
+
 	cardHandler->Release();
+	resumeRendering();
 
 }
 
@@ -396,9 +405,16 @@ GraphicHandler::~GraphicHandler(void)
 
 	isInited = false;
 	canDraw = false;
-	while (isDrawing){
-		this_thread::yield();;
-	}//Wait until objects aren't being read and we aren't rendering
+
+	if (!stopDrawing)
+	{
+
+		pauseRendering();
+
+	}
+
 	delete cardHandler;
+
+	resumeRendering();
 
 }
