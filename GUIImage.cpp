@@ -100,6 +100,20 @@ void GUIImage::SetDrawFrame(ImageResourceObject* frame)
 
 	drawFrame = frame;
 
+	if (frame->GetRenderImage() != nullptr)
+	{
+
+		killMessages[1] = new Message();
+		unsigned char tempBuff[]{ drawFrame->GetImageId() >> 0, drawFrame->GetImageId() >> 8, 
+			drawFrame->GetImageId() >> 16, drawFrame->GetImageId() >> 24 };
+		killMessages[1]->SetParams(tempBuff, 0, 4);
+		killMessages[1]->destination = MessageSource_GRAPHICS;
+		killMessages[1]->type = MessageType_GRAPHICS;
+		killMessages[1]->mess = GraphicMess_RESETIMAGE;
+		killMessages[1]->read = false;
+
+	}
+
 }
 
 GUIImage::~GUIImage()

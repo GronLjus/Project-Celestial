@@ -64,6 +64,13 @@ CardHandler::CardHandler(int flips, bool useText)
 
 }
 
+void CardHandler::RecycleImageRenderTarget(unsigned int id)
+{
+
+	basic2DHandler->RecycleImageRenderTarget(id);
+
+}
+
 HRESULT CardHandler::initBackBuffer()
 {
 

@@ -16,15 +16,23 @@ namespace Resources
 			unsigned int LastUpdated() const;
 			virtual unsigned int GetTargetId() const;
 			virtual unsigned int GetParentId() const;
-			CrossHandlers::Message* GetKillMessage() const;
+			CrossHandlers::Message** GetKillMessage(unsigned int &kills) const;
 			virtual ~BaseObject()
 			{
-				if (killMessage != nullptr){ delete killMessage; }
+				if (killMessages != nullptr) { 
+					for (int i = 0; i < kills; i++) { 
+						if (killMessages[i] != nullptr)
+						{
+							delete killMessages[i];
+						}
+					} 
+					delete[] killMessages; }
 			}
 
 		protected:
 			void setLastUpdated(unsigned int time);
-			CrossHandlers::Message* killMessage;
+			CrossHandlers::Message** killMessages;
+			unsigned int kills;
 
 		private:
 			unsigned int id;

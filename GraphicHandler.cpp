@@ -229,8 +229,29 @@ void GraphicHandler::Update(unsigned int time)
 			cardHandler->SetContentBrush(object, color);
 
 		}
+		else if (currentMessage->mess == GraphicMess_RESETIMAGE)
+		{
+
+			unsigned int param1 = currentMessage->params[0] | ((int)currentMessage->params[1] << 8) | ((int)currentMessage->params[2] << 16) | ((int)currentMessage->params[3] << 24);
+			
+			if (param1 > 0)
+			{
+
+
+				cardHandler->RecycleImageRenderTarget(param1-1);
+
+			}
+		}
 		
 		currentMessage->read = true;
+
+		if (currentMessage->killWhenDone)
+		{
+
+			delete currentMessage;
+
+		}
+
 		currentMessage = inQueue->PopMessage();
 
 	}

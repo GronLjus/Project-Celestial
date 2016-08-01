@@ -601,6 +601,14 @@ void GameBoardHandler::UpdateMessages(unsigned int time)
 		}
 
 		currentMessage->read = true;
+
+		if (currentMessage->killWhenDone)
+		{
+
+			delete currentMessage;
+
+		}
+
 		currentMessage = inQueue->PopMessage();
 
 	}

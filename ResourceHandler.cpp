@@ -274,13 +274,32 @@ void ResourceHandler::handleMess(Message* currentMessage, unsigned int time)
 		{
 
 			gameObjects->Remove(param1);
-			Message* killMess = object->GetKillMessage();
+
+			unsigned int kills = 0;
+			Message** killMess = object->GetKillMessage(kills);
 
 			if (killMess != nullptr)
 			{
 
-				handleMess(killMess, time);
+				for (unsigned int i = 0;i < kills; i++)
+				{
 
+					if (killMess[i] != nullptr &&
+						killMess[i]->destination == MessageSource_RESOURCES)
+					{
+
+						handleMess(killMess[i], time);
+
+					}
+					else if(killMess[i] != nullptr)
+					{
+
+						Message* outMess = new Message(killMess[i]);
+						outMess->killWhenDone = true;
+						outQueue->PushMessage(outMess);
+
+					}
+				}
 			}
 
 			delete object;
@@ -319,6 +338,12 @@ void ResourceHandler::Update(unsigned int time)
 		currentMessage->read = true;
 		currentMessage = inQueue->PopMessage();
 
+		if (currentMessage->killWhenDone)
+		{
+
+			delete currentMessage;
+
+		}
 	}
 }
 

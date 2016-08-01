@@ -12,6 +12,7 @@ ImageResourceObject::ImageResourceObject()
 	size = vectorUI2(0, 0);
 	pos = vectorUI2(0, 0);
 	delay = 0;
+	renderImageId = 0;
 
 }
 
@@ -60,10 +61,19 @@ ID2D1BitmapRenderTarget* ImageResourceObject::GetRenderImage() const
 
 }
 
-void ImageResourceObject::SetRenderImage(ID2D1BitmapRenderTarget* image)
+void ImageResourceObject::SetRenderImage(ID2D1BitmapRenderTarget* image, unsigned int id)
 {
 
 	this->renderImage = image;
+	renderImageId = id;
+
+}
+
+
+unsigned int ImageResourceObject::GetImageId() const
+{
+
+	return renderImageId;
 
 }
 
@@ -103,14 +113,6 @@ ImageResourceObject::~ImageResourceObject()
 
 		image->Release();
 		image = nullptr;
-
-	}
-
-	if (renderImage != nullptr)
-	{
-
-		renderImage->Release();
-		renderImage = nullptr;
 
 	}
 }

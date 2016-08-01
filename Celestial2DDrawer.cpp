@@ -49,6 +49,12 @@ Celestial2DDrawer::Celestial2DDrawer()
 	caretBlinkShow = 500;
 	caretBlink = false;
 	caretTime = 0;
+
+	imageRenderTargets = new CelestialStack<imageRenderStruct>(false);
+	totalImageRenderTargets = new CelestialSlicedList<ID2D1BitmapRenderTarget*>(128,nullptr);
+
+	totalRenderTargets = 0;
+
 }
 
 void Celestial2DDrawer::Begin()
@@ -315,12 +321,31 @@ void Celestial2DDrawer::DrawGUIObject(Resources::GUIObject* object, unsigned int
 			if (drawArea == nullptr)
 			{
 
+
+				ID2D1BitmapRenderTarget* renderTarget;
+				unsigned int renderTargetId = 0;
+
+				if (imageRenderTargets->GetCount() > 0)
+				{
+
+					imageRenderStruct str = imageRenderTargets->PopElement();
+					renderTargetId = str.id+1;
+					renderTarget = str.renderTarget;
+
+				}
+				else
+				{
+
+					rT->CreateCompatibleRenderTarget(&renderTarget);
+					renderTargetId = totalImageRenderTargets->Add(renderTarget)+1;
+					totalRenderTargets++;
+
+				}
+
 				drawArea = new ImageResourceObject();
 				drawArea->SetSize(vectorUI2(image->GetCurrentFrame()->GetSize().x, image->GetCurrentFrame()->GetSize().y));
-				ID2D1BitmapRenderTarget* renderTarget;
-				rT->CreateCompatibleRenderTarget(&renderTarget);
-
-				drawArea->SetRenderImage(renderTarget);
+				
+				drawArea->SetRenderImage(renderTarget, renderTargetId);
 				image->SetDrawFrame(drawArea);
 				
 			}
@@ -390,6 +415,16 @@ void Celestial2DDrawer::DrawGUIObject(Resources::GUIObject* object, unsigned int
 		rT->PopAxisAlignedClip();
 
 	}
+}
+
+void Celestial2DDrawer::RecycleImageRenderTarget(unsigned int id)
+{
+
+	imageRenderStruct rs;
+	rs.id = id;
+	rs.renderTarget = totalImageRenderTargets->GetValue(id);
+	imageRenderTargets->PushElement(rs);
+
 }
 
 void Celestial2DDrawer::Clear()
@@ -489,5 +524,18 @@ Celestial2DDrawer::~Celestial2DDrawer()
 	
 	delete[] fonts;
 	delete[] brushes;
+
+
+
+	for (int i = 0; i < totalRenderTargets; i++)
+	{
+
+		ID2D1BitmapRenderTarget* target = totalImageRenderTargets->GetValue(i);
+		target->Release();
+
+	}
+
+	delete imageRenderTargets;
+	delete totalImageRenderTargets;
 
 }

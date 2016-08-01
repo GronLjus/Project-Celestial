@@ -125,7 +125,15 @@ void CelscriptHandler::Update(unsigned int time)
 
 		}
 
-		currentMessage->read = true;
+		currentMessage->read = true; 
+		
+		if (currentMessage->killWhenDone)
+		{
+
+			delete currentMessage;
+
+		}
+
 		currentMessage = inQueue->PopMessage();
 
 	}

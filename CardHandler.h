@@ -38,6 +38,8 @@ namespace Graphics
 			void SetBorderBrush(Resources::GUIObject* object, CelestialMath::Vector3 color);
 			void SetContentBrush(Resources::GUIObject* object, CelestialMath::Vector3 color);
 
+			void RecycleImageRenderTarget(unsigned int id);
+
 			///<summary>Draws a ui</summary>
 			///<param val='ui'>[in]A pointer to the objects to draw</param>
 			void Draw(Resources::GUIObject* object, unsigned int time);

@@ -24,6 +24,7 @@ namespace Graphics
 			HRESULT InitSolidBrush(float r, float g, float b, int &index);
 			ImageResourceObject* Load2DImage(unsigned char* values, UINT bPC, UINT channels, UINT width, UINT height);
 			void DrawGUIObject(Resources::GUIObject* object, unsigned int time);
+			void RecycleImageRenderTarget(unsigned int id);
 			void Clear();
 			void Release();
 			void SetBorderBrush(Resources::GUIObject* object, CelestialMath::Vector3 color);
@@ -31,6 +32,7 @@ namespace Graphics
 			~Celestial2DDrawer();
 
 		private:
+
 			///<summary>Extends the internal array containing the fonts</summary>
 			///<param name='by'>[in]The amount to increase the array by</param>
 			void extendFontArray(int by);
@@ -73,6 +75,19 @@ namespace Graphics
 			bool caretBlink;
 			unsigned int caretTime;
 			unsigned int caretLastTime;
+
+
+			struct imageRenderStruct
+			{
+
+				unsigned int id;
+				ID2D1BitmapRenderTarget* renderTarget;
+
+			};
+
+			CrossHandlers::CelestialStack<imageRenderStruct>* imageRenderTargets;
+			CrossHandlers::CelestialSlicedList<ID2D1BitmapRenderTarget*>* totalImageRenderTargets;
+			unsigned int totalRenderTargets;
 
 	};
 }

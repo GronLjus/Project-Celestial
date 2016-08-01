@@ -11,6 +11,7 @@ namespace CrossHandlers
 		private:
 			ID2D1Bitmap* image;
 			ID2D1BitmapRenderTarget* renderImage;
+			unsigned int renderImageId;
 
 			CelestialMath::vectorUI2 size;
 			CelestialMath::vectorUI2 pos;
@@ -24,11 +25,12 @@ namespace CrossHandlers
 			void SetDelay(unsigned int delay);
 
 			ID2D1Bitmap* GetImage() const;
+			unsigned int GetImageId() const;
 			void SetImage(ID2D1Bitmap* image);
 
 
 			ID2D1BitmapRenderTarget* GetRenderImage() const;
-			void SetRenderImage(ID2D1BitmapRenderTarget* image);
+			void SetRenderImage(ID2D1BitmapRenderTarget* image, unsigned int id);
 
 			void SetSize(CelestialMath::vectorUI2 size);
 			void SetPos(CelestialMath::vectorUI2 pos);

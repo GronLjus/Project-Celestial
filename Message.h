@@ -26,7 +26,8 @@ namespace CrossHandlers
 	enum GraphicMess{ GraphicMess_GETSCREEN, 
 		GraphicMess_SETGAMEBOARD, GraphicMess_SETUI, GraphicMess_SETCAMERA, 
 		GraphicMess_UPDATEGAMEBOARDBUFFERS,
-		GraphicMess_SETCONTENTBRUSH, GraphicMess_SETBORDERBRUSH, GraphicMess_NA
+		GraphicMess_SETCONTENTBRUSH, GraphicMess_SETBORDERBRUSH,
+		GraphicMess_RESETIMAGE, GraphicMess_NA
 	};
 
 	enum GameBoardMess{ GameBoardMess_SETBOARDOBJECT, GameBoardMess_SETCAM, GameBoardMess_SETGAMEBOARD,GameBoardMess_SETTRACKING,
@@ -70,7 +71,11 @@ namespace CrossHandlers
 				{ 
 					params[i] = 0; 
 				} 
+				
+				killWhenDone = false;
+
 			}
+
 			Message(const Message& mess) : Message(){ 
 				source = mess.source; 
 				destination = mess.destination; 
@@ -82,10 +87,24 @@ namespace CrossHandlers
 				this->mess = mess.mess;
 				SetParams(mess.params, 0, mess.numParams-1); 
 			}
+
+			Message(const Message* mess) : Message() {
+				source = mess->source;
+				destination = mess->destination;
+				type = mess->type;
+				read = mess->read;
+				senderId = mess->senderId;
+				returnParam = mess->returnParam;
+				timeSent = mess->timeSent;
+				this->mess = mess->mess;
+				SetParams(mess->params, 0, mess->numParams - 1);
+			}
+
 			MessageSource source;
 			MessageSource destination;
 			MessageType type;
 			bool read;
+			bool killWhenDone;
 			unsigned int senderId;
 			unsigned int returnParam;
 			unsigned int timeSent;

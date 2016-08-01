@@ -6,7 +6,7 @@ using namespace Resources;
 BaseObject::BaseObject()
 {
 
-	killMessage = nullptr;
+	killMessages = nullptr;
 
 }
 
@@ -18,10 +18,11 @@ void BaseObject::SetId(unsigned int id)
 
 }
 
-CrossHandlers::Message* BaseObject::GetKillMessage() const
+CrossHandlers::Message** BaseObject::GetKillMessage(unsigned int &kills) const
 {
 
-	return killMessage;
+	kills = this->kills;
+	return killMessages;
 
 }
 

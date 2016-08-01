@@ -17,6 +17,10 @@ GUIObject::GUIObject() : PositionableObject()
 	isVisible = true;
 	focused = false;
 	target = new ScreenTarget(Vector4(0, 0, 0, 0));
+	kills = 2;
+	killMessages = new Message*[kills];
+	killMessages[0] = nullptr;
+	killMessages[1] = nullptr;
 
 }
 
@@ -24,16 +28,16 @@ void GUIObject::UpdateScreenTarget()
 {
 
 
-	if (killMessage == nullptr)
+	if (killMessages[0] == nullptr)
 	{
 
-		killMessage = new Message();
+		killMessages[0] = new Message();
 		unsigned char tempBuff[]{ target->GetId() >> 0, target->GetId() >> 8, target->GetId() >> 16, target->GetId() >> 24 };
-		killMessage->SetParams(tempBuff, 0, 4);
-		killMessage->destination = MessageSource_RESOURCES;
-		killMessage->type = MessageType_RESOURCES;
-		killMessage->mess = ResourceMess_UNLOADOBJECT;
-		killMessage->read = false;
+		killMessages[0]->SetParams(tempBuff, 0, 4);
+		killMessages[0]->destination = MessageSource_RESOURCES;
+		killMessages[0]->type = MessageType_RESOURCES;
+		killMessages[0]->mess = ResourceMess_UNLOADOBJECT;
+		killMessages[0]->read = false;
 
 	}
 }
@@ -375,13 +379,5 @@ void GUIObject::SetBorderBrush(unsigned int brush)
 
 GUIObject::~GUIObject()
 { 
-
-	if (killMessage != nullptr)
-	{
-
-		delete killMessage;
-		killMessage = nullptr;
-
-	}
 
 }
