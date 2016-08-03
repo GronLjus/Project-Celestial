@@ -51,6 +51,7 @@ namespace CrossHandlers
 		ObjectMess_SETLCSCRPT, ObjectMess_SETRCSCRPT, ObjectMess_SETMCSCRPT,
 		ObjectMess_SETLDSCRPT, ObjectMess_SETRDSCRPT, ObjectMess_SETMDSCRPT,
 		ObjectMess_SETWHLSCRPT, ObjectMess_SETUPDWNSCRPT,
+		ObjectMess_SETTRVLNDESCRPT,
 		ObjectMess_SETSCRPTTRGT,
 		ObjectMess_SETSNAP, ObjectMess_SETTEXT, ObjectMess_APPENDTEXT, ObjectMess_APPENDTEXTLINE,
 		ObjectMess_HANDLECHAR, ObjectMess_HANDLEKEY,

@@ -40,32 +40,9 @@ void GameBoardHandler::sendCommonScriptParams(unsigned int script, unsigned int 
 		mouseY >> 0, mouseY >> 8, mouseY >> 16, mouseY >> 24
 	};
 
-	messageBuffer[this->currentMessage].timeSent = time;
-	messageBuffer[this->currentMessage].destination = MessageSource_CELSCRIPT;
-	messageBuffer[this->currentMessage].type = MessageType_SCRIPT;
-	messageBuffer[this->currentMessage].mess = ScriptMess_ADDPARNUM;
-	messageBuffer[this->currentMessage].read = false;
-	messageBuffer[this->currentMessage].SetParams(tempBuff, 0, 8);
-	outQueue->PushMessage(&messageBuffer[this->currentMessage]);
-	this->currentMessage = (this->currentMessage + 1) % outMessages;
-
-	messageBuffer[this->currentMessage].timeSent = time;
-	messageBuffer[this->currentMessage].destination = MessageSource_CELSCRIPT;
-	messageBuffer[this->currentMessage].type = MessageType_SCRIPT;
-	messageBuffer[this->currentMessage].mess = ScriptMess_ADDPARNUM;
-	messageBuffer[this->currentMessage].read = false;
-	messageBuffer[this->currentMessage].SetParams(tempBuff2, 0, 8);
-	outQueue->PushMessage(&messageBuffer[this->currentMessage]);
-	this->currentMessage = (this->currentMessage + 1) % outMessages;
-
-	messageBuffer[this->currentMessage].timeSent = time;
-	messageBuffer[this->currentMessage].destination = MessageSource_CELSCRIPT;
-	messageBuffer[this->currentMessage].type = MessageType_SCRIPT;
-	messageBuffer[this->currentMessage].mess = ScriptMess_ADDPARNUM;
-	messageBuffer[this->currentMessage].read = false;
-	messageBuffer[this->currentMessage].SetParams(tempBuff3, 0, 8);
-	outQueue->PushMessage(&messageBuffer[this->currentMessage]);
-	this->currentMessage = (this->currentMessage + 1) % outMessages;
+	addScriptParamNum(script, objectId, time);
+	addScriptParamNum(script, mouseX, time);
+	addScriptParamNum(script, mouseY, time);
 
 	messageBuffer[this->currentMessage].timeSent = time;
 	messageBuffer[this->currentMessage].destination = MessageSource_CELSCRIPT;
@@ -112,6 +89,24 @@ void GameBoardHandler::runScript(unsigned int script, unsigned int time)
 
 }
 
+void GameBoardHandler::addScriptParamNum(unsigned int script, unsigned int num, unsigned int time)
+{
+
+	unsigned char tempBuff[]{ script >> 0, script >> 8, script >> 16, script >> 24,
+		num >> 0, num >> 8, num >> 16, num >> 24
+	};
+
+	messageBuffer[this->currentMessage].timeSent = time;
+	messageBuffer[this->currentMessage].destination = MessageSource_CELSCRIPT;
+	messageBuffer[this->currentMessage].type = MessageType_SCRIPT;
+	messageBuffer[this->currentMessage].mess = ScriptMess_ADDPARNUM;
+	messageBuffer[this->currentMessage].read = false;
+	messageBuffer[this->currentMessage].SetParams(tempBuff, 0, 8);
+	outQueue->PushMessage(&messageBuffer[this->currentMessage]);
+	this->currentMessage = (this->currentMessage + 1) % outMessages;
+
+}
+
 void GameBoardHandler::triggerMouseScript(unsigned int script, unsigned int objectId, unsigned int time, int mouseX, int mouseY)
 {
 
@@ -125,19 +120,10 @@ void GameBoardHandler::triggerMouseScript(unsigned int script, unsigned int obje
 
 
 	sendCommonScriptParams(script, objectId, time, mouseX, mouseY);
-
+	addScriptParamNum(script, dragStatus, time);
 	unsigned char tempBuff[]{ script >> 0, script >> 8, script >> 16, script >> 24,
 		dragStatus >> 0, dragStatus >> 8, dragStatus >> 16, dragStatus >> 24
 	};
-
-	messageBuffer[this->currentMessage].timeSent = time;
-	messageBuffer[this->currentMessage].destination = MessageSource_CELSCRIPT;
-	messageBuffer[this->currentMessage].type = MessageType_SCRIPT;
-	messageBuffer[this->currentMessage].mess = ScriptMess_ADDPARNUM;
-	messageBuffer[this->currentMessage].read = false;
-	messageBuffer[this->currentMessage].SetParams(tempBuff, 0, 8);
-	outQueue->PushMessage(&messageBuffer[this->currentMessage]);
-	this->currentMessage = (this->currentMessage + 1) % outMessages;
 
 	runScript(script, time);
 
@@ -147,20 +133,17 @@ void GameBoardHandler::triggerMouseScript(unsigned int script, unsigned int obje
 {
 
 	sendCommonScriptParams(script, objectId, time, mouseX, mouseY);
+	addScriptParamNum(script, delta, time);
+	runScript(script, time);
 
-	unsigned char tempBuff[]{ script >> 0, script >> 8, script >> 16, script >> 24,
-		delta >> 0, delta >> 8, delta >> 16, delta >> 24
-	};
+}
 
-	messageBuffer[this->currentMessage].timeSent = time;
-	messageBuffer[this->currentMessage].destination = MessageSource_CELSCRIPT;
-	messageBuffer[this->currentMessage].type = MessageType_SCRIPT;
-	messageBuffer[this->currentMessage].mess = ScriptMess_ADDPARNUM;
-	messageBuffer[this->currentMessage].read = false;
-	messageBuffer[this->currentMessage].SetParams(tempBuff, 0, 8);
-	outQueue->PushMessage(&messageBuffer[this->currentMessage]);
-	this->currentMessage = (this->currentMessage + 1) % outMessages;
+void GameBoardHandler::triggerNodeScript(unsigned int script, unsigned int obj, unsigned int goalNode, unsigned int currentNode, unsigned int time)
+{
 
+	addScriptParamNum(script, obj, time);
+	addScriptParamNum(script, currentNode, time);
+	addScriptParamNum(script, goalNode, time);
 	runScript(script, time);
 
 }
@@ -814,8 +797,21 @@ void GameBoardHandler::Update(unsigned int time)
 
 	}
 
-	routing->Update(time);
+	unsigned int scripts = 0;
+	unsigned int* scriptsToRun = routing->Update(time, scripts);
 
+	for (unsigned int i = 0; i < scripts; i++)
+	{
+
+		GameTravelObject* obj = (GameTravelObject*)gameObjects->GetValue(scriptsToRun[i]);
+		triggerNodeScript(
+			obj->GetTravelNodeScript()-1,
+			scriptsToRun[i],
+			obj->GetFinalGoalNode() + 1,
+			obj->GetNode() + 1,
+			time);
+
+	}
 }
 
 GameBoardHandler::~GameBoardHandler()

@@ -22,6 +22,8 @@ namespace Resources
 
 			unsigned int GetUpdownScript() const;
 
+			unsigned int GetTravelNodeScript() const;
+
 			virtual ~ScriptableObject(){}
 
 		private:
@@ -36,6 +38,8 @@ namespace Resources
 			unsigned int wheelScript;
 
 			unsigned int upDownScript;
+
+			unsigned int travelArrivedNodeScript;
 
 	};
 }

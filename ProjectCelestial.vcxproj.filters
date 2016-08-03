@@ -286,6 +286,9 @@
     <Filter Include="Source Files\Entities\Routing">
       <UniqueIdentifier>{7ddf6b8a-6598-4238-a92b-b2c09cef6e5c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resource Files\Content\Scripts\ObjectScripts">
+      <UniqueIdentifier>{41a9b08e-f5ab-48ea-9686-ce23428b2b6e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Project Celestial.h">
@@ -1144,6 +1147,9 @@
     </None>
     <None Include="Content\Plane1.clmsh">
       <Filter>Resource Files\Content</Filter>
+    </None>
+    <None Include="Content\Scripts\ObjectScripts\NodeArrive.celsrc">
+      <Filter>Resource Files\Content\Scripts\ObjectScripts</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

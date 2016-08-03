@@ -17,6 +17,9 @@ RoutingManager::RoutingManager()
 	paths = 128;
 	path = new unsigned[paths];
 
+	maxSOuts = 128;
+	scriptOuts = new unsigned int[maxSOuts];
+
 }
 
 void RoutingManager::Init(CelestialSlicedList<BaseObject*>* gameObjects)
@@ -47,9 +50,27 @@ unsigned int RoutingManager::AddNode(Vector3 position, GameRouteObject* obj)
 
 }
 
-void RoutingManager::Update(unsigned int time)
+unsigned int RoutingManager::addToOutScripts(unsigned int script, unsigned int place)
 {
 
+	if (place >= maxSOuts)
+	{
+
+		maxSOuts += 128;
+		unsigned int* newScripts = new unsigned int[maxSOuts];
+		memcpy(newScripts, scriptOuts, maxSOuts - 128 * sizeof(unsigned int));
+
+	}
+
+	scriptOuts[place] = script;
+	return place + 1;
+
+}
+
+unsigned int* RoutingManager::Update(unsigned int time, unsigned int &scripts)
+{
+
+	unsigned int scriptPlace = 0;
 	CelestialListNode<GameTravelObject*>* lastNode = nullptr;
 	CelestialListNode<GameTravelObject*>* node = travelObjects->GetFirstNode();
 
@@ -67,6 +88,13 @@ void RoutingManager::Update(unsigned int time)
 		{
 
 			obj->SetNode(rNode->GetId());
+
+			if (obj->GetTravelNodeScript() > 0)
+			{
+
+				scriptPlace = addToOutScripts(obj->GetId(), scriptPlace);
+
+			}
 
 			//Object has arrived at its final destination
 			if (obj->GetFinalGoalNode() == rNode->GetId())
@@ -149,6 +177,10 @@ void RoutingManager::Update(unsigned int time)
 			}
 		}
 	}
+
+	scripts = scriptPlace;
+	return scriptOuts;
+
 }
 
 unsigned int RoutingManager::AddNode(Vector3 position, unsigned int* objects, unsigned int amounts)
@@ -380,5 +412,6 @@ RoutingManager::~RoutingManager()
 	delete routeNodes;
 	delete travelObjects;
 	delete[] path;
+	delete[] scriptOuts;
 
 }

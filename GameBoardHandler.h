@@ -39,9 +39,11 @@ namespace Entities
 
 			void transformHookedObject(CelestialMath::Vector3 mousePos);
 
+			void addScriptParamNum(unsigned int script, unsigned int num, unsigned int time);
 			void triggerMouseScript(unsigned int script, unsigned int objectId, unsigned int time, int mouseX, int mouseY);
 			void triggerMouseScript(unsigned int script, unsigned int objectId, unsigned int time, int mouseX, int mouseY, short delta);
 			void triggerMouseScript(unsigned int script, unsigned int objectId, unsigned int time, int mouseX, int mouseY, unsigned int dragStatus);
+			void triggerNodeScript(unsigned int script, unsigned int obj, unsigned int goalNode, unsigned int currentNode, unsigned int time);
 
 			CelestialMath::Vector3 getMouseWorldLine(unsigned int mouseX, unsigned int mouseY) const;
 			Resources::ScriptableObject* getMouseObject(CelestialMath::Vector3 direction) const;

@@ -21,6 +21,7 @@ namespace Logic
 		opcode_SETLCLK, opcode_SETMCLK, opcode_SETRCLK,
 		opcode_SETLDRG, opcode_SETMDRG, opcode_SETRDRG,
 		opcode_SETMWHL, opcode_SETUD,
+		opcode_SETNDEARRVL,
 		opcode_SETUI,
 		opcode_SETCRS,
 		opcode_FCSUI,

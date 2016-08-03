@@ -19,6 +19,8 @@ ScriptableObject::ScriptableObject() : BaseObject()
 	wheelScript = 0;
 	upDownScript = 0;
 
+	travelArrivedNodeScript = 0;
+
 }
 
 
@@ -55,6 +57,9 @@ void ScriptableObject::Update(Message* mess)
 			break;
 		case ObjectMess_SETUPDWNSCRPT:
 			upDownScript = param1 + 1;
+			break;
+		case ObjectMess_SETTRVLNDESCRPT:
+			travelArrivedNodeScript = param1 + 1;
 			break;
 		}
 	}
@@ -113,5 +118,12 @@ unsigned int ScriptableObject::GetLeftClickScript() const
 {
 
 	return leftClickScript;
+
+}
+
+unsigned int ScriptableObject::GetTravelNodeScript() const
+{
+
+	return travelArrivedNodeScript;
 
 }

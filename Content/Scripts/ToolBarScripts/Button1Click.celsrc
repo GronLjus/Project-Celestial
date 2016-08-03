@@ -2,6 +2,7 @@ $
 {
 	
 	plane1Mesh = import 'planeMesh'
+	plane1Arr = load script 'Content\Scripts\ObjectScripts\NodeArrive.celsrc'
 
 }
 
@@ -10,3 +11,4 @@ size plane 1.0 0.195 0.932
 add plane
 spawn plane 1
 travel plane 3
+set nodearrival plane plane1Arr

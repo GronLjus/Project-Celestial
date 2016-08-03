@@ -426,6 +426,7 @@
     <None Include="Content\Scripts\CameraScripts\CameraZoom.celsrc" />
     <None Include="Content\Scripts\LoadScripts\LoadGameBoard.celsrc" />
     <None Include="Content\Scripts\LoadScripts\LoadToolBar.celsrc" />
+    <None Include="Content\Scripts\ObjectScripts\NodeArrive.celsrc" />
     <None Include="Content\Scripts\PreLoad.celsrc" />
     <None Include="Content\Scripts\Root.celsrc" />
     <None Include="Content\Scripts\ToolBarScripts\Button1Click.celsrc" />

@@ -16,7 +16,7 @@ namespace Entities
 			void Init(CrossHandlers::CelestialSlicedList<Resources::BaseObject*>* gameObjects);
 			unsigned int AddNode(CelestialMath::Vector3 position, Resources::GameRouteObject* obj);
 			unsigned int AddNode(CelestialMath::Vector3 position, unsigned int* objects, unsigned int amounts);
-			void Update(unsigned int time);
+			unsigned int* Update(unsigned int time, unsigned int &scripts);
 			void Travel(Resources::GameTravelObject* object, unsigned int goal, unsigned int time);
 			void Spawn(Resources::GameTravelObject* object, unsigned int cell);
 			virtual ~RoutingManager();
@@ -30,6 +30,10 @@ namespace Entities
 			unsigned char pathFindVal;
 			unsigned int* path;
 			unsigned char paths;
+
+			unsigned int addToOutScripts(unsigned int script, unsigned int place);
+			unsigned int* scriptOuts;
+			unsigned int maxSOuts;
 
 			class prio_queue
 			{

@@ -1,0 +1,16 @@
+
+if ?1 : ?2
+{
+
+	newGoal = 1
+
+	if ?1 : 1
+	{
+		
+		newGoal = 3
+
+	}
+
+	travel ?0 newGoal
+
+}
