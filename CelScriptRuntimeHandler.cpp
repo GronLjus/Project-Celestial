@@ -3002,15 +3002,12 @@ RunTimeError CelScriptRuntimeHandler::AddScriptFloatParam(int scriptId, unsigned
 	unsigned int par = scriptFloatParams->GetValue(script->GetScriptId() - 1);
 	unsigned int parPlace = script->GetAdr(par, 'f');
 	scriptFloatParams->Add(par + 1, script->GetScriptId() - 1);
-
-	if (parPlace != 0)
-	{
-
-		rtc->GetValue(script->GetScriptId() - 1)->memory->AddVariable(parPlace - 1, value, 4);
-
-	}
+	unsigned char* charArr = new unsigned char[4];
+	memcpy(charArr, value, 4);
+	script->AddParam(4, charArr, parPlace);
 
 	return er;
+
 }
 
 RunTimeError CelScriptRuntimeHandler::AddScriptNumParam(int scriptId, unsigned char* value)
@@ -3022,13 +3019,9 @@ RunTimeError CelScriptRuntimeHandler::AddScriptNumParam(int scriptId, unsigned c
 	unsigned int par = scriptNumParams->GetValue(script->GetScriptId() - 1);
 	unsigned int parPlace = script->GetAdr(par, 'n');
 	scriptNumParams->Add(par + 1, script->GetScriptId() - 1);
-
-	if (parPlace != 0)
-	{
-
-		rtc->GetValue(script->GetScriptId() - 1)->memory->AddVariable(parPlace - 1, value, 4);
-
-	}
+	unsigned char* charArr = new unsigned char[4];
+	memcpy(charArr, value, 4);
+	script->AddParam(4, charArr, parPlace);
 
 	return er;
 
@@ -3043,26 +3036,20 @@ RunTimeError CelScriptRuntimeHandler::AddScriptStrParam(int scriptId, std::strin
 	unsigned int par = scriptStrParams->GetValue(script->GetScriptId() - 1);
 	unsigned int parPlace = script->GetAdr(par, 's');
 	scriptStrParams->Add(par + 1, script->GetScriptId() - 1);
+	unsigned char* charArr = new unsigned char[value.length() + 4];
+	charArr[0] = value.length() >> 0;
+	charArr[1] = value.length() >> 8;
+	charArr[2] = value.length() >> 16;
+	charArr[3] = value.length() >> 24;
 
-	if (parPlace != 0)
+	for (unsigned int i = 4; i < 4 + value.length(); i++)
 	{
-		unsigned char* charArr = new unsigned char[value.length() + 4];
-		charArr[0] = value.length() >> 0;
-		charArr[1] = value.length() >> 8;
-		charArr[2] = value.length() >> 16;
-		charArr[3] = value.length() >> 24;
 
-		for (unsigned int i = 4; i < 4 + value.length(); i++)
-		{
+		charArr[i] = value[i - 4];
 
-			charArr[i] = value[i - 4];
-
-		}
-
-		rtc->GetValue(script->GetScriptId() - 1)->memory->AddVariable(parPlace - 1, charArr, value.length() + 4);
-		delete[] charArr;
 	}
 
+	script->AddParam(value.length() + 1, charArr, parPlace);
 	return er;
 
 }
@@ -3127,6 +3114,33 @@ RunTimeError CelScriptRuntimeHandler::commonScripts(unsigned int end, RunTimeCom
 
 }
 
+RunTimeError CelScriptRuntimeHandler::FinalizeParams(int id)
+{
+
+	CelScriptCompiled* script = (CelScriptCompiled*)gameObjects->GetValue(id);
+	RunTimeError er = initScript(script, id);
+
+	if (er != RunTimeError_OK)
+	{
+
+		return er;
+
+	}
+
+	if (script != nullptr)
+	{
+
+		scriptNumParams->Add(0, script->GetScriptId() - 1);
+		scriptStrParams->Add(0, script->GetScriptId() - 1);
+		scriptFloatParams->Add(0, script->GetScriptId() - 1);
+		script->FinishParams();
+
+	}
+
+	return er;
+
+}
+
 RunTimeError CelScriptRuntimeHandler::RunScript(int id,unsigned int stackId, unsigned int eTime)
 {
 
@@ -3146,7 +3160,6 @@ RunTimeError CelScriptRuntimeHandler::RunScript(int id,unsigned int stackId, uns
 	if (script != nullptr && thisRtc != nullptr)
 	{
 
-
 		if (thisRtc->status == scriptStatus_PRIMED)
 		{
 
@@ -3160,10 +3173,30 @@ RunTimeError CelScriptRuntimeHandler::RunScript(int id,unsigned int stackId, uns
 
 			}
 
-			scriptNumParams->Add(0, script->GetScriptId() - 1);
-			scriptStrParams->Add(0, script->GetScriptId() - 1);
-			scriptFloatParams->Add(0, script->GetScriptId() - 1);
+			CelestialStack<CelScriptCompiled::Param>* paramList = script->GetParamList();
+			CelestialStack<unsigned int>* params = script->GetParams();
 
+			if (params->GetCount() > 0)
+			{
+
+				unsigned int nrParams = params->PopElement();
+
+				for (unsigned int i = 0; i < nrParams && paramList->GetCount() > 0; i++)
+				{
+
+					CelScriptCompiled::Param param = paramList->PopElement();
+
+					if (param.adr > 0)
+					{
+
+						thisRtc->memory->AddVariable(param.adr - 1, param.byteVal, param.byteSize);
+
+					}
+
+					delete[] param.byteVal;
+
+				}
+			}
 		}
 
 		RunTimeError er = commonScripts(script->GetCodeSize(), thisRtc, script);

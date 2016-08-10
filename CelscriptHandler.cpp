@@ -64,6 +64,7 @@ void CelscriptHandler::Update(unsigned int time)
 			if (script != nullptr)
 			{
 
+				runTime->FinalizeParams(param1);
 				unsigned int chosenStack = takenStacks->Add(true);
 
 				if (scriptStacks->GetValue(chosenStack) == nullptr)
@@ -88,6 +89,7 @@ void CelscriptHandler::Update(unsigned int time)
 		else if (currentMessage->mess == ScriptMess_RUNFROM)
 		{
 
+			runTime->FinalizeParams(param1);
 			unsigned int param2 = currentMessage->params[4] | ((int)currentMessage->params[5] << 8) | ((int)currentMessage->params[6] << 16) | ((int)currentMessage->params[7] << 24);
 			reverseStacks->Add(param2, param1);
 			scriptStacks->GetValue(param2)->stack->PushElement(param1);

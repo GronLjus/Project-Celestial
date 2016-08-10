@@ -2,6 +2,7 @@
 #include "CelScriptCompiled.h"
 
 using namespace Resources;
+using namespace CrossHandlers;
 
 CelScriptCompiled::CelScriptCompiled(unsigned int maxParams, unsigned int maxStringParams, unsigned int maxFloatParams)
 {
@@ -26,6 +27,48 @@ CelScriptCompiled::CelScriptCompiled(unsigned int maxParams, unsigned int maxStr
 	codeSize = 0;
 	offset = 0;
 	scriptId = 0;
+	paramList = new CelestialStack<Param>(false);
+	params = new CelestialStack<unsigned int>(false);
+	currentParams = 0;
+
+}
+
+void CelScriptCompiled::AddParam(unsigned char byteSize, unsigned char* byteVal, unsigned int adr)
+{
+
+	Param par;
+	par.adr = adr;
+	par.byteSize = byteSize;
+	par.byteVal = byteVal;
+
+	paramList->PushElement(par);
+	currentParams++;
+
+}
+
+void CelScriptCompiled::FinishParams()
+{
+	
+	if (currentParams > 0)
+	{
+
+		params->PushElement(currentParams);
+		currentParams = 0;
+
+	}
+}
+
+CelestialStack<CelScriptCompiled::Param>* CelScriptCompiled::GetParamList() const
+{
+
+	return paramList;
+
+}
+
+CelestialStack<unsigned int>* CelScriptCompiled::GetParams() const
+{
+
+	return params;
 
 }
 
@@ -221,5 +264,8 @@ CelScriptCompiled::~CelScriptCompiled()
 	delete[] floatParamAdrDic;
 
 	delete[] systemParams;
+
+	delete paramList;
+	delete params;
 
 }

@@ -48,6 +48,7 @@ namespace Logic
 		///<returns>Any runtime errors</returns>
 		RunTimeError RunScript(int id, unsigned int stackId, unsigned int eTime);
 
+		RunTimeError FinalizeParams(int id);
 		RunTimeError AddScriptFloatParam(int scriptId, unsigned char* value);
 		RunTimeError AddScriptNumParam(int scriptId, unsigned char* value);
 		RunTimeError AddScriptStrParam(int scriptId, std::string value);

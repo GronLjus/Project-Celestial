@@ -1,6 +1,7 @@
 #pragma once
 #include "BaseObject.h"
 #include "RunTimeOperations.h"
+#include "CelestialStack.h"
 
 namespace Resources
 {
@@ -8,8 +9,56 @@ namespace Resources
 	///<summary>The class contains the bytecode of the script</summary>
 	class CelScriptCompiled : public BaseObject
 	{
+	public:
+
+		struct Param
+		{
+
+			unsigned char* byteVal;
+			unsigned char byteSize;
+			unsigned int adr;
+
+		};
+
+		CelScriptCompiled(unsigned int maxParams, unsigned int maxStringParams, unsigned int maxFloatParams);
+		///<summary>Add a compiled command to the script</summary>
+		///<param val='code'>[in]An array of bytes</param>
+		///<param val='codeSize'>[in]The amount of bytes in the array</param>
+		void AddCommand(unsigned char* code, int codeSize);
+
+		void AddParam(unsigned char byteSize, unsigned char* byteVal, unsigned int adr);
+		void FinishParams();
+		CrossHandlers::CelestialStack<Param>* GetParamList() const;
+		CrossHandlers::CelestialStack<unsigned int>* GetParams() const;
+
+		void AddParamAdr(unsigned int param, unsigned int adr, char type);
+		void AddSystemParamAdr(Logic::RunTimeParams rtp, unsigned int adr);
+
+		unsigned int GetMaxParams(bool string) const;
+		unsigned int GetAdr(unsigned int param, char type) const;
+		unsigned int GetAdr(Logic::RunTimeParams rtp) const;
+
+		///<summary>Sets the offset of the script</summary>
+		///<param val='off'>[in]The offset</param>
+		void SetOffset(int off);
+		///<summary>Gets the amount of commands</summary>
+		///<returns>The number off commands in the script</returns>
+		int GetCodeSize();
+		///<summary>Get a command from the script</summary>
+		///<param val='size'>[out]The number of bytes in the command</param>
+		///<param val='place'>[in]The command to load</param>
+		///<returns>An array of bytes </returns>
+		unsigned char* GetCode(int &size, int place);
+		///<summary>Gets the scripts offset</summary>
+		///<returns>The scripts offset</returns>
+		int GetOffset();
+
+		unsigned int GetScriptId() const;
+		void SetScriptId(unsigned int scriptId);
+		virtual ~CelScriptCompiled();
 
 		private:
+
 			///<summary>A list of commands in the script</summary>
 			unsigned char** code;
 			///<summary>Haw many bytes are in each commands</summary>
@@ -29,39 +78,9 @@ namespace Resources
 			unsigned int maxStringParams;
 			unsigned int maxFloatParams;
 			unsigned int scriptId;
-
-		public:
-			CelScriptCompiled(unsigned int maxParams, unsigned int maxStringParams, unsigned int maxFloatParams);
-			///<summary>Add a compiled command to the script</summary>
-			///<param val='code'>[in]An array of bytes</param>
-			///<param val='codeSize'>[in]The amount of bytes in the array</param>
-			void AddCommand(unsigned char* code, int codeSize);
-
-			void AddParamAdr(unsigned int param, unsigned int adr, char type);
-			void AddSystemParamAdr(Logic::RunTimeParams rtp, unsigned int adr);
-
-			unsigned int GetMaxParams(bool string) const;
-			unsigned int GetAdr(unsigned int param,char type) const;
-			unsigned int GetAdr(Logic::RunTimeParams rtp) const;
-
-			///<summary>Sets the offset of the script</summary>
-			///<param val='off'>[in]The offset</param>
-			void SetOffset(int off);
-			///<summary>Gets the amount of commands</summary>
-			///<returns>The number off commands in the script</returns>
-			int GetCodeSize();
-			///<summary>Get a command from the script</summary>
-			///<param val='size'>[out]The number of bytes in the command</param>
-			///<param val='place'>[in]The command to load</param>
-			///<returns>An array of bytes </returns>
-			unsigned char* GetCode(int &size, int place);
-			///<summary>Gets the scripts offset</summary>
-			///<returns>The scripts offset</returns>
-			int GetOffset();
-
-			unsigned int GetScriptId() const;
-			void SetScriptId(unsigned int scriptId);
-			virtual ~CelScriptCompiled();
-
+			CrossHandlers::CelestialStack<Param>* paramList;
+			CrossHandlers::CelestialStack<unsigned int>* params;
+			unsigned int currentParams;
+		
 	};
 }

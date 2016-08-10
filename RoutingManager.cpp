@@ -88,6 +88,7 @@ unsigned int* RoutingManager::Update(unsigned int time, unsigned int &scripts)
 		{
 
 			obj->SetNode(rNode->GetId());
+			unsigned int script = obj->GetTravelNodeScript();
 
 			if (obj->GetTravelNodeScript() > 0)
 			{
@@ -167,6 +168,15 @@ unsigned int* RoutingManager::Update(unsigned int time, unsigned int &scripts)
 				delete node;
 				node = lastNode->GetNext();
 
+				if (node == nullptr)
+				{
+
+					travelObjects->SetLast(lastNode);
+
+				}
+
+				travelObjects->DecreaseCount();
+
 			}
 			else
 			{
@@ -209,6 +219,7 @@ unsigned int RoutingManager::AddNode(Vector3 position, unsigned int* objects, un
 				position = obj->GetObjectCenterLine(position,lastObject->GetDirection());
 			
 			}
+
 			position.y = obj->GetPosition().y + obj->GetScale().y / 2;
 			preExist = obj->GetRouteNode(position);
 			lastObject = obj;
@@ -383,6 +394,8 @@ void RoutingManager::Travel(GameTravelObject* object, unsigned int goal, unsigne
 
 	unsigned int paths = pathFind(routeNodes->GetValue(object->GetNode()), routeNodes->GetValue(goal));
 	object->SetFinalGoalNode(goal);
+	unsigned int objId = object->GetId();
+	unsigned int startNode = object->GetNode();
 
 	if (paths > 0)
 	{
