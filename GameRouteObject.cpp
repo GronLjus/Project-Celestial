@@ -111,7 +111,6 @@ void GameRouteObject::AddRouteNode(RouteNodeObject* node)
 			bool isOnSame = false;
 
 		}
-
 	}
 
 	RouteNodeObject* leftNode = nodes->GetValue(left);
@@ -134,40 +133,8 @@ void GameRouteObject::AddRouteNode(RouteNodeObject* node)
 	else if (distRight >= 0 && distLeft >= 0)
 	{
 
-		bool stop = false;
-
-		for (unsigned int i = 0; i < leftNode->GetRoutes() && !stop; i++)
-		{
-
-			float dist;
-			RouteNodeObject* nodeHere = leftNode->GetRoute(i, dist);
-
-			if (nodeHere != nullptr && nodeHere->GetId() == right)
-			{
-
-				leftNode->RemoveRoute(i);
-				stop = true;
-
-			}
-
-		}
-
-		stop = false;
-
-		for (unsigned int i = 0; i < rightNode->GetRoutes() && !stop; i++)
-		{
-
-			float dist;
-			RouteNodeObject* nodeHere = rightNode->GetRoute(i, dist);
-
-			if (nodeHere != nullptr && nodeHere->GetId() == left)
-			{
-
-				rightNode->RemoveRoute(i);
-				stop = true;
-
-			}
-		}
+		leftNode->RemoveRoute(rightNode->GetId());
+		rightNode->RemoveRoute(leftNode->GetId());
 
 		leftNode->AddRoute(node);
 		rightNode->AddRoute(node);

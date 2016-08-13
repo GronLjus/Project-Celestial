@@ -201,6 +201,14 @@ unsigned int RoutingManager::AddNode(Vector3 position, unsigned int* objects, un
 
 		RouteNodeObject* preExist = nullptr;
 		GameRouteObject* lastObject = nullptr;
+		bool* exists = new bool[amounts];
+
+		for (unsigned int i = 0; i < amounts; i++)
+		{
+
+			exists[i] = false;
+
+		}
 
 		for (unsigned int i = 0; i < amounts && preExist == nullptr; i++)
 		{
@@ -222,6 +230,7 @@ unsigned int RoutingManager::AddNode(Vector3 position, unsigned int* objects, un
 
 			position.y = obj->GetPosition().y + obj->GetScale().y / 2;
 			preExist = obj->GetRouteNode(position);
+			exists[i] = preExist != nullptr;
 			lastObject = obj;
 
 		}
@@ -240,9 +249,8 @@ unsigned int RoutingManager::AddNode(Vector3 position, unsigned int* objects, un
 		{
 
 			GameRouteObject* obj = ((GameRouteObject*)this->gameObjects->GetValue(objects[i]));
-			RouteNodeObject* nodeHere = obj->GetRouteNode(position);
 
-			if (nodeHere == nullptr)
+			if (!exists[i])
 			{
 
 				obj->AddRouteNode(preExist);
@@ -250,6 +258,7 @@ unsigned int RoutingManager::AddNode(Vector3 position, unsigned int* objects, un
 			}
 		}
 
+		delete[] exists;
 		return preExist->GetId()+1;
 
 	}

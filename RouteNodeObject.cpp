@@ -186,12 +186,12 @@ void RouteNodeObject::RemoveRoute(unsigned int id)
 	for (unsigned int i = 0; i < maxRoutes && !found;i++)
 	{
 	
-		
 		route rte = routes->GetValue(i);
 
 		if (rte.goal->GetId() == id && !rte.deleted)
 		{
 
+			found = true;
 			routes->Remove(i);
 
 		}
