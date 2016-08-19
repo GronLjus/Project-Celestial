@@ -543,6 +543,59 @@ Intersection BoundingBox::IntersectsBounding(IBounding* bounding,Shape shape)
 
 }
 
+Intersection BoundingBox::checkPointPlanes(CelestialMath::Vector3 point,BoundingPlane &plane1, BoundingPlane &plane2)
+{
+
+	Vector3 plane1Normal = plane1.GetUnitNormal();
+	Vector3 plane2Normal = plane2.GetUnitNormal();
+
+
+	float plane1Dist = VectorDot(point, plane1Normal) + plane1.GetP();
+	float plane2Dist = VectorDot(point, plane2Normal) + plane2.GetP();
+
+	if (plane1Dist < -epsilon || plane2Dist < -epsilon)
+	{
+
+		return Intersection_BACK;
+
+	}
+	else if (plane1Dist > epsilon && plane2Dist > epsilon)
+	{
+
+		return Intersection_FRONT;
+
+	}
+
+	return Intersection_ON;
+
+}
+
+Intersection BoundingBox::ContainsPoint(CelestialMath::Vector3 point)
+{
+
+	Intersection retVal = checkPointPlanes(point, topPlane, bottomPlane);
+
+	if (retVal != Intersection_BACK)
+	{
+
+		Intersection frontBack = checkPointPlanes(point, rightPlane, leftPlane);
+		retVal = retVal == Intersection_ON && frontBack != Intersection_BACK
+			? retVal : frontBack;
+
+		if (retVal != Intersection_BACK)
+		{
+
+			Intersection leftRight = checkPointPlanes(point, frontPlane, rearPlane);
+			retVal = retVal == Intersection_ON && leftRight != Intersection_BACK
+				? retVal : leftRight;
+
+		}
+	}
+
+	return retVal;
+
+}
+
 void BoundingBox::Transform(Matrix mat)
 {
 

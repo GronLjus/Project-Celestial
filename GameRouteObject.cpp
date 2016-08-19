@@ -35,6 +35,31 @@ RouteNodeObject* GameRouteObject::GetRouteNode(unsigned int localId) const
 
 }
 
+Intersection GameRouteObject::ContainsPoint(Vector3 point)
+{
+
+	BoundingBox* box = GetBox();
+	point.y = GetPosition().y;
+	Intersection retVal = box->ContainsPoint(point);
+
+	for (unsigned int i = 0; i < GetSubobjects() && retVal == Intersection_BACK; i++)
+	{
+
+		GameObject* sub = (GameObject*)GetSubobject(i);
+
+		if (sub != nullptr)
+		{
+
+			box = sub->GetBox();
+			retVal = box->ContainsPoint(point);
+
+		}
+	}
+
+	return retVal;
+
+}
+
 RouteNodeObject* GameRouteObject::GetRouteNode(Vector3 position) const
 {
 
@@ -44,13 +69,18 @@ RouteNodeObject* GameRouteObject::GetRouteNode(Vector3 position) const
 	{
 	
 		RouteNodeObject* val = nodes->GetValue(i);
-		float dist = VectorDot(position - val->GetPosition());
 
-		if (dist < 0.5f)
+		if (val != nullptr)
 		{
 
-			retval = val;
+			float dist = VectorDot(position - val->GetPosition());
 
+			if (dist < 0.5f)
+			{
+
+				retval = val;
+
+			}
 		}
 	}
 
@@ -144,12 +174,26 @@ void GameRouteObject::AddRouteNode(RouteNodeObject* node)
 
 	}
 
+	InsertNode(node);
+
+}
+
+void GameRouteObject::RemoveNode(unsigned int localId)
+{
+
+	nodes->Remove(localId);
+
+}
+
+void GameRouteObject::InsertNode(Entities::RouteNodeObject* node)
+{
+
 	unsigned int newId = nodes->Add(node);
 
-	if (newId+1 > routeNodes)
+	if (newId + 1 > routeNodes)
 	{
 
-		routeNodes = newId+1;
+		routeNodes = newId + 1;
 
 	}
 }

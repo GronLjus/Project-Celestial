@@ -582,6 +582,27 @@ void GameBoardHandler::UpdateMessages(unsigned int time)
 
 			}
 		}
+		else if (currentMessage->mess == GameBoardMess_SPLITOBJECT)
+		{
+
+			RouteNodeObject* node = routing->GetNode(param1 -1);
+			float width;
+			memcpy(&width, &currentMessage->params[4], 4);
+			BoundingSphere bs = BoundingSphere(node->GetPosition().x,
+				node->GetPosition().y,
+				node->GetPosition().z,
+				width / 2);
+
+			unsigned int amounts;
+			unsigned int* objects = localGameBoard->GetCollidedObject(&bs, GameObjectType_ROUTE, amounts);
+
+			for (unsigned int i = 0; i < amounts; i++)
+			{
+
+				splitObject((GameObject*)gameObjects->GetValue(objects[i]), node->GetPosition(), width, time);
+
+			}
+		}
 
 		currentMessage->read = true;
 
@@ -595,6 +616,71 @@ void GameBoardHandler::UpdateMessages(unsigned int time)
 		currentMessage = inQueue->PopMessage();
 
 	}
+}
+
+void GameBoardHandler::splitObject(GameObject* object, Vector3 position, float width, unsigned int time)
+{
+
+	float objectLength = object->GetScale().z;
+	position.y = object->GetPosition().y;
+
+	Vector3 endPoint1 = object->GetPosition() + (object->GetDirection() * (objectLength / 2.0f));
+	Vector3 endPoint2 = object->GetPosition() - (object->GetDirection() * (objectLength / 2.0f));
+	float halfWidthSquared = pow(width / 2.0f, 2);
+	float dist1 = VectorDot(endPoint1 - position);
+	float dist2 = VectorDot(endPoint2 - position);
+
+	float dir1 = VectorDot(endPoint1 - position, object->GetDirection());
+	float dir2 = VectorDot(endPoint2 - position, object->GetDirection());
+
+	if (dir1 < 0.0f ||
+		dir2 > 0.0f ||
+		dist1 <= halfWidthSquared+CELESTIAL_EPSILON ||
+		dist2 <= halfWidthSquared+CELESTIAL_EPSILON)
+	{
+
+		return;
+
+	}
+
+	Vector3 startPoint1 = position + (object->GetDirection() * (width / 2.0f));
+	Vector3 startPoint2 = position - (object->GetDirection() * (width / 2.0f));
+
+	Vector3 diff1 = startPoint1 - endPoint1;
+	float length1 = sqrt(VectorDot(diff1));
+	float length2 = objectLength - length1 - width;
+
+	Vector3 pos1 = startPoint1 + (object->GetDirection() * (length1 / 2.0f));
+	Vector3 pos2 = startPoint2 - (object->GetDirection() * (length2 / 2.0f));
+
+	Vector3 newScale = object->GetScale();
+	newScale.z = length1;
+
+	object->SetScale(newScale);
+	object->SetPosition(pos1);
+	object->UpdateMatrix();
+
+	messageBuffer[this->currentMessage].timeSent = time;
+	messageBuffer[this->currentMessage].destination = MessageSource_RESOURCES;
+	messageBuffer[this->currentMessage].type = MessageType_RESOURCES;
+	messageBuffer[this->currentMessage].mess = ResourceMess_LOADCOPYOBJECTAT;
+	unsigned char tempBuff[]{ object->GetId() >> 0, object->GetId() >> 8, object->GetId() >> 16, object->GetId() >> 24,
+		0,0,0,0,
+		0,0,0,0,
+		0,0,0,0,
+		0,0,0,0
+	};
+
+	memcpy(&tempBuff[4], &length2, 4);
+	memcpy(&tempBuff[8], &(pos2.x), 4);
+	memcpy(&tempBuff[12], &(pos2.y), 4);
+	memcpy(&tempBuff[16], &(pos2.z), 4);
+
+	messageBuffer[this->currentMessage].SetParams(tempBuff, 0, 20);
+	messageBuffer[this->currentMessage].read = false;
+	outQueue->PushMessage(&messageBuffer[this->currentMessage]);
+	this->currentMessage = (this->currentMessage + 1) % outMessages;
+
 }
 
 void GameBoardHandler::transformHookedObject(Vector3 mousePos)

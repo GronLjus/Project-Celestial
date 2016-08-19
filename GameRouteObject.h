@@ -19,6 +19,9 @@ namespace Resources
 
 			void SetWidth(unsigned int width);
 			void AddRouteNode(Entities::RouteNodeObject* node);
+			void InsertNode(Entities::RouteNodeObject* node);
+			void RemoveNode(unsigned int localId);
+			CrossHandlers::Intersection ContainsPoint(CelestialMath::Vector3 point);
 			virtual ~GameRouteObject();
 
 		private:

@@ -27,6 +27,13 @@ PositionableObject::PositionableObject(Vector3 position, Vector3 scale) : Script
 
 }
 
+void PositionableObject::Move(float distance)
+{
+
+	this->position += direction*distance;
+
+}
+
 Vector3 PositionableObject::getPlane(Vector3 point)
 {
 

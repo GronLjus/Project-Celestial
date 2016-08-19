@@ -1642,6 +1642,38 @@ CelScriptCompiler::CelScriptCompiler()
 	};
 
 
+	operators[OperatorTypes_SPLIT].keyword = "split";
+	operators[OperatorTypes_SPLIT].enumAmount = 1;
+	operators[OperatorTypes_SPLIT].enums = new std::string[operators[OperatorTypes_SPLIT].enumAmount]; operators[OperatorTypes_SPLIT].enums[0] = "route";
+	operators[OperatorTypes_SPLIT].byteCodes = new unsigned char[operators[OperatorTypes_SPLIT].enumAmount]{ opcode_SPLTRTE };
+	operators[OperatorTypes_SPLIT].params = new unsigned char[operators[OperatorTypes_SPLIT].enumAmount]{ 2 };
+	operators[OperatorTypes_SPLIT].minParams = new unsigned char[operators[OperatorTypes_SPLIT].enumAmount]{ 2 };
+	operators[OperatorTypes_SPLIT].paramsyntax = new VarType*[operators[OperatorTypes_SPLIT].enumAmount]{
+		new VarType[operators[OperatorTypes_SPLIT].params[0]]{ VarType_NUMBER, VarType_FLOAT }
+	};
+	operators[OperatorTypes_SPLIT].paramTypes = new ParamType*[operators[OperatorTypes_SPLIT].enumAmount]{
+		new ParamType[operators[OperatorTypes_SPLIT].params[0]]{ ParamType_NA, ParamType_NA }
+	};
+	operators[OperatorTypes_SPLIT].optionalPar = new bool*[operators[OperatorTypes_SPLIT].enumAmount]{
+		new bool[operators[OperatorTypes_SPLIT].params[0]]{ false, false }
+	};
+	operators[OperatorTypes_SPLIT].readParam = new unsigned char[operators[OperatorTypes_SPLIT].enumAmount]{ 0 };
+	operators[OperatorTypes_SPLIT].returns = new VarType[operators[OperatorTypes_SPLIT].enumAmount]{ VarType_NA };
+	operators[OperatorTypes_SPLIT].returnType = new ParamType[operators[OperatorTypes_SPLIT].enumAmount]{ ParamType_NA };
+	operators[OperatorTypes_SPLIT].writeParam = new unsigned char[operators[OperatorTypes_SPLIT].enumAmount]{ 0 };
+	operators[OperatorTypes_SPLIT].priority = 0;
+	operators[OperatorTypes_SPLIT].shortHandsAmounts = 0;
+	operators[OperatorTypes_SPLIT].amountParOperators = new unsigned char[operators[OperatorTypes_SPLIT].enumAmount]{ 0 };
+	operators[OperatorTypes_SPLIT].parRepeatsMin = new unsigned char*[operators[OperatorTypes_SPLIT].enumAmount]{
+		new unsigned char[operators[OperatorTypes_SPLIT].params[0]]{ 0, 0 }
+	};
+	operators[OperatorTypes_SPLIT].parRepeatsMax = new unsigned char*[operators[OperatorTypes_SPLIT].enumAmount]{
+		new unsigned char[operators[OperatorTypes_SPLIT].params[0]]{ 0, 0 }
+	};
+	operators[OperatorTypes_SPLIT].parOperatorAppend = new bool*[operators[OperatorTypes_SPLIT].enumAmount]{
+		new bool[operators[OperatorTypes_SPLIT].params[0]]{ false, false }
+	};
+
 	flowOps = new FlowController[FlowOperator_NA];
 
 	flowOps[FlowOperator_IF].keyword = "if";

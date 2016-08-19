@@ -35,6 +35,7 @@ namespace CrossHandlers
 
 			CelestialMath::Vector3* cornerPoints;
 
+			Intersection checkPointPlanes(CelestialMath::Vector3 point, BoundingPlane &plane1, BoundingPlane &plane2);
 			Intersection getPlaneDistSquare(CelestialMath::Vector3 &point1, CelestialMath::Vector3 &point2, BoundingPlane &plane); 
 			Intersection getPlaneDistSquare(CelestialMath::Vector3 &origin, CelestialMath::Vector3 &direction, BoundingPlane &plane, float& distSquare);
 			void constructBox(CelestialMath::Vector3 x1, CelestialMath::Vector3 x2, CelestialMath::Vector3 y1, CelestialMath::Vector3 y2, CelestialMath::Vector3 z1, CelestialMath::Vector3 z2);
@@ -89,6 +90,7 @@ namespace CrossHandlers
 			///<param name='shape'>A shape that determines how the boundingobject is constructed</param>
 			///<returns>How the two objects intersect, Intersection_THROUGH means they overlap</returns>
 			virtual Intersection IntersectsBounding(IBounding* bounding,Shape shape);
+			virtual Intersection ContainsPoint(CelestialMath::Vector3 point);
 			///<summary>Transforms the box according to a matrix</summary>
 			///<param name='mat'>The matrix to transform the box by</param>
 			virtual void Transform(CelestialMath::Matrix mat);

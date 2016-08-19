@@ -17,6 +17,7 @@ namespace Entities
 			unsigned int AddNode(CelestialMath::Vector3 position, Resources::GameRouteObject* obj);
 			unsigned int AddNode(CelestialMath::Vector3 position, unsigned int* objects, unsigned int amounts);
 			unsigned int* Update(unsigned int time, unsigned int &scripts);
+			RouteNodeObject* GetNode(unsigned int id) const;
 			void Travel(Resources::GameTravelObject* object, unsigned int goal, unsigned int time);
 			void Spawn(Resources::GameTravelObject* object, unsigned int cell);
 			virtual ~RoutingManager();

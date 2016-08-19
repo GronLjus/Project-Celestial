@@ -20,6 +20,7 @@ namespace Resources
 		~ResourceHandler();
 
 	private:
+		unsigned int copyObject(GameObject* objectToCopy, unsigned int time);
 		void handleMess(CrossHandlers::Message* mess,unsigned int time);
 		unsigned int crossScript;
 		ResourceLoader* loader;

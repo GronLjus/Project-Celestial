@@ -59,6 +59,7 @@ namespace Logic
 		OperatorTypes_HOOK, OperatorTypes_GLUE,
 		OperatorTypes_LINK,
 		OperatorTypes_SPAWN, OperatorTypes_TRAVEL,
+		OperatorTypes_SPLIT,
 		OperatorTypes_NA
 	};
 

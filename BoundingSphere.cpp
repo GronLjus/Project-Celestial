@@ -224,6 +224,29 @@ Intersection BoundingSphere::IntersectsBounding(IBounding* bounding,Shape shape)
 
 }
 
+Intersection BoundingSphere::ContainsPoint(Vector3 point)
+{
+
+	Vector3 diff = pos - point;
+	float distSQR = VectorDot(diff);
+
+	if (distSQR - epsilon < radi*radi)
+	{
+
+		return Intersection_FRONT;
+
+	}
+	else if(distSQR + epsilon > radi*radi)
+	{
+
+		return Intersection_BACK;
+
+	}
+
+	return Intersection_ON;
+
+}
+
 void BoundingSphere::Transform(Matrix mat)
 {
 

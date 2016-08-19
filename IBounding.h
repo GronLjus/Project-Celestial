@@ -54,6 +54,8 @@ namespace CrossHandlers
 			///<param name='shape'>A shape that determines how the boundingobject is constructed</param>
 			///<returns>How the two objects intersect, Intersection_THROUGH means they overlap</returns>
 			virtual Intersection IntersectsBounding(IBounding* bounding,Shape shape) = 0;
+
+			virtual Intersection ContainsPoint(CelestialMath::Vector3 point) = 0;
 			///<summary>Transforms the volume according to a matrix</summary>
 			///<param name='mat'>The matrix to transform the box by</param>
 			virtual void Transform(CelestialMath::Matrix mat) = 0;

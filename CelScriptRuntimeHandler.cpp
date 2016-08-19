@@ -2054,6 +2054,33 @@ RunTimeError SetGameBoardOperator(unsigned int returnVar, unsigned char* params,
 
 }
 
+RunTimeError SplitRouteOperator(unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int mId, RunTimeCommons* rtc)
+{
+
+	if (paramSize < 4)
+	{
+
+		return RunTimeError_BADPARAMS;
+
+	}
+
+	unsigned int s = 4;
+	unsigned int var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
+	rtc->memory->ReadVariable(var - 1, rtc->intLoader, s);
+
+	Message mess;
+	mess.destination = MessageSource_ENTITIES;
+	mess.type = MessageType_ENTITIES;
+	mess.mess = GameBoardMess_SPLITOBJECT;
+	mess.SetParams(rtc->intLoader, 0, 4);
+	var = (params[4] | ((int)params[5] << 8) | ((int)params[6] << 16) | ((int)params[7] << 24));
+	rtc->memory->ReadVariable(var - 1, rtc->intLoader, s);
+	mess.SetParams(rtc->intLoader, 4, 4);
+
+	return sendMessageOut(mess, rtc);
+
+}
+
 RunTimeError SetCameraOperator(unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int mId, RunTimeCommons* rtc)
 {
 
@@ -2902,6 +2929,8 @@ CelScriptRuntimeHandler::CelScriptRuntimeHandler(MessageQueue* mQueue, Celestial
 	operators[opcode_ADDLNE] = AddTextLineOperator;
 	operators[opcode_STCNTNT] = SetContentOperator;
 	operators[opcode_STBRDR] = SetBorderOperator;
+
+	operators[opcode_SPLTRTE] = SplitRouteOperator;
 
 	operators[opcode_TRCK] = TrackObjectOperator;
 	operators[opcode_CRLTRCK] = ClearTrackingOperator;

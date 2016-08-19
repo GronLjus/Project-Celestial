@@ -37,6 +37,7 @@ namespace Entities
 			CelestialMath::Vector2 mouseCell;
 			bool resetMouse;
 
+			void splitObject(Resources::GameObject* object, CelestialMath::Vector3 position, float width, unsigned int time);
 			void transformHookedObject(CelestialMath::Vector3 mousePos);
 
 			void addScriptParamNum(unsigned int script, unsigned int num, unsigned int time);

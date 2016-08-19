@@ -11,7 +11,7 @@ namespace CrossHandlers
 	enum ScriptMess{ ScriptMess_RUN, ScriptMess_RUNFROM, ScriptMess_ADDPARNUM, ScriptMess_ADDPARASTR, ScriptMess_ADDPARFLOAT, ScriptMess_RESUME, ScriptMess_CATCHUP, ScriptMess_NA };
 	enum ResourceMess{
 		ResourceMess_LOADCAMERA, ResourceMess_LOADOBJECT,
-		ResourceMess_LOADCOPYOBJECT,
+		ResourceMess_LOADCOPYOBJECT, ResourceMess_LOADCOPYOBJECTAT,
 		ResourceMess_LOADGAMEBOARD, ResourceMess_LOADMESH, ResourceMess_LOADLIGHT, ResourceMess_LOADCHARKEYTRIGGER, ResourceMess_LOADKEYTRIGGER, ResourceMess_LOADSCRIPT,
 		ResourceMess_LOADGUI, ResourceMess_UNLOADOBJECT, ResourceMess_NA
 	};
@@ -38,6 +38,7 @@ namespace CrossHandlers
 		GameBoardMess_HOOKTRACK, GameBoardMess_UNHOOKTRACK,
 		GameBoardMess_ORBITOBJECT, 
 		GameBoardMess_ADDROUTE, GameBoardMess_SPAWN, GameBoardMess_TRAVEL,
+		GameBoardMess_SPLITOBJECT,
 		GameBoardMess_NA };
 	enum SystemMess{SystemMess_GETSCREENRES, SystemMess_SETCURSOR, SystemMess_HIDECURSOR, SystemMess_SHOWCURSOR, SystemMess_MOVECURSOR,SystemMesss_NA};
 
@@ -64,6 +65,7 @@ namespace CrossHandlers
 	{
 
 		public:
+
 			Message() :params(nullptr)
 			{ 
 				numParams = 128; 
@@ -107,6 +109,7 @@ namespace CrossHandlers
 			bool read;
 			bool killWhenDone;
 			unsigned int senderId;
+			unsigned int returnMess;
 			unsigned int returnParam;
 			unsigned int timeSent;
 			unsigned int mess;

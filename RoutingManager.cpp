@@ -267,6 +267,13 @@ unsigned int RoutingManager::AddNode(Vector3 position, unsigned int* objects, un
 
 }
 
+RouteNodeObject* RoutingManager::GetNode(unsigned int id) const
+{
+
+	return routeNodes->GetValue(id);
+
+}
+
 unsigned int RoutingManager::pathFind(RouteNodeObject* start, RouteNodeObject* end)
 {
 
