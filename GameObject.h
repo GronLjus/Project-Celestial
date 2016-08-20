@@ -2,12 +2,13 @@
 #include "PositionableObject.h"
 #include "BoundingBox.h"
 #include "BoundingSphere.h"
+#include "SaveObject.h"
 
 namespace Resources
 {
 	enum GameObjectType{ GameObjectType_ROUTE, GameObjectType_SCENERY, GameObjectType_TRAVELING};
 
-	class GameObject : public PositionableObject
+	class GameObject : public PositionableObject, public SaveObject
 	{
 		public:
 			GameObject(CrossHandlers::BoundingBox* baseBox, CrossHandlers::BoundingSphere* baseSphere, unsigned int meshId);

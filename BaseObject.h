@@ -37,5 +37,7 @@ namespace Resources
 		private:
 			unsigned int id;
 			unsigned int lastUpdated;
+			bool save;
+
 	};
 }

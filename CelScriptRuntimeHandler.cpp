@@ -2657,6 +2657,39 @@ RunTimeError SpawnObjectOperator(unsigned int returnVar, unsigned char* params, 
 
 }
 
+RunTimeError ScopeSaveOperator(unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int mId, RunTimeCommons* rtc)
+{
+
+	if (paramSize < 8)
+	{
+
+		return RunTimeError_BADPARAMS;
+
+	}
+
+	unsigned int s = 4;
+	unsigned int var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
+	rtc->memory->ReadVariable(var - 1, rtc->intLoader, s);
+	unsigned int objectToMod = (rtc->intLoader[0] | ((int)rtc->intLoader[1] << 8) | ((int)rtc->intLoader[2] << 16) | ((int)rtc->intLoader[3] << 24));
+
+
+	BaseObject* object = rtc->gameObjects->GetValue(objectToMod);
+
+	var = (params[4] | ((int)params[5] << 8) | ((int)params[6] << 16) | ((int)params[7] << 24));
+	rtc->memory->ReadVariable(var - 1, rtc->intLoader, s);
+	Message mess;
+	mess.destination = MessageSource_OBJECT;
+	mess.type = MessageType_OBJECT;
+	mess.mess = ObjectMess_SAVESCOPE;
+	mess.SetParams(rtc->intLoader, 0, 4);
+
+	object->Update(&mess);
+
+	return RunTimeError_OK;
+
+
+}
+
 RunTimeError TravelObjectOperator(unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int mId, RunTimeCommons* rtc)
 {
 
@@ -2938,6 +2971,8 @@ CelScriptRuntimeHandler::CelScriptRuntimeHandler(MessageQueue* mQueue, Celestial
 	operators[opcode_SPWN] = SpawnObjectOperator;
 	operators[opcode_TRVL] = TravelObjectOperator;
 	operators[opcode_GLUOBJCT] = GlueObjectOperator;
+
+	operators[opcode_SVESCPE] = ScopeSaveOperator;
 
 	operators[opcode_JMPINVVAR] = JumpInv;
 	operators[opcode_JMPNOW] = JumpNow;

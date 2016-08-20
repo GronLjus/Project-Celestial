@@ -69,6 +69,8 @@ namespace Logic
 		opcode_SPWN, opcode_TRVL,
 		opcode_GLUOBJCT,
 
+		opcode_SVESCPE,
+
 		opcode_JMPINVVAR,opcode_JMPNOW,opCode_WTFRVR,
 
 		opcode_NA

@@ -6,6 +6,7 @@ using namespace Resources;
 GUIImage::GUIImage(GUISnap h, GUISnap v) : GUIObject()
 {
 
+	setSaveState(false);
 	frames = nullptr;
 	drawFrame = nullptr;
 	totalFrames = 0;
@@ -20,6 +21,7 @@ GUIImage::GUIImage(GUISnap h, GUISnap v) : GUIObject()
 GUIImage::GUIImage(ImageResourceObject** frames, unsigned int totalFrames, GUISnap h, GUISnap v) : GUIObject()
 {
 
+	setSaveState(false);
 	drawFrame = nullptr;
 	this->frames = frames;
 	this->totalFrames = totalFrames;

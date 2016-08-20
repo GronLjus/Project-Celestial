@@ -2,7 +2,7 @@ $
 {
 	
 	plane1Mesh = import 'planeMesh'
-	plane1Arr = load script 'Content\Scripts\ObjectScripts\NodeArrive.celsrc'
+	plane1Arr = import 'nodeArr'
 
 }
 

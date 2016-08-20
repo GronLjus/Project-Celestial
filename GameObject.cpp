@@ -5,7 +5,7 @@ using namespace Resources;
 using namespace CrossHandlers;
 using namespace CelestialMath;
 
-GameObject::GameObject(BoundingBox* box, BoundingSphere* baseSphere, unsigned int meshId) : PositionableObject()
+GameObject::GameObject(BoundingBox* box, BoundingSphere* baseSphere, unsigned int meshId) : PositionableObject(), SaveObject()
 {
 
 	this->box = box;
@@ -54,8 +54,12 @@ void GameObject::Update(Message* mess)
 
 			break;
 		default:
-			PositionableObject::Update(mess);
+			if (!UpdateSaveObject(mess))
+			{
 
+				PositionableObject::Update(mess);
+
+			}
 		}
 	}
 }

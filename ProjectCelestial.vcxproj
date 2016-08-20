@@ -266,6 +266,7 @@
     <ClInclude Include="RouteNodeObject.h" />
     <ClInclude Include="RoutingManager.h" />
     <ClInclude Include="RunTimeOperations.h" />
+    <ClInclude Include="SaveObject.h" />
     <ClInclude Include="ScreenTarget.h" />
     <ClInclude Include="ScriptableObject.h" />
     <ClInclude Include="ShadowMapConstants.h" />
@@ -368,6 +369,7 @@
     <ClCompile Include="ResourceHandler.cpp" />
     <ClCompile Include="RouteNodeObject.cpp" />
     <ClCompile Include="RoutingManager.cpp" />
+    <ClCompile Include="SaveObject.cpp" />
     <ClCompile Include="ScreenTarget.cpp" />
     <ClCompile Include="ScriptableObject.cpp" />
     <ClCompile Include="ShadowMapConstants.cpp" />
@@ -425,6 +427,7 @@
     <None Include="Content\Scripts\CameraScripts\CameraRotation.celsrc" />
     <None Include="Content\Scripts\CameraScripts\CameraZoom.celsrc" />
     <None Include="Content\Scripts\LoadScripts\LoadGameBoard.celsrc" />
+    <None Include="Content\Scripts\LoadScripts\LoadScripts.celsrc" />
     <None Include="Content\Scripts\LoadScripts\LoadToolBar.celsrc" />
     <None Include="Content\Scripts\ObjectScripts\NodeArrive.celsrc" />
     <None Include="Content\Scripts\PreLoad.celsrc" />

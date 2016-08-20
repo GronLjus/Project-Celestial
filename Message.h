@@ -58,7 +58,9 @@ namespace CrossHandlers
 		ObjectMess_HANDLECHAR, ObjectMess_HANDLEKEY,
 		ObjectMess_STEPFRAME, ObjectMess_REMOVECHILD, ObjectMess_REMOVE,
 		ObjectMess_LOCKMOUSE, ObjectMess_LOCKKEYS, ObjectMess_LOCKINPUT,
-		ObjectMess_INCREMENTLAYER, ObjectMess_DECREMENTLAYER, ObjectMess_SETLAYER, ObjectMess_NA
+		ObjectMess_INCREMENTLAYER, ObjectMess_DECREMENTLAYER, ObjectMess_SETLAYER,
+		ObjectMess_SAVESCOPE,
+		ObjectMess_NA
 	};
 
 	struct Message

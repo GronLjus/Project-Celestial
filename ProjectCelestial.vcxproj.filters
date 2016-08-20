@@ -738,6 +738,9 @@
     <ClInclude Include="CLMSHFileLoader.h">
       <Filter>Header Files\Resources\Loaders\FileLoaders</Filter>
     </ClInclude>
+    <ClInclude Include="SaveObject.h">
+      <Filter>Header Files\Resources\Objects</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Camera.cpp">
@@ -1013,6 +1016,9 @@
     <ClCompile Include="CelMesh.cpp">
       <Filter>Source Files\Resources\Objects\MeshObject</Filter>
     </ClCompile>
+    <ClCompile Include="SaveObject.cpp">
+      <Filter>Source Files\Resources\Objects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico">
@@ -1150,6 +1156,9 @@
     </None>
     <None Include="Content\Scripts\ObjectScripts\NodeArrive.celsrc">
       <Filter>Resource Files\Content\Scripts\ObjectScripts</Filter>
+    </None>
+    <None Include="Content\Scripts\LoadScripts\LoadScripts.celsrc">
+      <Filter>Resource Files\Content\Scripts\LoadScripts</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

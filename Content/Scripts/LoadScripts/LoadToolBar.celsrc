@@ -58,4 +58,13 @@ set content button2Text 0.0 0.0 0.0
 set text button2Text 'Button2'
 
 
+scope save toolbarLY 0
+scope save button1 0
+scope save button2 0
+scope save button2Text 0
+scope save button1Text 0
+scope save button1Click 0
+scope save button2Click 0
+scope save button1UD 0
+
 increment layer toolbarLY

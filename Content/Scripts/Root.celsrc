@@ -7,12 +7,14 @@ focus outTextBox
 
 gameBoardLoad = load script 'Content\Scripts\LoadScripts\LoadGameBoard.celsrc'
 toolbarLoad = load script 'Content\Scripts\LoadScripts\LoadToolBar.celsrc'
+scriptLoad = load script 'Content\Scripts\LoadScripts\LoadScripts.celsrc'
 
 cam = load camera
 export 'cmra' cam
 run gameBoardLoad
 endTile = load mesh 'Content\EndTile.clmsh'
 run toolbarLoad
+run scriptLoad
 
 export 'endTile' endTile
 export 'planeMesh' load mesh 'Content\Plane1.clmsh'

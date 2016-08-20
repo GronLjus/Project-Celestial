@@ -1674,6 +1674,38 @@ CelScriptCompiler::CelScriptCompiler()
 		new bool[operators[OperatorTypes_SPLIT].params[0]]{ false, false }
 	};
 
+	operators[OperatorTypes_SCOPE].keyword = "scope";
+	operators[OperatorTypes_SCOPE].enumAmount = 1;
+	operators[OperatorTypes_SCOPE].enums = new std::string[operators[OperatorTypes_SCOPE].enumAmount]; operators[OperatorTypes_SCOPE].enums[0] = "save";
+	operators[OperatorTypes_SCOPE].byteCodes = new unsigned char[operators[OperatorTypes_SCOPE].enumAmount]{ opcode_SVESCPE };
+	operators[OperatorTypes_SCOPE].params = new unsigned char[operators[OperatorTypes_SCOPE].enumAmount]{ 2 };
+	operators[OperatorTypes_SCOPE].minParams = new unsigned char[operators[OperatorTypes_SCOPE].enumAmount]{ 2 };
+	operators[OperatorTypes_SCOPE].paramsyntax = new VarType*[operators[OperatorTypes_SCOPE].enumAmount]{
+		new VarType[operators[OperatorTypes_SCOPE].params[0]]{ VarType_NUMBER, VarType_NUMBER }
+	};
+	operators[OperatorTypes_SCOPE].paramTypes = new ParamType*[operators[OperatorTypes_SCOPE].enumAmount]{
+		new ParamType[operators[OperatorTypes_SCOPE].params[0]]{ ParamType_NA, ParamType_NA }
+	};
+	operators[OperatorTypes_SCOPE].optionalPar = new bool*[operators[OperatorTypes_SCOPE].enumAmount]{
+		new bool[operators[OperatorTypes_SCOPE].params[0]]{ false, false }
+	};
+	operators[OperatorTypes_SCOPE].readParam = new unsigned char[operators[OperatorTypes_SCOPE].enumAmount]{ 0 };
+	operators[OperatorTypes_SCOPE].returns = new VarType[operators[OperatorTypes_SCOPE].enumAmount]{ VarType_NA };
+	operators[OperatorTypes_SCOPE].returnType = new ParamType[operators[OperatorTypes_SCOPE].enumAmount]{ ParamType_NA };
+	operators[OperatorTypes_SCOPE].writeParam = new unsigned char[operators[OperatorTypes_SCOPE].enumAmount]{ 0 };
+	operators[OperatorTypes_SCOPE].priority = 0;
+	operators[OperatorTypes_SCOPE].shortHandsAmounts = 0;
+	operators[OperatorTypes_SCOPE].amountParOperators = new unsigned char[operators[OperatorTypes_SCOPE].enumAmount]{ 0 };
+	operators[OperatorTypes_SCOPE].parRepeatsMin = new unsigned char*[operators[OperatorTypes_SCOPE].enumAmount]{
+		new unsigned char[operators[OperatorTypes_SCOPE].params[0]]{ 0, 0 }
+	};
+	operators[OperatorTypes_SCOPE].parRepeatsMax = new unsigned char*[operators[OperatorTypes_SCOPE].enumAmount]{
+		new unsigned char[operators[OperatorTypes_SCOPE].params[0]]{ 0, 0 }
+	};
+	operators[OperatorTypes_SCOPE].parOperatorAppend = new bool*[operators[OperatorTypes_SCOPE].enumAmount]{
+		new bool[operators[OperatorTypes_SCOPE].params[0]]{ false, false }
+	};
+
 	flowOps = new FlowController[FlowOperator_NA];
 
 	flowOps[FlowOperator_IF].keyword = "if";

@@ -5,7 +5,7 @@
 using namespace Resources;
 using namespace CelestialMath;
 
-GUIObject::GUIObject() : PositionableObject()
+GUIObject::GUIObject() : PositionableObject(), SaveObject()
 { 
 
 	parentGUI = nullptr;
@@ -205,7 +205,13 @@ void GUIObject::Update(Message* mess)
 			target->SetLayer(GetLayer());
 			break;
 		default:
-			PositionableObject::Update(mess);
+
+			if (!UpdateSaveObject(mess))
+			{
+
+				PositionableObject::Update(mess);
+
+			}
 			break;
 
 		}

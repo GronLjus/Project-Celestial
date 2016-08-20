@@ -50,6 +50,7 @@ namespace Logic
 		OperatorTypes_ROTATE, OperatorTypes_ORBIT,
 		OperatorTypes_POS, OperatorTypes_MOVE, OperatorTypes_PROPEL,
 		OperatorTypes_SIZE, OperatorTypes_SCALE,
+		OperatorTypes_SCOPE,
 		OperatorTypes_RUN, OperatorTypes_SETPARAM,
 		OperatorTypes_IMPORT, OperatorTypes_EXPORT,
 		OperatorTypes_FOCUS, OperatorTypes_HIDE, OperatorTypes_SHOW,
