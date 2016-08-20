@@ -7,6 +7,21 @@ BaseObject::BaseObject()
 {
 
 	killMessages = nullptr;
+	activeId = 0;
+
+}
+
+unsigned int BaseObject::GetActiveId() const
+{
+
+	return activeId;
+
+}
+
+void BaseObject::SetActiveId(unsigned int id)
+{
+
+	activeId = id;
 
 }
 

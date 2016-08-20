@@ -267,6 +267,14 @@ unsigned int RoutingManager::AddNode(Vector3 position, unsigned int* objects, un
 
 }
 
+void RoutingManager::ClearNodes()
+{
+
+	routeNodes->KillList();
+	routeNodes->Reset();
+
+}
+
 RouteNodeObject* RoutingManager::GetNode(unsigned int id) const
 {
 

@@ -582,6 +582,12 @@ void GameBoardHandler::UpdateMessages(unsigned int time)
 
 			}
 		}
+		else if (currentMessage->mess == GameBoardMess_CLEARNODES)
+		{
+
+			routing->ClearNodes();
+
+		}
 		else if (currentMessage->mess == GameBoardMess_SPLITOBJECT)
 		{
 

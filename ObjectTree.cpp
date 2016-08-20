@@ -51,6 +51,27 @@ ObjectTree::ObjectTree(unsigned int cells, unsigned int minCells, Vector2 positi
 
 }
 
+void ObjectTree::ClearObjects()
+{
+
+	if (objects != nullptr)
+	{
+
+		objects->Reset();
+		objectAmountMax = 0;
+
+	}
+	else
+	{
+		for (unsigned int i = 0; i < 4; i++)
+		{
+
+			subTrees[i]->ClearObjects();
+
+		}
+	}
+}
+
 bool ObjectTree::RemoveObject(unsigned int id)
 {
 

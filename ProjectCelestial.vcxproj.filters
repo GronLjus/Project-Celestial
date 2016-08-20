@@ -1160,6 +1160,9 @@
     <None Include="Content\Scripts\LoadScripts\LoadScripts.celsrc">
       <Filter>Resource Files\Content\Scripts\LoadScripts</Filter>
     </None>
+    <None Include="Content\Scripts\ToolBarScripts\Button3Click.celsrc">
+      <Filter>Resource Files\Content\Scripts\ToolBarScripts</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Project Celestial.rc">

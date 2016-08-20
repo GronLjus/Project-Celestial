@@ -12,6 +12,8 @@ namespace Resources
 			GameBoard(unsigned int cells, CelMesh* GridObject, unsigned char maxFlip, unsigned int maxInstances);
 			virtual void Update(CrossHandlers::Message* mess);
 			void AddObject(GameObject* object);
+			void ClearObjects();
+			CrossHandlers::CelestialSlicedList<GameObject*>* GetActiveObjects() const;
 			void SetBoardObject(GameObject* object);
 			GameObject* GetBoardObject() const;
 			void FillInstanceBuffer(GameObject* trackingObj);
@@ -29,6 +31,7 @@ namespace Resources
 		private:
 			CrossHandlers::ObjectTree* objectRoot;
 			CrossHandlers::CelestialSlicedList<GameObject*>* travelObjects;
+			CrossHandlers::CelestialSlicedList<GameObject*>* activeObjects;
 			unsigned int travelObjectsAmounts;
 
 			Entities::DrawingBoard* drawingBoard;

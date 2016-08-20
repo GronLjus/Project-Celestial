@@ -50,6 +50,7 @@ namespace CrossHandlers
 			///<summary>Resets the list and deletes all the elements</summary>
 			void KillList();
 			unsigned int GetFirstEmpty();
+			unsigned int GetHighest() const;
 			~CelestialSlicedList();
 
 		private:
@@ -63,6 +64,8 @@ namespace CrossHandlers
 			unsigned int slice;
 			///<summary>The maximum number of slices</summary>
 			unsigned int maxSlices;
+
+			unsigned int highestValue;
 
 			///<summary>The list</summary>
 			T** list;
@@ -79,6 +82,7 @@ template <class T>
 CelestialSlicedList<T>::CelestialSlicedList(unsigned int sliceSize)
 {
 
+	highestValue = 0;
 	holes = new CelestialStack<unsigned int>(false);
 	maxSliceSize = sliceSize;
 	slice = 0;
@@ -284,6 +288,14 @@ bool CelestialSlicedList<T>::Add(T element, unsigned int id)
 
 	list[slice][id%maxSliceSize] = element;
 	//sliceSize[slice]++;
+
+	if (id > highestValue)
+	{
+
+		highestValue = id;
+
+	}
+
 	return true;
 
 }
@@ -345,11 +357,21 @@ void CelestialSlicedList<T>::Reset()
 	for (unsigned int i = 0; i < maxSlices; i++)
 	{
 
+		if (base != nullptr && 
+			list[i] != nullptr)
+		{
+
+			memcpy(list[i], base, sizeof(T)*maxSliceSize);
+
+		}
+
 		sliceSize[i] = 0;
 
 	}
 
+	holes->Reset();
 	slice = 0;
+	highestValue = 0;
 
 }
 
@@ -379,6 +401,14 @@ void CelestialSlicedList<T>::KillList()
 
 		}
 	}
+}
+
+template <class T>
+unsigned int CelestialSlicedList<T>::GetHighest() const
+{
+
+	return highestValue;
+
 }
 
 template <class T>

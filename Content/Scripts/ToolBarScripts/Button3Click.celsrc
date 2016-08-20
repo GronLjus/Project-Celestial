@@ -1,0 +1,8 @@
+$
+{
+
+	localBoard = import 'board'
+
+}
+
+clear gameboard localBoard

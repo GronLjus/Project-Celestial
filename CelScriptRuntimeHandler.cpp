@@ -399,6 +399,29 @@ RunTimeError LoadImageOperator(unsigned int returnVar, unsigned char* params, un
 
 }
 
+RunTimeError ClearBoardOperator(unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int mId, RunTimeCommons* rtc)
+{
+
+	if (paramSize < 4)
+	{
+
+		return RunTimeError_BADPARAMS;
+
+	}
+
+	unsigned int s = 4;
+	unsigned int var1 = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
+	rtc->memory->ReadVariable(var1 - 1, rtc->intLoader, s);
+
+	Message mess;
+	mess.destination = MessageSource_RESOURCES;
+	mess.type = MessageType_RESOURCES;
+	mess.mess = ResourceMess_CLEARBOARD;
+	mess.SetParams(rtc->intLoader, 0, 4);
+	return sendMessageOut(mess, rtc);
+
+}
+
 RunTimeError AddObjectOperator(unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int mId, RunTimeCommons* rtc)
 {
 
@@ -2973,6 +2996,7 @@ CelScriptRuntimeHandler::CelScriptRuntimeHandler(MessageQueue* mQueue, Celestial
 	operators[opcode_GLUOBJCT] = GlueObjectOperator;
 
 	operators[opcode_SVESCPE] = ScopeSaveOperator;
+	operators[opcode_CLRBRD] = ClearBoardOperator;
 
 	operators[opcode_JMPINVVAR] = JumpInv;
 	operators[opcode_JMPNOW] = JumpNow;

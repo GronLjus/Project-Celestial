@@ -13,9 +13,20 @@ GameBoard::GameBoard(unsigned int cells, CelMesh* gridObject, unsigned char maxF
 	drawingBoard->AddMesh(gridObject);
 	objectRoot = new ObjectTree(cells, 32, CelestialMath::Vector2(0.0f, 0.0f), ((BaseObject*)gridObject)->GetId());
 	travelObjects = new CelestialSlicedList<GameObject*>(32, nullptr);
+	activeObjects = new CelestialSlicedList<GameObject*>(32, nullptr);
 	camera = nullptr;
 	boardObject = nullptr;
 	boardNormal = Vector3(0.0f, 1.0f, 0.0f);
+	travelObjectsAmounts = 0;
+
+}
+
+void GameBoard::ClearObjects()
+{
+
+	objectRoot->ClearObjects();
+	travelObjects->Reset();
+	activeObjects->Reset();
 	travelObjectsAmounts = 0;
 
 }
@@ -158,12 +169,15 @@ void GameBoard::AddObject(GameObject* object)
 
 	if (object->GetScale().x <= CELESTIAL_EPSILON ||
 		object->GetScale().y <= CELESTIAL_EPSILON ||
-		object->GetScale().z <= CELESTIAL_EPSILON)
+		object->GetScale().z <= CELESTIAL_EPSILON ||
+		object->GetActiveId() != 0)
 	{
 
 		return;
 
 	}
+
+	object->SetActiveId(activeObjects->Add(object) + 1);
 
 	if (object->GetType() != GameObjectType_TRAVELING)
 	{
@@ -180,6 +194,13 @@ void GameBoard::AddObject(GameObject* object)
 	}
 
 	object->SetParent(this);
+
+}
+
+CelestialSlicedList<GameObject*>* GameBoard::GetActiveObjects() const
+{
+
+	return activeObjects;
 
 }
 
@@ -247,5 +268,6 @@ GameBoard::~GameBoard()
 	delete drawingBoard;
 	delete objectRoot;
 	delete travelObjects;
+	delete activeObjects;
 
 }

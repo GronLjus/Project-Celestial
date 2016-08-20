@@ -1292,35 +1292,41 @@ CelScriptCompiler::CelScriptCompiler()
 	};
 
 	operators[OperatorTypes_CLEAR].keyword = "clear";
-	operators[OperatorTypes_CLEAR].enumAmount = 1;
-	operators[OperatorTypes_CLEAR].enums = new std::string[operators[OperatorTypes_CLEAR].enumAmount]; operators[OperatorTypes_CLEAR].enums[0] = "tracking";
-	operators[OperatorTypes_CLEAR].byteCodes = new unsigned char[operators[OperatorTypes_CLEAR].enumAmount]{ opcode_CRLTRCK };
-	operators[OperatorTypes_CLEAR].params = new unsigned char[operators[OperatorTypes_CLEAR].enumAmount]{ 0 };
-	operators[OperatorTypes_CLEAR].minParams = new unsigned char[operators[OperatorTypes_CLEAR].enumAmount]{ 0 };
+	operators[OperatorTypes_CLEAR].enumAmount = 2;
+	operators[OperatorTypes_CLEAR].enums = new std::string[operators[OperatorTypes_CLEAR].enumAmount]; operators[OperatorTypes_CLEAR].enums[0] = "tracking"; operators[OperatorTypes_CLEAR].enums[1] = "gameboard";
+	operators[OperatorTypes_CLEAR].byteCodes = new unsigned char[operators[OperatorTypes_CLEAR].enumAmount]{ opcode_CRLTRCK, opcode_CLRBRD };
+	operators[OperatorTypes_CLEAR].params = new unsigned char[operators[OperatorTypes_CLEAR].enumAmount]{ 0, 1 };
+	operators[OperatorTypes_CLEAR].minParams = new unsigned char[operators[OperatorTypes_CLEAR].enumAmount]{ 0, 1 };
 	operators[OperatorTypes_CLEAR].paramsyntax = new VarType*[operators[OperatorTypes_CLEAR].enumAmount]{
-		nullptr
+		nullptr,
+		new VarType[operators[OperatorTypes_CLEAR].params[1]]{ VarType_NUMBER }
 	};
 	operators[OperatorTypes_CLEAR].paramTypes = new ParamType*[operators[OperatorTypes_CLEAR].enumAmount]{
-		nullptr
+		nullptr,
+		new ParamType[operators[OperatorTypes_CLEAR].params[1]]{ ParamType_NA }
 	};
 	operators[OperatorTypes_CLEAR].optionalPar = new bool*[operators[OperatorTypes_CLEAR].enumAmount]{
-		nullptr
+		nullptr,
+		new bool[operators[OperatorTypes_CLEAR].params[1]]{ false }
 	};
-	operators[OperatorTypes_CLEAR].readParam = new unsigned char[operators[OperatorTypes_CLEAR].enumAmount]{ 0,};
-	operators[OperatorTypes_CLEAR].returns = new VarType[operators[OperatorTypes_CLEAR].enumAmount]{ VarType_NA };
-	operators[OperatorTypes_CLEAR].returnType = new ParamType[operators[OperatorTypes_CLEAR].enumAmount]{ ParamType_NA };
-	operators[OperatorTypes_CLEAR].writeParam = new unsigned char[operators[OperatorTypes_CLEAR].enumAmount]{ 0 };
+	operators[OperatorTypes_CLEAR].readParam = new unsigned char[operators[OperatorTypes_CLEAR].enumAmount]{ 0,0,};
+	operators[OperatorTypes_CLEAR].returns = new VarType[operators[OperatorTypes_CLEAR].enumAmount]{ VarType_NA, VarType_NA };
+	operators[OperatorTypes_CLEAR].returnType = new ParamType[operators[OperatorTypes_CLEAR].enumAmount]{ ParamType_NA, ParamType_NA };
+	operators[OperatorTypes_CLEAR].writeParam = new unsigned char[operators[OperatorTypes_CLEAR].enumAmount]{ 0, 0 };
 	operators[OperatorTypes_CLEAR].priority = 0;
 	operators[OperatorTypes_CLEAR].shortHandsAmounts = 0;
-	operators[OperatorTypes_CLEAR].amountParOperators = new unsigned char[operators[OperatorTypes_CLEAR].enumAmount]{ 0 };
+	operators[OperatorTypes_CLEAR].amountParOperators = new unsigned char[operators[OperatorTypes_CLEAR].enumAmount]{ 0, 0};
 	operators[OperatorTypes_CLEAR].parRepeatsMin = new unsigned char*[operators[OperatorTypes_CLEAR].enumAmount]{
-		nullptr
+		nullptr,
+		new unsigned char[operators[OperatorTypes_CLEAR].params[1]]{ 0 }
 	};
 	operators[OperatorTypes_CLEAR].parRepeatsMax = new unsigned char*[operators[OperatorTypes_CLEAR].enumAmount]{
-		nullptr
+		nullptr,
+		new unsigned char[operators[OperatorTypes_CLEAR].params[1]]{ 0 }
 	};
 	operators[OperatorTypes_CLEAR].parOperatorAppend = new bool*[operators[OperatorTypes_CLEAR].enumAmount]{
-		nullptr
+		nullptr,
+		new bool[operators[OperatorTypes_CLEAR].params[1]]{ 0 }
 	};
 
 	operators[OperatorTypes_HOOK].keyword = "hook";

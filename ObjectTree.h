@@ -12,6 +12,7 @@ namespace CrossHandlers
 		public:
 			ObjectTree(unsigned int cells, unsigned int minCells, CelestialMath::Vector2 position, unsigned int mesh);
 			void AddObject(Resources::GameObject* obj);
+			void ClearObjects();
 			unsigned int AddInstance(Entities::ViewObject* view, Entities::DrawingBoard* board);
 			unsigned int GetClosestObject(CelestialMath::Vector3 origin, CelestialMath::Vector3 unitDirection, float &smallestDistance) const;
 			unsigned int* GetCollidedObject(Resources::GameObject* obj, unsigned int &objects) const; 

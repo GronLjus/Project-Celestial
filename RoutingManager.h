@@ -20,6 +20,7 @@ namespace Entities
 			RouteNodeObject* GetNode(unsigned int id) const;
 			void Travel(Resources::GameTravelObject* object, unsigned int goal, unsigned int time);
 			void Spawn(Resources::GameTravelObject* object, unsigned int cell);
+			void ClearNodes();
 			virtual ~RoutingManager();
 
 		private:

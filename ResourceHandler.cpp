@@ -20,6 +20,8 @@ ResourceHandler::ResourceHandler(unsigned int bufferFlips) : IHandleMessages(200
 	filter = MessageType_RESOURCES;
 	this->bufferFlips = bufferFlips;
 
+	activeGUI = new CelestialSlicedList<GUIObject*>(32, nullptr);
+
 }
 
 unsigned int ResourceHandler::GetCrossScriptObject() const
@@ -307,6 +309,7 @@ void ResourceHandler::handleMess(Message* currentMessage, unsigned int time)
 		unsigned int param1 = currentMessage->params[0] | ((int)currentMessage->params[1] << 8) | ((int)currentMessage->params[2] << 16) | ((int)currentMessage->params[3] << 24);
 		std::string stringParam((char*)(&currentMessage->params[4]));
 		GUIObject* obj = loader->LoadGUIObject(GUIObjects(param1), GUISnap_LEFT, GUISnap_TOP, stringParam);
+		obj->SetActiveId(activeGUI->Add(obj) + 1);
 		obj->ToggleVisibility(true);
 
 		obj->SetId(gameObjects->Add(obj));
@@ -344,47 +347,56 @@ void ResourceHandler::handleMess(Message* currentMessage, unsigned int time)
 		outId = kT->GetId();
 
 	}
+	else if (currentMessage->mess == ResourceMess_CLEARBOARD)
+	{
+
+		unsigned int param1 = currentMessage->params[0] | ((int)currentMessage->params[1] << 8) | ((int)currentMessage->params[2] << 16) | ((int)currentMessage->params[3] << 24);
+		GameBoard* board = (GameBoard*)gameObjects->GetValue(param1);
+		CelestialSlicedList<GameObject*>* activeObjects = board->GetActiveObjects();
+
+		for (unsigned int i = 0; i < activeObjects->GetHighest(); i++)
+		{
+
+			GameObject* object = activeObjects->GetValue(i);
+
+			if (object != nullptr && object->ShouldSave())
+			{
+
+				unloadObject(object->GetId(), time);
+
+			}
+		}
+
+		for (unsigned int i = 0; i < activeGUI->GetHighest(); i++)
+		{
+
+			GUIObject* object = activeGUI->GetValue(i);
+
+			if (object != nullptr && object->ShouldSave())
+			{
+
+				unloadObject(object->GetId(), time);
+
+			}
+		}
+
+		board->ClearObjects();
+
+		messageBuffer[this->currentMessage].timeSent = time;
+		messageBuffer[this->currentMessage].destination = MessageSource_ENTITIES;
+		messageBuffer[this->currentMessage].type = MessageType_ENTITIES;
+		messageBuffer[this->currentMessage].mess = GameBoardMess_CLEARNODES;
+		messageBuffer[this->currentMessage].read = false;
+		outQueue->PushMessage(&messageBuffer[this->currentMessage]);
+		this->currentMessage = (this->currentMessage + 1) % outMessages;
+
+	}
 	else if (currentMessage->mess == ResourceMess_UNLOADOBJECT)
 	{
 
 		unsigned int param1 = currentMessage->params[0] | ((int)currentMessage->params[1] << 8) | ((int)currentMessage->params[2] << 16) | ((int)currentMessage->params[3] << 24);
-		BaseObject* object = gameObjects->GetValue(param1);
+		unloadObject(param1, time);
 
-		if (object != nullptr)
-		{
-
-			gameObjects->Remove(param1);
-
-			unsigned int kills = 0;
-			Message** killMess = object->GetKillMessage(kills);
-
-			if (killMess != nullptr)
-			{
-
-				for (unsigned int i = 0;i < kills; i++)
-				{
-
-					if (killMess[i] != nullptr &&
-						killMess[i]->destination == MessageSource_RESOURCES)
-					{
-
-						handleMess(killMess[i], time);
-
-					}
-					else if(killMess[i] != nullptr)
-					{
-
-						Message* outMess = new Message(killMess[i]);
-						outMess->killWhenDone = true;
-						outQueue->PushMessage(outMess);
-
-					}
-				}
-			}
-
-			delete object;
-
-		}
 	}
 
 	if (currentMessage->source == MessageSource_CELSCRIPT && outId > 0 && currentMessage->returnParam > 0)
@@ -406,10 +418,69 @@ void ResourceHandler::handleMess(Message* currentMessage, unsigned int time)
 	}
 }
 
+void ResourceHandler::unloadObject(unsigned int param1, unsigned int time)
+{
+
+	BaseObject* object = gameObjects->GetValue(param1);
+
+	if (object != nullptr)
+	{
+
+		unsigned int activeId = object->GetActiveId();
+
+		if (activeId > 0)
+		{
+
+			activeId -= 1;
+
+			if (activeGUI->GetValue(activeId) != nullptr &&
+				activeGUI->GetValue(activeId)->GetId() == param1)
+			{
+
+				activeGUI->Remove(activeId);
+
+			}
+		}
+
+		gameObjects->Remove(param1);
+
+		unsigned int kills = 0;
+		Message** killMess = object->GetKillMessage(kills);
+
+		if (killMess != nullptr)
+		{
+
+			for (unsigned int i = 0; i < kills; i++)
+			{
+
+				if (killMess[i] != nullptr &&
+					killMess[i]->destination == MessageSource_RESOURCES)
+				{
+
+					handleMess(killMess[i], time);
+
+				}
+				else if (killMess[i] != nullptr)
+				{
+
+					Message* outMess = new Message(killMess[i]);
+					outMess->killWhenDone = true;
+					outQueue->PushMessage(outMess);
+
+				}
+			}
+		}
+
+		delete object;
+
+	}
+}
+
 unsigned int ResourceHandler::copyObject(GameObject* objectToCopy, unsigned int time)
 {
 
 	GameObject* obj = loadGameObject(objectToCopy->GetMeshId(), objectToCopy->GetType());
+
 	unsigned int retVal = obj->GetId();
 
 	Vector3 oldPos = objectToCopy->GetPosition();
@@ -465,5 +536,6 @@ ResourceHandler::~ResourceHandler()
 	delete loader;
 	gameObjects->KillList();
 	delete gameObjects;
+	delete activeGUI;
 
 }

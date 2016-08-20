@@ -11,6 +11,8 @@ namespace Resources
 		public:
 			BaseObject();
 			virtual void SetId(unsigned int id);
+			unsigned int GetActiveId() const;
+			void SetActiveId(unsigned int id);
 			unsigned int GetId() const;
 			virtual void Update(CrossHandlers::Message* mess) = 0;
 			unsigned int LastUpdated() const;
@@ -35,6 +37,7 @@ namespace Resources
 			unsigned int kills;
 
 		private:
+			unsigned int activeId;
 			unsigned int id;
 			unsigned int lastUpdated;
 			bool save;
