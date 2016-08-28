@@ -41,7 +41,7 @@ namespace Logic
 	///<summary>The different types of operators in the script</summary>
 	enum OperatorTypes{
 		OperatorTypes_ADD, OperatorTypes_REMOVE, 
-		OperatorTypes_LOAD, OperatorTypes_UNLOAD, 
+		OperatorTypes_LOAD, OperatorTypes_UNLOAD, OperatorTypes_SAVE,
 		OperatorTypes_SET, OperatorTypes_POST,
 		OperatorTypes_SUM, OperatorTypes_SUB, OperatorTypes_MUL, OperatorTypes_DIV, 
 		OperatorTypes_CAST,

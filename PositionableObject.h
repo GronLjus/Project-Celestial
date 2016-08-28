@@ -34,11 +34,18 @@ namespace Resources
 			
 			unsigned int GetSubobjects() const;
 			PositionableObject* GetSubobject(unsigned int object) const;
+			bool IsChild() const;
+
 
 			void Point(CelestialMath::Vector3 point);
 
 			void UpdateMatrix();
 			unsigned char GetLayer() const;
+
+			//Serializable Interface
+			virtual char* Serialize(unsigned int &size);
+			virtual char* Unserialize(char* data);
+
 			virtual ~PositionableObject();
 
 		protected:
@@ -48,6 +55,7 @@ namespace Resources
 			CelestialMath::Matrix GetBoundingMatrix() const;
 
 		private:
+			unsigned int serial;
 			CelestialMath::Vector3 relativePosition;
 			CelestialMath::Vector3 position;
 			CelestialMath::Vector3 rotation;

@@ -8,19 +8,45 @@ using namespace CelestialMath;
 RouteNodeObject::RouteNodeObject() : RouteNodeObject(Vector3(0,0,0),0)
 {
 
+	width = 0.0f;
+
 }
 
-RouteNodeObject::RouteNodeObject(Vector3 position, unsigned int width)
+RouteNodeObject::RouteNodeObject(Vector3 position, float width)
 {
 
 	this->position = position;
-	width = width;
+	this->width = width;
 	routes = new CelestialSlicedList<route>(32);
 	objId = 0;
 	maxRoutes = 0;
 	openSet = 0;
 	closedSet = 0;
 	parent = 0;
+
+}
+
+char* RouteNodeObject::Serialize(unsigned int &size)
+{
+
+	size = sizeof(float) * 4;
+	char* byteVal = new char[size];
+	memcpy(byteVal, &position.x, 4);
+	memcpy(&byteVal[4], &position.y, 4);
+	memcpy(&byteVal[8], &position.z, 4);
+	memcpy(&byteVal[12], &width, 4);
+	return byteVal;
+
+}
+
+char* RouteNodeObject::Unserialize(char* data)
+{
+
+	memcpy(&position.x, &data[0], 4);
+	memcpy(&position.y, &data[4], 4);
+	memcpy(&position.z, &data[8], 4);
+	memcpy(&width, &data[12], 4);
+	return nullptr;
 
 }
 

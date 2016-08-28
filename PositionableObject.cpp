@@ -12,6 +12,7 @@ PositionableObject::PositionableObject() : PositionableObject(Vector3(0.0f, 0.0f
 
 }
 
+
 PositionableObject::PositionableObject(Vector3 position, Vector3 scale) : ScriptableObject()
 {
 
@@ -24,6 +25,139 @@ PositionableObject::PositionableObject(Vector3 position, Vector3 scale) : Script
 	subObjects = new CelestialSlicedList<PositionableObject*>(32);
 	subObjectAmount = 0;
 	childId = 0;
+	serial = 40;
+
+}
+
+char* PositionableObject::Unserialize(char* data)
+{
+
+	memcpy(&position.x ,&data[0], 4);
+	memcpy(&position.y,&data[4], 4);
+	memcpy(&position.z, &data[8], 4);
+
+	memcpy(&scale.x, &data[12], 4);
+	memcpy(&scale.y, &data[16], 4);
+	memcpy(&scale.z, &data[20], 4);
+
+	memcpy(&rotation.x, &data[24], 4);
+	memcpy(&rotation.y, &data[28], 4);
+	memcpy(&rotation.z, &data[32], 4);
+
+	unsigned int subSize = 0;
+	memcpy(&subSize, &data[36], 4);
+
+	if (data[36 + subSize] == SerializableType_SCRIPTABLE)
+	{
+
+		ScriptableObject::Unserialize(&data[36 + subSize + 1]);
+
+	}
+
+	return &data[36];
+
+}
+
+char* PositionableObject::Serialize(unsigned int &size)
+{
+
+	char** subsSer = nullptr;
+	unsigned int* subSizes = nullptr;
+	unsigned int subVal = 0;
+	unsigned int subSize = 0;
+
+	if (subObjectAmount > 0)
+	{
+
+		subsSer = new char*[subObjectAmount];
+		subSizes = new unsigned int[subObjectAmount];
+
+		for (unsigned int i = 0; i < subObjectAmount; i++)
+		{
+
+			PositionableObject* sub = subObjects->GetValue(i);
+
+			if (sub != nullptr)
+			{
+
+				subsSer[subVal] = sub->Serialize(subSizes[subVal]);
+
+				unsigned int tempSize = subSizes[subVal] + sizeof(unsigned int) + sizeof(float) * 3;
+
+				char* temp = new char[tempSize];
+
+				unsigned int offset = 0;
+				Vector3 subPos = sub->GetRelativePosition();
+
+				memcpy(&temp[offset], &(subPos.x), sizeof(float));
+				offset += sizeof(float);
+				memcpy(&temp[offset], &(subPos.y), sizeof(float));
+				offset += sizeof(float);
+				memcpy(&temp[offset], &(subPos.z), sizeof(float));
+				offset += sizeof(float);
+				memcpy(&temp[offset], &subSizes[subVal], sizeof(unsigned int));
+				offset += sizeof(unsigned int);
+				memcpy(&temp[offset], subsSer[subVal], subSizes[subVal]);
+
+				delete[] subsSer[subVal];
+				subsSer[subVal] = temp;
+				subSizes[subVal] = tempSize;
+
+				subSize += subSizes[subVal];
+				subVal++;
+
+			}
+		}
+	}
+
+	unsigned int subObjectSize;
+	char* subSerial = ScriptableObject::Serialize(subObjectSize);
+
+	unsigned int standardSize = serial+1;
+	size = 41 + subSize + subObjectSize;
+
+	char* byteVal = new char[size];
+
+	byteVal[0] = SerializableType_POSITIONABLE;
+	Vector3 pos = GetPosition();
+	memcpy(&byteVal[1], &pos.x, 4);
+	memcpy(&byteVal[5], &pos.y, 4);
+	memcpy(&byteVal[9], &pos.z, 4);
+
+	Vector3 scale = GetScale();
+	memcpy(&byteVal[13], &scale.x, 4);
+	memcpy(&byteVal[17], &scale.y, 4);
+	memcpy(&byteVal[21], &scale.z, 4);
+
+	Vector3 rot = GetRotation();
+	memcpy(&byteVal[25], &rot.x, 4);
+	memcpy(&byteVal[29], &rot.y, 4);
+	memcpy(&byteVal[33], &rot.z, 4);
+	
+	memcpy(&byteVal[37], &subSize, sizeof(unsigned int));
+
+	unsigned int offset = 41;
+
+	if (subsSer != nullptr)
+	{
+
+		for (unsigned int i = 0; i < subVal; i++)
+		{
+
+			memcpy(&byteVal[offset], subsSer[i], subSizes[i]);
+			offset += subSizes[i];
+			delete[] subsSer[i];
+
+		}
+
+		delete[] subSizes;
+		delete[] subsSer;
+
+	}
+
+	memcpy(&byteVal[offset], subSerial, subObjectSize);
+	delete[] subSerial;
+	return byteVal;
 
 }
 
@@ -142,7 +276,6 @@ void PositionableObject::refresh(Vector3 position, Vector3 scale)
 
 }
 
-
 void PositionableObject::AddSubObject(PositionableObject* object, Vector3 relativePosition)
 {
 
@@ -169,6 +302,13 @@ void PositionableObject::SetObjectParent(PositionableObject* parent, unsigned in
 	this->relativePosition = relativePosition;
 	position = Vector3(0.0f, 0.0f, 0.0f);
 	rotateObjectToPoint(relativePosition);
+
+}
+
+bool PositionableObject::IsChild() const
+{
+
+	return parent != nullptr;
 
 }
 

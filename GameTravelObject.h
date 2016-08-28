@@ -9,6 +9,8 @@ namespace Resources
 
 		public:
 			GameTravelObject(CrossHandlers::BoundingBox* baseBox, CrossHandlers::BoundingSphere* baseSphere, unsigned int meshId);
+			GameTravelObject();
+			
 			virtual GameObjectType GetType() const;
 
 			unsigned int GetGoalNode() const;
@@ -25,6 +27,10 @@ namespace Resources
 			void Time(unsigned int time);
 			bool StepGoal();
 			void SetNode(unsigned int node);
+
+			//Serializable Interface
+			virtual char* Serialize(unsigned int &size);
+			virtual char* Unserialize(char* data);
 
 			virtual ~GameTravelObject();
 

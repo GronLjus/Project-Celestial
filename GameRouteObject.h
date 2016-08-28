@@ -10,6 +10,8 @@ namespace Resources
 
 		public:
 			GameRouteObject(CrossHandlers::BoundingBox* baseBox, CrossHandlers::BoundingSphere* baseSphere, unsigned int meshId);
+			GameRouteObject();
+			
 			virtual GameObjectType GetType() const;
 
 			unsigned int GetRoutenodes() const;
@@ -22,6 +24,11 @@ namespace Resources
 			void InsertNode(Entities::RouteNodeObject* node);
 			void RemoveNode(unsigned int localId);
 			CrossHandlers::Intersection ContainsPoint(CelestialMath::Vector3 point);
+
+			//Serializable Interface
+			virtual char* Serialize(unsigned int &size);
+			virtual char* Unserialize(char* data);
+
 			virtual ~GameRouteObject();
 
 		private:

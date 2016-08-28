@@ -3,12 +3,13 @@
 #include "GameTravelObject.h"
 #include "RouteNodeObject.h"
 #include "GameRouteObject.h"
+#include "SerializableObject.h"
 #include <vector>
 
 namespace Entities
 {
 
-	class RoutingManager
+	class RoutingManager : public Resources::SerializableObject
 	{
 
 		public:
@@ -21,12 +22,17 @@ namespace Entities
 			void Travel(Resources::GameTravelObject* object, unsigned int goal, unsigned int time);
 			void Spawn(Resources::GameTravelObject* object, unsigned int cell);
 			void ClearNodes();
+
+			//Serializable Interface
+			virtual char* Serialize(unsigned int &size);
+			virtual char* Unserialize(char* data);
+
 			virtual ~RoutingManager();
 
 		private:
 			CrossHandlers::CelestialSlicedList<Resources::BaseObject*>* gameObjects;
-			CrossHandlers::CelestialSlicedList<RouteNodeObject*>* routeNodes;
 			CrossHandlers::CelestialList<Resources::GameTravelObject*>* travelObjects;
+			CrossHandlers::CelestialSlicedList<RouteNodeObject*>* routeNodes;
 
 			unsigned int pathFind(RouteNodeObject* start, RouteNodeObject* end);
 			unsigned char pathFindVal;

@@ -14,7 +14,6 @@ GameBoardHandler::GameBoardHandler() : IHandleMessages(200, MessageSource_ENTITI
 	filter = MessageType_ENTITIES;
 	dragScript = 0;
 	hookObject = false;
-	routing = new RoutingManager();
 	hookColl = new unsigned int[128];
 
 }
@@ -23,7 +22,6 @@ void GameBoardHandler::Init(CelestialSlicedList<BaseObject*>* gameObjects)
 {
 
 	this->gameObjects = gameObjects;
-	routing->Init(gameObjects);
 
 }
 
@@ -488,6 +486,8 @@ void GameBoardHandler::UpdateMessages(unsigned int time)
 		{
 
 			GameBoard* gB = (GameBoard*)(gameObjects->GetValue(param1));
+			routing = gB->GetRoutingManager();
+			routing->Init(gameObjects);
 
 			messageBuffer[this->currentMessage].timeSent = time;
 			messageBuffer[this->currentMessage].destination = MessageSource_GRAPHICS;
@@ -523,16 +523,12 @@ void GameBoardHandler::UpdateMessages(unsigned int time)
 			memcpy(&(pos.y), &(currentMessage->params[4]), 4);
 			memcpy(&(pos.z), &(currentMessage->params[8]), 4);
 
-			float width = 0.49f;
+			float width = 0.98f;
 
 			pos.x = floor(pos.x) + 0.5f;
 			pos.z = floor(pos.z) + 0.5f;
 
-			BoundingSphere sphere = BoundingSphere(pos.x, pos.y, pos.z, width);
-			unsigned int amount = 0;
-
-			unsigned int* collided = localGameBoard->GetCollidedObject(&sphere, GameObjectType_ROUTE, amount);
-			unsigned int retVal = routing->AddNode(pos,collided,amount);
+			unsigned int retVal = localGameBoard->AddRouteNode(pos, width);
 
 			if (currentMessage->source == MessageSource_CELSCRIPT && currentMessage->returnParam > 0)
 			{
@@ -581,12 +577,6 @@ void GameBoardHandler::UpdateMessages(unsigned int time)
 				routing->Spawn((GameTravelObject*)gameObjects->GetValue(param1), param2-1);
 
 			}
-		}
-		else if (currentMessage->mess == GameBoardMess_CLEARNODES)
-		{
-
-			routing->ClearNodes();
-
 		}
 		else if (currentMessage->mess == GameBoardMess_SPLITOBJECT)
 		{
@@ -887,29 +877,27 @@ void GameBoardHandler::Update(unsigned int time)
 
 		localGameBoard->FillInstanceBuffer(trackedObject);
 
-	}
+		unsigned int scripts = 0;
+		unsigned int* scriptsToRun = routing->Update(time, scripts);
 
-	unsigned int scripts = 0;
-	unsigned int* scriptsToRun = routing->Update(time, scripts);
+		for (unsigned int i = 0; i < scripts; i++)
+		{
 
-	for (unsigned int i = 0; i < scripts; i++)
-	{
+			GameTravelObject* obj = (GameTravelObject*)gameObjects->GetValue(scriptsToRun[i]);
+			triggerNodeScript(
+				obj->GetTravelNodeScript() - 1,
+				scriptsToRun[i],
+				obj->GetFinalGoalNode() + 1,
+				obj->GetNode() + 1,
+				time);
 
-		GameTravelObject* obj = (GameTravelObject*)gameObjects->GetValue(scriptsToRun[i]);
-		triggerNodeScript(
-			obj->GetTravelNodeScript()-1,
-			scriptsToRun[i],
-			obj->GetFinalGoalNode() + 1,
-			obj->GetNode() + 1,
-			time);
-
+		}
 	}
 }
 
 GameBoardHandler::~GameBoardHandler()
 {
 
-	delete routing;
 	delete[] hookColl;
 
 }

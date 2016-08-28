@@ -62,6 +62,7 @@ void ResourceLoader::Init(Graphics::CardHandler* &card, TextContainer* outText)
 
 	}
 
+	saveLoader->Init(card, outText);
 	/*compiledScriptLoader->Init(card);
 	sourceScriptLoader->Init(card);*/
 
@@ -107,12 +108,50 @@ ResourceLoader::ResourceLoader()
 	scriptFileLoaders[0] = new CelScriptBinLoader();
 	scriptFileLoaders[1] = new CelScriptSourceLoader();
 
+	saveLoader = new CLSVLoader();
+
 }
 
 int ResourceLoader::MatID()
 {
 
 	return matID++;
+
+}
+
+char* ResourceLoader::LoadSaveFile(string file, unsigned int &size)
+{
+
+	bool found = false;
+	string extension = getExtension(file);
+	int i = 0;
+
+	const string* extensions = saveLoader->Extension();
+
+	for (int k = 0; k<saveLoader->GetNrExtensions() && !found; k++)
+	{
+
+		found = extensions[k] == extension;
+
+	}
+
+	if (found)
+	{
+
+		return saveLoader->Load(file, size);
+
+	}
+
+	return nullptr;
+
+}
+
+void ResourceLoader::SaveBoardToFile(string path, char* data, unsigned int size)
+{
+
+	string exts = saveLoader->Extension()[0];
+	path += '.'+exts;
+	saveLoader->Save(path, data, size);
 
 }
 
@@ -503,5 +542,7 @@ ResourceLoader::~ResourceLoader()
 	delete[] matFileLoaders;
 	delete[] texFileLoaders;
 	delete[] scriptFileLoaders;
+
+	delete saveLoader;
 
 }

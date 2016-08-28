@@ -185,12 +185,14 @@
     <ClInclude Include="CelScriptRunTimeHandler.h" />
     <ClInclude Include="CelScriptSource.h" />
     <ClInclude Include="CLMSHFileLoader.h" />
+    <ClInclude Include="CLSVLoader.h" />
     <ClInclude Include="ColourLoader.h" />
     <ClInclude Include="CommonParticle.h" />
     <ClInclude Include="CrossHandlerHeader.h" />
     <ClInclude Include="CelscriptHandler.h" />
     <ClInclude Include="CrossScriptMemoryObject.h" />
     <ClInclude Include="CursorCodes.h" />
+    <ClInclude Include="Dictionary.h" />
     <ClInclude Include="DrawingBoard.h" />
     <ClInclude Include="DXBufferObject.h" />
     <ClInclude Include="CelestialBufferHandler.h" />
@@ -261,6 +263,7 @@
     <ClInclude Include="MessageQueue.h" />
     <ClInclude Include="ObjectTree.h" />
     <ClInclude Include="PositionableObject.h" />
+    <ClInclude Include="ResourceDictionary.h" />
     <ClInclude Include="ResourceHandler.h" />
     <ClInclude Include="ResourceHeader.h" />
     <ClInclude Include="RouteNodeObject.h" />
@@ -269,6 +272,7 @@
     <ClInclude Include="SaveObject.h" />
     <ClInclude Include="ScreenTarget.h" />
     <ClInclude Include="ScriptableObject.h" />
+    <ClInclude Include="SerializableObject.h" />
     <ClInclude Include="ShadowMapConstants.h" />
     <ClInclude Include="LightParticleEmitter.h" />
     <ClInclude Include="DrawScene.h" />
@@ -333,10 +337,12 @@
     <ClCompile Include="CelScriptSource.cpp" />
     <ClCompile Include="CelScriptSourceLoader.cpp" />
     <ClCompile Include="CLMSHFileLoader.cpp" />
+    <ClCompile Include="CLSVLoader.cpp" />
     <ClCompile Include="ColourLoader.cpp" />
     <ClCompile Include="CommonParticle.cpp" />
     <ClCompile Include="CelscriptHandler.cpp" />
     <ClCompile Include="CrossScriptMemoryObject.cpp" />
+    <ClCompile Include="Dictionary.cpp" />
     <ClCompile Include="DrawingBoard.cpp" />
     <ClCompile Include="DrawScene.cpp" />
     <ClCompile Include="DXBufferObject.cpp" />
@@ -366,6 +372,7 @@
     <ClCompile Include="MessageQueue.cpp" />
     <ClCompile Include="ObjectTree.cpp" />
     <ClCompile Include="PositionableObject.cpp" />
+    <ClCompile Include="ResourceDictionary.cpp" />
     <ClCompile Include="ResourceHandler.cpp" />
     <ClCompile Include="RouteNodeObject.cpp" />
     <ClCompile Include="RoutingManager.cpp" />
@@ -420,6 +427,7 @@
     <None Include="..\d3dcompiler_46.dll">
       <FileType>Document</FileType>
     </None>
+    <None Include="Button4Click.celsrc" />
     <None Include="ClassDiagram.cd" />
     <None Include="Content\EndTile.clmsh" />
     <None Include="Content\Plane1.clmsh" />
@@ -438,6 +446,7 @@
     <None Include="Content\Scripts\ToolBarScripts\Button3Click.celsrc" />
     <None Include="Content\Tile.clmsh" />
     <None Include="ErrorTest.celsrc" />
+    <None Include="saves\save1.clsv" />
     <None Include="Shaders_Registers.hlsli" />
     <None Include="Tennisboll.mtl">
       <FileType>Document</FileType>

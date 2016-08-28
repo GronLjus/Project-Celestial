@@ -29,6 +29,70 @@ void RoutingManager::Init(CelestialSlicedList<BaseObject*>* gameObjects)
 
 }
 
+char* RoutingManager::Serialize(unsigned int &size)
+{
+
+	char** subData = nullptr;
+	unsigned int* subSize = nullptr;
+	unsigned int totalSize = 0;
+	unsigned int subTot = 0;
+
+	if (routeNodes->GetHighest() > 0)
+	{
+
+		subData = new char*[routeNodes->GetHighest()];
+		subSize = new unsigned int[routeNodes->GetHighest()];
+
+		for (unsigned int i = 0; i < routeNodes->GetHighest(); i++)
+		{
+
+			RouteNodeObject* subObject = routeNodes->GetValue(i);
+
+			if (subObject != nullptr)
+			{
+
+				subData[subTot] = subObject->Serialize(subSize[subTot]);
+				totalSize += subSize[subTot];
+				subTot++;
+
+			}
+		}
+	}
+
+	size = totalSize + 1 + sizeof(unsigned int);
+	char* byteVal = new char[size];
+	byteVal[0] = SerializableType_ROUTEMANAGER;
+	memcpy(&byteVal[1], &totalSize, sizeof(unsigned int));
+	unsigned int offset = 1 + sizeof(unsigned int);
+
+	if (subData != nullptr)
+	{
+
+		for (unsigned int i = 0; i < subTot; i++)
+		{
+
+			memcpy(&byteVal[offset], subData[i], subSize[i]);
+			delete[] subData[i];
+			offset += subSize[i];
+
+		}
+
+		delete[] subData;
+		delete[] subSize;
+
+	}
+
+	return byteVal;
+
+}
+
+char* RoutingManager::Unserialize(char* data)
+{
+
+	return data;
+
+}
+
 unsigned int RoutingManager::AddNode(Vector3 position, GameRouteObject* obj)
 {
 
@@ -240,7 +304,7 @@ unsigned int RoutingManager::AddNode(Vector3 position, unsigned int* objects, un
 
 			GameRouteObject* obj = ((GameRouteObject*)this->gameObjects->GetValue(objects[0]));
 			position.y = obj->GetPosition().y + obj->GetScale().y / 2;
-			preExist = new RouteNodeObject(position, 1.0f);
+			preExist = new RouteNodeObject(position, 0.98f);
 			preExist->SetId(routeNodes->Add(preExist));
 
 		}

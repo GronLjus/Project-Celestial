@@ -4,7 +4,7 @@ $
 	objClick = import 'ghostClick'
 	tile = import 'baseTile'
 	roadGhost = load object tile 0
-	scope save roadGhost 0
+	scope sve roadGhost 0
 	size roadGhost 0.8 0.2 0.8
 	set leftclick roadGhost objClick
 

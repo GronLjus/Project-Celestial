@@ -1,6 +1,5 @@
 #include "stdafx.h"
 #include "ResourceHandler.h"
-#include "GameBoard.h"
 #include "CameraObject.h"
 #include "CrossScriptMemoryObject.h"
 #include "GameRouteObject.h"
@@ -21,6 +20,7 @@ ResourceHandler::ResourceHandler(unsigned int bufferFlips) : IHandleMessages(200
 	this->bufferFlips = bufferFlips;
 
 	activeGUI = new CelestialSlicedList<GUIObject*>(32, nullptr);
+	currentDic = new ResourceDictionary();
 
 }
 
@@ -101,6 +101,7 @@ GameObject* ResourceHandler::loadGameObject(unsigned int param1, GameObjectType 
 
 void ResourceHandler::handleMess(Message* currentMessage, unsigned int time)
 {
+
 	unsigned int outId = 0;
 
 	if (currentMessage->mess == ResourceMess_LOADGAMEBOARD)
@@ -248,6 +249,7 @@ void ResourceHandler::handleMess(Message* currentMessage, unsigned int time)
 		{
 
 			bo->SetId(gameObjects->Add(bo));
+			currentDic->AddResource(bo->GetId(), stringParam);
 			outId = bo->GetId();
 
 		}
@@ -279,6 +281,22 @@ void ResourceHandler::handleMess(Message* currentMessage, unsigned int time)
 		outId = light->GetId();
 
 	}
+	else if (currentMessage->mess == ResourceMess_SAVEBOARD)
+	{
+
+		unsigned int param1 = currentMessage->params[0] | ((int)currentMessage->params[1] << 8) | ((int)currentMessage->params[2] << 16) | ((int)currentMessage->params[3] << 24);
+		std::string stringParam((char*)(&currentMessage->params[4])); 
+		saveGameBoard(stringParam, param1);
+
+	}
+	else if (currentMessage->mess == ResourceMess_LOADBOARD)
+	{
+
+		unsigned int param1 = currentMessage->params[0] | ((int)currentMessage->params[1] << 8) | ((int)currentMessage->params[2] << 16) | ((int)currentMessage->params[3] << 24);
+		std::string stringParam((char*)(&currentMessage->params[4]));
+		loadGameBoard(stringParam, param1, time);
+
+	}
 	else if (currentMessage->mess == ResourceMess_LOADMESH)
 	{
 
@@ -289,6 +307,7 @@ void ResourceHandler::handleMess(Message* currentMessage, unsigned int time)
 		{
 
 			bo->SetId(gameObjects->Add(bo));
+			currentDic->AddResource(bo->GetId(), stringParam);
 			outId = bo->GetId();
 
 			messageBuffer[this->currentMessage].timeSent = time;
@@ -382,19 +401,12 @@ void ResourceHandler::handleMess(Message* currentMessage, unsigned int time)
 
 		board->ClearObjects();
 
-		messageBuffer[this->currentMessage].timeSent = time;
-		messageBuffer[this->currentMessage].destination = MessageSource_ENTITIES;
-		messageBuffer[this->currentMessage].type = MessageType_ENTITIES;
-		messageBuffer[this->currentMessage].mess = GameBoardMess_CLEARNODES;
-		messageBuffer[this->currentMessage].read = false;
-		outQueue->PushMessage(&messageBuffer[this->currentMessage]);
-		this->currentMessage = (this->currentMessage + 1) % outMessages;
-
 	}
 	else if (currentMessage->mess == ResourceMess_UNLOADOBJECT)
 	{
 
 		unsigned int param1 = currentMessage->params[0] | ((int)currentMessage->params[1] << 8) | ((int)currentMessage->params[2] << 16) | ((int)currentMessage->params[3] << 24);
+		currentDic->RemoveResource(param1); 
 		unloadObject(param1, time);
 
 	}
@@ -530,6 +542,213 @@ void ResourceHandler::Update(unsigned int time)
 	}
 }
 
+void ResourceHandler::saveGameBoard(std::string path, unsigned int gameBoard)
+{
+
+	GameBoard* board = (GameBoard*)gameObjects->GetValue(gameBoard);
+
+	unsigned int dicSize;
+	char* dicData = currentDic->Serialize(dicSize);
+
+	unsigned int boardSize;
+	char* boardData = board->Serialize(boardSize);
+
+	unsigned int byteSize = dicSize + boardSize + sizeof(unsigned int) * 2;
+	char* data = new char[byteSize];
+
+	unsigned int offset = 0;
+
+	memcpy(&data[0], &dicSize, sizeof(unsigned int));
+	offset += sizeof(unsigned int);
+	memcpy(&data[offset], dicData, dicSize);
+	offset += dicSize;
+	memcpy(&data[offset], &boardSize, sizeof(unsigned int));
+	offset += sizeof(unsigned int);
+	memcpy(&data[offset], boardData, boardSize);
+
+	delete[] dicData;
+	delete[] boardData;
+
+	loader->SaveBoardToFile(path, data, byteSize);
+	
+	delete[] data;
+
+}
+
+unsigned int ResourceHandler::loadGameBoard(std::string path, unsigned int gameBoard, unsigned int time)
+{
+
+	unsigned int byteSize;
+	char* data = loader->LoadSaveFile(path, byteSize);
+
+	if (byteSize <= 8 || data == nullptr)
+	{
+
+		return 0;
+
+	}
+
+	unsigned int newDicSize;
+	memcpy(&newDicSize, &data[0], sizeof(unsigned int));
+	unsigned int offset = sizeof(unsigned int);
+
+	if (data[offset] != SerializableType_RESOURCEDICTIONARY)
+	{
+
+		return 0;
+
+	}
+
+	ResourceDictionary* saveDic = new ResourceDictionary();
+	saveDic->Unserialize(&data[offset + 1]);
+	Dictionary* translatedDict = saveDic->Translate(currentDic);
+	offset += newDicSize;
+
+	GameBoard* localBoard = (GameBoard*)gameObjects->GetValue(gameBoard);
+	unsigned int boardSize;
+	memcpy(&boardSize, &data[offset], sizeof(unsigned int));
+	offset += sizeof(unsigned int);
+	
+	if (data[offset] != SerializableType_GAMEBOARD ||
+		localBoard == nullptr ||
+		boardSize == 0)
+	{
+
+		return 0;
+
+	}
+
+	offset++;
+	unsigned int subSize = 0;
+	memcpy(&subSize, &data[offset], sizeof(unsigned int));
+	unsigned int readBytes = 0;
+	offset += sizeof(unsigned int);
+
+	while (subSize > readBytes)
+	{
+
+		unsigned int objectSize;
+		GameObject* object = loadGameObject(&data[offset], objectSize, translatedDict, localBoard, time);
+		offset += objectSize;
+		readBytes += objectSize;
+
+	}
+
+	if (data[offset] == SerializableType_ROUTEMANAGER)
+	{
+
+		localBoard->Unserialize(&data[offset]);
+		localBoard->TranslateScripts(translatedDict);
+
+	}
+
+	localBoard->ReCalcPaths(time);
+	delete translatedDict;
+	delete saveDic;
+
+	delete[] data;
+	return localBoard->GetId();
+
+}
+
+GameObject* ResourceHandler::loadGameObject(char* data, unsigned int &readBytes, Dictionary* translatedDictionary, GameBoard* board, unsigned int time)
+{
+
+	memcpy(&readBytes, data, sizeof(unsigned int));
+	readBytes += sizeof(unsigned int);
+	unsigned int offset = sizeof(unsigned int);
+	GameObject* returnValue = nullptr;
+
+	if (data[offset] == SerializableType_GAMEOBJECTROUTE)
+	{
+
+		returnValue = new GameRouteObject();
+
+	}
+	else if (data[offset] == SerializableType_GAMEOBJECTTRAVEL)
+	{
+
+		returnValue = new GameTravelObject();
+
+	}
+	else if (data[offset] == SerializableType_GAMEOBJECTSCENERY)
+	{
+
+		returnValue = new GameObject();
+
+	}
+
+	offset++;
+	char* returnData = returnValue->Unserialize(&data[offset]);
+
+	translateMesh(returnValue, translatedDictionary);
+	returnValue->SetId(gameObjects->Add(returnValue));
+	board->AddObject(returnValue);
+	returnValue->TranslateScripts(translatedDictionary);
+	returnValue->UpdateMatrix();
+
+	if (returnData != nullptr)
+	{
+
+		unsigned int subSize;
+		memcpy(&subSize, returnData, sizeof(unsigned int));
+		unsigned int subOffset = sizeof(unsigned int);
+		subSize += subOffset;
+
+		while (subSize > subOffset)
+		{
+
+			Vector3 relPos;
+
+			memcpy(&relPos.x, &returnData[subOffset], sizeof(float));
+			subOffset += sizeof(float);
+			memcpy(&relPos.y, &returnData[subOffset], sizeof(float));
+			subOffset += sizeof(float);
+			memcpy(&relPos.z, &returnData[subOffset], sizeof(float));
+			subOffset += sizeof(float);
+			
+			unsigned int localSubSize;
+			GameObject* subObject = loadGameObject(&returnData[subOffset], localSubSize, translatedDictionary, board, time);
+			returnValue->AddSubObject(subObject, relPos);
+			subOffset += localSubSize;
+			
+		}
+	}
+
+	return returnValue;
+
+}
+
+bool ResourceHandler::translateMesh(GameObject* object, Dictionary* translation)
+{
+
+	unsigned int translationMesh = translation->GetTranslation(object->GetMeshId());
+	
+	if (translationMesh == 0)
+	{
+
+		return false;
+
+	}
+
+	BaseObject* mesh = gameObjects->GetValue(translationMesh);
+
+	if (mesh == nullptr)
+	{
+
+		return false;
+
+	}
+
+	CelMesh* meshObj = (CelMesh*)mesh;
+	BoundingBox* baseBox = (BoundingBox*)meshObj->GetBoundingObjectCopy(Shape_BOX);
+	BoundingSphere* baseSphere = (BoundingSphere*)meshObj->GetBoundingObjectCopy(Shape_SPHERE);
+
+	object->SetMesh(baseBox, baseSphere, translationMesh);
+	return true;
+
+}
+
 ResourceHandler::~ResourceHandler()
 {
 
@@ -537,5 +756,6 @@ ResourceHandler::~ResourceHandler()
 	gameObjects->KillList();
 	delete gameObjects;
 	delete activeGUI;
+	delete currentDic;
 
 }

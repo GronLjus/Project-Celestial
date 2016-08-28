@@ -15,6 +15,95 @@ GameTravelObject::GameTravelObject(BoundingBox* baseBox, BoundingSphere* baseSph
 
 }
 
+GameTravelObject::GameTravelObject() : GameObject()
+{
+
+	lastTime = 0;
+	currentNode = 0;
+	goal = 0;
+	goalAmounts = 128;
+	goals = new unsigned int[goalAmounts];
+	speed = 1.5f;
+
+}
+
+char* GameTravelObject::Unserialize(char* data)
+{
+
+	memcpy(&currentNode, data, 4);
+	memcpy(&finalGoal, &data[4], 4);
+	goal = data[8];
+	memcpy(&filter, &data[9], 4);
+	memcpy(&speed, &data[13], 4);
+	goalAmounts = data[17];
+	unsigned int goalPlace = goalAmounts*sizeof(unsigned int);
+	memcpy(goals, &data[18], goalPlace);
+
+	if (data[18 + goalPlace] == SerializableType_GAMEOBJECTSCENERY)
+	{
+
+		return GameObject::Unserialize(&data[18 + goalPlace + 1]);
+
+	}
+
+	return nullptr;
+
+}
+
+char* GameTravelObject::Serialize(unsigned int &size)
+{
+
+	unsigned int subSize = 0;
+	char* subSerial = GameObject::Serialize(subSize);
+	unsigned int goalSize = goalAmounts * sizeof(unsigned int);
+	char* goals = new char[goalSize];
+
+	for (unsigned int i = 0; i < goalSize; i+=4)
+	{
+
+		goals[i] = goals[i] << 0;
+		goals[i+1] = goals[i] << 8;
+		goals[i+2] = goals[i] << 16;
+		goals[i+3] = goals[i] << 20;
+
+	}
+
+	unsigned int standard = 19;
+	size = standard + goalSize + subSize;
+	
+	char* byteVal = new char[size];
+
+	byteVal[0] = SerializableType_GAMEOBJECTTRAVEL;
+
+	byteVal[1] = currentNode << 0;
+	byteVal[2] = currentNode << 8;
+	byteVal[3] = currentNode << 16;
+	byteVal[4] = currentNode << 20;
+
+	byteVal[5] = finalGoal << 0;
+	byteVal[6] = finalGoal << 8;
+	byteVal[7] = finalGoal << 16;
+	byteVal[8] = finalGoal << 20;
+
+	byteVal[9] = goal;
+
+	byteVal[10] = filter << 0;
+	byteVal[11] = filter << 8;
+	byteVal[12] = filter << 16;
+	byteVal[13] = filter << 20;
+
+	memcpy(&byteVal[14], &speed, 4);
+	byteVal[18] = goalAmounts;
+
+	memcpy(&byteVal[standard], goals, goalSize);
+	memcpy(&byteVal[standard+goalSize], subSerial, subSize);
+	delete[] subSerial;
+	delete[] goals;
+
+	return byteVal;
+
+}
+
 GameObjectType GameTravelObject::GetType() const
 {
 

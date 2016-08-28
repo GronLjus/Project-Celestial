@@ -741,6 +741,18 @@
     <ClInclude Include="SaveObject.h">
       <Filter>Header Files\Resources\Objects</Filter>
     </ClInclude>
+    <ClInclude Include="SerializableObject.h">
+      <Filter>Header Files\Resources\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="ResourceDictionary.h">
+      <Filter>Header Files\Resources\Objects\Container</Filter>
+    </ClInclude>
+    <ClInclude Include="CLSVLoader.h">
+      <Filter>Header Files\Resources\Loaders\FileLoaders</Filter>
+    </ClInclude>
+    <ClInclude Include="Dictionary.h">
+      <Filter>Header Files\CrossHandler-Tools\Container</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Camera.cpp">
@@ -1019,6 +1031,15 @@
     <ClCompile Include="SaveObject.cpp">
       <Filter>Source Files\Resources\Objects</Filter>
     </ClCompile>
+    <ClCompile Include="ResourceDictionary.cpp">
+      <Filter>Source Files\Resources\Objects\Container</Filter>
+    </ClCompile>
+    <ClCompile Include="CLSVLoader.cpp">
+      <Filter>Source Files\Resources\Loaders\FileLoaders</Filter>
+    </ClCompile>
+    <ClCompile Include="Dictionary.cpp">
+      <Filter>Source Files\CrossHandler-Tools\Container</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico">
@@ -1163,6 +1184,10 @@
     <None Include="Content\Scripts\ToolBarScripts\Button3Click.celsrc">
       <Filter>Resource Files\Content\Scripts\ToolBarScripts</Filter>
     </None>
+    <None Include="Button4Click.celsrc">
+      <Filter>Resource Files\Content\Scripts\ToolBarScripts</Filter>
+    </None>
+    <None Include="saves\save1.clsv" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Project Celestial.rc">

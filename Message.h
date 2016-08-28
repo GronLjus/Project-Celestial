@@ -14,10 +14,13 @@ namespace CrossHandlers
 		ResourceMess_LOADCOPYOBJECT, ResourceMess_LOADCOPYOBJECTAT,
 		ResourceMess_LOADGAMEBOARD, ResourceMess_LOADMESH, ResourceMess_LOADLIGHT, ResourceMess_LOADCHARKEYTRIGGER, ResourceMess_LOADKEYTRIGGER, ResourceMess_LOADSCRIPT,
 		ResourceMess_LOADGUI, ResourceMess_UNLOADOBJECT,
-		ResourceMess_CLEARBOARD,
+		ResourceMess_CLEARBOARD, 
+		ResourceMess_SAVEBOARD, ResourceMess_LOADBOARD,
 		ResourceMess_NA
 	};
-	enum EventMess{ EventMess_OBJECTADDED, EventMess_SCRIPTADDED, EventMess_GUIOBJECTADDED, EventMess_LNKDBG, EventMess_WAITFORFRAME, EventMess_NA };
+	enum EventMess{ EventMess_OBJECTADDED, EventMess_SCRIPTADDED, EventMess_GUIOBJECTADDED, 
+		EventMess_LNKDBG, EventMess_WAITFORFRAME,
+		EventMess_NA };
 	enum GUIMess{
 		GUIMess_SETUI, 
 		GUIMess_CLICKOBJECT, GUIMess_MOVEMOUSE, 
@@ -40,7 +43,7 @@ namespace CrossHandlers
 		GameBoardMess_HOOKTRACK, GameBoardMess_UNHOOKTRACK,
 		GameBoardMess_ORBITOBJECT, 
 		GameBoardMess_ADDROUTE, GameBoardMess_SPAWN, GameBoardMess_TRAVEL,
-		GameBoardMess_SPLITOBJECT, GameBoardMess_CLEARNODES,
+		GameBoardMess_SPLITOBJECT,
 		GameBoardMess_NA };
 	enum SystemMess{SystemMess_GETSCREENRES, SystemMess_SETCURSOR, SystemMess_HIDECURSOR, SystemMess_SHOWCURSOR, SystemMess_MOVECURSOR,SystemMesss_NA};
 

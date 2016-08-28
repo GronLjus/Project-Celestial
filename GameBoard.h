@@ -1,6 +1,7 @@
 #pragma once
 #include "ObjectTree.h"
 #include "CameraObject.h"
+#include "RoutingManager.h"
 
 namespace Resources
 {
@@ -26,9 +27,19 @@ namespace Resources
 			bool GetBoardPosition(CelestialMath::Vector3 origin, CelestialMath::Vector3 unitDirection, Vector3 &position) const; 
 			bool GetBoardPosition(CelestialMath::Vector3 origin, CelestialMath::Vector3 unitDirection, Vector3 &position, float floor) const;
 
+			Entities::RoutingManager* GetRoutingManager() const;
+			unsigned int AddRouteNode(CelestialMath::Vector3 position, float width);
+
+			void ReCalcPaths(unsigned int time);
+
+			//Serializable Interface
+			virtual char* Serialize(unsigned int &size);
+			virtual char* Unserialize(char* data);
+
 			~GameBoard();
 
 		private:
+			Entities::RoutingManager* routing;
 			CrossHandlers::ObjectTree* objectRoot;
 			CrossHandlers::CelestialSlicedList<GameObject*>* travelObjects;
 			CrossHandlers::CelestialSlicedList<GameObject*>* activeObjects;

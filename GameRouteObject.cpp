@@ -14,6 +14,44 @@ GameRouteObject::GameRouteObject(BoundingBox* baseBox, BoundingSphere* baseSpher
 
 }
 
+GameRouteObject::GameRouteObject() : GameObject()
+{
+
+	nodes = new CelestialSlicedList<RouteNodeObject*>(64, nullptr);
+	routeNodes = 0;
+
+}
+
+char* GameRouteObject::Unserialize(char* data)
+{
+
+	if (data[0] == SerializableType_GAMEOBJECTSCENERY)
+	{
+
+		return GameObject::Unserialize(&data[1]);
+
+	}
+
+	return nullptr;
+
+}
+
+char* GameRouteObject::Serialize(unsigned int &size)
+{
+
+	unsigned int subSize = 0;
+	char* subSerial = GameObject::Serialize(subSize);
+	size = subSize + 1;
+	char* byteVal = new char[size];
+
+	byteVal[0] = SerializableType_GAMEOBJECTROUTE;
+	memcpy(&byteVal[1], subSerial, subSize);
+	delete[] subSerial;
+
+	return byteVal;
+
+}
+
 GameObjectType GameRouteObject::GetType() const
 {
 

@@ -10,7 +10,9 @@ toolbarLY = load panel
 button1 = load panel
 button2 = load panel
 button3 = load panel
+button4 = load panel
 
+button4Text = load textbox
 button3Text = load textbox
 button2Text = load textbox
 button1Text = load textbox
@@ -18,6 +20,8 @@ button1Text = load textbox
 button1Click = load script 'Content\Scripts\ToolBarScripts\Button1Click.celsrc'
 button2Click = load script 'Content\Scripts\ToolBarScripts\Button2Click.celsrc'
 button3Click = load script 'Content\Scripts\ToolBarScripts\Button3Click.celsrc'
+button4Click = load script 'Content\Scripts\ToolBarScripts\Button4Click.celsrc'
+
 button1UD = load script 'Content\Scripts\ToolBarScripts\Button1UpDown.celsrc'
 
 add ui screenLayout toolbarLY
@@ -47,6 +51,7 @@ set text button1Text 'Button1'
 link target button1 button1Text
 link target button2 button2Text
 link target button3 button3Text
+link target button4 button4Text
 
 add ui toolbarLY button2
 pos button2 110.0 5.0
@@ -80,13 +85,33 @@ snap button3Text 0 1
 set content button3Text 0.0 0.0 0.0
 set text button3Text 'Button3'
 
-scope save toolbarLY 0
-scope save button1 0
-scope save button2 0
-scope save button3 0
-scope save button2Text 0
-scope save button3Text 0
-scope save button1Text 0
-scope save button1UD 0
+add ui toolbarLY button4
+pos button4 310.0 5.0
+size button4 90.0 90.0
+set border button4 0.0 0.0 1.0
+accept mouse button4
+
+set leftclick button4 button4Click
+set mouseupdown button4 button1UD
+
+add ui button4 button4Text
+size button4Text 55.0 20.0
+pos button4Text 0.0 35.0
+snap button4Text 0 1
+set content button4Text 0.0 0.0 0.0
+set text button4Text 'Button4'
+
+scope sve toolbarLY 0
+scope sve button1 0
+scope sve button2 0
+scope sve button3 0
+scope sve button4 0
+
+scope sve button1Text 0
+scope sve button2Text 0
+scope sve button3Text 0
+scope sve button4Text 0
+
+scope sve button1UD 0
 
 increment layer toolbarLY

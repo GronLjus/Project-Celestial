@@ -1,0 +1,8 @@
+$
+{
+
+	localBoard = import 'board'
+
+}
+
+save state localBoard 'saves\save1'

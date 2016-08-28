@@ -18,6 +18,161 @@ GameBoard::GameBoard(unsigned int cells, CelMesh* gridObject, unsigned char maxF
 	boardObject = nullptr;
 	boardNormal = Vector3(0.0f, 1.0f, 0.0f);
 	travelObjectsAmounts = 0;
+	routing = new RoutingManager();
+
+}
+
+void GameBoard::ReCalcPaths(unsigned int time)
+{
+
+	for (unsigned int i = 0; i < travelObjects->GetHighest(); i++)
+	{
+
+		GameTravelObject* travelObj = (GameTravelObject*)travelObjects->GetValue(i);
+		
+		if (travelObj != nullptr &&
+			travelObj->GetNode() != travelObj->GetFinalGoalNode())
+		{
+
+			routing->Travel(travelObj, travelObj->GetFinalGoalNode(), time);
+
+		}
+	}
+
+}
+RoutingManager* GameBoard::GetRoutingManager() const
+{
+
+	return routing;
+
+}
+
+char* GameBoard::Serialize(unsigned int &size)
+{
+
+	char** subs = nullptr;
+	unsigned int* subSizes = nullptr;
+	unsigned int subTot = 0;
+	unsigned int subSize = 0;
+
+	if (activeObjects->GetHighest() > 0)
+	{
+
+		subs = new char*[activeObjects->GetHighest()];
+		subSizes = new unsigned int[activeObjects->GetHighest()];
+
+		for (unsigned int i = 0; i < activeObjects->GetHighest(); i++)
+		{
+
+			GameObject* object = activeObjects->GetValue(i);
+
+			if (object != nullptr 
+				&& !object->IsChild()
+				&& object->ShouldSave())
+			{
+
+				subs[subTot] = object->Serialize(subSizes[subTot]);
+				char* temp = new char[subSizes[subTot] + sizeof(unsigned int)];
+
+				memcpy(temp, &subSizes[subTot], sizeof(unsigned int));
+				memcpy(&temp[4], subs[subTot], subSizes[subTot]);
+
+				subSizes[subTot] += sizeof(unsigned int);
+
+				delete[] subs[subTot];
+				subs[subTot] = temp;
+
+				subSize += subSizes[subTot];
+				subTot++;
+
+			}
+		}
+	
+	}
+
+	unsigned int routingSize = 0;
+	char* routeBytes = routing->Serialize(routingSize);
+	unsigned int subObjectSize;
+	char* subSer = ScriptableObject::Serialize(subObjectSize);
+
+	size = 1 + subSize + subObjectSize + sizeof(unsigned int) + routingSize;
+
+	char* byteVal = new char[size];
+	byteVal[0] = SerializableType_GAMEBOARD;
+	unsigned int offset = 1;
+
+	memcpy(&byteVal[offset], &subSize, 4);
+	offset += 4;
+
+	if (subs != nullptr)
+	{
+
+		for (unsigned int i = 0; i < subTot; i++)
+		{
+
+			memcpy(&byteVal[offset], subs[i], subSizes[i]);
+			offset += subSizes[i];
+			delete[] subs[i];
+
+		}
+
+		delete[] subSizes;
+		delete[] subs;
+
+	}
+
+	memcpy(&byteVal[offset], routeBytes, routingSize);
+	delete[] routeBytes;
+	offset += routingSize;
+
+	memcpy(&byteVal[offset], subSer, subObjectSize);
+	delete[] subSer;
+	return byteVal;
+
+}
+
+char* GameBoard::Unserialize(char* data)
+{
+
+	unsigned int offset = 1;
+
+	if (data[0] == SerializableType_ROUTEMANAGER)
+	{
+
+		unsigned int totalNodes;
+		memcpy(&totalNodes, &data[offset], sizeof(unsigned int));
+		offset += sizeof(unsigned int);
+
+		unsigned int nodes = totalNodes / 16;
+
+		for (unsigned int i = 0; i < nodes; i++)
+		{
+
+			Vector3 nodePos;
+			float width;
+			memcpy(&nodePos.x, &data[offset], 4);
+			offset += 4;
+			memcpy(&nodePos.y, &data[offset], 4);
+			offset += 4;
+			memcpy(&nodePos.z, &data[offset], 4);
+			offset += 4;
+			memcpy(&width, &data[offset], 4);
+			offset += 4;
+
+			AddRouteNode(nodePos, width);
+
+		}
+	}
+
+
+	if (data[offset] == SerializableType_SCRIPTABLE)
+	{
+
+		ScriptableObject::Unserialize(&data[offset + 1]);
+
+	}
+
+	return data;
 
 }
 
@@ -28,6 +183,7 @@ void GameBoard::ClearObjects()
 	travelObjects->Reset();
 	activeObjects->Reset();
 	travelObjectsAmounts = 0;
+	routing->ClearNodes();
 
 }
 
@@ -197,6 +353,17 @@ void GameBoard::AddObject(GameObject* object)
 
 }
 
+unsigned int GameBoard::AddRouteNode(Vector3 position, float width)
+{
+
+	BoundingSphere sphere = BoundingSphere(position.x, position.y, position.z, width / 2.0f);
+	unsigned int amount = 0;
+
+	unsigned int* collided = GetCollidedObject(&sphere, GameObjectType_ROUTE, amount);
+	return routing->AddNode(position, collided, amount);
+
+}
+
 CelestialSlicedList<GameObject*>* GameBoard::GetActiveObjects() const
 {
 
@@ -269,5 +436,6 @@ GameBoard::~GameBoard()
 	delete objectRoot;
 	delete travelObjects;
 	delete activeObjects;
+	delete routing;
 
 }

@@ -22,7 +22,7 @@ namespace Resources
 			virtual ~BaseObject()
 			{
 				if (killMessages != nullptr) { 
-					for (int i = 0; i < kills; i++) { 
+					for (unsigned int i = 0; i < kills; i++) { 
 						if (killMessages[i] != nullptr)
 						{
 							delete killMessages[i];

@@ -2,16 +2,17 @@
 
 #include "CelestialMath.h"
 #include "CelestialSlicedList.h"
+#include "SerializableObject.h"
 
 namespace Entities
 {
 
-	class RouteNodeObject
+	class RouteNodeObject : public Resources::SerializableObject
 	{
 
 	public:
 		RouteNodeObject();
-		RouteNodeObject(CelestialMath::Vector3 position, unsigned int width);
+		RouteNodeObject(CelestialMath::Vector3 position, float width);
 		void SetPosition(CelestialMath::Vector3 pos);
 
 		CelestialMath::Vector3 GetPosition() const;
@@ -35,6 +36,10 @@ namespace Entities
 		void SetClosedset(unsigned char closed);
 		void SetStep(unsigned int step);
 
+		//Serializable Interface
+		virtual char* Serialize(unsigned int &size);
+		virtual char* Unserialize(char* data);
+
 		virtual ~RouteNodeObject();
 
 
@@ -57,7 +62,7 @@ namespace Entities
 		unsigned int objId;
 		
 		CelestialMath::Vector3 position;
-		unsigned int width;
+		float width;
 
 		CrossHandlers::CelestialSlicedList<route>* routes;
 		unsigned int maxRoutes;

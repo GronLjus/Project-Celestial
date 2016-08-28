@@ -16,6 +16,64 @@ GameObject::GameObject(BoundingBox* box, BoundingSphere* baseSphere, unsigned in
 
 }
 
+GameObject::GameObject() : PositionableObject(), SaveObject()
+{
+
+	flipInit = false;
+	parent = nullptr;
+
+	this->box = nullptr;
+	this->sphere = nullptr;
+	this->mesh = 0;
+
+}
+
+void GameObject::SetMesh(CrossHandlers::BoundingBox* baseBox, CrossHandlers::BoundingSphere* baseSphere, unsigned int meshId)
+{
+
+	this->box = baseBox;
+	this->sphere = baseSphere;
+	this->mesh = meshId;
+
+}
+
+char* GameObject::Unserialize(char* data)
+{
+
+	memcpy(&mesh, data, 4);
+
+	if (data[4] == SerializableType_POSITIONABLE)
+	{
+
+		return PositionableObject::Unserialize(&data[5]);
+
+	}
+
+	return nullptr;
+
+}
+
+char* GameObject::Serialize(unsigned int &size)
+{
+
+	unsigned int subSize = 0;
+	char* subSerial = PositionableObject::Serialize(subSize);
+	size = subSize + 5;
+	char* byteVal = new char[size];
+
+	byteVal[0] = SerializableType_GAMEOBJECTSCENERY;
+	byteVal[1] = mesh << 0;
+	byteVal[2] = mesh << 8;
+	byteVal[3] = mesh << 16;
+	byteVal[4] = mesh << 24;
+
+	memcpy(&byteVal[5], subSerial, subSize);
+
+	delete[] subSerial;
+	return byteVal;
+
+}
+
 void GameObject::SetParent(BaseObject* parent)
 {
 

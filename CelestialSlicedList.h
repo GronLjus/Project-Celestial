@@ -289,10 +289,10 @@ bool CelestialSlicedList<T>::Add(T element, unsigned int id)
 	list[slice][id%maxSliceSize] = element;
 	//sliceSize[slice]++;
 
-	if (id > highestValue)
+	if (id + 1 > highestValue)
 	{
 
-		highestValue = id;
+		highestValue = id + 1;
 
 	}
 
@@ -307,10 +307,11 @@ void CelestialSlicedList<T>::Remove(unsigned int id)
 	unsigned int slice = id / maxSliceSize;
 	list[slice][TransformId(id)] = nullptr;
 
-	if (id == GetFirstEmpty())
+	if (id + 1 == highestValue)
 	{
 
 		sliceSize[slice]--;
+		highestValue--;
 
 	}
 	else

@@ -1300,6 +1300,62 @@ RunTimeError SetTextOperator(unsigned int returnVar, unsigned char* params, unsi
 
 }
 
+RunTimeError SaveStateOperator(unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int mId, RunTimeCommons* rtc)
+{
+
+	if (paramSize < 8)
+	{
+
+		return RunTimeError_BADPARAMS;
+
+	}
+
+	unsigned int s = 4;
+	unsigned int var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
+	rtc->memory->ReadVariable(var - 1, rtc->intLoader, s);
+	unsigned int var2 = (params[4] | ((int)params[5] << 8) | ((int)params[6] << 16) | ((int)params[7] << 24));
+
+	Message mess;
+	mess.destination = MessageSource_RESOURCES;
+	mess.type = MessageType_RESOURCES;
+	mess.mess = ResourceMess_SAVEBOARD;
+	mess.SetParams(rtc->intLoader, 0, 4);
+	unsigned int length;
+	unsigned char* message = loadString(var2, mId, rtc, length);
+	mess.SetParams(message, 4, length);
+
+	return sendMessageOut(mess, rtc);
+
+}
+
+RunTimeError LoadStateOperator(unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int mId, RunTimeCommons* rtc)
+{
+
+	if (paramSize < 8)
+	{
+
+		return RunTimeError_BADPARAMS;
+
+	}
+
+	unsigned int s = 4;
+	unsigned int var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
+	rtc->memory->ReadVariable(var - 1, rtc->intLoader, s);
+	unsigned int var2 = (params[4] | ((int)params[5] << 8) | ((int)params[6] << 16) | ((int)params[7] << 24));
+	unsigned int length;
+
+	Message mess;
+	mess.destination = MessageSource_RESOURCES;
+	mess.type = MessageType_RESOURCES;
+	mess.mess = ResourceMess_LOADBOARD;
+	mess.SetParams(rtc->intLoader, 0, 4);
+	unsigned char* message = loadString(var2, mId, rtc, length);
+	mess.SetParams(message, 4, length);
+
+	return sendMessageOut(mess, rtc);
+
+}
+
 RunTimeError AppendTextOperator(unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int mId, RunTimeCommons* rtc)
 {
 
@@ -2996,6 +3052,8 @@ CelScriptRuntimeHandler::CelScriptRuntimeHandler(MessageQueue* mQueue, Celestial
 	operators[opcode_GLUOBJCT] = GlueObjectOperator;
 
 	operators[opcode_SVESCPE] = ScopeSaveOperator;
+	operators[opcode_SVESTT] = SaveStateOperator;
+	operators[opcode_LDSTT] = LoadStateOperator;
 	operators[opcode_CLRBRD] = ClearBoardOperator;
 
 	operators[opcode_JMPINVVAR] = JumpInv;

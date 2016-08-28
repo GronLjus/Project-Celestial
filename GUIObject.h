@@ -53,6 +53,10 @@ namespace Resources
 
 			void ShouldPause();
 
+			//Serializable Interface
+			virtual char* Serialize(unsigned int &size);
+			virtual char* Unserialize(char* data);
+
 			virtual ~GUIObject();
 
 		protected:

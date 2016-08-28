@@ -24,6 +24,62 @@ GUIObject::GUIObject() : PositionableObject(), SaveObject()
 
 }
 
+char* GUIObject::Serialize(unsigned int &size)
+{
+	
+	unsigned int subObjectSize;
+	char* subSerial = PositionableObject::Serialize(subObjectSize);
+	unsigned int standard = 13;
+	size = standard + subObjectSize;
+	char* byteVal = new char[size];
+
+	byteVal[0] = SerializableType_GUIOBJECT;
+	byteVal[1] = isVisible;
+	byteVal[2] = enabled;
+	byteVal[3] = hSnap;
+
+	byteVal[4] = vSnap;
+	byteVal[5] = type;
+
+	byteVal[6] = contentBrush << 0;
+	byteVal[7] = contentBrush << 8;
+	byteVal[8] = contentBrush << 16;
+	byteVal[9] = contentBrush << 24;
+
+	byteVal[10] = borderBrush << 0;
+	byteVal[11] = borderBrush << 8;
+	byteVal[12] = borderBrush << 16;
+	byteVal[13] = borderBrush << 24;
+	memcpy(&byteVal[14], subSerial, subObjectSize);
+	delete[] subSerial;
+
+	return byteVal;
+
+}
+
+char* GUIObject::Unserialize(char* data)
+{
+
+	isVisible = data[0];
+	enabled = data[1];
+	hSnap = GUISnap(data[2]);
+	vSnap = GUISnap(data[3]);
+	type = GUIObjects(data[4]);
+
+	memcpy(&contentBrush, &data[5], 4);
+	memcpy(&borderBrush, &data[9], 4);
+
+	if (data[13] == SerializableType_POSITIONABLE)
+	{
+
+		return PositionableObject::Unserialize(&data[14]);
+
+	}
+
+	return nullptr;
+
+}
+
 void GUIObject::UpdateScreenTarget()
 {
 

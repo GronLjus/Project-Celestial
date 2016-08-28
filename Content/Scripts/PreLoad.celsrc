@@ -33,6 +33,6 @@ ignore input screenLayout
 ignore input debugLayout
 decrement outTextBox
 
-scope save debugLayout 0
-scope save outTextBox 0
-scope save screenLayout 0
+scope sve debugLayout 0
+scope sve outTextBox 0
+scope sve screenLayout 0

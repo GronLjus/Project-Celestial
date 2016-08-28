@@ -70,6 +70,7 @@ namespace Logic
 		opcode_GLUOBJCT,
 
 		opcode_SVESCPE,
+		opcode_SVESTT, opcode_LDSTT,
 		opcode_CLRBRD,
 
 		opcode_JMPINVVAR,opcode_JMPNOW,opCode_WTFRVR,

@@ -11,12 +11,13 @@
 #include "ResourceContainer.h"
 #include "ResourceObject.h"
 #include "TextContainer.h"
+#include "CLSVLoader.h"
 
 namespace Resources
 {
 
 	enum Shape{Shape_PLANE, Shape_GRID,Shape_NA};
-	///<summary>This class manages the internal resources of the engine</summary>
+	///<summary>This class manages the loading of external resources of the engine</summary>
 	class ResourceLoader
 	{
 
@@ -57,6 +58,8 @@ namespace Resources
 			IGUILoader** gUILoads;
 			IFileCLLoader** scriptFileLoaders;
 
+			CLSVLoader* saveLoader;
+
 
 		public:
 			///<summary>Gets a unique Id for materials</summary>
@@ -65,6 +68,9 @@ namespace Resources
 			ResourceLoader();
 
 			TerrainObject* LoadTerrainFromFile(std::string file);
+
+			char* LoadSaveFile(std::string file, unsigned int &size);
+			void SaveBoardToFile(std::string path, char* data, unsigned int size);
 
 			///<summary>Loads a mesh from a file</summary>
 			///<param val='file'>[in]The path of the file</param>

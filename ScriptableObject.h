@@ -1,10 +1,12 @@
 #pragma once
+#include "SerializableObject.h"
 #include "BaseObject.h"
+#include "Dictionary.h"
 
 namespace Resources
 {
 
-	class ScriptableObject : public BaseObject
+	class ScriptableObject : public SerializableObject, public BaseObject
 	{
 
 		public:
@@ -24,9 +26,17 @@ namespace Resources
 
 			unsigned int GetTravelNodeScript() const;
 
+			bool TranslateScripts(CrossHandlers::Dictionary* dict);
+
+			//Serializable Interface
+			virtual char* Serialize(unsigned int &size);
+			virtual char* Unserialize(char* data);
+
 			virtual ~ScriptableObject(){}
 
 		private:
+
+			unsigned int serial;
 			unsigned int rightClickScript;
 			unsigned int leftClickScript;
 			unsigned int middleClickScript;

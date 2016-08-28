@@ -12,6 +12,9 @@ namespace Resources
 	{
 		public:
 			GameObject(CrossHandlers::BoundingBox* baseBox, CrossHandlers::BoundingSphere* baseSphere, unsigned int meshId);
+			GameObject();
+
+			void SetMesh(CrossHandlers::BoundingBox* baseBox, CrossHandlers::BoundingSphere* baseSphere, unsigned int meshId);
 			virtual void Update(CrossHandlers::Message* mess);
 			unsigned int GetMeshId() const;
 			unsigned int GetScriptId() const;
@@ -28,6 +31,11 @@ namespace Resources
 
 			CrossHandlers::BoundingBox* GetBox();
 			CrossHandlers::BoundingSphere* GetSphere();
+
+			//Serializable Interface
+			virtual char* Serialize(unsigned int &size);
+			virtual char* Unserialize(char* data);
+
 			virtual ~GameObject();
 
 		private:

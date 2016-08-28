@@ -2,7 +2,6 @@
 #include "GameBoard.h"
 #include "IHandleMessages.h"
 #include "CelestialSlicedList.h"
-#include "RoutingManager.h"
 
 namespace Entities
 {
