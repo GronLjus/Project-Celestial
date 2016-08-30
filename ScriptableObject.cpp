@@ -39,7 +39,7 @@ bool ScriptableObject::TranslateScripts(CrossHandlers::Dictionary* dict)
 
 		}
 
-		rightClickScript = newScript - 1;
+		rightClickScript = newScript + 1;
 
 	}
 
@@ -55,7 +55,7 @@ bool ScriptableObject::TranslateScripts(CrossHandlers::Dictionary* dict)
 
 		}
 
-		leftClickScript = newScript - 1;
+		leftClickScript = newScript + 1;
 
 	}
 
@@ -71,7 +71,7 @@ bool ScriptableObject::TranslateScripts(CrossHandlers::Dictionary* dict)
 
 		}
 
-		middleClickScript = newScript - 1;
+		middleClickScript = newScript + 1;
 
 	}
 
@@ -87,7 +87,7 @@ bool ScriptableObject::TranslateScripts(CrossHandlers::Dictionary* dict)
 
 		}
 
-		rightDragScript = newScript - 1;
+		rightDragScript = newScript + 1;
 
 	}
 
@@ -103,7 +103,7 @@ bool ScriptableObject::TranslateScripts(CrossHandlers::Dictionary* dict)
 
 		}
 
-		leftDragScript = newScript - 1;
+		leftDragScript = newScript + 1;
 
 	}
 
@@ -119,7 +119,7 @@ bool ScriptableObject::TranslateScripts(CrossHandlers::Dictionary* dict)
 
 		}
 
-		middleDragScript = newScript - 1;
+		middleDragScript = newScript + 1;
 
 	}
 
@@ -135,7 +135,7 @@ bool ScriptableObject::TranslateScripts(CrossHandlers::Dictionary* dict)
 
 		}
 
-		wheelScript = newScript - 1;
+		wheelScript = newScript + 1;
 
 	}
 
@@ -151,7 +151,7 @@ bool ScriptableObject::TranslateScripts(CrossHandlers::Dictionary* dict)
 
 		}
 
-		upDownScript = newScript - 1;
+		upDownScript = newScript + 1;
 
 	}
 
@@ -167,7 +167,7 @@ bool ScriptableObject::TranslateScripts(CrossHandlers::Dictionary* dict)
 
 		}
 
-		travelArrivedNodeScript = newScript - 1;
+		travelArrivedNodeScript = newScript + 1;
 
 	}
 
@@ -201,51 +201,17 @@ char* ScriptableObject::Serialize(unsigned int &size)
 
 	byteVal[0] = SerializableType_SCRIPTABLE;
 
-	byteVal[1] = rightClickScript << 0;
-	byteVal[2] = rightClickScript << 8;
-	byteVal[3] = rightClickScript << 16;
-	byteVal[4] = rightClickScript << 24;
+	memcpy(&byteVal[1], &rightClickScript, sizeof(unsigned int));
+	memcpy(&byteVal[5], &leftClickScript, sizeof(unsigned int));
+	memcpy(&byteVal[9], &middleClickScript, sizeof(unsigned int));
 
-	byteVal[5] = leftClickScript << 0;
-	byteVal[6] = leftClickScript << 8;
-	byteVal[7] = leftClickScript << 16;
-	byteVal[8] = leftClickScript << 24;
+	memcpy(&byteVal[13], &rightDragScript, sizeof(unsigned int));
+	memcpy(&byteVal[17], &leftDragScript, sizeof(unsigned int));
+	memcpy(&byteVal[21], &middleDragScript, sizeof(unsigned int));
 
-	byteVal[9] = middleClickScript << 0;
-	byteVal[10] = middleClickScript << 8;
-	byteVal[11] = middleClickScript << 16;
-	byteVal[12] = middleClickScript << 24;
-
-
-	byteVal[13] = rightDragScript << 0;
-	byteVal[14] = rightDragScript << 8;
-	byteVal[15] = rightDragScript << 16;
-	byteVal[16] = rightDragScript << 24;
-
-	byteVal[17] = leftDragScript << 0;
-	byteVal[18] = leftDragScript << 8;
-	byteVal[19] = leftDragScript << 16;
-	byteVal[20] = leftDragScript << 24;
-
-	byteVal[21] = middleDragScript << 0;
-	byteVal[22] = middleDragScript << 8;
-	byteVal[23] = middleDragScript << 16;
-	byteVal[24] = middleDragScript << 24;
-
-	byteVal[25] = wheelScript << 0;
-	byteVal[26] = wheelScript << 8;
-	byteVal[27] = wheelScript << 16;
-	byteVal[28] = wheelScript << 24;
-
-	byteVal[29] = upDownScript << 0;
-	byteVal[30] = upDownScript << 8;
-	byteVal[31] = upDownScript << 16;
-	byteVal[32] = upDownScript << 24;
-
-	byteVal[33] = travelArrivedNodeScript << 0;
-	byteVal[34] = travelArrivedNodeScript << 8;
-	byteVal[35] = travelArrivedNodeScript << 16;
-	byteVal[36] = travelArrivedNodeScript << 24;
+	memcpy(&byteVal[25], &wheelScript, sizeof(unsigned int));
+	memcpy(&byteVal[29], &upDownScript, sizeof(unsigned int));
+	memcpy(&byteVal[33], &travelArrivedNodeScript, sizeof(unsigned int));
 
 	return byteVal;
 

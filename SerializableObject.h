@@ -4,6 +4,7 @@ namespace Resources
 {
 
 	enum SerializableType {
+		SerializableType_NA,
 		SerializableType_SCRIPTABLE,
 		SerializableType_POSITIONABLE,
 		SerializableType_GAMEOBJECTSCENERY,

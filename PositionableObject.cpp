@@ -47,10 +47,10 @@ char* PositionableObject::Unserialize(char* data)
 	unsigned int subSize = 0;
 	memcpy(&subSize, &data[36], 4);
 
-	if (data[36 + subSize] == SerializableType_SCRIPTABLE)
+	if (data[40 + subSize] == SerializableType_SCRIPTABLE)
 	{
 
-		ScriptableObject::Unserialize(&data[36 + subSize + 1]);
+		ScriptableObject::Unserialize(&data[40 + subSize + 1]);
 
 	}
 

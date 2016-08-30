@@ -38,7 +38,6 @@ void GameBoard::ReCalcPaths(unsigned int time)
 
 		}
 	}
-
 }
 
 RoutingManager* GameBoard::GetRoutingManager() const
@@ -324,13 +323,20 @@ void GameBoard::FillInstanceBuffer(GameObject* trackingObject)
 void GameBoard::AddObject(GameObject* object)
 {
 
+	if (object->GetActiveId() != 0)
+	{
+
+		return;
+
+	}
+
 	if (object->GetScale().x <= CELESTIAL_EPSILON ||
 		object->GetScale().y <= CELESTIAL_EPSILON ||
 		object->GetScale().z <= CELESTIAL_EPSILON ||
 		object->GetActiveId() != 0)
 	{
 
-		return;
+		unsigned int i = 0;
 
 	}
 
