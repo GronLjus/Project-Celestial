@@ -40,6 +40,7 @@ void GameBoard::ReCalcPaths(unsigned int time)
 	}
 
 }
+
 RoutingManager* GameBoard::GetRoutingManager() const
 {
 
@@ -350,6 +351,13 @@ void GameBoard::AddObject(GameObject* object)
 	}
 
 	object->SetParent(this);
+
+}
+
+unsigned int GameBoard::AddRouteNode(CelestialMath::Vector3 position, float width, unsigned int* collided, unsigned int &collAmounts)
+{
+
+	return routing->AddNode(position, collided, collAmounts);
 
 }
 

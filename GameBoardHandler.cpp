@@ -528,7 +528,25 @@ void GameBoardHandler::UpdateMessages(unsigned int time)
 			pos.x = floor(pos.x) + 0.5f;
 			pos.z = floor(pos.z) + 0.5f;
 
-			unsigned int retVal = localGameBoard->AddRouteNode(pos, width);
+			BoundingSphere sphere = BoundingSphere(pos.x, pos.y, pos.z, width / 2.0f);
+			unsigned int amount = 0;
+
+			unsigned int* collided = localGameBoard->GetCollidedObject(&sphere, GameObjectType_ROUTE, amount);
+			unsigned int retVal = localGameBoard->AddRouteNode(pos, width, collided, amount);
+
+			for (unsigned int i = 0; i < amount; i++)
+			{
+
+				GameRouteObject* routeObj = (GameRouteObject*)gameObjects->GetValue(collided[i]);
+
+				if (routeObj->GetMiddleNode() != 0)
+				{
+
+					RouteNodeObject* middleNode = routing->GetNode(routeObj->GetMiddleNode() - 1);
+					splitObject(routeObj, middleNode->GetPosition(), width, time);
+
+				}
+			}
 
 			if (currentMessage->source == MessageSource_CELSCRIPT && currentMessage->returnParam > 0)
 			{
@@ -581,23 +599,6 @@ void GameBoardHandler::UpdateMessages(unsigned int time)
 		else if (currentMessage->mess == GameBoardMess_SPLITOBJECT)
 		{
 
-			RouteNodeObject* node = routing->GetNode(param1 -1);
-			float width;
-			memcpy(&width, &currentMessage->params[4], 4);
-			BoundingSphere bs = BoundingSphere(node->GetPosition().x,
-				node->GetPosition().y,
-				node->GetPosition().z,
-				width / 2);
-
-			unsigned int amounts;
-			unsigned int* objects = localGameBoard->GetCollidedObject(&bs, GameObjectType_ROUTE, amounts);
-
-			for (unsigned int i = 0; i < amounts; i++)
-			{
-
-				splitObject((GameObject*)gameObjects->GetValue(objects[i]), node->GetPosition(), width, time);
-
-			}
 		}
 
 		currentMessage->read = true;

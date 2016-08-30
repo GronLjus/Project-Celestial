@@ -28,6 +28,8 @@ namespace Resources
 			bool GetBoardPosition(CelestialMath::Vector3 origin, CelestialMath::Vector3 unitDirection, Vector3 &position, float floor) const;
 
 			Entities::RoutingManager* GetRoutingManager() const;
+
+			unsigned int AddRouteNode(CelestialMath::Vector3 position, float width, unsigned int* collided, unsigned int &collAmounts);
 			unsigned int AddRouteNode(CelestialMath::Vector3 position, float width);
 
 			void ReCalcPaths(unsigned int time);

@@ -62,6 +62,8 @@ namespace Entities
 		unsigned int objId;
 		
 		CelestialMath::Vector3 position;
+
+
 		float width;
 
 		CrossHandlers::CelestialSlicedList<route>* routes;

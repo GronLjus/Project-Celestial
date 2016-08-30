@@ -1,6 +1,5 @@
 #pragma once
 #include "GameObject.h"
-#include "RouteNodeObject.h"
 
 namespace Resources
 {
@@ -14,15 +13,18 @@ namespace Resources
 			
 			virtual GameObjectType GetType() const;
 
-			unsigned int GetRoutenodes() const;
-			Entities::RouteNodeObject* GetRouteNode(unsigned int localId) const;
-			Entities::RouteNodeObject* GetRouteNode(CelestialMath::Vector3 position) const;
+			void SetWidth(unsigned int width);
+
+			unsigned int GetUpperNode() const;
+			unsigned int GetMiddleNode() const;
+			unsigned int GetLowerNode() const;
+
+			void SetUpperNode(unsigned int node);
+			void SetMiddleNode(unsigned int node);
+			void SetLowerNode(unsigned int node);
+			
 			unsigned int GetWidth() const;
 
-			void SetWidth(unsigned int width);
-			void AddRouteNode(Entities::RouteNodeObject* node);
-			void InsertNode(Entities::RouteNodeObject* node);
-			void RemoveNode(unsigned int localId);
 			CrossHandlers::Intersection ContainsPoint(CelestialMath::Vector3 point);
 
 			//Serializable Interface
@@ -32,8 +34,10 @@ namespace Resources
 			virtual ~GameRouteObject();
 
 		private:
-			CrossHandlers::CelestialSlicedList<Entities::RouteNodeObject*>* nodes;
-			unsigned int routeNodes;
+			unsigned int upperNode;
+			unsigned int middleNode;
+			unsigned int lowerNode;
+
 			unsigned int width;
 
 	};

@@ -2,23 +2,24 @@
 #include "GameRouteObject.h"
 
 using namespace Resources;
-using namespace Entities;
 using namespace CrossHandlers;
 using namespace CelestialMath;
 
 GameRouteObject::GameRouteObject(BoundingBox* baseBox, BoundingSphere* baseSphere, unsigned int meshId) : GameObject(baseBox,baseSphere,meshId)
 {
 
-	nodes = new CelestialSlicedList<RouteNodeObject*>(64, nullptr);
-	routeNodes = 0;
+	lowerNode = 0;
+	middleNode = 0;
+	upperNode = 0;
 
 }
 
 GameRouteObject::GameRouteObject() : GameObject()
 {
 
-	nodes = new CelestialSlicedList<RouteNodeObject*>(64, nullptr);
-	routeNodes = 0;
+	lowerNode = 0;
+	middleNode = 0;
+	upperNode = 0;
 
 }
 
@@ -59,18 +60,46 @@ GameObjectType GameRouteObject::GetType() const
 
 }
 
-unsigned int GameRouteObject::GetRoutenodes() const
+unsigned int GameRouteObject::GetUpperNode() const
 {
 
-	return routeNodes;
+	return upperNode;
 
 }
 
-RouteNodeObject* GameRouteObject::GetRouteNode(unsigned int localId) const
+unsigned int GameRouteObject::GetMiddleNode() const
 {
 
-	return nodes->GetValue(localId);
+	return middleNode;
 
+}
+
+unsigned int GameRouteObject::GetLowerNode() const
+{
+
+	return lowerNode;
+
+}
+
+void GameRouteObject::SetUpperNode(unsigned int node)
+{
+
+	upperNode = node;
+	
+}
+
+void GameRouteObject::SetMiddleNode(unsigned int node)
+{
+
+	middleNode = node;
+
+}
+
+void GameRouteObject::SetLowerNode(unsigned int node)
+{
+
+	lowerNode = node;
+	
 }
 
 Intersection GameRouteObject::ContainsPoint(Vector3 point)
@@ -98,33 +127,6 @@ Intersection GameRouteObject::ContainsPoint(Vector3 point)
 
 }
 
-RouteNodeObject* GameRouteObject::GetRouteNode(Vector3 position) const
-{
-
-	RouteNodeObject* retval = nullptr;
-
-	for (unsigned int i = 0; i < routeNodes && retval == nullptr;i++)
-	{
-	
-		RouteNodeObject* val = nodes->GetValue(i);
-
-		if (val != nullptr)
-		{
-
-			float dist = VectorDot(position - val->GetPosition());
-
-			if (dist < 0.5f)
-			{
-
-				retval = val;
-
-			}
-		}
-	}
-
-	return retval;
-
-}
 
 unsigned int GameRouteObject::GetWidth() const
 {
@@ -140,105 +142,8 @@ void GameRouteObject::SetWidth(unsigned int width)
 
 }
 
-void GameRouteObject::AddRouteNode(RouteNodeObject* node)
-{
-
-	unsigned int left = 0;
-	unsigned int right = 0;
-	float distLeft = -1.0f;
-	float distRight = -1.0f;
-
-	for (unsigned int i = 0; i < routeNodes; i++)
-	{
-
-		RouteNodeObject* nodeHere = nodes->GetValue(i);
-
-		if (nodeHere != nullptr)
-		{
-
-			Vector3 vect = node->GetPosition() - nodeHere->GetPosition();
-			float distSQR = VectorDot(vect);
-			float vD = VectorDot(vect, this->GetDirection());
-
-			if (vD >= 0 && (distSQR < distRight || distRight < 0))
-			{
-
-				distRight = distSQR;
-				right = i;
-
-			}
-			else if (vD < 0 && (distSQR < distLeft || distLeft < 0))
-			{
-
-				distLeft = distSQR;
-				left = i;
-
-			}
-
-			float dist2 = -1.0f;
-			bool isOnSame = false;
-
-		}
-	}
-
-	RouteNodeObject* leftNode = nodes->GetValue(left);
-	RouteNodeObject* rightNode = nodes->GetValue(right);
-
-	if (distLeft < 0 && distRight >= 0)
-	{
-
-		node->AddRoute(rightNode);
-		rightNode->AddRoute(node);
-
-	}
-	else if (distRight < 0 && distLeft >= 0)
-	{
-
-		node->AddRoute(leftNode);
-		leftNode->AddRoute(node);
-
-	}
-	else if (distRight >= 0 && distLeft >= 0)
-	{
-
-		leftNode->RemoveRoute(rightNode->GetId());
-		rightNode->RemoveRoute(leftNode->GetId());
-
-		leftNode->AddRoute(node);
-		rightNode->AddRoute(node);
-
-		node->AddRoute(leftNode);
-		node->AddRoute(rightNode);
-
-	}
-
-	InsertNode(node);
-
-}
-
-void GameRouteObject::RemoveNode(unsigned int localId)
-{
-
-	nodes->Remove(localId);
-
-}
-
-void GameRouteObject::InsertNode(Entities::RouteNodeObject* node)
-{
-
-	unsigned int newId = nodes->Add(node);
-
-	if (newId + 1 > routeNodes)
-	{
-
-		routeNodes = newId + 1;
-
-	}
-}
-
 GameRouteObject::~GameRouteObject()
 {
 
-	delete nodes;
 
 }

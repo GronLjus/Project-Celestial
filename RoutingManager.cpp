@@ -96,21 +96,7 @@ char* RoutingManager::Unserialize(char* data)
 unsigned int RoutingManager::AddNode(Vector3 position, GameRouteObject* obj)
 {
 
-	position.y = obj->GetPosition().y + obj->GetScale().y / 2;
-
-	RouteNodeObject* preExist = obj->GetRouteNode(position);
-
-	if (preExist != nullptr)
-	{
-
-		return preExist->GetId();
-
-	}
-
-	RouteNodeObject* node = new RouteNodeObject(position, obj->GetWidth());
-	node->SetId(routeNodes->Add(node));
-	obj->AddRouteNode(node);
-	return node->GetId();
+	return 0;
 
 }
 
@@ -265,20 +251,12 @@ unsigned int RoutingManager::AddNode(Vector3 position, unsigned int* objects, un
 
 		RouteNodeObject* preExist = nullptr;
 		GameRouteObject* lastObject = nullptr;
-		bool* exists = new bool[amounts];
-
-		for (unsigned int i = 0; i < amounts; i++)
-		{
-
-			exists[i] = false;
-
-		}
 
 		for (unsigned int i = 0; i < amounts && preExist == nullptr; i++)
 		{
 
 			GameRouteObject* obj = ((GameRouteObject*)this->gameObjects->GetValue(objects[i]));
-			
+
 			if (lastObject == nullptr)
 			{
 
@@ -286,15 +264,42 @@ unsigned int RoutingManager::AddNode(Vector3 position, unsigned int* objects, un
 
 			}
 			else
-			{ 
+			{
 
-				position = obj->GetObjectCenterLine(position,lastObject->GetDirection());
-			
+				position = obj->GetObjectCenterLine(position, lastObject->GetDirection());
+
 			}
 
 			position.y = obj->GetPosition().y + obj->GetScale().y / 2;
-			preExist = obj->GetRouteNode(position);
-			exists[i] = preExist != nullptr;
+			
+			if (obj != nullptr && obj->GetLowerNode() != 0)
+			{
+
+				RouteNodeObject* lower = routeNodes->GetValue(obj->GetLowerNode() - 1);
+				Vector3 dir = lower->GetPosition() - position;
+
+				if (abs(VectorDot(dir)) < CELESTIAL_EPSILON)
+				{
+
+					preExist = lower;
+
+				}
+				else if (obj->GetUpperNode() != 0)
+				{
+
+					RouteNodeObject* upper = routeNodes->GetValue(obj->GetUpperNode() - 1);
+					dir = upper->GetPosition() - position;
+
+					if (abs(VectorDot(dir)) < CELESTIAL_EPSILON)
+					{
+
+						preExist = upper;
+
+					}
+				}
+			}
+
+
 			lastObject = obj;
 
 		}
@@ -314,15 +319,44 @@ unsigned int RoutingManager::AddNode(Vector3 position, unsigned int* objects, un
 
 			GameRouteObject* obj = ((GameRouteObject*)this->gameObjects->GetValue(objects[i]));
 
-			if (!exists[i])
+			if (obj->GetLowerNode() == 0)
 			{
 
-				obj->AddRouteNode(preExist);
+				obj->SetLowerNode(preExist->GetId() + 1);
+
+			}
+			else if (obj->GetUpperNode() == 0)
+			{
+
+				obj->SetUpperNode(preExist->GetId() + 1);
+
+				RouteNodeObject* lower = routeNodes->GetValue(obj->GetLowerNode() - 1);
+
+				preExist->AddRoute(lower);
+				lower->AddRoute(preExist);
+
+			}
+			else if (preExist->GetId() + 1 != obj->GetLowerNode() &&
+				preExist->GetId() + 1 != obj->GetUpperNode())
+			{
+
+
+				RouteNodeObject* lower = routeNodes->GetValue(obj->GetLowerNode() - 1);
+				RouteNodeObject* upper = routeNodes->GetValue(obj->GetUpperNode() - 1);
+				lower->RemoveRoute(upper->GetId());
+				upper->RemoveRoute(lower->GetId());
+				
+				lower->AddRoute(preExist);
+				upper->AddRoute(preExist);
+
+				preExist->AddRoute(lower);
+				preExist->AddRoute(upper);
+
+				obj->SetMiddleNode(preExist->GetId() + 1);
 
 			}
 		}
 
-		delete[] exists;
 		return preExist->GetId()+1;
 
 	}

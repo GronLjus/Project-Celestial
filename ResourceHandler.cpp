@@ -198,31 +198,12 @@ void ResourceHandler::handleMess(Message* currentMessage, unsigned int time)
 			GameRouteObject* routeOld = (GameRouteObject*)oldObj;
 			GameRouteObject* routeNew = (GameRouteObject*)obj;
 
-			for (unsigned int i = 0; i < routeOld->GetRoutenodes(); i++)
-			{
+			routeNew->SetUpperNode(routeOld->GetMiddleNode());
+			routeNew->SetLowerNode(routeOld->GetLowerNode());
 
-				Entities::RouteNodeObject* node = routeOld->GetRouteNode(i);
+			routeOld->SetLowerNode(routeOld->GetMiddleNode());
+			routeOld->SetMiddleNode(0);
 
-				if (node != nullptr)
-				{
-
-					Vector3 nodePos = node->GetPosition();
-
-					if (routeNew->ContainsPoint(nodePos) != Intersection_BACK)
-					{
-
-						routeNew->InsertNode(node);
-
-					}
-
-					if (routeOld->ContainsPoint(nodePos) == Intersection_BACK)
-					{
-
-						routeOld->RemoveNode(i);
-
-					}
-				}
-			}
 		}
 		
 		messageBuffer[this->currentMessage].timeSent = time;
