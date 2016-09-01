@@ -15,11 +15,12 @@ RouteNodeObject::RouteNodeObject() : RouteNodeObject(Vector3(0,0,0),0)
 RouteNodeObject::RouteNodeObject(Vector3 position, float width)
 {
 
+	road = 0;
 	this->position = position;
 	this->width = width;
 	routes = new CelestialSlicedList<route>(32);
 	objId = 0;
-	maxRoutes = 0;
+	routesAmount = 0;
 	openSet = 0;
 	closedSet = 0;
 	parent = 0;
@@ -47,6 +48,21 @@ char* RouteNodeObject::Unserialize(char* data)
 	memcpy(&position.z, &data[8], 4);
 	memcpy(&width, &data[12], 4);
 	return nullptr;
+
+}
+
+
+unsigned int RouteNodeObject::GetRoad() const
+{
+
+	return road;
+
+}
+
+void RouteNodeObject::SetRoad(unsigned int road)
+{
+
+	this->road = road;
 
 }
 
@@ -95,10 +111,17 @@ RouteNodeObject* RouteNodeObject::GetRoute(unsigned int localId, float &dist)
 
 }
 
+unsigned int RouteNodeObject::GetMaxRoutes() const
+{
+
+	return routes->GetHighest();
+
+}
+
 unsigned int RouteNodeObject::GetRoutes() const
 {
 
-	return maxRoutes;
+	return routesAmount;
 
 }
 
@@ -181,13 +204,8 @@ void RouteNodeObject::AddRoute(RouteNodeObject* node)
 	rte.goal = node;
 
 	unsigned int x = routes->Add(rte);
+	routesAmount++;
 
-	if (x+1 >= maxRoutes)
-	{
-
-		maxRoutes = x+1;
-
-	}
 }
 
 unsigned int RouteNodeObject::GetId() const
@@ -209,7 +227,7 @@ void RouteNodeObject::RemoveRoute(unsigned int id)
 
 	bool found = false;
 
-	for (unsigned int i = 0; i < maxRoutes && !found;i++)
+	for (unsigned int i = 0; i < routes->GetHighest() && !found;i++)
 	{
 	
 		route rte = routes->GetValue(i);
@@ -222,6 +240,9 @@ void RouteNodeObject::RemoveRoute(unsigned int id)
 
 		}
 	}
+
+	routesAmount--;
+
 }
 
 RouteNodeObject::~RouteNodeObject()

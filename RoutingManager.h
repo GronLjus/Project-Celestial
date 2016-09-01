@@ -4,6 +4,7 @@
 #include "RouteNodeObject.h"
 #include "GameRouteObject.h"
 #include "SerializableObject.h"
+#include "Road.h"
 #include <vector>
 
 namespace Entities
@@ -33,6 +34,10 @@ namespace Entities
 			CrossHandlers::CelestialSlicedList<Resources::BaseObject*>* gameObjects;
 			CrossHandlers::CelestialList<Resources::GameTravelObject*>* travelObjects;
 			CrossHandlers::CelestialSlicedList<RouteNodeObject*>* routeNodes;
+			CrossHandlers::CelestialSlicedList<Road*>* roads;
+
+			void handleOldRoad(RouteNodeObject* target);
+			void handleRoad(RouteNodeObject* source, RouteNodeObject* target);
 
 			unsigned int pathFind(RouteNodeObject* start, RouteNodeObject* end);
 			unsigned char pathFindVal;

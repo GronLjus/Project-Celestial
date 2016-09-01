@@ -11,6 +11,7 @@ namespace Entities
 	{
 
 	public:
+
 		RouteNodeObject();
 		RouteNodeObject(CelestialMath::Vector3 position, float width);
 		void SetPosition(CelestialMath::Vector3 pos);
@@ -18,6 +19,7 @@ namespace Entities
 		CelestialMath::Vector3 GetPosition() const;
 		unsigned int GetObjId() const;
 		RouteNodeObject* GetRoute(unsigned int localId, float &dist);
+		unsigned int GetMaxRoutes() const;
 		unsigned int GetRoutes() const;
 		unsigned int GetWidth() const;
 		unsigned int GetParent() const;
@@ -25,10 +27,15 @@ namespace Entities
 		unsigned char GetClosedSet() const;
 		unsigned int GetStep() const;
 
+		unsigned int GetRoad() const;
+
+		void SetRoad(unsigned int road);
+
 		void SetObjId(unsigned int id);
 		void LinkObj(unsigned int objId);
 		void AddRoute(RouteNodeObject* node);
 		void RemoveRoute(unsigned int goalId);
+
 		unsigned int GetId() const;
 		void SetId(unsigned int id);
 		void SetParent(unsigned int parent);
@@ -58,16 +65,17 @@ namespace Entities
 
 		};
 
+		unsigned int road;
+
 		unsigned int id;
 		unsigned int objId;
 		
 		CelestialMath::Vector3 position;
 
-
 		float width;
 
 		CrossHandlers::CelestialSlicedList<route>* routes;
-		unsigned int maxRoutes;
+		unsigned int routesAmount;
 
 		unsigned char closedSet;
 		unsigned char openSet;

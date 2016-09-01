@@ -10,6 +10,7 @@ RoutingManager::RoutingManager()
 {
 
 	gameObjects = nullptr;
+	roads = new CelestialSlicedList<Road*>(32, nullptr);
 	routeNodes = new CelestialSlicedList<RouteNodeObject*>(32, nullptr);
 	travelObjects = new CelestialList<GameTravelObject*>();
 	pathFindVal = 1;
@@ -357,6 +358,7 @@ unsigned int RoutingManager::AddNode(Vector3 position, unsigned int* objects, un
 			}
 		}
 
+		handleRoad(nullptr, preExist);
 		return preExist->GetId()+1;
 
 	}
@@ -365,10 +367,128 @@ unsigned int RoutingManager::AddNode(Vector3 position, unsigned int* objects, un
 
 }
 
+void RoutingManager::handleOldRoad(RouteNodeObject* target)
+{
+
+	if (target->GetRoad() != 0)
+	{
+
+		Road* oldRoad = roads->GetValue(target->GetRoad() - 1);
+		oldRoad->DecreaseNodes(1);
+
+		if (oldRoad->GetNodes() == 0)
+		{
+
+			roads->Kill(target->GetRoad() - 1);
+
+		}
+	}
+}
+
+void RoutingManager::handleRoad(RouteNodeObject* source, RouteNodeObject* target)
+{
+
+	unsigned int oldId = 0;
+
+	if (target->GetRoutes() > 2)
+	{
+
+		if (target->GetRoad() != 0)
+		{
+
+			oldId = target->GetRoad();
+			handleOldRoad(target);
+
+		}
+
+		source = target;
+		target->SetRoad(0);
+
+	}
+	else if (source == nullptr || source->GetRoad() == 0)
+	{
+
+		if (target->GetRoutes() == 0 || 
+			(source != nullptr && source->GetRoad() == 0))
+		{
+
+			handleOldRoad(target);
+			Road* road = new Road();
+			road->IncreaseNodes(1);
+			unsigned int rd = roads->Add(road) + 1;
+			target->SetRoad(rd);
+
+		}
+		else
+		{
+
+			float dist; 
+
+			for (unsigned int i = 0; i < target->GetMaxRoutes() && source == nullptr; i++)
+			{
+
+				source = target->GetRoute(i, dist);
+
+			}
+
+			handleRoad(source, target);
+
+		}
+	}
+	else if(source->GetRoad() != target->GetRoad())
+	{
+
+		handleOldRoad(target);
+		unsigned int newRoad = 0;
+		target->SetRoad(source->GetRoad());
+
+		Road* rd = roads->GetValue(target->GetRoad() - 1);
+		rd->IncreaseNodes(1);
+
+	}
+	else
+	{
+
+		return;
+
+	}
+
+	if (source != nullptr && target->GetRoutes() > 0)
+	{
+
+		for (unsigned int i = 0; i < target->GetMaxRoutes(); i++)
+		{
+
+			float dist;
+			RouteNodeObject* node = target->GetRoute(i, dist);
+
+			if (node != nullptr &&
+				node->GetRoad() != 0 &&
+				(node->GetId() != source->GetId() || (node->GetRoutes() > 2 && node->GetRoad() != 0)) &&
+				node->GetRoad() != oldId
+				)
+			{
+
+				handleRoad(target, node);
+
+			}
+
+			if (node != nullptr && node->GetRoad() == oldId)
+			{
+
+				oldId = 0;
+
+			}
+		}
+	}
+}
+
 void RoutingManager::ClearNodes()
 {
 
+	roads->KillList();
 	routeNodes->KillList();
+	roads->Reset();
 	routeNodes->Reset();
 
 }
@@ -544,6 +664,8 @@ RoutingManager::~RoutingManager()
 {
 
 	routeNodes->KillList();
+	roads->KillList();
+	delete roads;
 	delete routeNodes;
 	delete travelObjects;
 	delete[] path;

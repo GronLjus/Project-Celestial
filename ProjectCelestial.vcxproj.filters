@@ -753,6 +753,9 @@
     <ClInclude Include="Dictionary.h">
       <Filter>Header Files\CrossHandler-Tools\Container</Filter>
     </ClInclude>
+    <ClInclude Include="Road.h">
+      <Filter>Header Files\Entities\Routing</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Camera.cpp">
@@ -1039,6 +1042,9 @@
     </ClCompile>
     <ClCompile Include="Dictionary.cpp">
       <Filter>Source Files\CrossHandler-Tools\Container</Filter>
+    </ClCompile>
+    <ClCompile Include="Road.cpp">
+      <Filter>Source Files\Entities\Routing</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
