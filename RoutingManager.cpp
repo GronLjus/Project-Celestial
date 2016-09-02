@@ -538,63 +538,72 @@ unsigned int RoutingManager::pathFind(RouteNodeObject* start, RouteNodeObject* e
 
 			float dist;
 			RouteNodeObject* neigh = nodeObj->GetRoute(i, dist);
+			float tDist = VectorDot(end->GetPosition() - neigh->GetPosition());
+			float trDist = currentNode.traveledDist + VectorDot(nodeObj->GetPosition() - neigh->GetPosition());
+			float heuristic = tDist + trDist;
 
 			if (neigh != nullptr)
 			{
 				//Check if the node exists in the closed set
 				bool closed = neigh->GetClosedSet() == pathFindVal;
 
-				if (!closed)
+				if (!closed )
 				{
 
 					//Check if the node already exists in the open set
 					bool exists = neigh->GetOpenSet() == pathFindVal;
-						
-					//We need to replace the node in the openset
-					if (exists)
+
+					if (!exists ||
+						(exists && neigh->GetHeuristic() > heuristic))
 					{
 
-						prio_queue newOpenSet;
-
-						for (unsigned int j = 0; j < openSet.oVect.size(); j++)
+						//We need to replace the node in the openset
+						if (exists)
 						{
 
-							if (openSet.oVect[j].index != neigh->GetId())
+							prio_queue newOpenSet;
+
+							for (unsigned int j = 0; j < openSet.oVect.size(); j++)
 							{
 
-								newOpenSet.push(openSet.oVect[j]);
+								if (openSet.oVect[j].index != neigh->GetId())
+								{
+
+									newOpenSet.push(openSet.oVect[j]);
+
+								}
 
 							}
 
+							openSet = newOpenSet;
+
 						}
 
-						openSet = newOpenSet;
 
-					}
+						prio_queue::nodeVal neighNode;
+						neighNode.index = neigh->GetId();
+						neighNode.parentIndex = currentNode.index;
+						neighNode.targetDist = tDist;
+						neighNode.traveledDist = trDist;
 
+						neigh->SetHeuristic(heuristic);
+						neigh->SetOpenset(pathFindVal);
+						neigh->SetParent(currentNode.index);
+						neigh->SetStep(nodeObj->GetStep() + 1);
+						reachedEnd = neighNode.index == end->GetId();
 
-					prio_queue::nodeVal neighNode;
-					neighNode.index = neigh->GetId();
-					neighNode.parentIndex = currentNode.index;
-					neighNode.targetDist = VectorDot(end->GetPosition() - neigh->GetPosition());
-					neighNode.traveledDist = currentNode.traveledDist + VectorDot(nodeObj->GetPosition() - neigh->GetPosition());
+						if (!reachedEnd)
+						{
 
-					neigh->SetOpenset(pathFindVal);
-					neigh->SetParent(currentNode.index);
-					neigh->SetStep(nodeObj->GetStep() + 1);
-					reachedEnd = neighNode.index == end->GetId();
-					
-					if (!reachedEnd)
-					{
+							openSet.push(neighNode);
 
-						openSet.push(neighNode);
+						}
+						else
+						{
 
-					}
-					else
-					{
+							dist = neighNode.traveledDist;
 
-						dist = neighNode.traveledDist;
-
+						}
 					}
 				}
 			}

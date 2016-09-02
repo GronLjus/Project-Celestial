@@ -24,6 +24,7 @@ RouteNodeObject::RouteNodeObject(Vector3 position, float width)
 	openSet = 0;
 	closedSet = 0;
 	parent = 0;
+	heurustic = 0.0f;
 
 }
 
@@ -51,6 +52,18 @@ char* RouteNodeObject::Unserialize(char* data)
 
 }
 
+float RouteNodeObject::GetHeuristic() const
+{
+
+	return heurustic;
+}
+
+void RouteNodeObject::SetHeuristic(float heuristic)
+{
+
+	this->heurustic = heuristic;
+
+}
 
 unsigned int RouteNodeObject::GetRoad() const
 {

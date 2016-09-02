@@ -28,6 +28,9 @@ namespace Entities
 		unsigned int GetStep() const;
 
 		unsigned int GetRoad() const;
+		float GetHeuristic() const;
+
+		void SetHeuristic(float heuristic);
 
 		void SetRoad(unsigned int road);
 
@@ -64,6 +67,8 @@ namespace Entities
 			~route() { deleted = true; }
 
 		};
+
+		float heurustic;
 
 		unsigned int road;
 
