@@ -4,6 +4,8 @@
 namespace Resources
 {
 
+	enum TravelStatus{ TravelStatus_TRAVELING, TravelStatus_WAITING, TravelStatus_READY, TravelStatus_TRAVELNEAR, TravelStatus_PRIMED, TravelStatus_NA};
+
 	class GameTravelObject : public GameObject
 	{
 
@@ -19,7 +21,10 @@ namespace Resources
 			float GetSpeed() const;
 			unsigned int GetLastTime() const;
 			unsigned int GetNode() const;
+			TravelStatus GetStatus() const;
+			unsigned int PeekNextGoal(bool &reCalc) const;
 
+			void SetStatus(TravelStatus status);
 			void SetTravelSpeed(float cells);
 			void SetGoalNode(unsigned int* goals);
 			void SetFinalGoalNode(unsigned int goal);
@@ -43,6 +48,7 @@ namespace Resources
 			unsigned int filter;
 			unsigned int lastTime;
 			float speed;
+			TravelStatus status;
 
 	};
 }

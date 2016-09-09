@@ -100,6 +100,8 @@ char* GameTravelObject::Serialize(unsigned int &size)
 	delete[] subSerial;
 	delete[] goals;
 
+	status = TravelStatus_READY;
+
 	return byteVal;
 
 }
@@ -153,6 +155,21 @@ unsigned int GameTravelObject::GetNode() const
 
 }
 
+TravelStatus GameTravelObject::GetStatus() const
+{
+
+	return status;
+
+}
+
+
+void GameTravelObject::SetStatus(TravelStatus status)
+{
+
+	this->status = status;
+
+}
+
 void GameTravelObject::SetTravelSpeed(float cells)
 {
 
@@ -198,6 +215,13 @@ bool GameTravelObject::StepGoal()
 
 }
 
+unsigned int GameTravelObject::PeekNextGoal(bool &reCalc) const
+{
+
+	reCalc = (goal + 1) % goalAmounts == 0;
+	return  !reCalc ? goals[goal + 1] : 0;
+
+}
 void GameTravelObject::SetNode(unsigned int node)
 {
 

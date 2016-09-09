@@ -3,6 +3,7 @@
 #include "CelestialMath.h"
 #include "CelestialSlicedList.h"
 #include "SerializableObject.h"
+#include "Road.h"
 
 namespace Entities
 {
@@ -19,6 +20,7 @@ namespace Entities
 		CelestialMath::Vector3 GetPosition() const;
 		unsigned int GetObjId() const;
 		RouteNodeObject* GetRoute(unsigned int localId, float &dist);
+		RouteNodeObject* GetRoute(unsigned int localId);
 		unsigned int GetMaxRoutes() const;
 		unsigned int GetRoutes() const;
 		unsigned int GetWidth() const;
@@ -26,6 +28,11 @@ namespace Entities
 		unsigned char GetOpenSet() const;
 		unsigned char GetClosedSet() const;
 		unsigned int GetStep() const;
+		unsigned int GetUpId() const;
+		unsigned int GetDownId() const;
+
+		unsigned int GetLocalId(unsigned int globalId) const;
+		bool CanTravel(unsigned int localId);
 
 		unsigned int GetRoad() const;
 		float GetHeuristic() const;
@@ -36,8 +43,12 @@ namespace Entities
 
 		void SetObjId(unsigned int id);
 		void LinkObj(unsigned int objId);
+		void AddRoute(RouteNodeObject* node, Road::Direction direction);
 		void AddRoute(RouteNodeObject* node);
 		void RemoveRoute(unsigned int goalId);
+
+		void SetDownId(unsigned int id);
+		void SetUpId(unsigned int id);
 
 		unsigned int GetId() const;
 		void SetId(unsigned int id);
@@ -45,6 +56,11 @@ namespace Entities
 		void SetOpenset(unsigned char open);
 		void SetClosedset(unsigned char closed);
 		void SetStep(unsigned int step);
+
+		void TravelRoute(unsigned int localId, unsigned int objId);
+		void TravelDone(unsigned int localId, unsigned int objId);
+
+		void SetDirection(unsigned int localId, Road::Direction dir);
 
 		//Serializable Interface
 		virtual char* Serialize(unsigned int &size);
@@ -61,6 +77,8 @@ namespace Entities
 			RouteNodeObject* goal;
 			float distSQR;
 			CelestialMath::Vector3 direction;
+			unsigned int lastObject;
+			Road::Direction travelDirection;
 
 			route operator= (const route* rt) {return route(); }
 			route() :deleted(true) {}
@@ -86,6 +104,9 @@ namespace Entities
 		unsigned char openSet;
 		unsigned int parent;
 		unsigned int step;
+
+		unsigned int upId;
+		unsigned int downId;
 
 	};
 }

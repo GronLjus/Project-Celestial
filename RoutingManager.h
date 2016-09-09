@@ -36,17 +36,39 @@ namespace Entities
 			CrossHandlers::CelestialSlicedList<RouteNodeObject*>* routeNodes;
 			CrossHandlers::CelestialSlicedList<Road*>* roads;
 
-			void handleOldRoad(RouteNodeObject* target);
-			void handleRoad(RouteNodeObject* source, RouteNodeObject* target);
+			RouteNodeObject* getPreExistantNode(CelestialMath::Vector3 position, unsigned int* objects, unsigned int amounts) const;
 
-			unsigned int pathFind(RouteNodeObject* start, RouteNodeObject* end);
+			void addToRoad(RouteNodeObject* object, unsigned int road);
+			void handleOldRoad(RouteNodeObject* target);
+			void handleRoad(RouteNodeObject* object);
+			void mergeRoads(RouteNodeObject* source, unsigned int road);
+			void addToNewRoad(RouteNodeObject* source);
+
+			void reverseNode(RouteNodeObject* object, Road::Direction dir);
+
+			void handleNearNode(Resources::GameTravelObject* obj, RouteNodeObject* currentNode, RouteNodeObject* goalNode);
+			void travelObject(Resources::GameTravelObject* obj, RouteNodeObject* currentNode, RouteNodeObject* goalNode, CelestialMath::Vector3 dir, float distSqr, unsigned int time);
+			bool handleNodeArrival(Resources::GameTravelObject* obj, RouteNodeObject* currentNode, RouteNodeObject* goalNode);
+			void handlePrimedObject(Resources::GameTravelObject* obj);
+
+			unsigned int pathFindOpenRoad(RouteNodeObject* at, RouteNodeObject* start, RouteNodeObject* end);
+			unsigned int pathFind(RouteNodeObject* start, RouteNodeObject* through, RouteNodeObject* end);
+			unsigned int pathFind(RouteNodeObject* start, RouteNodeObject* through, RouteNodeObject* end, float &dist);
 			unsigned char pathFindVal;
 			unsigned int* path;
-			unsigned char paths;
+			unsigned char totalPaths;
 
 			unsigned int addToOutScripts(unsigned int script, unsigned int place);
 			unsigned int* scriptOuts;
 			unsigned int maxSOuts;
+
+			float offsetDist;
+			float offsetDistSqrt;
+
+			//Road::Direction getDirection(RouteNodeObject* object) const;
+			Road::Direction getDirection(RouteNodeObject* start, RouteNodeObject* next) const;
+
+			RouteNodeObject* getNeighbour(RouteNodeObject* object, Road::Direction dir) const;
 
 			class prio_queue
 			{

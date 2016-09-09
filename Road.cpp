@@ -10,6 +10,7 @@ Road::Road()
 	dir = Direction_NA;
 	nodes = 0;
 	lastObject = 0;
+	headerNode = 0;
 
 }
 
@@ -27,10 +28,17 @@ unsigned int Road::GetNodes() const
 
 }
 
-unsigned int Road::GetLastNode() const
+unsigned int Road::GetLastObject() const
 {
 
 	return lastObject;
+
+}
+
+unsigned int Road::GetHeaderNode() const
+{
+
+	return headerNode;
 
 }
 
@@ -59,6 +67,13 @@ void Road::SetDirection(Road::Direction dir)
 {
 
 	this->dir = dir;
+
+}
+
+void Road::SetHeaderNode(unsigned int header)
+{
+
+	this->headerNode = header;
 
 }
 

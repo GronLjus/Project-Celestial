@@ -24,6 +24,8 @@ RouteNodeObject::RouteNodeObject(Vector3 position, float width)
 	openSet = 0;
 	closedSet = 0;
 	parent = 0;
+	upId = 0;
+	downId = 0;
 	heurustic = 0.0f;
 
 }
@@ -72,6 +74,20 @@ unsigned int RouteNodeObject::GetRoad() const
 
 }
 
+unsigned int RouteNodeObject::GetDownId() const
+{
+
+	return downId;
+
+}
+
+unsigned int RouteNodeObject::GetUpId() const
+{
+
+	return upId;
+
+}
+
 void RouteNodeObject::SetRoad(unsigned int road)
 {
 
@@ -116,6 +132,22 @@ RouteNodeObject* RouteNodeObject::GetRoute(unsigned int localId, float &dist)
 	{
 
 		dist = rte.distSQR;
+		return rte.goal;
+
+	}
+
+	return nullptr;
+
+}
+
+RouteNodeObject* RouteNodeObject::GetRoute(unsigned int localId)
+{
+
+	route rte = routes->GetValue(localId);
+
+	if (!rte.deleted)
+	{
+
 		return rte.goal;
 
 	}
@@ -173,6 +205,92 @@ unsigned int RouteNodeObject::GetStep() const
 
 }
 
+unsigned int RouteNodeObject::GetLocalId(unsigned int id) const
+{
+
+	unsigned int lId = 0;
+	RouteNodeObject* route = nullptr;
+
+	for (unsigned int i = 0; i < routesAmount && route == nullptr; i++)
+	{
+
+		route = routes->GetValue(i).goal;
+		lId = i;
+
+		if (route != nullptr && route->GetId() != id)
+		{
+
+			route = nullptr;
+
+		}
+	}
+
+	return route == nullptr ? 0 : lId;
+
+}
+void  RouteNodeObject::SetDirection(unsigned int localId, Road::Direction dir)
+{
+
+	route rte = routes->GetValue(localId);
+
+	if (!rte.deleted)
+	{
+
+		rte.travelDirection = dir;
+		routes->Add(rte, localId);
+
+	}
+}
+
+void RouteNodeObject::TravelRoute(unsigned int localId, unsigned int objId)
+{
+
+	route rte = routes->GetValue(localId);
+
+	if (rte.travelDirection != Road::Direction_UP && !rte.deleted)
+	{
+
+		if (rte.lastObject == 0)
+		{
+
+			unsigned int oppId = rte.goal->GetLocalId(this->GetId());
+			rte.goal->SetDirection(oppId, Road::Direction_UP);
+
+		}
+
+		rte.travelDirection = Road::Direction_DOWN;
+		rte.lastObject = objId;
+		routes->Add(rte, localId);
+
+	}
+}
+
+void RouteNodeObject::TravelDone(unsigned int localId, unsigned int objId)
+{
+
+	route rte = routes->GetValue(localId);
+
+	if (!rte.deleted && 
+		(rte.lastObject == objId || rte.lastObject == 0))
+	{
+
+		unsigned int oppId = rte.goal->GetLocalId(this->GetId());
+		rte.goal->SetDirection(oppId, Road::Direction_NA);
+
+		rte.travelDirection = Road::Direction_NA;
+		rte.lastObject = 0;
+		routes->Add(rte, localId);
+
+	}
+}
+
+bool RouteNodeObject::CanTravel(unsigned int localId)
+{
+
+	return routes->GetValue(localId).travelDirection != Road::Direction_UP;
+
+}
+
 void RouteNodeObject::LinkObj(unsigned int objId)
 {
 
@@ -208,16 +326,54 @@ void RouteNodeObject::SetStep(unsigned int step)
 
 }
 
-void RouteNodeObject::AddRoute(RouteNodeObject* node)
+void RouteNodeObject::AddRoute(RouteNodeObject* node, Road::Direction dir)
 {
 	route rte;
 	rte.deleted = false;
 	rte.direction = node->GetPosition() - position;
 	rte.distSQR = VectorDot(rte.direction);
 	rte.goal = node;
+	rte.lastObject = 0;
+	rte.travelDirection = Road::Direction_NA;
 
 	unsigned int x = routes->Add(rte);
+
+	if (dir == Road::Direction_DOWN)
+	{
+
+		downId = x + 1;
+
+	}
+	else if (dir == Road::Direction_UP)
+	{
+
+		upId = x + 1;
+
+	}
+
 	routesAmount++;
+
+}
+
+void RouteNodeObject::SetDownId(unsigned int id)
+{
+
+	downId = id;
+
+}
+
+void RouteNodeObject::SetUpId(unsigned int id)
+{
+
+
+	upId = id;
+
+}
+
+void RouteNodeObject::AddRoute(RouteNodeObject* node)
+{
+
+	AddRoute(node, Road::Direction_NA);
 
 }
 
@@ -239,6 +395,7 @@ void RouteNodeObject::RemoveRoute(unsigned int id)
 {
 
 	bool found = false;
+	unsigned int x = 0;
 
 	for (unsigned int i = 0; i < routes->GetHighest() && !found;i++)
 	{
@@ -248,10 +405,26 @@ void RouteNodeObject::RemoveRoute(unsigned int id)
 		if (rte.goal->GetId() == id && !rte.deleted)
 		{
 
+			x = i;
 			found = true;
 			routes->Remove(i);
 
 		}
+	}
+
+	x++;
+
+	if (x == downId)
+	{
+
+		downId = 0;
+
+	}
+	else if (x == upId)
+	{
+
+		upId = 0;
+
 	}
 
 	routesAmount--;

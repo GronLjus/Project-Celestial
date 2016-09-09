@@ -15,11 +15,14 @@ RoutingManager::RoutingManager()
 	travelObjects = new CelestialList<GameTravelObject*>();
 	pathFindVal = 1;
 
-	paths = 128;
-	path = new unsigned[paths];
+	totalPaths = 128;
+	path = new unsigned[totalPaths];
 
 	maxSOuts = 128;
 	scriptOuts = new unsigned int[maxSOuts];
+
+	offsetDistSqrt = 0.5f;
+	offsetDist = offsetDistSqrt * offsetDistSqrt;
 
 }
 
@@ -118,6 +121,205 @@ unsigned int RoutingManager::addToOutScripts(unsigned int script, unsigned int p
 
 }
 
+void RoutingManager::handleNearNode(GameTravelObject* obj, RouteNodeObject* currentNode, RouteNodeObject* goalNode)
+{
+
+	bool travelOn = false;
+
+	if (goalNode->GetRoad() == 0 &&
+		obj->GetStatus() == TravelStatus_WAITING)//Object is at Intersection and waiting for go-ahead
+	{
+
+		if (goalNode->GetObjId() == 0)//The intersection is free
+		{
+
+			if (obj->GetFinalGoalNode() == obj->GetGoalNode())//The intersection is the final goal
+			{
+
+				travelOn = true;
+
+			}
+			else //The final goal lies beyond
+			{
+
+				bool reCalc;
+				unsigned int nextGoal = obj->PeekNextGoal(reCalc);
+
+				if (reCalc)
+				{
+
+					unsigned int amounts = pathFind(currentNode,
+						goalNode,
+						routeNodes->GetValue(obj->GetFinalGoalNode()));
+
+					if (amounts > 0)
+					{
+
+						obj->SetGoalNode(path);
+
+					}
+					
+					nextGoal = obj->PeekNextGoal(reCalc);
+
+				}
+
+				RouteNodeObject* nextGoalNode = routeNodes->GetValue(nextGoal);
+				unsigned int routeId = goalNode->GetLocalId(nextGoalNode->GetId());
+
+				if (goalNode->CanTravel(routeId))//The route can be traveled
+				{
+
+					travelOn = true;
+
+				}
+				else//The road is occupied
+				{
+
+					unsigned int amounts = pathFindOpenRoad(currentNode,
+						goalNode,
+						routeNodes->GetValue(obj->GetFinalGoalNode()));
+
+					if (amounts > 0)//There is a way around
+					{
+
+						obj->SetGoalNode(path);
+						travelOn = true;
+
+					}
+				}
+			}
+		}
+	}
+	else if (goalNode->GetRoad() == 0 &&
+		obj->GetStatus() == TravelStatus_TRAVELING)//Object has just arrived near an intersection
+	{
+
+		obj->SetStatus(TravelStatus_WAITING);
+
+	}
+	else//Object has arrived near a roadnode
+	{
+
+		travelOn = true;
+
+	}
+
+	if (travelOn)
+	{
+
+		obj->SetStatus(TravelStatus_TRAVELNEAR);
+		goalNode->SetObjId(obj->GetId());
+
+	}
+}
+
+void  RoutingManager::travelObject(GameTravelObject* obj, RouteNodeObject* currentNode, RouteNodeObject* goalNode, Vector3 dir, float distSqr, unsigned int time)
+{
+
+	bool slowDown = obj->GetStatus() != TravelStatus_TRAVELNEAR &&
+		goalNode->GetRoad() == 0;
+
+	distSqr = sqrt(distSqr);
+	dir /= distSqr;
+	distSqr -= !slowDown ? 0 : offsetDistSqrt;
+	float fact = distSqr;
+	float timeFact = (float)(time - obj->GetLastTime()) / 1000.0f;
+	float spd = obj->GetSpeed() * timeFact;
+
+	//Object has a long way to go
+	if (distSqr >= spd)
+	{
+
+		fact = spd;
+
+	}
+
+	obj->SetPosition(obj->GetPosition() + (dir * fact));
+	obj->UpdateMatrix();
+
+	Vector3 traveled = currentNode->GetPosition() + Vector3(0.0f, obj->GetScale().y / 2, 0.0f) - obj->GetPosition();
+	float traveledDist = VectorDot(traveled);
+
+	if (traveledDist > offsetDist)//The object has traveled beyond the objects threshold
+	{
+
+		currentNode->SetObjId(0);
+
+	}
+}
+
+bool RoutingManager::handleNodeArrival(GameTravelObject* obj, RouteNodeObject* currentNode, RouteNodeObject* goalNode)
+{
+
+	bool killNode = false;
+	obj->SetNode(goalNode->GetId());
+	
+	unsigned int localId = currentNode->GetLocalId(goalNode->GetId());
+	currentNode->TravelDone(localId, obj->GetId());
+
+	if (obj->GetFinalGoalNode() == goalNode->GetId())//The object is at the final target
+	{
+
+		killNode = true;
+		obj->SetStatus(TravelStatus_READY);
+
+	}
+	else//The object is at an intermediary node
+	{
+
+		bool recalculate = obj->StepGoal();
+
+		if (recalculate)//We are out of goals
+		{
+
+			unsigned int amounts = pathFind(
+				goalNode,
+				goalNode,
+				routeNodes->GetValue(obj->GetFinalGoalNode()));
+
+			if (amounts > 0)
+			{
+
+				obj->SetGoalNode(path);
+
+			}
+		}
+
+		RouteNodeObject* nextStop = routeNodes->GetValue(obj->GetGoalNode());
+		obj->Point(nextStop->GetPosition() + Vector3(0.0f, obj->GetScale().y / 2, 0.0f));
+		unsigned int localId = goalNode->GetLocalId(nextStop->GetId());
+		goalNode->TravelRoute(localId, obj->GetId());
+
+		obj->SetStatus(TravelStatus_TRAVELING);
+
+	}
+
+	return killNode;
+
+}
+
+void RoutingManager::handlePrimedObject(GameTravelObject* obj)
+{
+
+	RouteNodeObject* node = routeNodes->GetValue(obj->GetNode());
+	RouteNodeObject* end = routeNodes->GetValue(obj->GetFinalGoalNode());
+	unsigned int paths = pathFindOpenRoad(node, node, end);
+
+	if (paths > 0)
+	{
+
+		obj->SetGoalNode(path);
+		obj->SetStatus(TravelStatus_TRAVELING);
+
+		RouteNodeObject* nextStop = routeNodes->GetValue(obj->GetGoalNode());
+		unsigned int local = node->GetLocalId(nextStop->GetId());
+		node->TravelRoute(local, obj->GetId());
+
+		obj->Point(nextStop->GetPosition() + Vector3(0.0f, obj->GetScale().y / 2, 0.0f));
+
+	}
+}
+
 unsigned int* RoutingManager::Update(unsigned int time, unsigned int &scripts)
 {
 
@@ -128,77 +330,58 @@ unsigned int* RoutingManager::Update(unsigned int time, unsigned int &scripts)
 	while (node != nullptr)
 	{
 
-		GameTravelObject* obj = node->GetNodeObject();
-		RouteNodeObject* rNode = routeNodes->GetValue(obj->GetGoalNode());
-		Vector3 dir = rNode->GetPosition() + Vector3(0.0f, obj->GetScale().y / 2, 0.0f) - obj->GetPosition();
-		float distSqr = VectorDot(dir);
 		bool killNode = false;
+		GameTravelObject* obj = node->GetNodeObject();
 
-		//Object has arrived at its goal
-		if (distSqr <= CELESTIAL_EPSILON * CELESTIAL_EPSILON)
+		if (obj->GetStatus() == TravelStatus_PRIMED)
 		{
 
-			obj->SetNode(rNode->GetId());
-			unsigned int script = obj->GetTravelNodeScript();
+			handlePrimedObject(obj);
 
-			if (obj->GetTravelNodeScript() > 0)
+		}
+
+		if (obj->GetStatus() != TravelStatus_PRIMED)
+		{
+
+			RouteNodeObject* nodeObject = routeNodes->GetValue(obj->GetNode());
+			RouteNodeObject* goalObject = routeNodes->GetValue(obj->GetGoalNode());
+
+			Vector3 dir = goalObject->GetPosition() + Vector3(0.0f, obj->GetScale().y / 2, 0.0f) - obj->GetPosition();
+			float distSqr = VectorDot(dir);
+
+			if (abs(distSqr - offsetDist) <= CELESTIAL_EPSILON &&
+				obj->GetStatus() != TravelStatus_TRAVELNEAR)//Object is near a node
 			{
 
-				scriptPlace = addToOutScripts(obj->GetId(), scriptPlace);
+				handleNearNode(obj, nodeObject, goalObject);
 
 			}
 
-			//Object has arrived at its final destination
-			if (obj->GetFinalGoalNode() == rNode->GetId())
+			if (obj->GetStatus() != TravelStatus_WAITING)
 			{
 
-				killNode = true;
-
-			}
-			else //Object has arrived at a stop
-			{
-
-				bool recalculate = obj->StepGoal();
-
-				if (recalculate)
+				if (distSqr > CELESTIAL_EPSILON * CELESTIAL_EPSILON)//The object has not arrived 
 				{
 
-					unsigned int amounts = pathFind(routeNodes->GetValue(obj->GetGoalNode()),
-						routeNodes->GetValue(obj->GetFinalGoalNode()));
+					travelObject(obj, nodeObject, goalObject, dir, distSqr, time);
 
-					if (amounts > 0)
+				}
+				else//The object has arrived at a node
+				{
+
+					unsigned int script = obj->GetTravelNodeScript();
+
+					if (script > 0)
 					{
 
-						obj->SetGoalNode(path);
+						scriptPlace = addToOutScripts(obj->GetId(), scriptPlace);
 
 					}
+
+					killNode = handleNodeArrival(obj, nodeObject, goalObject);
+
 				}
-
-				RouteNodeObject* nextStop = routeNodes->GetValue(obj->GetGoalNode());
-				obj->Point(nextStop->GetPosition() + Vector3(0.0f, obj->GetScale().y / 2, 0.0f));
-
 			}
-		}
-		else //Object has not arrived
-		{
-
-			distSqr = sqrt(distSqr);
-			dir /= distSqr;
-			float fact = distSqr;
-			float timeFact = (float)(time - obj->GetLastTime()) / 1000.0f;
-			float spd = obj->GetSpeed() * timeFact;
-
-			//Object has a long way to go
-			if (distSqr >= spd)
-			{
-
-				fact = spd;
-
-			}
-
-			obj->SetPosition(obj->GetPosition() + (dir*fact));
-			obj->UpdateMatrix();
-			obj->Time(time);
 
 		}
 
@@ -237,10 +420,137 @@ unsigned int* RoutingManager::Update(unsigned int time, unsigned int &scripts)
 
 			}
 		}
+
+		obj->Time(time);
+
 	}
 
 	scripts = scriptPlace;
 	return scriptOuts;
+
+}
+
+Road::Direction RoutingManager::getDirection(RouteNodeObject* start, RouteNodeObject* next) const
+{
+
+	if (start->GetRoad() != 0)
+	{
+
+		unsigned int subId = 0;
+		RouteNodeObject* subObject = nullptr;
+
+		for (unsigned int i = 0; i < start->GetRoutes() && subObject == nullptr; i++)
+		{
+
+			float dist;
+			subObject = start->GetRoute(i, dist);
+			subId = i;
+
+			if (subObject != next)
+			{
+
+				subObject = nullptr;
+
+			}
+		}
+
+		subId++;
+
+		if (subId == start->GetDownId())
+		{
+
+			return Road::Direction_DOWN;
+
+		}
+		else if (subId == start->GetUpId())
+		{
+
+			return Road::Direction_UP;
+
+		}
+	}
+	else if(next->GetRoad() != 0)
+	{
+
+		Road::Direction reverseDir = getDirection(next, start);
+
+		if (reverseDir == Road::Direction_DOWN)
+		{
+
+			return Road::Direction_UP;
+
+		}
+		else if (reverseDir == Road::Direction_UP)
+		{
+
+			return Road::Direction_DOWN;
+
+		}
+	}
+
+	return Road::Direction_NA;
+
+}
+
+RouteNodeObject* RoutingManager::getPreExistantNode(Vector3 position, unsigned int* objects, unsigned int amounts) const
+{
+
+	RouteNodeObject* preExist = nullptr;
+	GameRouteObject* lastObject = nullptr;
+
+	for (unsigned int i = 0; i < amounts && preExist == nullptr; i++)
+	{
+
+		GameRouteObject* obj = ((GameRouteObject*)this->gameObjects->GetValue(objects[i]));
+
+		if (lastObject == nullptr)
+		{
+
+			position = obj->GetObjectCenterLine(position);
+
+		}
+		else
+		{
+
+			position = obj->GetObjectCenterLine(position, lastObject->GetDirection());
+
+		}
+
+		position.y = obj->GetPosition().y + obj->GetScale().y / 2;
+
+		if (obj != nullptr && obj->GetLowerNode() != 0)
+		{
+
+			RouteNodeObject* lower = routeNodes->GetValue(obj->GetLowerNode() - 1);
+			Vector3 dir = lower->GetPosition() - position;
+
+			if (abs(VectorDot(dir)) < CELESTIAL_EPSILON)
+			{
+
+				preExist = lower;
+
+			}
+			else if (obj->GetUpperNode() != 0)
+			{
+
+				RouteNodeObject* upper = routeNodes->GetValue(obj->GetUpperNode() - 1);
+				dir = upper->GetPosition() - position;
+
+				if (abs(VectorDot(dir)) < CELESTIAL_EPSILON)
+				{
+
+					preExist = upper;
+
+				}
+			}
+		}
+
+
+		lastObject = obj;
+
+	}
+
+	return preExist;
 
 }
 
@@ -250,60 +560,7 @@ unsigned int RoutingManager::AddNode(Vector3 position, unsigned int* objects, un
 	if (amounts != 0)
 	{
 
-		RouteNodeObject* preExist = nullptr;
-		GameRouteObject* lastObject = nullptr;
-
-		for (unsigned int i = 0; i < amounts && preExist == nullptr; i++)
-		{
-
-			GameRouteObject* obj = ((GameRouteObject*)this->gameObjects->GetValue(objects[i]));
-
-			if (lastObject == nullptr)
-			{
-
-				position = obj->GetObjectCenterLine(position);
-
-			}
-			else
-			{
-
-				position = obj->GetObjectCenterLine(position, lastObject->GetDirection());
-
-			}
-
-			position.y = obj->GetPosition().y + obj->GetScale().y / 2;
-			
-			if (obj != nullptr && obj->GetLowerNode() != 0)
-			{
-
-				RouteNodeObject* lower = routeNodes->GetValue(obj->GetLowerNode() - 1);
-				Vector3 dir = lower->GetPosition() - position;
-
-				if (abs(VectorDot(dir)) < CELESTIAL_EPSILON)
-				{
-
-					preExist = lower;
-
-				}
-				else if (obj->GetUpperNode() != 0)
-				{
-
-					RouteNodeObject* upper = routeNodes->GetValue(obj->GetUpperNode() - 1);
-					dir = upper->GetPosition() - position;
-
-					if (abs(VectorDot(dir)) < CELESTIAL_EPSILON)
-					{
-
-						preExist = upper;
-
-					}
-				}
-			}
-
-
-			lastObject = obj;
-
-		}
+		RouteNodeObject* preExist = getPreExistantNode(position, objects, amounts);
 
 		if (preExist == nullptr)
 		{
@@ -333,8 +590,30 @@ unsigned int RoutingManager::AddNode(Vector3 position, unsigned int* objects, un
 
 				RouteNodeObject* lower = routeNodes->GetValue(obj->GetLowerNode() - 1);
 
-				preExist->AddRoute(lower);
-				lower->AddRoute(preExist);
+				if (lower->GetUpId() != 0 && lower->GetDownId() == 0)
+				{
+
+					reverseNode(preExist, Road::Direction_UP);
+					preExist->AddRoute(lower, Road::Direction_UP);
+					lower->AddRoute(preExist, Road::Direction_DOWN);
+
+				}
+				else if(lower->GetUpId() == 0)
+				{
+
+					preExist->AddRoute(lower, Road::Direction_DOWN);
+					lower->AddRoute(preExist, Road::Direction_UP);
+
+				}
+				else//Node is an intersection
+				{
+
+					preExist->AddRoute(lower);
+					lower->AddRoute(preExist);
+
+				}
+
+				handleRoad(lower);
 
 			}
 			else if (preExist->GetId() + 1 != obj->GetLowerNode() &&
@@ -347,24 +626,107 @@ unsigned int RoutingManager::AddNode(Vector3 position, unsigned int* objects, un
 				lower->RemoveRoute(upper->GetId());
 				upper->RemoveRoute(lower->GetId());
 				
-				lower->AddRoute(preExist);
-				upper->AddRoute(preExist);
+				lower->AddRoute(preExist, Road::Direction_UP);
+				upper->AddRoute(preExist, Road::Direction_DOWN);
 
-				preExist->AddRoute(lower);
-				preExist->AddRoute(upper);
+				preExist->AddRoute(lower, Road::Direction_DOWN);
+				preExist->AddRoute(upper, Road::Direction_UP);
 
 				obj->SetMiddleNode(preExist->GetId() + 1);
 
 			}
 		}
 
-		handleRoad(nullptr, preExist);
+		handleRoad(preExist);
+
 		return preExist->GetId()+1;
 
 	}
 
 	return 0;
 
+}
+
+void RoutingManager::reverseNode(RouteNodeObject* object, Road::Direction dir)
+{
+
+	unsigned int dId = object->GetDownId();
+	unsigned int uId = object->GetUpId();
+	object->SetUpId(dId);
+	object->SetDownId(uId);
+
+	RouteNodeObject* nextNode = nullptr;
+
+	if (dir == Road::Direction_UP && uId != 0)
+	{
+
+		nextNode = object->GetRoute(uId - 1);
+
+	}
+	else if (dir == Road::Direction_DOWN && dId != 0)
+	{
+
+		nextNode = object->GetRoute(dId - 1);
+
+	}
+
+	if(nextNode != nullptr && nextNode->GetRoad() != 0)
+	{ 
+
+		reverseNode(nextNode, dir);
+	
+	}
+}
+
+void RoutingManager::addToRoad(RouteNodeObject* object, unsigned int road)
+{
+
+	Road* roadObj = roads->GetValue(road);
+
+	if (roadObj == nullptr)
+	{
+
+		return;
+
+	}
+
+	object->SetRoad(road + 1);
+	roadObj->IncreaseNodes(1);
+
+}
+
+void RoutingManager::mergeRoads(RouteNodeObject* node, unsigned int road)
+{
+	
+	if (node->GetRoad() == 0)
+	{
+
+		return;
+
+	}
+
+	if (node->GetRoad() - 1 != road)
+	{
+
+		handleOldRoad(node);//Remove the old road from the object
+		addToRoad(node, road);
+		
+	}
+
+	for (unsigned int i = 0; i < node->GetRoutes(); i++)
+	{
+
+		RouteNodeObject* objectToChange = node->GetRoute(i);
+
+		if (objectToChange != nullptr && 
+			objectToChange->GetRoad() != 0 &&
+			objectToChange->GetRoad() - 1 != road)
+		{
+
+			mergeRoads(objectToChange, road);
+
+		}
+	}
 }
 
 void RoutingManager::handleOldRoad(RouteNodeObject* target)
@@ -385,100 +747,122 @@ void RoutingManager::handleOldRoad(RouteNodeObject* target)
 	}
 }
 
-void RoutingManager::handleRoad(RouteNodeObject* source, RouteNodeObject* target)
+void RoutingManager::addToNewRoad(RouteNodeObject* object)
 {
 
-	unsigned int oldId = 0;
+	Road* road = new Road();
+	road->IncreaseNodes(1);
+	unsigned int rd = roads->Add(road) + 1;
+	object->SetRoad(rd);
 
-	if (target->GetRoutes() > 2)
+}
+
+void RoutingManager::handleRoad(RouteNodeObject* object)
+{
+
+	if (object->GetRoutes() > 2)//The target should be an intersection
 	{
 
-		if (target->GetRoad() != 0)
+		if (object->GetRoad() != 0)//The target used to be a road
 		{
 
-			oldId = target->GetRoad();
-			handleOldRoad(target);
+			unsigned int oldId = object->GetRoad();
+			handleOldRoad(object);
+			object->SetRoad(0);
 
-		}
+			bool first = false;
 
-		source = target;
-		target->SetRoad(0);
-
-	}
-	else if (source == nullptr || source->GetRoad() == 0)
-	{
-
-		if (target->GetRoutes() == 0 || 
-			(source != nullptr && source->GetRoad() == 0))
-		{
-
-			handleOldRoad(target);
-			Road* road = new Road();
-			road->IncreaseNodes(1);
-			unsigned int rd = roads->Add(road) + 1;
-			target->SetRoad(rd);
-
-		}
-		else
-		{
-
-			float dist; 
-
-			for (unsigned int i = 0; i < target->GetMaxRoutes() && source == nullptr; i++)
+			for (unsigned int i = 0; i < object->GetRoutes(); i++)
 			{
 
-				source = target->GetRoute(i, dist);
+				RouteNodeObject* subNode = object->GetRoute(i);
+
+				if (first && 
+					subNode != nullptr && 
+					subNode->GetRoutes() <= 2)
+				{
+
+					addToNewRoad(subNode);
+					mergeRoads(subNode, subNode->GetRoad() - 1);
+
+				}
+
+				first = subNode != nullptr || first;
 
 			}
-
-			handleRoad(source, target);
-
 		}
-	}
-	else if(source->GetRoad() != target->GetRoad())
-	{
 
-		handleOldRoad(target);
-		unsigned int newRoad = 0;
-		target->SetRoad(source->GetRoad());
-
-		Road* rd = roads->GetValue(target->GetRoad() - 1);
-		rd->IncreaseNodes(1);
+		object->SetDownId(0);
+		object->SetUpId(0);
 
 	}
-	else
+	else if(object->GetRoad() == 0)
 	{
 
-		return;
+		bool virgin = true;
 
-	}
-
-	if (source != nullptr && target->GetRoutes() > 0)
-	{
-
-		for (unsigned int i = 0; i < target->GetMaxRoutes(); i++)
+		if (object->GetRoutes() > 0)
 		{
 
+			unsigned int firstId = 0;
+			unsigned int secondId = 0;
+
+			RouteNodeObject* subObj = nullptr;
 			float dist;
-			RouteNodeObject* node = target->GetRoute(i, dist);
 
-			if (node != nullptr &&
-				node->GetRoad() != 0 &&
-				(node->GetId() != source->GetId() || (node->GetRoutes() > 2 && node->GetRoad() != 0)) &&
-				node->GetRoad() != oldId
-				)
+			for (unsigned int i = 0; i < object->GetMaxRoutes(); i++)
 			{
 
-				handleRoad(target, node);
+				subObj = object->GetRoute(i, dist);
+
+				if (subObj != nullptr &&
+					virgin)
+				{
+
+					firstId = i;
+
+				}
+				else if (subObj != nullptr)
+				{
+
+					secondId = i;
+
+				}
+
+				virgin = !(subObj != nullptr
+					&& subObj->GetRoad() != 0);
 
 			}
 
-			if (node != nullptr && node->GetRoad() == oldId)
+			if (!virgin)
 			{
 
-				oldId = 0;
+				addToRoad(object, subObj->GetRoad() - 1);
 
+				if (object->GetRoutes() > 1)//The node has more then one connection
+				{
+
+					RouteNodeObject* first = object->GetRoute(firstId);
+					RouteNodeObject* second = object->GetRoute(secondId);
+
+					//The connections are of different roads
+					if (first->GetRoad() != second->GetRoad() &&
+						first->GetRoad() != 0 &&
+						second->GetRoad() != 0)
+					{
+
+						mergeRoads(object, object->GetRoad() - 1);
+
+					}
+				}
 			}
+		}
+
+		if(virgin)//The node is not connected to a road
+		{
+
+			addToNewRoad(object);
+
 		}
 	}
 }
@@ -500,7 +884,73 @@ RouteNodeObject* RoutingManager::GetNode(unsigned int id) const
 
 }
 
-unsigned int RoutingManager::pathFind(RouteNodeObject* start, RouteNodeObject* end)
+unsigned int RoutingManager::pathFindOpenRoad(RouteNodeObject* at, RouteNodeObject* start, RouteNodeObject* end)
+{
+
+	unsigned int returnVal = 0;
+	float smallestDist = -1.0f;
+
+	unsigned char offset = at->GetId() == start->GetId() ? 0 : 1;
+	unsigned int* smallestPath = new unsigned int[totalPaths + offset];
+	smallestPath[0] = start->GetId();
+	unsigned char smallestPaths = 0;
+
+	for (unsigned int i = 0; i < start->GetRoutes(); i++)
+	{
+
+		RouteNodeObject* subObject = start->GetRoute(i);
+
+		if (subObject != nullptr &&
+			subObject->GetId() != at->GetId())
+		{
+
+			bool isCandidate = start->CanTravel(i);
+
+			if (isCandidate)
+			{
+
+				float dist;
+				unsigned int paths = pathFind(start, subObject, end, dist);
+
+				if (paths > 0)
+				{
+
+					if (dist < smallestDist ||
+						smallestDist < 0)
+					{
+
+						smallestDist = dist; 
+						smallestPaths = paths;
+						memcpy(&smallestPath[offset], path, smallestPaths * sizeof(unsigned int));
+
+					}
+				}
+			}
+		}
+	}
+
+	if (smallestPaths > 0)
+	{
+
+		smallestPaths = min(totalPaths, smallestPaths + offset);
+		memcpy(path, smallestPath, smallestPaths * sizeof(unsigned int));
+
+	}
+
+	delete[] smallestPath;
+	return smallestPaths;
+
+}
+
+unsigned int RoutingManager::pathFind(RouteNodeObject* start, RouteNodeObject* through, RouteNodeObject* end)
+{
+
+	float dist;
+	return pathFind(start, through, end, dist);
+
+}
+
+unsigned int RoutingManager::pathFind(RouteNodeObject* start, RouteNodeObject* through, RouteNodeObject* end, float &totalDist)
 {
 
 	if (end == nullptr)
@@ -512,15 +962,27 @@ unsigned int RoutingManager::pathFind(RouteNodeObject* start, RouteNodeObject* e
 
 	prio_queue openSet;
 	prio_queue::nodeVal startNode;
-	startNode.index = start->GetId();
+	startNode.index = through->GetId();
 	startNode.parentIndex = startNode.index;
-	startNode.targetDist = VectorDot(end->GetPosition() - start->GetPosition());
+	startNode.targetDist = VectorDot(end->GetPosition() - through->GetPosition());
 	startNode.traveledDist = 0.0f;
 	openSet.push(startNode);
-	start->SetParent(start->GetId());
-	start->SetOpenset(pathFindVal);
-	start->SetStep(0);
+
 	std::vector<unsigned int> closedSet;
+
+	if (start->GetId() != through->GetId())
+	{
+
+		start->SetClosedset(pathFindVal);
+		closedSet.push_back(start->GetId());
+
+	}
+
+	through->SetParent(start->GetId());
+	through->SetOpenset(pathFindVal);
+	through->SetStep(1);
+	start->SetStep(0);
+
 	bool reachedEnd = false;
 	float dist = -1.0f;
 
@@ -532,6 +994,7 @@ unsigned int RoutingManager::pathFind(RouteNodeObject* start, RouteNodeObject* e
 		closedSet.push_back(currentNode.index);
 		RouteNodeObject* nodeObj = routeNodes->GetValue(currentNode.index);
 		nodeObj->SetClosedset(pathFindVal);
+		reachedEnd = currentNode.index == end->GetId();
 
 		for (unsigned int i = 0; i < nodeObj->GetRoutes() && !reachedEnd; i++)
 		{
@@ -611,6 +1074,7 @@ unsigned int RoutingManager::pathFind(RouteNodeObject* start, RouteNodeObject* e
 	}
 
 	unsigned int retVal = 0;
+	totalDist = 0;
 
 	if (reachedEnd)
 	{
@@ -620,14 +1084,18 @@ unsigned int RoutingManager::pathFind(RouteNodeObject* start, RouteNodeObject* e
 		while (node->GetId() != start->GetId())
 		{
 
-			if (node->GetStep() - 1 < paths)
+			if (node->GetStep() - 1 < totalPaths)
 			{
 
 				path[node->GetStep() - 1] = node->GetId();
 
 			}
 
+			RouteNodeObject* last = node;
 			node = routeNodes->GetValue(node->GetParent());
+
+			totalDist += VectorDot(last->GetPosition() - node->GetPosition());
+
 			retVal++;
 
 		}
@@ -640,24 +1108,47 @@ unsigned int RoutingManager::pathFind(RouteNodeObject* start, RouteNodeObject* e
 
 }
 
+RouteNodeObject* RoutingManager::getNeighbour(RouteNodeObject* object, Road::Direction dir) const
+{
+
+	RouteNodeObject* returnValue = nullptr;
+
+	if (object->GetRoad() != 0)
+	{
+
+		if (dir == Road::Direction_DOWN &&
+			object->GetDownId() != 0)
+		{
+
+			float dist;
+			return object->GetRoute(object->GetDownId() - 1, dist);
+
+		}
+		else if (dir == Road::Direction_UP &&
+			object->GetUpId() != 0)
+		{
+
+			float dist;
+			return object->GetRoute(object->GetUpId() - 1, dist);
+
+		}
+		else
+		{
+
+			return nullptr;
+
+		}
+	}
+}
+
 void RoutingManager::Travel(GameTravelObject* object, unsigned int goal, unsigned int time)
 {
 
-	unsigned int paths = pathFind(routeNodes->GetValue(object->GetNode()), routeNodes->GetValue(goal));
 	object->SetFinalGoalNode(goal);
-	unsigned int objId = object->GetId();
-	unsigned int startNode = object->GetNode();
+	object->SetStatus(TravelStatus_PRIMED);
+	travelObjects->PushElement(object);
+	object->Time(time);
 
-	if (paths > 0)
-	{
-
-		object->Time(time);
-		object->SetGoalNode(path);
-		RouteNodeObject* nextStop = routeNodes->GetValue(object->GetGoalNode());
-		object->Point(nextStop->GetPosition() + Vector3(0.0f, object->GetScale().y / 2, 0.0f));
-		travelObjects->PushElement(object);
-
-	}
 }
 
 void RoutingManager::Spawn(GameTravelObject* object, unsigned int cell)
