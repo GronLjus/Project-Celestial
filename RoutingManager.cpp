@@ -126,11 +126,11 @@ void RoutingManager::handleNearNode(GameTravelObject* obj, RouteNodeObject* curr
 
 	bool travelOn = false;
 
-	if (goalNode->GetRoad() == 0 &&
-		obj->GetStatus() == TravelStatus_WAITING)//Object is at Intersection and waiting for go-ahead
+	if (goalNode->GetObjId() == 0)//The node is open
 	{
 
-		if (goalNode->GetObjId() == 0)//The intersection is free
+		if (goalNode->GetRoad() == 0 &&
+			obj->GetStatus() == TravelStatus_WAITING)//Object is at Intersection and waiting for go-ahead
 		{
 
 			if (obj->GetFinalGoalNode() == obj->GetGoalNode())//The intersection is the final goal
@@ -158,7 +158,7 @@ void RoutingManager::handleNearNode(GameTravelObject* obj, RouteNodeObject* curr
 						obj->SetGoalNode(path);
 
 					}
-					
+
 					nextGoal = obj->PeekNextGoal(reCalc);
 
 				}
@@ -189,19 +189,19 @@ void RoutingManager::handleNearNode(GameTravelObject* obj, RouteNodeObject* curr
 				}
 			}
 		}
-	}
-	else if (goalNode->GetRoad() == 0 &&
-		obj->GetStatus() == TravelStatus_TRAVELING)//Object has just arrived near an intersection
-	{
+		else if (goalNode->GetRoad() == 0 &&
+			obj->GetStatus() == TravelStatus_TRAVELING)//Object has just arrived near an intersection
+		{
 
-		obj->SetStatus(TravelStatus_WAITING);
+			obj->SetStatus(TravelStatus_WAITING);
 
-	}
-	else//Object has arrived near a roadnode
-	{
+		}
+		else//Object has arrived near a roadnode
+		{
 
-		travelOn = true;
+			travelOn = true;
 
+		}
 	}
 
 	if (travelOn)
@@ -209,6 +209,12 @@ void RoutingManager::handleNearNode(GameTravelObject* obj, RouteNodeObject* curr
 
 		obj->SetStatus(TravelStatus_TRAVELNEAR);
 		goalNode->SetObjId(obj->GetId());
+
+	}
+	else
+	{
+
+		obj->SetStatus(TravelStatus_WAITING);
 
 	}
 }
@@ -240,7 +246,8 @@ void  RoutingManager::travelObject(GameTravelObject* obj, RouteNodeObject* curre
 	Vector3 traveled = currentNode->GetPosition() + Vector3(0.0f, obj->GetScale().y / 2, 0.0f) - obj->GetPosition();
 	float traveledDist = VectorDot(traveled);
 
-	if (traveledDist > offsetDist)//The object has traveled beyond the objects threshold
+	if (traveledDist > offsetDist &&
+		currentNode->GetObjId() == obj->GetId())//The object has traveled beyond the objects threshold
 	{
 
 		currentNode->SetObjId(0);
@@ -349,7 +356,7 @@ unsigned int* RoutingManager::Update(unsigned int time, unsigned int &scripts)
 			Vector3 dir = goalObject->GetPosition() + Vector3(0.0f, obj->GetScale().y / 2, 0.0f) - obj->GetPosition();
 			float distSqr = VectorDot(dir);
 
-			if (abs(distSqr - offsetDist) <= CELESTIAL_EPSILON &&
+			if (distSqr - offsetDist <= CELESTIAL_EPSILON &&
 				obj->GetStatus() != TravelStatus_TRAVELNEAR)//Object is near a node
 			{
 
@@ -1156,6 +1163,8 @@ void RoutingManager::Spawn(GameTravelObject* object, unsigned int cell)
 
 	object->SetNode(cell);
 	object->SetPosition(routeNodes->GetValue(cell)->GetPosition() + Vector3(0.0f, object->GetScale().y/2,0.0f));
+	RouteNodeObject* node = routeNodes->GetValue(cell);
+	node->SetObjId(object->GetId());
 	object->UpdateMatrix();
 
 }
