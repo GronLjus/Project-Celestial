@@ -4,7 +4,7 @@
 namespace Resources
 {
 
-	enum TravelStatus{ TravelStatus_TRAVELING, TravelStatus_WAITING, TravelStatus_READY, TravelStatus_TRAVELNEAR, TravelStatus_PRIMED, TravelStatus_NA};
+	enum TravelStatus{ TravelStatus_TRAVELING, TravelStatus_WAITING, TravelStatus_QUEUEING, TravelStatus_READY, TravelStatus_TRAVELNEAR, TravelStatus_PRIMED, TravelStatus_NA};
 
 	class GameTravelObject : public GameObject
 	{
@@ -23,6 +23,9 @@ namespace Resources
 			unsigned int GetNode() const;
 			TravelStatus GetStatus() const;
 			unsigned int PeekNextGoal(bool &reCalc) const;
+			float GetQueueLength() const;
+			float LastQueue() const;
+			unsigned int GetQTime() const;
 
 			void SetStatus(TravelStatus status);
 			void SetTravelSpeed(float cells);
@@ -30,8 +33,11 @@ namespace Resources
 			void SetFinalGoalNode(unsigned int goal);
 			void SetFilter(unsigned int filter);
 			void Time(unsigned int time);
+			void QueueTime(unsigned int time);
 			bool StepGoal();
 			void SetNode(unsigned int node);
+			void SetQueueLength(float qLength);
+			void SetLastQueue(float lastQ);
 
 			//Serializable Interface
 			virtual char* Serialize(unsigned int &size);
@@ -48,6 +54,9 @@ namespace Resources
 			unsigned int filter;
 			unsigned int lastTime;
 			float speed;
+			float qLength;
+			float lastQueue;
+			unsigned int qUTime;
 			TravelStatus status;
 
 	};

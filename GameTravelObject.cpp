@@ -12,6 +12,9 @@ GameTravelObject::GameTravelObject(BoundingBox* baseBox, BoundingSphere* baseSph
 	goalAmounts = 128;
 	goals = new unsigned int[goalAmounts];
 	speed = 1.5f;
+	qLength = 1.0f;
+	lastQueue = 0.0f;
+	qUTime = 0;
 
 }
 
@@ -24,6 +27,9 @@ GameTravelObject::GameTravelObject() : GameObject()
 	goalAmounts = 128;
 	goals = new unsigned int[goalAmounts];
 	speed = 1.5f;
+	qLength = 1.0f;
+	lastQueue = 0.0f;
+	qUTime = 0;
 
 }
 
@@ -162,6 +168,26 @@ TravelStatus GameTravelObject::GetStatus() const
 
 }
 
+float GameTravelObject::GetQueueLength() const
+{
+
+	return qLength;
+
+}
+
+float GameTravelObject::LastQueue() const
+{
+
+	return lastQueue;
+
+}
+
+unsigned int GameTravelObject::GetQTime() const
+{
+
+	return qUTime;
+
+}
 
 void GameTravelObject::SetStatus(TravelStatus status)
 {
@@ -199,6 +225,20 @@ void GameTravelObject::SetFilter(unsigned int filter)
 
 }
 
+void GameTravelObject::SetQueueLength(float qLength)
+{
+	
+	this->qLength = qLength;
+
+}
+
+void GameTravelObject::SetLastQueue(float lastQ)
+{
+
+	lastQueue = lastQ;
+
+}
+
 void GameTravelObject::Time(unsigned int time)
 {
 
@@ -212,6 +252,13 @@ bool GameTravelObject::StepGoal()
 	goal++;
 	goal %= goalAmounts;
 	return goal == 0;
+
+}
+
+void GameTravelObject::QueueTime(unsigned int time)
+{
+
+	qUTime = time;
 
 }
 

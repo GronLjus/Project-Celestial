@@ -21,8 +21,7 @@ RoutingManager::RoutingManager()
 	maxSOuts = 128;
 	scriptOuts = new unsigned int[maxSOuts];
 
-	offsetDistSqrt = 0.5f;
-	offsetDist = offsetDistSqrt * offsetDistSqrt;
+	offsetDist = 0.25f;
 
 }
 
@@ -121,7 +120,7 @@ unsigned int RoutingManager::addToOutScripts(unsigned int script, unsigned int p
 
 }
 
-void RoutingManager::handleNearNode(GameTravelObject* obj, RouteNodeObject* currentNode, RouteNodeObject* goalNode)
+void RoutingManager::handleNearNode(GameTravelObject* obj, RouteNodeObject* currentNode, RouteNodeObject* goalNode, unsigned int time)
 {
 
 	bool travelOn = false;
@@ -189,14 +188,7 @@ void RoutingManager::handleNearNode(GameTravelObject* obj, RouteNodeObject* curr
 				}
 			}
 		}
-		else if (goalNode->GetRoad() == 0 &&
-			obj->GetStatus() == TravelStatus_TRAVELING)//Object has just arrived near an intersection
-		{
-
-			obj->SetStatus(TravelStatus_WAITING);
-
-		}
-		else//Object has arrived near a roadnode
+		else if(goalNode->GetRoad() != 0)//Object has arrived near a roadnode
 		{
 
 			travelOn = true;
@@ -204,14 +196,17 @@ void RoutingManager::handleNearNode(GameTravelObject* obj, RouteNodeObject* curr
 		}
 	}
 
+	unsigned int localId = goalNode->GetLocalId(currentNode->GetId());
+
 	if (travelOn)
 	{
 
 		obj->SetStatus(TravelStatus_TRAVELNEAR);
 		goalNode->SetObjId(obj->GetId());
+		goalNode->QueueRoute(localId, -(obj->GetQueueLength()), time);
 
 	}
-	else
+	else if(obj->GetStatus() != TravelStatus_WAITING)
 	{
 
 		obj->SetStatus(TravelStatus_WAITING);
@@ -219,21 +214,20 @@ void RoutingManager::handleNearNode(GameTravelObject* obj, RouteNodeObject* curr
 	}
 }
 
-void  RoutingManager::travelObject(GameTravelObject* obj, RouteNodeObject* currentNode, RouteNodeObject* goalNode, Vector3 dir, float distSqr, unsigned int time)
+float RoutingManager::travelObject(GameTravelObject* obj, RouteNodeObject* currentNode, RouteNodeObject* goalNode, Vector3 dir, float distance, unsigned int time)
 {
 
-	bool slowDown = obj->GetStatus() != TravelStatus_TRAVELNEAR &&
+	bool slowDown = obj->GetStatus() == TravelStatus_TRAVELING &&
 		goalNode->GetRoad() == 0;
 
-	distSqr = sqrt(distSqr);
-	dir /= distSqr;
-	distSqr -= !slowDown ? 0 : offsetDistSqrt;
-	float fact = distSqr;
+	float offset = offsetDist + obj->GetQueueLength() / 2;
+	distance -= !slowDown ? 0 : offset;
+	float fact = distance;
 	float timeFact = (float)(time - obj->GetLastTime()) / 1000.0f;
 	float spd = obj->GetSpeed() * timeFact;
 
 	//Object has a long way to go
-	if (distSqr >= spd)
+	if (distance >= spd)
 	{
 
 		fact = spd;
@@ -242,16 +236,52 @@ void  RoutingManager::travelObject(GameTravelObject* obj, RouteNodeObject* curre
 
 	obj->SetPosition(obj->GetPosition() + (dir * fact));
 	obj->UpdateMatrix();
+	return fact;
 
-	Vector3 traveled = currentNode->GetPosition() + Vector3(0.0f, obj->GetScale().y / 2, 0.0f) - obj->GetPosition();
-	float traveledDist = VectorDot(traveled);
+}
 
-	if (traveledDist > offsetDist &&
-		currentNode->GetObjId() == obj->GetId())//The object has traveled beyond the objects threshold
+void RoutingManager::handleTravel(GameTravelObject* obj, RouteNodeObject* currentNode, RouteNodeObject* goalNode, Vector3 dir, float distance, unsigned int time)
+{
+
+	if (obj->GetStatus() == TravelStatus_QUEUEING)//The object is in a queue
 	{
 
-		currentNode->SetObjId(0);
+		unsigned int localId = goalNode->GetLocalId(currentNode->GetId());
+		float lastQ = obj->LastQueue();
+		unsigned int lastTime = goalNode->GetQTime(localId);
 
+		if (lastTime != 0 &&
+			lastTime >= obj->GetQTime())//The queue has moved
+		{
+
+			float diff = goalNode->GetQDiff(localId);
+			lastQ += diff;
+			obj->QueueTime(time);
+
+		}
+		
+		if (lastQ > CELESTIAL_EPSILON)
+		{
+
+			lastQ -= travelObject(obj, currentNode, goalNode, dir, lastQ, time);
+			obj->SetLastQueue(lastQ);
+
+		}
+	}
+	else
+	{
+
+		travelObject(obj, currentNode, goalNode, dir, distance, time);
+		Vector3 traveled = currentNode->GetPosition() + Vector3(0.0f, obj->GetScale().y / 2, 0.0f) - obj->GetPosition();
+		float traveledDist = VectorDot(traveled);
+
+		if (traveledDist > offsetDist &&
+			currentNode->GetObjId() == obj->GetId())//The object has traveled beyond the objects threshold
+		{
+
+			currentNode->SetObjId(0);
+
+		}
 	}
 }
 
@@ -327,6 +357,28 @@ void RoutingManager::handlePrimedObject(GameTravelObject* obj)
 	}
 }
 
+void RoutingManager::handleQueing(GameTravelObject* obj, unsigned int localId, RouteNodeObject* goalNode, float distance, unsigned int time)
+{
+
+	float qDist = goalNode->GetQuelength(localId) + offsetDist;
+
+	if (obj->GetStatus() != TravelStatus_QUEUEING)//The object isn't in the queue
+	{
+
+		qDist += obj->GetQueueLength()/2;
+
+		if (distance - qDist <= CELESTIAL_EPSILON)//The object is in the queue
+		{
+
+			obj->SetLastQueue(0.0f);
+			obj->QueueTime(time);
+			obj->SetStatus(TravelStatus_QUEUEING);
+			goalNode->QueueRoute(localId, obj->GetQueueLength(), 0);
+
+		}
+	}
+}
+
 unsigned int* RoutingManager::Update(unsigned int time, unsigned int &scripts)
 {
 
@@ -354,23 +406,40 @@ unsigned int* RoutingManager::Update(unsigned int time, unsigned int &scripts)
 			RouteNodeObject* goalObject = routeNodes->GetValue(obj->GetGoalNode());
 
 			Vector3 dir = goalObject->GetPosition() + Vector3(0.0f, obj->GetScale().y / 2, 0.0f) - obj->GetPosition();
-			float distSqr = VectorDot(dir);
+			float distance = VectorDot(dir);
+			distance = sqrt(distance);
+			dir /= distance;
+			unsigned int localId = goalObject->GetLocalId(nodeObject->GetId());
+			float qDist = goalObject->GetQuelength(localId);
 
-			if (distSqr - offsetDist <= CELESTIAL_EPSILON &&
-				obj->GetStatus() != TravelStatus_TRAVELNEAR)//Object is near a node
+			float offset = offsetDist + obj->GetQueueLength() / 2;
+
+			if (obj->GetStatus() != TravelStatus_TRAVELNEAR)
 			{
 
-				handleNearNode(obj, nodeObject, goalObject);
+				if (obj->GetStatus() != TravelStatus_WAITING &&
+					obj->GetStatus() != TravelStatus_QUEUEING)
+				{
 
+					handleQueing(obj, localId, goalObject, distance, time);
+
+				}
+				
+				if (distance - offset <= CELESTIAL_EPSILON)//Object is near a node
+				{
+
+					handleNearNode(obj, nodeObject, goalObject, time);
+
+				}
 			}
 
 			if (obj->GetStatus() != TravelStatus_WAITING)
 			{
 
-				if (distSqr > CELESTIAL_EPSILON * CELESTIAL_EPSILON)//The object has not arrived 
+				if (distance > CELESTIAL_EPSILON)//The object has not arrived 
 				{
 
-					travelObject(obj, nodeObject, goalObject, dir, distSqr, time);
+					handleTravel(obj, nodeObject, goalObject, dir, distance, time);
 
 				}
 				else//The object has arrived at a node

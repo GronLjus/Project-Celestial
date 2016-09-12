@@ -46,10 +46,13 @@ namespace Entities
 
 			void reverseNode(RouteNodeObject* object, Road::Direction dir);
 
-			void handleNearNode(Resources::GameTravelObject* obj, RouteNodeObject* currentNode, RouteNodeObject* goalNode);
-			void travelObject(Resources::GameTravelObject* obj, RouteNodeObject* currentNode, RouteNodeObject* goalNode, CelestialMath::Vector3 dir, float distSqr, unsigned int time);
+			float travelObject(Resources::GameTravelObject* obj, RouteNodeObject* currentNode, RouteNodeObject* goalNode, CelestialMath::Vector3 dir, float distSqr, unsigned int time);
+			
+			void handleNearNode(Resources::GameTravelObject* obj, RouteNodeObject* currentNode, RouteNodeObject* goalNode, unsigned int time);
 			bool handleNodeArrival(Resources::GameTravelObject* obj, RouteNodeObject* currentNode, RouteNodeObject* goalNode);
 			void handlePrimedObject(Resources::GameTravelObject* obj);
+			void handleQueing(Resources::GameTravelObject* obj, unsigned int localId, RouteNodeObject* goalNode, float distSqr, unsigned int time);
+			void handleTravel(Resources::GameTravelObject* obj, RouteNodeObject* currentNode, RouteNodeObject* goalNode, CelestialMath::Vector3 dir, float distSqr, unsigned int time);
 
 			unsigned int pathFindOpenRoad(RouteNodeObject* at, RouteNodeObject* start, RouteNodeObject* end);
 			unsigned int pathFind(RouteNodeObject* start, RouteNodeObject* through, RouteNodeObject* end);
@@ -63,7 +66,6 @@ namespace Entities
 			unsigned int maxSOuts;
 
 			float offsetDist;
-			float offsetDistSqrt;
 
 			//Road::Direction getDirection(RouteNodeObject* object) const;
 			Road::Direction getDirection(RouteNodeObject* start, RouteNodeObject* next) const;

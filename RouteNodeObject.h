@@ -30,6 +30,9 @@ namespace Entities
 		unsigned int GetStep() const;
 		unsigned int GetUpId() const;
 		unsigned int GetDownId() const;
+		float GetQuelength(unsigned int localId) const;
+		unsigned int GetQTime(unsigned int localId) const;
+		float GetQDiff(unsigned int localId) const;
 
 		unsigned int GetLocalId(unsigned int globalId) const;
 		bool CanTravel(unsigned int localId);
@@ -57,6 +60,7 @@ namespace Entities
 		void SetClosedset(unsigned char closed);
 		void SetStep(unsigned int step);
 
+		void QueueRoute(unsigned int localId, float length, unsigned int time);
 		void TravelRoute(unsigned int localId, unsigned int objId);
 		void TravelDone(unsigned int localId, unsigned int objId);
 
@@ -79,6 +83,10 @@ namespace Entities
 			CelestialMath::Vector3 direction;
 			unsigned int lastObject;
 			Road::Direction travelDirection;
+			float qLength;
+
+			float qDiff;
+			unsigned int qTime;
 
 			route operator= (const route* rt) {return route(); }
 			route() :deleted(true) {}
