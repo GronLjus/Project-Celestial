@@ -276,6 +276,23 @@ unsigned int RouteNodeObject::GetLocalId(unsigned int id) const
 	return route == nullptr ? 0 : lId;
 
 }
+
+float RouteNodeObject::GetDistance(unsigned int localId) const
+{
+
+	route rte = routes->GetValue(localId);
+
+	if (!rte.deleted)
+	{
+
+		return rte.dist;
+
+	}
+
+	return 0.0f;
+
+}
+
 void  RouteNodeObject::SetDirection(unsigned int localId, Road::Direction dir)
 {
 
@@ -380,6 +397,7 @@ void RouteNodeObject::AddRoute(RouteNodeObject* node, Road::Direction dir)
 	rte.deleted = false;
 	rte.direction = node->GetPosition() - position;
 	rte.distSQR = VectorDot(rte.direction);
+	rte.dist = sqrt(rte.distSQR);
 	rte.goal = node;
 	rte.lastObject = 0;
 	rte.travelDirection = Road::Direction_NA;

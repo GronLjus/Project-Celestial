@@ -1169,9 +1169,9 @@ unsigned int RoutingManager::pathFind(RouteNodeObject* start, RouteNodeObject* t
 
 			RouteNodeObject* last = node;
 			node = routeNodes->GetValue(node->GetParent());
+			unsigned int localId = node->GetLocalId(last->GetId());
 
-			totalDist += VectorDot(last->GetPosition() - node->GetPosition());
-
+			totalDist += node->GetDistance(localId);
 			retVal++;
 
 		}

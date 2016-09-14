@@ -33,6 +33,7 @@ namespace Entities
 		float GetQuelength(unsigned int localId) const;
 		unsigned int GetQTime(unsigned int localId) const;
 		float GetQDiff(unsigned int localId) const;
+		float GetDistance(unsigned int localId) const;
 
 		unsigned int GetLocalId(unsigned int globalId) const;
 		bool CanTravel(unsigned int localId);
@@ -80,6 +81,7 @@ namespace Entities
 			bool deleted;
 			RouteNodeObject* goal;
 			float distSQR;
+			float dist;
 			CelestialMath::Vector3 direction;
 			unsigned int lastObject;
 			Road::Direction travelDirection;
