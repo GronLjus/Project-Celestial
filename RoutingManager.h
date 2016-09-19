@@ -4,7 +4,7 @@
 #include "RouteNodeObject.h"
 #include "GameRouteObject.h"
 #include "SerializableObject.h"
-#include "Road.h"
+#include "Route.h"
 #include <vector>
 
 namespace Entities
@@ -36,24 +36,16 @@ namespace Entities
 			CrossHandlers::CelestialSlicedList<Resources::BaseObject*>* gameObjects;
 			CrossHandlers::CelestialList<Resources::GameTravelObject*>* travelObjects;
 			CrossHandlers::CelestialSlicedList<RouteNodeObject*>* routeNodes;
-			CrossHandlers::CelestialSlicedList<Road*>* roads;
+			CrossHandlers::CelestialSlicedList<Route*>* roads;
 
 			RouteNodeObject* getPreExistantNode(CelestialMath::Vector3 position, unsigned int* objects, unsigned int amounts) const;
-
-			void addToRoad(RouteNodeObject* object, unsigned int road);
-			void handleOldRoad(RouteNodeObject* target);
-			void handleRoad(RouteNodeObject* object);
-			void mergeRoads(RouteNodeObject* source, unsigned int road);
-			void addToNewRoad(RouteNodeObject* source);
-
-			void reverseNode(RouteNodeObject* object, Road::Direction dir);
 
 			float travelObject(Resources::GameTravelObject* obj, RouteNodeObject* currentNode, RouteNodeObject* goalNode, CelestialMath::Vector3 dir, float distSqr, unsigned int time);
 			
 			void handleNearNode(Resources::GameTravelObject* obj, RouteNodeObject* currentNode, RouteNodeObject* goalNode, unsigned int time);
 			bool handleNodeArrival(Resources::GameTravelObject* obj, RouteNodeObject* currentNode, RouteNodeObject* goalNode);
 			void handlePrimedObject(Resources::GameTravelObject* obj);
-			void handleQueing(Resources::GameTravelObject* obj, unsigned int localId, RouteNodeObject* goalNode, float distSqr, unsigned int time);
+			void handleQueing(Resources::GameTravelObject* obj, unsigned int localId, Route* route, float distSqr, unsigned int time);
 			void handleTravel(Resources::GameTravelObject* obj, RouteNodeObject* currentNode, RouteNodeObject* goalNode, CelestialMath::Vector3 dir, float distSqr, unsigned int time);
 
 			void handleSplit(RouteNodeObject* intersect, RouteNodeObject* lower, RouteNodeObject* upper);
@@ -75,11 +67,6 @@ namespace Entities
 			unsigned int maxSOuts;
 
 			float offsetDist;
-
-			//Road::Direction getDirection(RouteNodeObject* object) const;
-			Road::Direction getDirection(RouteNodeObject* start, RouteNodeObject* next) const;
-
-			RouteNodeObject* getNeighbour(RouteNodeObject* object, Road::Direction dir) const;
 
 			class prio_queue
 			{

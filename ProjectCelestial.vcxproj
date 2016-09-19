@@ -266,7 +266,7 @@
     <ClInclude Include="ResourceDictionary.h" />
     <ClInclude Include="ResourceHandler.h" />
     <ClInclude Include="ResourceHeader.h" />
-    <ClInclude Include="Road.h" />
+    <ClInclude Include="Route.h" />
     <ClInclude Include="RouteNodeObject.h" />
     <ClInclude Include="RoutingManager.h" />
     <ClInclude Include="RunTimeOperations.h" />
@@ -375,7 +375,7 @@
     <ClCompile Include="PositionableObject.cpp" />
     <ClCompile Include="ResourceDictionary.cpp" />
     <ClCompile Include="ResourceHandler.cpp" />
-    <ClCompile Include="Road.cpp" />
+    <ClCompile Include="Route.cpp" />
     <ClCompile Include="RouteNodeObject.cpp" />
     <ClCompile Include="RoutingManager.cpp" />
     <ClCompile Include="SaveObject.cpp" />

@@ -15,7 +15,6 @@ RouteNodeObject::RouteNodeObject() : RouteNodeObject(Vector3(0,0,0),0)
 RouteNodeObject::RouteNodeObject(Vector3 position, float width)
 {
 
-	road = 0;
 	this->position = position;
 	this->width = width;
 	routes = new CelestialSlicedList<route>(32);
@@ -24,8 +23,6 @@ RouteNodeObject::RouteNodeObject(Vector3 position, float width)
 	openSet = 0;
 	closedSet = 0;
 	parent = 0;
-	upId = 0;
-	downId = 0;
 	heurustic = 0.0f;
 
 }
@@ -67,50 +64,6 @@ void RouteNodeObject::SetHeuristic(float heuristic)
 
 }
 
-unsigned int RouteNodeObject::GetRoad() const
-{
-
-	return road;
-
-}
-
-unsigned int RouteNodeObject::GetDownId() const
-{
-
-	return downId;
-
-}
-
-unsigned int RouteNodeObject::GetUpId() const
-{
-
-	return upId;
-
-}
-
-float RouteNodeObject::GetQuelength(unsigned int localId) const
-{
-
-	route rte = routes->GetValue(localId);
-
-	if (!rte.deleted)
-	{
-
-		return rte.qLength;
-
-	}
-
-	return 0.0f;
-
-}
-
-void RouteNodeObject::SetRoad(unsigned int road)
-{
-
-	this->road = road;
-
-}
-
 void RouteNodeObject::SetPosition(Vector3 pos)
 {
 
@@ -139,7 +92,7 @@ unsigned int RouteNodeObject::GetObjId() const
 
 }
 
-RouteNodeObject* RouteNodeObject::GetRoute(unsigned int localId, float &dist)
+Route* RouteNodeObject::GetRoute(unsigned int localId, Route::Direction &dir)
 {
 
 	route rte = routes->GetValue(localId);
@@ -147,8 +100,8 @@ RouteNodeObject* RouteNodeObject::GetRoute(unsigned int localId, float &dist)
 	if (!rte.deleted)
 	{
 
-		dist = rte.distSQR;
-		return rte.goal;
+		dir = rte.dir;
+		return rte.rte;
 
 	}
 
@@ -156,7 +109,7 @@ RouteNodeObject* RouteNodeObject::GetRoute(unsigned int localId, float &dist)
 
 }
 
-RouteNodeObject* RouteNodeObject::GetRoute(unsigned int localId)
+Route* RouteNodeObject::GetRoute(unsigned int localId)
 {
 
 	route rte = routes->GetValue(localId);
@@ -164,44 +117,11 @@ RouteNodeObject* RouteNodeObject::GetRoute(unsigned int localId)
 	if (!rte.deleted)
 	{
 
-		return rte.goal;
+		return rte.rte;
 
 	}
 
 	return nullptr;
-
-}
-
-unsigned int RouteNodeObject::GetQTime(unsigned int localId) const
-{
-
-	route rte = routes->GetValue(localId);
-
-	if (!rte.deleted)
-	{
-
-		return rte.qTime;
-
-	}
-
-	return 0;
-
-}
-
-float RouteNodeObject::GetQDiff(unsigned int localId) const
-{
-
-	route rte = routes->GetValue(localId);
-
-	if (!rte.deleted)
-	{
-
-		return rte.qDiff;
-
-	}
-
-	return 0.0f;
-
 }
 
 unsigned int RouteNodeObject::GetMaxRoutes() const
@@ -257,140 +177,24 @@ unsigned int RouteNodeObject::GetLocalId(unsigned int id) const
 {
 
 	unsigned int lId = 0;
-	RouteNodeObject* route = nullptr;
+	Route* rte = nullptr;
 
-	for (unsigned int i = 0; i < routesAmount && route == nullptr; i++)
+	for (unsigned int i = 0; i < routes->GetHighest() && rte == nullptr; i++)
 	{
 
-		route = routes->GetValue(i).goal;
+		route rt = routes->GetValue(i);
+		rte = rt.rte;
 		lId = i;
 
-		if (route != nullptr && route->GetId() != id)
+		if (rte != nullptr && rte->GetNode(rt.dir) != id + 1)
 		{
 
-			route = nullptr;
+			rte = nullptr;
 
 		}
 	}
 
-	return route == nullptr ? 0 : lId;
-
-}
-
-float RouteNodeObject::GetDistance(unsigned int localId) const
-{
-
-	route rte = routes->GetValue(localId);
-
-	if (!rte.deleted)
-	{
-
-		return rte.dist;
-
-	}
-
-	return 0.0f;
-
-}
-
-bool RouteNodeObject::GetLastObj(unsigned int localId)
-{
-
-	route rte = routes->GetValue(localId);
-
-	if (!rte.deleted)
-	{
-
-		return rte.lastObject;
-
-	}
-
-	return 0;
-
-}
-
-void  RouteNodeObject::SetDirection(unsigned int localId, Road::Direction dir)
-{
-
-	route rte = routes->GetValue(localId);
-
-	if (!rte.deleted)
-	{
-
-		rte.travelDirection = dir;
-		routes->Add(rte, localId);
-
-	}
-}
-
-void RouteNodeObject::TravelRoute(unsigned int localId, unsigned int objId)
-{
-
-	route rte = routes->GetValue(localId);
-
-	if (rte.travelDirection != Road::Direction_UP && !rte.deleted)
-	{
-
-		if (rte.lastObject == 0)
-		{
-
-			unsigned int oppId = rte.goal->GetLocalId(this->GetId());
-			rte.goal->SetDirection(oppId, Road::Direction_UP);
-
-		}
-
-		rte.travelDirection = Road::Direction_DOWN;
-		rte.lastObject = objId;
-		routes->Add(rte, localId);
-
-	}
-}
-
-void RouteNodeObject::TravelDone(unsigned int localId, unsigned int objId)
-{
-
-	route rte = routes->GetValue(localId);
-
-	if (!rte.deleted && 
-		(rte.lastObject == objId || rte.lastObject == 0))
-	{
-
-		unsigned int oppId = rte.goal->GetLocalId(this->GetId());
-		rte.goal->SetDirection(oppId, Road::Direction_NA);
-
-		rte.travelDirection = Road::Direction_NA;
-		rte.lastObject = 0;
-		routes->Add(rte, localId);
-
-	}
-}
-
-void RouteNodeObject::TravelRoute(unsigned int localId)
-{
-
-	route rte = routes->GetValue(localId);
-
-	if (rte.travelDirection != Road::Direction_UP && !rte.deleted)
-	{
-
-		if (rte.lastObject == 0)
-		{
-
-			unsigned int oppId = rte.goal->GetLocalId(this->GetId());
-			rte.goal->SetDirection(oppId, Road::Direction_UP);
-
-		}
-
-		rte.travelDirection = Road::Direction_DOWN;
-		routes->Add(rte, localId);
-
-	}
-}
-
-bool RouteNodeObject::CanTravel(unsigned int localId)
-{
-
-	return routes->GetValue(localId).travelDirection != Road::Direction_UP;
+	return rte == nullptr ? 0 : lId;
 
 }
 
@@ -429,58 +233,29 @@ void RouteNodeObject::SetStep(unsigned int step)
 
 }
 
-void RouteNodeObject::AddRoute(RouteNodeObject* node, Road::Direction dir)
+void RouteNodeObject::AddRoute(Route* node)
 {
 	route rte;
 	rte.deleted = false;
-	rte.direction = node->GetPosition() - position;
-	rte.distSQR = VectorDot(rte.direction);
-	rte.dist = sqrt(rte.distSQR);
-	rte.goal = node;
-	rte.lastObject = 0;
-	rte.travelDirection = Road::Direction_NA;
-	rte.qLength = 0.0f;
-	rte.qTime = 0;
-	rte.qDiff = 0.0f;
+	rte.rte = node;
+
+	if (node->GetNode(Route::Direction_DOWN) == 0)
+	{
+
+		rte.dir = Route::Direction_UP;
+		node->SetNode(id + 1, Route::Direction_DOWN);
+	
+	}
+	else
+	{
+
+		rte.dir = Route::Direction_DOWN;
+		node->SetNode(id + 1, Route::Direction_UP);
+
+	}
 
 	unsigned int x = routes->Add(rte);
-
-	if (dir == Road::Direction_DOWN)
-	{
-
-		downId = x + 1;
-
-	}
-	else if (dir == Road::Direction_UP)
-	{
-
-		upId = x + 1;
-
-	}
-
 	routesAmount++;
-
-}
-
-void RouteNodeObject::SetDownId(unsigned int id)
-{
-
-	downId = id;
-
-}
-
-void RouteNodeObject::SetUpId(unsigned int id)
-{
-
-
-	upId = id;
-
-}
-
-void RouteNodeObject::AddRoute(RouteNodeObject* node)
-{
-
-	AddRoute(node, Road::Direction_NA);
 
 }
 
@@ -498,79 +273,12 @@ void RouteNodeObject::SetId(unsigned int id)
 
 }
 
-void RouteNodeObject::ShortenQueue(unsigned int localId, float length)
-{
-
-	route rte = routes->GetValue(localId);
-
-	if (!rte.deleted)
-	{
-
-		rte.qLength -= length;
-		routes->Add(rte, localId);
-
-	}
-}
-
-void RouteNodeObject::QueueRoute(unsigned int localId, float length, unsigned int time)
-{
-
-	route rte = routes->GetValue(localId);
-
-	if (!rte.deleted)
-	{
-
-		if (length < 0)
-		{
-
-			rte.qDiff = -length;
-			rte.qTime = time;
-
-		}
-
-		rte.qLength += length;
-		rte.qLength = max(rte.qLength, 0.0f);
-
-		routes->Add(rte, localId);
-
-	}
-}
-
 void RouteNodeObject::RemoveRoute(unsigned int id)
 {
 
 	bool found = false;
-	unsigned int x = 0;
-
-	for (unsigned int i = 0; i < routes->GetHighest() && !found;i++)
-	{
-	
-		route rte = routes->GetValue(i);
-
-		if (rte.goal->GetId() == id && !rte.deleted)
-		{
-
-			x = i;
-			found = true;
-			routes->Remove(i);
-
-		}
-	}
-
-	x++;
-
-	if (x == downId)
-	{
-
-		downId = 0;
-
-	}
-	else if (x == upId)
-	{
-
-		upId = 0;
-
-	}
+	unsigned int x = GetLocalId(id);
+	routes->Remove(x);
 
 	routesAmount--;
 
