@@ -43,12 +43,13 @@ char* GameTravelObject::Unserialize(char* data)
 	memcpy(&speed, &data[13], 4);
 	goalAmounts = data[17];
 	unsigned int goalPlace = goalAmounts*sizeof(unsigned int);
-	memcpy(goals, &data[18], goalPlace);
+	status = TravelStatus(data[18]);
+	memcpy(goals, &data[19], goalPlace);
 
-	if (data[18 + goalPlace] == SerializableType_GAMEOBJECTSCENERY)
+	if (data[19 + goalPlace] == SerializableType_GAMEOBJECTSCENERY)
 	{
 
-		return GameObject::Unserialize(&data[18 + goalPlace + 1]);
+		return GameObject::Unserialize(&data[19 + goalPlace + 1]);
 
 	}
 
@@ -74,7 +75,7 @@ char* GameTravelObject::Serialize(unsigned int &size)
 
 	}
 
-	unsigned int standard = 19;
+	unsigned int standard = 20;
 	size = standard + goalSize + subSize;
 	
 	char* byteVal = new char[size];
@@ -100,6 +101,7 @@ char* GameTravelObject::Serialize(unsigned int &size)
 
 	memcpy(&byteVal[14], &speed, 4);
 	byteVal[18] = goalAmounts;
+	byteVal[19] = status;
 
 	memcpy(&byteVal[standard], goals, goalSize);
 	memcpy(&byteVal[standard+goalSize], subSerial, subSize);

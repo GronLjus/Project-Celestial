@@ -1190,10 +1190,11 @@
     <None Include="Content\Scripts\ToolBarScripts\Button3Click.celsrc">
       <Filter>Resource Files\Content\Scripts\ToolBarScripts</Filter>
     </None>
-    <None Include="Button4Click.celsrc">
+    <None Include="saves\save1.clsv" />
+    <None Include="Content\Scripts\ToolBarScripts\Button4Click.celsrc">
       <Filter>Resource Files\Content\Scripts\ToolBarScripts</Filter>
     </None>
-    <None Include="saves\save1.clsv" />
+    <None Include="saves\save2.clsv" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Project Celestial.rc">
