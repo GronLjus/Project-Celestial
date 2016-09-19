@@ -293,6 +293,22 @@ float RouteNodeObject::GetDistance(unsigned int localId) const
 
 }
 
+bool RouteNodeObject::GetLastObj(unsigned int localId)
+{
+
+	route rte = routes->GetValue(localId);
+
+	if (!rte.deleted)
+	{
+
+		return rte.lastObject;
+
+	}
+
+	return 0;
+
+}
+
 void  RouteNodeObject::SetDirection(unsigned int localId, Road::Direction dir)
 {
 
@@ -344,6 +360,28 @@ void RouteNodeObject::TravelDone(unsigned int localId, unsigned int objId)
 
 		rte.travelDirection = Road::Direction_NA;
 		rte.lastObject = 0;
+		routes->Add(rte, localId);
+
+	}
+}
+
+void RouteNodeObject::TravelRoute(unsigned int localId)
+{
+
+	route rte = routes->GetValue(localId);
+
+	if (rte.travelDirection != Road::Direction_UP && !rte.deleted)
+	{
+
+		if (rte.lastObject == 0)
+		{
+
+			unsigned int oppId = rte.goal->GetLocalId(this->GetId());
+			rte.goal->SetDirection(oppId, Road::Direction_UP);
+
+		}
+
+		rte.travelDirection = Road::Direction_DOWN;
 		routes->Add(rte, localId);
 
 	}
@@ -460,6 +498,20 @@ void RouteNodeObject::SetId(unsigned int id)
 
 }
 
+void RouteNodeObject::ShortenQueue(unsigned int localId, float length)
+{
+
+	route rte = routes->GetValue(localId);
+
+	if (!rte.deleted)
+	{
+
+		rte.qLength -= length;
+		routes->Add(rte, localId);
+
+	}
+}
+
 void RouteNodeObject::QueueRoute(unsigned int localId, float length, unsigned int time)
 {
 
@@ -477,6 +529,8 @@ void RouteNodeObject::QueueRoute(unsigned int localId, float length, unsigned in
 		}
 
 		rte.qLength += length;
+		rte.qLength = max(rte.qLength, 0.0f);
+
 		routes->Add(rte, localId);
 
 	}

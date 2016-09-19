@@ -31,6 +31,8 @@ namespace Entities
 			virtual ~RoutingManager();
 
 		private:
+			enum objNode{ objNode_ON, objNode_ABOVE, objNode_BELOW, objNode_NA};
+
 			CrossHandlers::CelestialSlicedList<Resources::BaseObject*>* gameObjects;
 			CrossHandlers::CelestialList<Resources::GameTravelObject*>* travelObjects;
 			CrossHandlers::CelestialSlicedList<RouteNodeObject*>* routeNodes;
@@ -53,6 +55,13 @@ namespace Entities
 			void handlePrimedObject(Resources::GameTravelObject* obj);
 			void handleQueing(Resources::GameTravelObject* obj, unsigned int localId, RouteNodeObject* goalNode, float distSqr, unsigned int time);
 			void handleTravel(Resources::GameTravelObject* obj, RouteNodeObject* currentNode, RouteNodeObject* goalNode, CelestialMath::Vector3 dir, float distSqr, unsigned int time);
+
+			void handleSplit(RouteNodeObject* intersect, RouteNodeObject* lower, RouteNodeObject* upper);
+			objNode shouldIntersect(RouteNodeObject* intersect, RouteNodeObject* from, RouteNodeObject* to, Resources::GameTravelObject* obj);
+
+			bool updateObject(Resources::GameTravelObject* obj, unsigned int time, unsigned int &scriptPlace);
+
+			void resetNodes();
 
 			unsigned int pathFindOpenRoad(RouteNodeObject* at, RouteNodeObject* start, RouteNodeObject* end);
 			unsigned int pathFind(RouteNodeObject* start, RouteNodeObject* through, RouteNodeObject* end);

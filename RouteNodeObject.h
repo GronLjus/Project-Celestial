@@ -37,6 +37,7 @@ namespace Entities
 
 		unsigned int GetLocalId(unsigned int globalId) const;
 		bool CanTravel(unsigned int localId);
+		bool GetLastObj(unsigned int localId);
 
 		unsigned int GetRoad() const;
 		float GetHeuristic() const;
@@ -62,8 +63,11 @@ namespace Entities
 		void SetStep(unsigned int step);
 
 		void QueueRoute(unsigned int localId, float length, unsigned int time);
+		void ShortenQueue(unsigned int localId, float length);
 		void TravelRoute(unsigned int localId, unsigned int objId);
 		void TravelDone(unsigned int localId, unsigned int objId);
+
+		void TravelRoute(unsigned int localId);
 
 		void SetDirection(unsigned int localId, Road::Direction dir);
 
