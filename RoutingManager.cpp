@@ -62,11 +62,67 @@ char* RoutingManager::Serialize(unsigned int &size)
 		}
 	}
 
-	size = totalSize + 1 + sizeof(unsigned int);
+	char** routeData = nullptr;
+	unsigned int* routeSize = nullptr;
+	unsigned int totalRoutes = 0;
+	unsigned int routeTot = 0;
+
+	if (roads->GetHighest() > 0)
+	{
+
+		routeData = new char*[roads->GetHighest()];
+		routeSize = new unsigned int[roads->GetHighest()];
+
+		for (unsigned int i = 0; i < roads->GetHighest(); i++)
+		{
+
+			Route* road = roads->GetValue(i);
+
+			if (road != nullptr)
+			{
+
+				char* tempVal = road->Serialize(routeSize[routeTot]);
+				unsigned int objSize = routeSize[routeTot];
+				routeSize[routeTot] += sizeof(unsigned int) * 2;
+				routeData[routeTot] = new char[routeSize[routeTot]];
+
+				memcpy(routeData[routeTot], &i, sizeof(unsigned int));
+				memcpy(&routeData[routeTot][sizeof(unsigned int)], &objSize, sizeof(unsigned int));
+
+				memcpy(&routeData[routeTot][sizeof(unsigned int) * 2], tempVal, objSize);
+
+				totalRoutes += routeSize[routeTot];
+				routeTot++;
+
+			}
+		}
+	}
+
+	size = totalSize + totalRoutes + 1 + sizeof(unsigned int) * 2;
 	char* byteVal = new char[size];
 	byteVal[0] = SerializableType_ROUTEMANAGER;
-	memcpy(&byteVal[1], &totalSize, sizeof(unsigned int));
+	memcpy(&byteVal[1], &totalRoutes, sizeof(unsigned int));
 	unsigned int offset = 1 + sizeof(unsigned int);
+
+	if (routeData != nullptr)
+	{
+
+		for (unsigned int i = 0; i < routeTot; i++)
+		{
+
+			memcpy(&byteVal[offset], routeData[i], routeSize[i]);
+			delete[] routeData[i];
+			offset += routeSize[i];
+
+		}
+
+		delete[] routeData;
+		delete[] routeSize;
+
+	}
+
+	memcpy(&byteVal[offset], &totalSize, sizeof(unsigned int));
+	offset += sizeof(unsigned int);
 
 	if (subData != nullptr)
 	{
@@ -92,7 +148,36 @@ char* RoutingManager::Serialize(unsigned int &size)
 char* RoutingManager::Unserialize(char* data)
 {
 
-	return data;
+	unsigned int totalRoads = 0;
+	memcpy(&totalRoads, data, sizeof(unsigned int));
+	unsigned int offset = sizeof(unsigned int);
+
+	while (offset - sizeof(unsigned int) < totalRoads)
+	{
+
+		unsigned int location = 0;
+		unsigned int size = 0;
+		memcpy(&location, &data[offset], sizeof(unsigned int));
+		offset += sizeof(unsigned int);
+		memcpy(&size, &data[offset], sizeof(unsigned int));
+		offset += sizeof(unsigned int);
+
+		if (data[offset] != SerializableType_ROUTE)
+		{
+
+			return nullptr;
+
+		}
+
+		offset++;
+		Route* nRoad = new Route();
+		roads->Add(nRoad, location);
+		nRoad->Unserialize(&data[offset]);
+		offset += size - 1;
+
+	}
+
+	return &data[offset];
 
 }
 
@@ -631,11 +716,24 @@ unsigned int RoutingManager::AddNode(Vector3 position, unsigned int* objects, un
 				obj->SetUpperNode(preExist->GetId() + 1);
 
 				RouteNodeObject* lower = routeNodes->GetValue(obj->GetLowerNode() - 1);
-				Vector3 dir = lower->GetPosition() - preExist->GetPosition();
-				float dist = sqrt(VectorDot(dir));
+				Route* route;
 
-				Route* route = new Route(dist, dir / dist);
-				roads->Add(route);
+				if (obj->GetRoute() != 0)
+				{
+
+					route = roads->GetValue(obj->GetRoute() - 1);
+					
+				}
+				else
+				{
+
+					Vector3 dir = lower->GetPosition() - preExist->GetPosition();
+					float dist = sqrt(VectorDot(dir));
+					route = new Route(dist, dir / dist);
+					obj->SetRoute(roads->Add(route) + 1);
+
+				}
+
 				preExist->AddRoute(route);
 				lower->AddRoute(route);
 

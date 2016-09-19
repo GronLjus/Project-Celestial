@@ -8,8 +8,6 @@ using namespace CelestialMath;
 RouteNodeObject::RouteNodeObject() : RouteNodeObject(Vector3(0,0,0),0)
 {
 
-	width = 0.0f;
-
 }
 
 RouteNodeObject::RouteNodeObject(Vector3 position, float width)

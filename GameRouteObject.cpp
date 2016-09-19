@@ -11,6 +11,7 @@ GameRouteObject::GameRouteObject(BoundingBox* baseBox, BoundingSphere* baseSpher
 	lowerNode = 0;
 	middleNode = 0;
 	upperNode = 0;
+	route = 0;
 
 }
 
@@ -20,16 +21,22 @@ GameRouteObject::GameRouteObject() : GameObject()
 	lowerNode = 0;
 	middleNode = 0;
 	upperNode = 0;
+	route = 0;
 
 }
 
 char* GameRouteObject::Unserialize(char* data)
 {
 
-	if (data[0] == SerializableType_GAMEOBJECTSCENERY)
+	unsigned int offset = 0;
+
+	memcpy(&route, data, sizeof(unsigned int));
+	offset += sizeof(unsigned int);
+
+	if (data[offset] == SerializableType_GAMEOBJECTSCENERY)
 	{
 
-		return GameObject::Unserialize(&data[1]);
+		return GameObject::Unserialize(&data[offset + 1]);
 
 	}
 
@@ -42,11 +49,12 @@ char* GameRouteObject::Serialize(unsigned int &size)
 
 	unsigned int subSize = 0;
 	char* subSerial = GameObject::Serialize(subSize);
-	size = subSize + 1;
+	size = subSize + 1 + sizeof(unsigned int);
 	char* byteVal = new char[size];
 
 	byteVal[0] = SerializableType_GAMEOBJECTROUTE;
-	memcpy(&byteVal[1], subSerial, subSize);
+	memcpy(&byteVal[1], &route, sizeof(unsigned int));
+	memcpy(&byteVal[1 + sizeof(unsigned int)], subSerial, subSize);
 	delete[] subSerial;
 
 	return byteVal;
@@ -81,6 +89,13 @@ unsigned int GameRouteObject::GetLowerNode() const
 
 }
 
+unsigned int GameRouteObject::GetRoute() const
+{
+
+	return route;
+
+}
+
 void GameRouteObject::SetUpperNode(unsigned int node)
 {
 
@@ -100,6 +115,13 @@ void GameRouteObject::SetLowerNode(unsigned int node)
 
 	lowerNode = node;
 	
+}
+
+void GameRouteObject::SetRoute(unsigned int route)
+{
+
+	this->route = route;
+
 }
 
 Intersection GameRouteObject::ContainsPoint(Vector3 point)
@@ -126,7 +148,6 @@ Intersection GameRouteObject::ContainsPoint(Vector3 point)
 	return retVal;
 
 }
-
 
 unsigned int GameRouteObject::GetWidth() const
 {

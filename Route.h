@@ -1,13 +1,15 @@
 #pragma once
 #include "CelestialMath.h"
+#include "SerializableObject.h"
 
 namespace Entities
 {
 
-	class Route
+	class Route : public Resources::SerializableObject
 	{
 		public:
 			enum Direction{ Direction_UP, Direction_DOWN, Direction_NA};
+			Route();
 			Route(float dist ,CelestialMath::Vector3 direction);
 
 			Direction GetDirection() const; 
@@ -25,6 +27,10 @@ namespace Entities
 			void Queue(float length, unsigned int time);
 			void Travel(unsigned int obj, Direction dir);
 			void TravelDone(unsigned int obj);
+
+			//Serializable Interface
+			virtual char* Serialize(unsigned int &size);
+			virtual char* Unserialize(char* data);
 
 			~Route();
 

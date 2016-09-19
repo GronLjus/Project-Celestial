@@ -19,7 +19,8 @@ namespace Resources
 		SerializableType_GUITEXTBOX,
 		SerializableType_GUIIMAGE,
 
-		SerializableType_RESOURCEDICTIONARY
+		SerializableType_RESOURCEDICTIONARY,
+		SerializableType_ROUTE
 
 	};
 

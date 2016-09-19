@@ -18,10 +18,12 @@ namespace Resources
 			unsigned int GetUpperNode() const;
 			unsigned int GetMiddleNode() const;
 			unsigned int GetLowerNode() const;
+			unsigned int GetRoute() const;
 
 			void SetUpperNode(unsigned int node);
 			void SetMiddleNode(unsigned int node);
 			void SetLowerNode(unsigned int node);
+			void SetRoute(unsigned int route);
 			
 			unsigned int GetWidth() const;
 
@@ -37,6 +39,7 @@ namespace Resources
 			unsigned int upperNode;
 			unsigned int middleNode;
 			unsigned int lowerNode;
+			unsigned int route;
 
 			unsigned int width;
 

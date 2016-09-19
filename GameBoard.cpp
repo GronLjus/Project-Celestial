@@ -134,11 +134,12 @@ char* GameBoard::Serialize(unsigned int &size)
 char* GameBoard::Unserialize(char* data)
 {
 
-	unsigned int offset = 1;
+	unsigned int offset = 0;
 
 	if (data[0] == SerializableType_ROUTEMANAGER)
 	{
 
+		data = this->routing->Unserialize(&data[1]);
 		unsigned int totalNodes;
 		memcpy(&totalNodes, &data[offset], sizeof(unsigned int));
 		offset += sizeof(unsigned int);
@@ -163,7 +164,12 @@ char* GameBoard::Unserialize(char* data)
 
 		}
 	}
+	else
+	{
 
+		offset++;
+
+	}
 
 	if (data[offset] == SerializableType_SCRIPTABLE)
 	{

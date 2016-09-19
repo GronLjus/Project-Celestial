@@ -3,6 +3,12 @@
 
 using namespace Entities;
 
+Route::Route() : Route(0.0f, CelestialMath::Vector3())
+{
+
+
+}
+
 Route::Route(float dist, CelestialMath::Vector3 direction)
 {
 
@@ -12,11 +18,58 @@ Route::Route(float dist, CelestialMath::Vector3 direction)
 	travelDir = Direction_NA;
 	this->dist = dist;
 	this->direction = direction;
+	qLength = 0.0f;
 
 	lastObject = 0;
-	qLength = 0.0f;
 	qDiff = 0.0f;
 	qTime = 0;
+
+}
+
+char* Route::Serialize(unsigned int &size)
+{
+
+	size = sizeof(float) * 5 + 2;
+
+	unsigned int offset = 0;
+	char* byteVal = new char[size];
+	byteVal[offset] = Resources::SerializableType_ROUTE;
+	offset++;
+	byteVal[offset] = travelDir;
+	offset++;
+	memcpy(&byteVal[offset], &qLength, sizeof(float));
+	offset += sizeof(float);
+	memcpy(&byteVal[offset], &dist, sizeof(float));
+	offset += sizeof(float);
+	memcpy(&byteVal[offset], &direction.x, sizeof(float));
+	offset += sizeof(float);
+	memcpy(&byteVal[offset], &direction.y, sizeof(float));
+	offset += sizeof(float);
+	memcpy(&byteVal[offset], &direction.z, sizeof(float));
+	offset += sizeof(float);
+
+	return byteVal;
+
+}
+
+char* Route::Unserialize(char* data)
+{
+
+	unsigned int offset = 0;
+	travelDir = Route::Direction(data[0]);
+	offset++;
+	memcpy(&qLength, &data[offset], sizeof(float));
+	offset += sizeof(float);
+	memcpy(&dist, &data[offset], sizeof(float));
+	offset += sizeof(float);
+	memcpy(&direction.x, &data[offset], sizeof(float));
+	offset += sizeof(float);
+	memcpy(&direction.y, &data[offset], sizeof(float));
+	offset += sizeof(float);
+	memcpy(&direction.z, &data[offset], sizeof(float));
+	offset += sizeof(float);
+
+	return nullptr;
 
 }
 
