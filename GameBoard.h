@@ -32,7 +32,7 @@ namespace Resources
 			unsigned int AddRouteNode(CelestialMath::Vector3 position, float width, unsigned int* collided, unsigned int &collAmounts);
 			unsigned int AddRouteNode(CelestialMath::Vector3 position, float width);
 
-			void ReCalcPaths(unsigned int time);
+			void RefreshTravelingObjects(unsigned int time);
 
 			//Serializable Interface
 			virtual char* Serialize(unsigned int &size);

@@ -6,4 +6,4 @@ $
 }
 
 clear gameboard localBoard
-load state localBoard 'saves\save2.clsv'
+load state localBoard 'saves\save3.clsv'

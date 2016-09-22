@@ -623,7 +623,7 @@ unsigned int ResourceHandler::loadGameBoard(std::string path, unsigned int gameB
 
 	}
 
-	localBoard->ReCalcPaths(time);
+	localBoard->RefreshTravelingObjects(time);
 	delete translatedDict;
 	delete saveDic;
 

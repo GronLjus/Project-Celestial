@@ -1154,9 +1154,6 @@
     <None Include="Content\Scripts\CameraScripts\CameraZoom.celsrc">
       <Filter>Resource Files\Content\Scripts\CameraScripts</Filter>
     </None>
-    <None Include="Content\Scripts\PreLoad.celsrc">
-      <Filter>Resource Files\Content\Scripts</Filter>
-    </None>
     <None Include="Content\Scripts\LoadScripts\LoadToolBar.celsrc">
       <Filter>Resource Files\Content\Scripts\LoadScripts</Filter>
     </None>
@@ -1195,6 +1192,10 @@
       <Filter>Resource Files\Content\Scripts\ToolBarScripts</Filter>
     </None>
     <None Include="saves\save2.clsv" />
+    <None Include="Content\Scripts\PreLoad.celsrc">
+      <Filter>Resource Files\Content\Scripts\ToolBarScripts</Filter>
+    </None>
+    <None Include="saves\save3.clsv" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Project Celestial.rc">

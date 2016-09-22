@@ -30,7 +30,7 @@ char* GameRouteObject::Unserialize(char* data)
 
 	unsigned int offset = 0;
 
-	memcpy(&route, data, sizeof(unsigned int));
+	//memcpy(&route, data, sizeof(unsigned int));
 	offset += sizeof(unsigned int);
 
 	if (data[offset] == SerializableType_GAMEOBJECTSCENERY)

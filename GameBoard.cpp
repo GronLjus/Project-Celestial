@@ -22,7 +22,7 @@ GameBoard::GameBoard(unsigned int cells, CelMesh* gridObject, unsigned char maxF
 
 }
 
-void GameBoard::ReCalcPaths(unsigned int time)
+void GameBoard::RefreshTravelingObjects(unsigned int time)
 {
 
 	for (unsigned int i = 0; i < travelObjects->GetHighest(); i++)
@@ -34,7 +34,7 @@ void GameBoard::ReCalcPaths(unsigned int time)
 			travelObj->GetNode() != travelObj->GetFinalGoalNode())
 		{
 
-			routing->Travel(travelObj, travelObj->GetFinalGoalNode(), time);
+			routing->UpdateObject(travelObj, time);
 
 		}
 	}
@@ -136,33 +136,57 @@ char* GameBoard::Unserialize(char* data)
 
 	unsigned int offset = 0;
 
-	if (data[0] == SerializableType_ROUTEMANAGER)
+	if (data[offset] == SerializableType_ROUTEMANAGER)
 	{
 
-		data = this->routing->Unserialize(&data[1]);
+		offset++;
 		unsigned int totalNodes;
 		memcpy(&totalNodes, &data[offset], sizeof(unsigned int));
 		offset += sizeof(unsigned int);
 
-		unsigned int nodes = totalNodes / 16;
+		unsigned int nodes = totalNodes / 20;
+		unsigned int nodeStart = offset;
+
+		unsigned int* nodeIds = new unsigned int[nodes];
+		Vector3* nodePos = new Vector3[nodes];
+		float* nodeWidths = new float[nodes];
 
 		for (unsigned int i = 0; i < nodes; i++)
 		{
 
-			Vector3 nodePos;
-			float width;
-			memcpy(&nodePos.x, &data[offset], 4);
+			memcpy(&nodeIds[i], &data[offset], sizeof(unsigned int));
+			offset += sizeof(unsigned int);
+
+			memcpy(&nodePos[i].x, &data[offset], 4);
 			offset += 4;
-			memcpy(&nodePos.y, &data[offset], 4);
+			memcpy(&nodePos[i].y, &data[offset], 4);
 			offset += 4;
-			memcpy(&nodePos.z, &data[offset], 4);
+			memcpy(&nodePos[i].z, &data[offset], 4);
 			offset += 4;
-			memcpy(&width, &data[offset], 4);
+			memcpy(&nodeWidths[i], &data[offset], 4);
 			offset += 4;
 
-			AddRouteNode(nodePos, width);
+			routing->AddNode(nodePos[i], nodeWidths[i], nodeIds[i]);
+			
+		}
+
+		this->routing->Unserialize(&data[offset]);
+		
+		for (unsigned int i = 0; i < nodes; i++)
+		{
+
+			BoundingSphere sphere = BoundingSphere(nodePos[i].x, nodePos[i].y, nodePos[i].z, nodeWidths[i] / 2.0f);
+			unsigned int amount = 0;
+
+			unsigned int* collided = GetCollidedObject(&sphere, GameObjectType_ROUTE, amount);
+			routing->HandleNode(nodeIds[i], collided, amount);
 
 		}
+
+		delete[] nodeIds;
+		delete[] nodePos;
+		delete[] nodeWidths;
+
 	}
 	else
 	{

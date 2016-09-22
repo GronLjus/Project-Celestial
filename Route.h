@@ -19,14 +19,19 @@ namespace Entities
 			unsigned int GetQTime() const;
 			float GetQDiff() const;
 			float GetDistance() const;
+			unsigned int GetId() const;
 
 			bool CanTravel(Direction dir) const;
 			unsigned int GetLastObj() const;
 
+			void SetId(unsigned int);
 			void SetNode(unsigned int node, Direction dir);
 			void Queue(float length, unsigned int time);
 			void Travel(unsigned int obj, Direction dir);
+			void Travel(unsigned int obj, float dist, Direction dir);
 			void TravelDone(unsigned int obj);
+
+			void ResetLastDist();
 
 			//Serializable Interface
 			virtual char* Serialize(unsigned int &size);
@@ -46,6 +51,10 @@ namespace Entities
 			float qLength;
 			float qDiff;
 			unsigned int qTime;
+
+			float lastDist;
+
+			unsigned int id;
 
 	};
 }

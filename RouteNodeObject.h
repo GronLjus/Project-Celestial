@@ -34,6 +34,7 @@ namespace Entities
 		unsigned int GetLocalId(unsigned int globalId) const;
 
 		float GetHeuristic() const;
+		bool ContainsRoute(unsigned int gId) const;
 
 		void SetHeuristic(float heuristic);
 

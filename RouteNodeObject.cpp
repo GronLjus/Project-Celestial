@@ -196,6 +196,29 @@ unsigned int RouteNodeObject::GetLocalId(unsigned int id) const
 
 }
 
+bool  RouteNodeObject::ContainsRoute(unsigned int gId) const
+{
+
+	Route* rte = nullptr;
+
+	for (unsigned int i = 0; i < routes->GetHighest() && rte == nullptr; i++)
+	{
+
+		route rt = routes->GetValue(i);
+		rte = rt.rte;
+
+		if (rte != nullptr && rte->GetNode(rt.dir) != gId + 1)
+		{
+
+			rte = nullptr;
+
+		}
+	}
+
+	return rte != nullptr;
+
+}
+
 void RouteNodeObject::LinkObj(unsigned int objId)
 {
 
@@ -236,15 +259,17 @@ void RouteNodeObject::AddRoute(Route* node)
 	route rte;
 	rte.deleted = false;
 	rte.rte = node;
+	unsigned int downNode = node->GetNode(Route::Direction_DOWN);
+	unsigned int upNode = node->GetNode(Route::Direction_UP);
 
-	if (node->GetNode(Route::Direction_DOWN) == 0)
+	if (downNode == 0 || downNode == id + 1)
 	{
 
 		rte.dir = Route::Direction_UP;
 		node->SetNode(id + 1, Route::Direction_DOWN);
 	
 	}
-	else
+	else if(upNode == 0 || upNode == id + 1)
 	{
 
 		rte.dir = Route::Direction_DOWN;

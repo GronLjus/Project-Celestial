@@ -55,6 +55,15 @@ char* RoutingManager::Serialize(unsigned int &size)
 			{
 
 				subData[subTot] = subObject->Serialize(subSize[subTot]);
+				char* temp = new char[subSize[subTot] + sizeof(unsigned int)];
+				memcpy(temp, &i, sizeof(unsigned int));
+
+				memcpy(&temp[sizeof(unsigned int)], subData[subTot], subSize[subTot]);
+
+				delete[] subData[subTot];
+				subData[subTot] = temp;
+
+				subSize[subTot] += sizeof(unsigned int);
 				totalSize += subSize[subTot];
 				subTot++;
 
@@ -93,6 +102,7 @@ char* RoutingManager::Serialize(unsigned int &size)
 
 				totalRoutes += routeSize[routeTot];
 				routeTot++;
+				delete[] tempVal;
 
 			}
 		}
@@ -101,25 +111,7 @@ char* RoutingManager::Serialize(unsigned int &size)
 	size = totalSize + totalRoutes + 1 + sizeof(unsigned int) * 2;
 	char* byteVal = new char[size];
 	byteVal[0] = SerializableType_ROUTEMANAGER;
-	memcpy(&byteVal[1], &totalRoutes, sizeof(unsigned int));
-	unsigned int offset = 1 + sizeof(unsigned int);
-
-	if (routeData != nullptr)
-	{
-
-		for (unsigned int i = 0; i < routeTot; i++)
-		{
-
-			memcpy(&byteVal[offset], routeData[i], routeSize[i]);
-			delete[] routeData[i];
-			offset += routeSize[i];
-
-		}
-
-		delete[] routeData;
-		delete[] routeSize;
-
-	}
+	unsigned int offset = 1;
 
 	memcpy(&byteVal[offset], &totalSize, sizeof(unsigned int));
 	offset += sizeof(unsigned int);
@@ -138,6 +130,26 @@ char* RoutingManager::Serialize(unsigned int &size)
 
 		delete[] subData;
 		delete[] subSize;
+
+	}
+
+	memcpy(&byteVal[offset], &totalRoutes, sizeof(unsigned int));
+	offset += sizeof(unsigned int);
+
+	if (routeData != nullptr)
+	{
+
+		for (unsigned int i = 0; i < routeTot; i++)
+		{
+
+			memcpy(&byteVal[offset], routeData[i], routeSize[i]);
+			delete[] routeData[i];
+			offset += routeSize[i];
+
+		}
+
+		delete[] routeData;
+		delete[] routeSize;
 
 	}
 
@@ -171,8 +183,24 @@ char* RoutingManager::Unserialize(char* data)
 
 		offset++;
 		Route* nRoad = new Route();
-		roads->Add(nRoad, location);
+		nRoad->SetId(location);
+		roads->AddAt(nRoad, location);
 		nRoad->Unserialize(&data[offset]);
+
+		unsigned int uN = nRoad->GetNode(Route::Direction_UP);
+		unsigned lN = nRoad->GetNode(Route::Direction_DOWN);
+
+		if (uN != 0 && lN != 0)
+		{
+
+			RouteNodeObject* lowerNode = routeNodes->GetValue(lN - 1);
+			RouteNodeObject* upperNode = routeNodes->GetValue(uN - 1);
+
+			lowerNode->AddRoute(nRoad);
+			upperNode->AddRoute(nRoad);
+
+		}
+
 		offset += size - 1;
 
 	}
@@ -181,10 +209,12 @@ char* RoutingManager::Unserialize(char* data)
 
 }
 
-unsigned int RoutingManager::AddNode(Vector3 position, GameRouteObject* obj)
+void RoutingManager::AddNode(Vector3 position, float width, unsigned int id)
 {
 
-	return 0;
+	RouteNodeObject* node = new RouteNodeObject(position, 0.98f);
+	node->SetId(id);
+	routeNodes->AddAt(node, id);
 
 }
 
@@ -364,11 +394,24 @@ void RoutingManager::handleTravel(GameTravelObject* obj, RouteNodeObject* curren
 
 	}
 
+	checkObjPastNode(obj,currentNode);
+	
+}
+
+float RoutingManager::getObjDistSqr(GameTravelObject* obj, RouteNodeObject* node)
+{
+
 	Vector3 objEndPoint = obj->GetPosition() - (obj->GetDirection()*(obj->GetQueueLength() / 2));
+	Vector3 traveled = node->GetPosition() + Vector3(0.0f, obj->GetScale().y / 2, 0.0f) - objEndPoint;
+	return VectorDot(traveled);
 
-	Vector3 traveled = currentNode->GetPosition() + Vector3(0.0f, obj->GetScale().y / 2, 0.0f) - objEndPoint;
-	float traveledDist = VectorDot(traveled);
+}
 
+void RoutingManager::checkObjPastNode(Resources::GameTravelObject* obj, RouteNodeObject* currentNode)
+{
+
+	float traveledDist = getObjDistSqr(obj, currentNode);
+	
 	if (traveledDist > offsetDist * offsetDist &&
 		currentNode->GetObjId() == obj->GetId())//The object has traveled beyond the objects threshold
 	{
@@ -681,6 +724,81 @@ RouteNodeObject* RoutingManager::getPreExistantNode(Vector3 position, unsigned i
 
 }
 
+void RoutingManager::handleObjectNode(RouteNodeObject* preExist, unsigned int* objects, unsigned int amounts)
+{
+
+	for (unsigned int i = 0; i < amounts; i++)
+	{
+
+		GameRouteObject* obj = ((GameRouteObject*)this->gameObjects->GetValue(objects[i]));
+
+		if (obj->GetLowerNode() == 0)//First node on a route
+		{
+
+			obj->SetLowerNode(preExist->GetId() + 1);
+
+		}
+		else if (obj->GetUpperNode() == 0)//Second node on a route
+		{
+
+			obj->SetUpperNode(preExist->GetId() + 1);
+
+			RouteNodeObject* lower = routeNodes->GetValue(obj->GetLowerNode() - 1);
+			unsigned int routeId = 0;
+
+			if (!lower->ContainsRoute(preExist->GetId()))//The node lacks route
+			{
+
+				Vector3 dir = lower->GetPosition() - preExist->GetPosition();
+				float dist = sqrt(VectorDot(dir));
+				Route* route = new Route(dist, dir / dist);
+				routeId = roads->Add(route);
+				route->SetId(routeId);
+
+				preExist->AddRoute(route);
+				lower->AddRoute(route);
+
+			}
+			else
+			{
+
+				unsigned int lId = lower->GetLocalId(preExist->GetId());
+				Route* rt = lower->GetRoute(lId);
+				routeId = rt->GetId();
+
+			}
+
+			obj->SetRoute(routeId + 1);
+
+		}
+		else if (preExist->GetId() + 1 != obj->GetLowerNode() &&
+			preExist->GetId() + 1 != obj->GetUpperNode())
+		{
+
+			RouteNodeObject* lower = routeNodes->GetValue(obj->GetLowerNode() - 1);
+			RouteNodeObject* upper = routeNodes->GetValue(obj->GetUpperNode() - 1);
+
+			handleSplit(preExist, lower, upper);
+
+			obj->SetMiddleNode(preExist->GetId() + 1);
+
+
+		}
+	}
+}
+
+void RoutingManager::HandleNode(unsigned int nodeId, unsigned int* objects, unsigned int amounts)
+{
+
+	if (amounts != 0)
+	{
+
+		RouteNodeObject* preExist = routeNodes->GetValue(nodeId);
+		handleObjectNode(preExist, objects, amounts);
+
+	}
+}
+
 unsigned int RoutingManager::AddNode(Vector3 position, unsigned int* objects, unsigned int amounts)
 {
 
@@ -699,60 +817,7 @@ unsigned int RoutingManager::AddNode(Vector3 position, unsigned int* objects, un
 
 		}
 
-		for (unsigned int i = 0; i < amounts; i++)
-		{
-
-			GameRouteObject* obj = ((GameRouteObject*)this->gameObjects->GetValue(objects[i]));
-
-			if (obj->GetLowerNode() == 0)//First node on a route
-			{
-
-				obj->SetLowerNode(preExist->GetId() + 1);
-
-			}
-			else if (obj->GetUpperNode() == 0)//Second node on a route
-			{
-
-				obj->SetUpperNode(preExist->GetId() + 1);
-
-				RouteNodeObject* lower = routeNodes->GetValue(obj->GetLowerNode() - 1);
-				Route* route;
-
-				if (obj->GetRoute() != 0)
-				{
-
-					route = roads->GetValue(obj->GetRoute() - 1);
-					
-				}
-				else
-				{
-
-					Vector3 dir = lower->GetPosition() - preExist->GetPosition();
-					float dist = sqrt(VectorDot(dir));
-					route = new Route(dist, dir / dist);
-					obj->SetRoute(roads->Add(route) + 1);
-
-				}
-
-				preExist->AddRoute(route);
-				lower->AddRoute(route);
-
-			}
-			else if (preExist->GetId() + 1 != obj->GetLowerNode() &&
-				preExist->GetId() + 1 != obj->GetUpperNode())
-			{
-
-				RouteNodeObject* lower = routeNodes->GetValue(obj->GetLowerNode() - 1);
-				RouteNodeObject* upper = routeNodes->GetValue(obj->GetUpperNode() - 1);
-
-				handleSplit(preExist, lower, upper);
-
-				obj->SetMiddleNode(preExist->GetId() + 1);
-
-
-			}
-		}
-
+		handleObjectNode(preExist, objects, amounts);
 		return preExist->GetId()+1;
 
 	}
@@ -1235,7 +1300,44 @@ void RoutingManager::Spawn(GameTravelObject* object, unsigned int cell)
 	RouteNodeObject* node = routeNodes->GetValue(cell);
 	node->SetObjId(object->GetId());
 	object->UpdateMatrix();
+	object->SetStatus(TravelStatus_READY);
 
+}
+
+void RoutingManager::UpdateObject(GameTravelObject* obj, unsigned int time)
+{
+
+	RouteNodeObject* node = routeNodes->GetValue(obj->GetNode());
+
+	if (obj->GetStatus() == TravelStatus_READY)//The object is standing on a node
+	{
+
+		node->SetObjId(obj->GetId());
+
+	}
+	else
+	{
+
+		RouteNodeObject* goal = routeNodes->GetValue(obj->GetGoalNode());
+		float dist = getObjDistSqr(obj, node);
+
+		if (obj->GetStatus() == TravelStatus_TRAVELNEAR ||
+			dist < offsetDist*offsetDist)
+		{
+
+			node->SetObjId(obj->GetId());
+
+		}
+		
+		Route::Direction dir;
+		unsigned int localId = node->GetLocalId(goal->GetId());
+		Route* road = node->GetRoute(localId, dir);
+
+		road->Travel(obj->GetId(), dist, dir);
+		obj->Time(time);
+		travelObjects->PushElement(obj);
+
+	}
 }
 
 RoutingManager::~RoutingManager()

@@ -83,7 +83,7 @@ size button3Text 55.0 20.0
 pos button3Text 0.0 35.0
 snap button3Text 0 1
 set content button3Text 0.0 0.0 0.0
-set text button3Text 'Button3'
+set text button3Text 'Load'
 
 add ui toolbarLY button4
 pos button4 310.0 5.0
@@ -99,7 +99,7 @@ size button4Text 55.0 20.0
 pos button4Text 0.0 35.0
 snap button4Text 0 1
 set content button4Text 0.0 0.0 0.0
-set text button4Text 'Button4'
+set text button4Text 'Save'
 
 scope sve toolbarLY 0
 scope sve button1 0

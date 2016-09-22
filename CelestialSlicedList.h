@@ -34,6 +34,7 @@ namespace CrossHandlers
 			///<param val='element'>[in]The element to add</param>
 			///<returns>The global id of the added element</returns>
 			unsigned int Add(T element);
+			void AddAt(T element, unsigned int id);
 			///<summary>Adds an element to the list</summary>
 			///<param val='element'>[in]The element to add</param>
 			///<param val='element'>[in]The global id of the added element</param>
@@ -235,6 +236,17 @@ unsigned int CelestialSlicedList<T>::Add(T element)
 
 	Add(element, id);
 	return id;
+
+}
+
+template <class T>
+void CelestialSlicedList<T>::AddAt(T element, unsigned int id)
+{
+
+	unsigned int slice = id / maxSliceSize;
+
+	sliceSize[slice] = max((id + 1)% maxSliceSize, sliceSize[slice]);
+	Add(element, id);
 
 }
 

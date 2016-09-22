@@ -65,13 +65,10 @@ char* GameTravelObject::Serialize(unsigned int &size)
 	unsigned int goalSize = goalAmounts * sizeof(unsigned int);
 	char* goals = new char[goalSize];
 
-	for (unsigned int i = 0; i < goalSize; i+=4)
+	for (unsigned int i = 0; i < this->goalAmounts; i++)
 	{
 
-		goals[i] = goals[i] << 0;
-		goals[i+1] = goals[i] << 8;
-		goals[i+2] = goals[i] << 16;
-		goals[i+3] = goals[i] << 20;
+		memcpy(&goals[i*sizeof(unsigned int)], &this->goals[i], sizeof(unsigned int));
 
 	}
 

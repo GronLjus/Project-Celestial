@@ -16,12 +16,14 @@ namespace Entities
 		public:
 			RoutingManager();
 			void Init(CrossHandlers::CelestialSlicedList<Resources::BaseObject*>* gameObjects);
-			unsigned int AddNode(CelestialMath::Vector3 position, Resources::GameRouteObject* obj);
+			void AddNode(CelestialMath::Vector3 position, float width, unsigned int id);
 			unsigned int AddNode(CelestialMath::Vector3 position, unsigned int* objects, unsigned int amounts);
+			void HandleNode(unsigned int nodeId, unsigned int* objects, unsigned int amounts);
 			unsigned int* Update(unsigned int time, unsigned int &scripts);
 			RouteNodeObject* GetNode(unsigned int id) const;
 			void Travel(Resources::GameTravelObject* object, unsigned int goal, unsigned int time);
 			void Spawn(Resources::GameTravelObject* object, unsigned int cell);
+			void UpdateObject(Resources::GameTravelObject* obj, unsigned int time);
 			void ClearNodes();
 
 			//Serializable Interface
@@ -47,6 +49,11 @@ namespace Entities
 			void handlePrimedObject(Resources::GameTravelObject* obj);
 			void handleQueing(Resources::GameTravelObject* obj, unsigned int localId, Route* route, float distSqr, unsigned int time);
 			void handleTravel(Resources::GameTravelObject* obj, RouteNodeObject* currentNode, RouteNodeObject* goalNode, CelestialMath::Vector3 dir, float distSqr, unsigned int time);
+
+			void handleObjectNode(RouteNodeObject* preExist, unsigned int* objects, unsigned int amounts);
+
+			void checkObjPastNode(Resources::GameTravelObject* obj, RouteNodeObject* currentNode);
+			float getObjDistSqr(Resources::GameTravelObject* obj, RouteNodeObject* node);
 
 			void handleSplit(RouteNodeObject* intersect, RouteNodeObject* lower, RouteNodeObject* upper);
 			objNode shouldIntersect(RouteNodeObject* intersect, RouteNodeObject* from, RouteNodeObject* to, Resources::GameTravelObject* obj);

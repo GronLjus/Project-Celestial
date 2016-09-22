@@ -450,6 +450,7 @@
     <None Include="ErrorTest.celsrc" />
     <None Include="saves\save1.clsv" />
     <None Include="saves\save2.clsv" />
+    <None Include="saves\save3.clsv" />
     <None Include="Shaders_Registers.hlsli" />
     <None Include="Tennisboll.mtl">
       <FileType>Document</FileType>
