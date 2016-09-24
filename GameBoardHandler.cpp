@@ -12,9 +12,9 @@ GameBoardHandler::GameBoardHandler() : IHandleMessages(200, MessageSource_ENTITI
 	localGameBoard = nullptr;
 	trackedObject = nullptr;
 	filter = MessageType_ENTITIES;
-	dragScript = 0;
 	hookObject = false;
 	hookColl = new unsigned int[128];
+	mH = new MouseHandler();
 
 }
 
@@ -22,53 +22,11 @@ void GameBoardHandler::Init(CelestialSlicedList<BaseObject*>* gameObjects)
 {
 
 	this->gameObjects = gameObjects;
-
-}
-
-void GameBoardHandler::sendCommonScriptParams(unsigned int script, unsigned int objectId, unsigned int time, int mouseX, int mouseY)
-{
-	
-	unsigned char tempBuff[]{ script >> 0, script >> 8, script >> 16, script >> 24,
-		objectId >> 0, objectId >> 8, objectId >> 16, objectId >> 24 };
-
-	unsigned char tempBuff2[]{ script >> 0, script >> 8, script >> 16, script >> 24,
-		mouseX >> 0, mouseX >> 8, mouseX >> 16, mouseX >> 24
-	};
-	unsigned char tempBuff3[]{ script >> 0, script >> 8, script >> 16, script >> 24,
-		mouseY >> 0, mouseY >> 8, mouseY >> 16, mouseY >> 24
-	};
-
-	addScriptParamNum(script, objectId, time);
-	addScriptParamNum(script, mouseX, time);
-	addScriptParamNum(script, mouseY, time);
-
-	messageBuffer[this->currentMessage].timeSent = time;
-	messageBuffer[this->currentMessage].destination = MessageSource_CELSCRIPT;
-	messageBuffer[this->currentMessage].type = MessageType_SCRIPT;
-	messageBuffer[this->currentMessage].mess = ScriptMess_ADDPARFLOAT;
-	messageBuffer[this->currentMessage].read = false;
-	memcpy(&(tempBuff[4]), &(boardPos.x), 4);
-	messageBuffer[this->currentMessage].SetParams(tempBuff, 0, 8);
-	outQueue->PushMessage(&messageBuffer[this->currentMessage]);
-	this->currentMessage = (this->currentMessage + 1) % outMessages;
-	messageBuffer[this->currentMessage].timeSent = time;
-	messageBuffer[this->currentMessage].destination = MessageSource_CELSCRIPT;
-	messageBuffer[this->currentMessage].type = MessageType_SCRIPT;
-	messageBuffer[this->currentMessage].mess = ScriptMess_ADDPARFLOAT;
-	messageBuffer[this->currentMessage].read = false;
-	memcpy(&(tempBuff[4]), &(boardPos.y), 4);
-	messageBuffer[this->currentMessage].SetParams(tempBuff, 0, 8);
-	outQueue->PushMessage(&messageBuffer[this->currentMessage]);
-	this->currentMessage = (this->currentMessage + 1) % outMessages;
-	messageBuffer[this->currentMessage].timeSent = time;
-	messageBuffer[this->currentMessage].destination = MessageSource_CELSCRIPT;
-	messageBuffer[this->currentMessage].type = MessageType_SCRIPT;
-	messageBuffer[this->currentMessage].mess = ScriptMess_ADDPARFLOAT;
-	messageBuffer[this->currentMessage].read = false;
-	memcpy(&(tempBuff[4]), &(boardPos.z), 4);
-	messageBuffer[this->currentMessage].SetParams(tempBuff, 0, 8);
-	outQueue->PushMessage(&messageBuffer[this->currentMessage]);
-	this->currentMessage = (this->currentMessage + 1) % outMessages;
+	mH->Init(gameObjects,
+		messageBuffer,
+		currentMessage,
+		outQueue,
+		outMessages);
 
 }
 
@@ -91,8 +49,9 @@ void GameBoardHandler::addScriptParamNum(unsigned int script, unsigned int num, 
 {
 
 	unsigned char tempBuff[]{ script >> 0, script >> 8, script >> 16, script >> 24,
-		num >> 0, num >> 8, num >> 16, num >> 24
+		0.0f, 0.0f,0.0f,0.0f
 	};
+	memcpy(&(tempBuff[4]), &(num), 4);
 
 	messageBuffer[this->currentMessage].timeSent = time;
 	messageBuffer[this->currentMessage].destination = MessageSource_CELSCRIPT;
@@ -105,37 +64,6 @@ void GameBoardHandler::addScriptParamNum(unsigned int script, unsigned int num, 
 
 }
 
-void GameBoardHandler::triggerMouseScript(unsigned int script, unsigned int objectId, unsigned int time, int mouseX, int mouseY)
-{
-
-	sendCommonScriptParams(script, objectId, time, mouseX, mouseY);
-	runScript(script, time);
-
-}
-
-void GameBoardHandler::triggerMouseScript(unsigned int script, unsigned int objectId, unsigned int time, int mouseX, int mouseY, unsigned int dragStatus)
-{
-
-
-	sendCommonScriptParams(script, objectId, time, mouseX, mouseY);
-	addScriptParamNum(script, dragStatus, time);
-	unsigned char tempBuff[]{ script >> 0, script >> 8, script >> 16, script >> 24,
-		dragStatus >> 0, dragStatus >> 8, dragStatus >> 16, dragStatus >> 24
-	};
-
-	runScript(script, time);
-
-}
-
-void GameBoardHandler::triggerMouseScript(unsigned int script, unsigned int objectId, unsigned int time, int mouseX, int mouseY, short delta)
-{
-
-	sendCommonScriptParams(script, objectId, time, mouseX, mouseY);
-	addScriptParamNum(script, delta, time);
-	runScript(script, time);
-
-}
-
 void GameBoardHandler::triggerNodeScript(unsigned int script, unsigned int obj, unsigned int goalNode, unsigned int currentNode, unsigned int time)
 {
 
@@ -143,49 +71,6 @@ void GameBoardHandler::triggerNodeScript(unsigned int script, unsigned int obj, 
 	addScriptParamNum(script, currentNode, time);
 	addScriptParamNum(script, goalNode, time);
 	runScript(script, time);
-
-}
-
-Vector3 GameBoardHandler::getMouseWorldLine(unsigned int mouseX, unsigned int mouseY) const
-{
-
-	CameraObject* cam = localGameBoard->GetCam();
-	float screenX = ((float)mouseX) / (float)(cam->GetView()->GetPort().width);
-	float screenY = ((float)mouseY) / (float)(cam->GetView()->GetPort().height);
-	screenX = 2 * screenX - 1;
-	screenY = 2 * screenY - 1;
-	screenY = -screenY;
-	float screenZ = 0;// cam->GetView()->GetPort().minDepth;
-
-	Vector3 worldPoint = VectorTransform(Vector3(screenX, screenY, screenZ), cam->GetView()->GetInverseViewProjection(cam->GetFlip()));
-	Vector3 direction = worldPoint - cam->GetPosition();
-	direction /= sqrt(abs(VectorDot(direction, direction)));
-	return direction;
-
-}
-
-ScriptableObject* GameBoardHandler::getMouseObject(CelestialMath::Vector3 direction) const
-{
-
-	if (trackedObject != nullptr)
-	{
-
-		return trackedObject;
-
-	}
-
-	CameraObject* cam = localGameBoard->GetCam();
-	float minDist = 0;
-	unsigned int selectedObject = localGameBoard->GetClosestObject(cam->GetPosition(), direction, minDist);
-	ScriptableObject* obj = nullptr;
-
-	if (minDist != 0)
-	{
-
-		obj = (ScriptableObject*)gameObjects->GetValue(selectedObject);
-
-	}
-	return obj;
 
 }
 
@@ -223,155 +108,37 @@ void GameBoardHandler::UpdateMessages(unsigned int time)
 			localGameBoard != nullptr && localGameBoard->GetCam() != nullptr)
 		{
 
-			CameraObject* cam = localGameBoard->GetCam();
-			unsigned int mouseX = trackedObject != nullptr && hookObject ?
-				trackedMX :
-				currentMessage->params[0] | ((int)currentMessage->params[1] << 8) | ((int)currentMessage->params[2] << 16) | ((int)currentMessage->params[3] << 24);
-			unsigned int mouseY = trackedObject != nullptr && hookObject ?
-				trackedMY : 
-				currentMessage->params[4] | ((int)currentMessage->params[5] << 8) | ((int)currentMessage->params[6] << 16) | ((int)currentMessage->params[7] << 24);
-			
-			Vector3 direction = getMouseWorldLine(mouseX, mouseY);
-			ScriptableObject* obj = getMouseObject(direction);
-			unsigned int script = 0;
+			mH->Click(currentMessage->params[0], time, trackedObject);
 
-			if (obj == trackedObject && hookObject)
-			{
-
-				unsigned char tempBuff[]{ mouseX >> 0, mouseX >> 8, mouseY >> 0, mouseY >> 8 };
-				messageBuffer[this->currentMessage].timeSent = time;
-				messageBuffer[this->currentMessage].destination = MessageSource_SYSTEM;
-				messageBuffer[this->currentMessage].type = MessageType_SYSTEM;
-				messageBuffer[this->currentMessage].mess = SystemMess_MOVECURSOR;
-				messageBuffer[this->currentMessage].read = false;
-				messageBuffer[this->currentMessage].SetParams(tempBuff, 0, 4);
-				outQueue->PushMessage(&messageBuffer[this->currentMessage]);
-				this->currentMessage = (this->currentMessage + 1) % outMessages;
-
-			}
-
-			if (obj != nullptr)
-			{
-
-				script = currentMessage->params[8] == 0 ? obj->GetLeftClickScript() :
-					currentMessage->params[8] == 1 ? obj->GetMiddleClickScript() :
-					obj->GetRightClickScript();
-
-			}
-
-			if (obj == nullptr || script == 0)
-			{
-
-				obj = localGameBoard;
-				script = currentMessage->params[8] == 0 ? obj->GetLeftClickScript() :
-					currentMessage->params[8] == 1 ? obj->GetMiddleClickScript() :
-					obj->GetRightClickScript();
-
-			}
-
-			if (script != 0)
-			{
-
-				script--;
-				localGameBoard->GetBoardPosition(cam->GetPosition(), direction, boardPos);
-				triggerMouseScript(script, obj->GetId(), time, mouseX, mouseY);
-
-			}
 		}
 		else if (currentMessage->mess == GameBoardMess_WHEELOBJECT &&
 			localGameBoard != nullptr && localGameBoard->GetCam() != nullptr)
 		{
 
-			CameraObject* cam = localGameBoard->GetCam();
-			unsigned int mouseX = currentMessage->params[0] | ((int)currentMessage->params[1] << 8) | ((int)currentMessage->params[2] << 16) | ((int)currentMessage->params[3] << 24);
-			unsigned int mouseY = currentMessage->params[4] | ((int)currentMessage->params[5] << 8) | ((int)currentMessage->params[6] << 16) | ((int)currentMessage->params[7] << 24);
-			short wheelDelta = currentMessage->params[8] | ((int)currentMessage->params[9] << 8);
+			short wheelDelta = currentMessage->params[0] | ((int)currentMessage->params[1] << 8);
+			mH->Wheel(time, wheelDelta, trackedObject);
 
-			Vector3 direction = getMouseWorldLine(mouseX, mouseY);
-			ScriptableObject* obj = getMouseObject(direction);
-			unsigned int script = 0;
-
-			if (obj != nullptr)
-			{
-
-				script = obj->GetWheelScript();
-
-			}
-
-			if (obj == nullptr || script == 0)
-			{
-
-				obj = localGameBoard;
-				script = obj->GetWheelScript();
-
-			}
-
-			if (script != 0)
-			{
-
-				script--;
-				localGameBoard->GetBoardPosition(cam->GetPosition(), direction, boardPos);
-				triggerMouseScript(script, obj->GetId(), time, mouseX, mouseY, wheelDelta);
-
-			}
 		}
 		else if (currentMessage->mess == GameBoardMess_STARTDRAGGING &&
 			localGameBoard != nullptr && localGameBoard->GetCam() != nullptr)
 		{
 
-			unsigned int mouseX = currentMessage->params[0] | ((int)currentMessage->params[1] << 8) | ((int)currentMessage->params[2] << 16) | ((int)currentMessage->params[3] << 24);
-			unsigned int mouseY = currentMessage->params[4] | ((int)currentMessage->params[5] << 8) | ((int)currentMessage->params[6] << 16) | ((int)currentMessage->params[7] << 24);
-			
-			Vector3 direction = getMouseWorldLine(mouseX, mouseY);
-			ScriptableObject* obj = getMouseObject(direction);
-			unsigned int script = 0;
+			mH->StartDrag(currentMessage->params[0], time, trackedObject);
 
-			if (obj != nullptr)
-			{
-
-				script = currentMessage->params[8] == 0 ? obj->GetLeftDragScript() :
-					currentMessage->params[8] == 1 ? obj->GetMiddleDragScript() :
-					obj->GetRightDragScript();
-
-			}
-
-			if (obj == nullptr || script == 0)
-			{
-
-				obj = localGameBoard;
-				script = currentMessage->params[8] == 0 ? obj->GetLeftDragScript() :
-					currentMessage->params[8] == 1 ? obj->GetMiddleDragScript() :
-					obj->GetRightDragScript();
-
-			}
-
-			if (script != 0)
-			{
-
-				dragScript = script;
-				dragId = obj->GetId();
-				script--;
-				localGameBoard->GetBoardPosition(localGameBoard->GetCam()->GetPosition(), direction, boardPos);
-				triggerMouseScript(script, dragId, time, mouseX, mouseY, (unsigned int)0);
-
-			}
 		}
 		else if (currentMessage->mess == GameBoardMess_DRAGOBJECT &&
 			localGameBoard != nullptr && localGameBoard->GetCam() != nullptr)
 		{
 
-			unsigned int mouseX = currentMessage->params[0] | ((int)currentMessage->params[1] << 8) | ((int)currentMessage->params[2] << 16) | ((int)currentMessage->params[3] << 24);
-			unsigned int mouseY = currentMessage->params[4] | ((int)currentMessage->params[5] << 8) | ((int)currentMessage->params[6] << 16) | ((int)currentMessage->params[7] << 24);
+			mH->Drag(time);
 
-			Vector3 direction = getMouseWorldLine(mouseX, mouseY);
+		}
+		else if (currentMessage->mess == GameBoardMess_STOPDRAGGING &&
+			localGameBoard != nullptr && localGameBoard->GetCam() != nullptr)
+		{
+			
+			mH->StopDrag(time);
 
-			if (dragScript != 0)
-			{
-
-				localGameBoard->GetBoardPosition(localGameBoard->GetCam()->GetPosition(), direction, boardPos);
-				triggerMouseScript(dragScript-1, dragId, time, mouseX, mouseY, (unsigned int)1);
-
-			}
 		}
 		else if (currentMessage->mess == GameBoardMess_ORBITOBJECT &&
 			localGameBoard != nullptr && localGameBoard->GetCam() != nullptr)
@@ -399,24 +166,6 @@ void GameBoardHandler::UpdateMessages(unsigned int time)
 			messageBuffer[this->currentMessage].SetParams(tempBuff, 0, 16);
 			object->Update(&messageBuffer[this->currentMessage]);
 
-		}
-		else if (currentMessage->mess == GameBoardMess_STOPDRAGGING &&
-			localGameBoard != nullptr && localGameBoard->GetCam() != nullptr)
-		{
-
-			unsigned int mouseX = currentMessage->params[1] | ((int)currentMessage->params[2] << 8) | ((int)currentMessage->params[3] << 16) | ((int)currentMessage->params[4] << 24);
-			unsigned int mouseY = currentMessage->params[5] | ((int)currentMessage->params[6] << 8) | ((int)currentMessage->params[7] << 16) | ((int)currentMessage->params[8] << 24);
-
-			Vector3 direction = getMouseWorldLine(mouseX, mouseY);
-
-			if (dragScript != 0)
-			{
-
-				localGameBoard->GetBoardPosition(localGameBoard->GetCam()->GetPosition(), direction, boardPos);
-				triggerMouseScript(dragScript - 1, dragId, time, mouseX, mouseY, (unsigned int)2);
-				dragScript = 0;
-
-			}
 		}
 		else if (currentMessage->mess == GameBoardMess_SETTRACKING)
 		{
@@ -458,14 +207,21 @@ void GameBoardHandler::UpdateMessages(unsigned int time)
 
 			}
 		}
-		else if (currentMessage->mess == GameBoardMess_MOUSEMOVE && trackedObject != nullptr &&
+		else if (currentMessage->mess == GameBoardMess_MOUSEMOVE &&
 			localGameBoard != nullptr && localGameBoard->GetCam() != nullptr)
 		{
 
 			unsigned int mouseX = currentMessage->params[0] | ((int)currentMessage->params[1] << 8) | ((int)currentMessage->params[2] << 16) | ((int)currentMessage->params[3] << 24);
 			unsigned int mouseY = currentMessage->params[4] | ((int)currentMessage->params[5] << 8) | ((int)currentMessage->params[6] << 16) | ((int)currentMessage->params[7] << 24);
-			handleMouseMovement(mouseX, mouseY,time);
 
+			mH->MoveMouse(vectorUI2(mouseX, mouseY));
+
+			if (trackedObject != nullptr)
+			{
+
+				mH->SetWorldMouse(handleTracked(time));
+
+			}
 		}
 		else if (currentMessage->mess == GameBoardMess_SETCAM && localGameBoard != nullptr)
 		{
@@ -486,6 +242,7 @@ void GameBoardHandler::UpdateMessages(unsigned int time)
 		{
 
 			GameBoard* gB = (GameBoard*)(gameObjects->GetValue(param1));
+			mH->SetBoard(gB);
 			routing = gB->GetRoutingManager();
 			routing->Init(gameObjects);
 
@@ -524,9 +281,6 @@ void GameBoardHandler::UpdateMessages(unsigned int time)
 			memcpy(&(pos.z), &(currentMessage->params[8]), 4);
 
 			float width = 0.98f;
-
-			pos.x = floor(pos.x) + 0.5f;
-			pos.z = floor(pos.z) + 0.5f;
 
 			BoundingSphere sphere = BoundingSphere(pos.x, pos.y, pos.z, width / 2.0f);
 			unsigned int amount = 0;
@@ -709,69 +463,89 @@ void GameBoardHandler::transformHookedObject(Vector3 mousePos)
 
 }
 
-void GameBoardHandler::handleMouseMovement(unsigned int mouseX, unsigned int mouseY, unsigned int time)
+PositionableObject* GameBoardHandler::snapMouse(unsigned int amounts, unsigned int* collidedObjects, PositionableObject* lastObj, Vector3 &worldMouse)
 {
 
-	Vector3 direction = getMouseWorldLine(mouseX, mouseY);
-	float halfHeight = trackedObject->GetScale().y / 2;
-	localGameBoard->GetBoardPosition(localGameBoard->GetCam()->GetPosition(), direction, boardPos, halfHeight);
-	Vector3 scale = trackedObject->GetScale();
-	unsigned char tempBuff[12];
-	Vector3 mouse = boardPos;
+	for (unsigned int i = 0; i < amounts; i++)
+	{
+
+		PositionableObject* obj = (PositionableObject*)gameObjects->GetValue(collidedObjects[i]);
+		Vector3 newPos = lastObj == nullptr ?
+			obj->GetObjectCenterLine(worldMouse) :
+			obj->GetObjectCenterLine(worldMouse, lastObj->GetDirection());
+
+		worldMouse.x = newPos.x;
+		worldMouse.y = newPos.y;
+		worldMouse.z = newPos.z;
+		lastObj = obj;
+
+	}
+
+	return lastObj;
+
+}
+
+Vector3 GameBoardHandler::handleTracked(unsigned int time)
+{
+
+
+	Vector3 worldMouse = mH->GetWorldMouse();
+	worldMouse.y += trackedObject->GetScale().y / 2;
 	Message mess;
 
-	if (abs(floor(boardPos.x) - mouseCell.x) > CELESTIAL_EPSILON ||
-		abs(floor(boardPos.z) - mouseCell.y) > CELESTIAL_EPSILON ||
+	if (abs(floor(worldMouse.x) - mouseCell.x) > CELESTIAL_EPSILON ||
+		abs(floor(worldMouse.z) - mouseCell.y) > CELESTIAL_EPSILON ||
 		resetMouse)
 	{
 
 		resetMouse = false;
-		mouseCell.x = floor(boardPos.x);
-		mouseCell.y = floor(boardPos.z);
+		mouseCell.x = floor(worldMouse.x);
+		mouseCell.y = floor(worldMouse.z);
+		worldMouse.x = floor(worldMouse.x) + 0.5f;
+		worldMouse.z = floor(worldMouse.z) + 0.5f;
+		BoundingSphere cursor = BoundingSphere(worldMouse.x,
+			trackedObject->GetScale().y / 2,
+			worldMouse.z, 
+			0.5f);
 
 		if (!hookObject)
 		{
 
-			boardPos.x = floor(boardPos.x) + 0.5f;
-			boardPos.z = floor(boardPos.z) + 0.5f;
-			trackedObject->SetPosition(boardPos);
-			trackedObject->UpdateMatrix();
-
+			Vector3 midPos = worldMouse;
+			unsigned int amounts = 0;
+			unsigned int* collidedObjects = localGameBoard->GetCollidedObject(&cursor, GameObjectType_ROUTE, amounts);
+			PositionableObject* lastObject = nullptr;
 			hookTargets = 0;
-			unsigned int* collidedObjects = localGameBoard->GetCollidedObject(trackedObject, hookTargets);
 
-			if (hookTargets > 0)
+			if (amounts > 0)
 			{
 
-				memcpy(hookColl, collidedObjects, min(hookTargets, 128) * sizeof(unsigned int));
-				PositionableObject* lastObj = nullptr;
+				lastObject = snapMouse(amounts, collidedObjects, lastObject, worldMouse);
+				memcpy(hookColl, collidedObjects, min(amounts, 128) * sizeof(unsigned int));
+				hookTargets += amounts;
 
-				for (unsigned int i = 0; i < hookTargets; i++)
-				{
-				
-					PositionableObject* obj = (PositionableObject*)gameObjects->GetValue(collidedObjects[i]);
-					Vector3 newPos = lastObj == nullptr ?
-						obj->GetObjectCenterLine(boardPos) :
-						obj->GetObjectCenterLine(boardPos, lastObj->GetDirection());
-
-					boardPos.x = newPos.x;
-					boardPos.y = newPos.y;
-					boardPos.z = newPos.z;
-					lastObj = obj;
-
-				}
 			}
 
-			trackedObject->SetPosition(boardPos);
+			amounts = 0;
+			collidedObjects = localGameBoard->GetCollidedObject(&cursor, GameObjectType_SCENERY, amounts);
+
+			if (amounts > 0)
+			{
+
+				snapMouse(amounts, collidedObjects, lastObject, worldMouse);
+				memcpy(&hookColl[hookTargets], collidedObjects, min(amounts, 128 - hookTargets) * sizeof(unsigned int));
+				hookTargets += amounts;
+
+			}
+
+			trackedObject->SetPosition(worldMouse);
 			trackedObject->UpdateMatrix();
 
 		}
 		else
 		{
 
-			boardPos.x = floor(boardPos.x) + 0.5f;
-			boardPos.z = floor(boardPos.z) + 0.5f;
-			transformHookedObject(boardPos);
+			transformHookedObject(worldMouse);
 
 			unsigned int amountOfCollidedObjects = 0;
 			unsigned int* collidedObjects = localGameBoard->GetCollidedObject(trackedObject, amountOfCollidedObjects);
@@ -779,11 +553,11 @@ void GameBoardHandler::handleMouseMovement(unsigned int mouseX, unsigned int mou
 			if (amountOfCollidedObjects > hookTargets)
 			{
 
-				Vector3 distVect1 = boardPos - hookPos;
+				Vector3 distVect1 = worldMouse - hookPos;
 				float currentDist = VectorDot(distVect1, distVect1);
 
 				float smallest = -1.0f;
-				Vector3 smallestVect = boardPos;
+				Vector3 smallestVect = worldMouse;
 				float cellToMouse = 0.0f;
 
 				for (unsigned int i = 0; i < amountOfCollidedObjects; i++)
@@ -803,7 +577,7 @@ void GameBoardHandler::handleMouseMovement(unsigned int mouseX, unsigned int mou
 					
 						PositionableObject* obj = (PositionableObject*)gameObjects->GetValue(collidedObjects[i]);
 
-						Vector3 newPos = obj->GetObjectCenterLine(boardPos, distVect1);
+						Vector3 newPos = obj->GetObjectCenterLine(worldMouse, distVect1);
 						Vector3 distVect = newPos - hookPos;
 						float dist = VectorDot(distVect, distVect);
 
@@ -819,18 +593,18 @@ void GameBoardHandler::handleMouseMovement(unsigned int mouseX, unsigned int mou
 
 							smallest = dist;
 							smallestVect = newPos;
-							Vector3 mToC = mouse - newPos;
+							Vector3 mToC = worldMouse - newPos;
 							cellToMouse = VectorDot(mToC);
 
 						}
 					}
 				}
 
-				boardPos = smallestVect;
-				transformHookedObject(boardPos);
+				worldMouse = smallestVect;
+				transformHookedObject(worldMouse);
 
 				CameraObject* cam = localGameBoard->GetCam();
-				Vector3 onScreen = VectorTransform(boardPos,
+				Vector3 onScreen = VectorTransform(worldMouse,
 					cam->GetView()->GetViewProjection(cam->GetFlip()));
 				trackedMX = ((onScreen.x + 1) / 2) * cam->GetView()->GetPort().width;
 				trackedMY = ((-onScreen.y + 1) / 2) * cam->GetView()->GetPort().height;
@@ -849,8 +623,8 @@ void GameBoardHandler::handleMouseMovement(unsigned int mouseX, unsigned int mou
 					outQueue->PushMessage(&messageBuffer[this->currentMessage]);
 					this->currentMessage = (this->currentMessage + 1) % outMessages;
 
-					mouseCell.x = floor(boardPos.x);
-					mouseCell.y = floor(boardPos.z);
+					mouseCell.x = floor(worldMouse.x);
+					mouseCell.y = floor(worldMouse.z);
 
 				}
 			}
@@ -858,14 +632,26 @@ void GameBoardHandler::handleMouseMovement(unsigned int mouseX, unsigned int mou
 			{
 
 				CameraObject* cam = localGameBoard->GetCam();
-				Vector3 onScreen = VectorTransform(boardPos,
+				Vector3 onScreen = VectorTransform(worldMouse,
 					cam->GetView()->GetViewProjection(cam->GetFlip()));
 				trackedMX = ((onScreen.x + 1) / 2) * cam->GetView()->GetPort().width;
 				trackedMY = ((-onScreen.y + 1) / 2) * cam->GetView()->GetPort().height;
 
 			}
 		}
+
+		mouseCache = worldMouse;
+
 	}
+	else
+	{
+
+		worldMouse = mouseCache;
+
+	}
+
+	return worldMouse;
+
 }
 
 void GameBoardHandler::Update(unsigned int time)
@@ -875,6 +661,7 @@ void GameBoardHandler::Update(unsigned int time)
 
 	if (localGameBoard != nullptr)
 	{
+
 
 		localGameBoard->FillInstanceBuffer(trackedObject);
 
@@ -899,6 +686,7 @@ void GameBoardHandler::Update(unsigned int time)
 GameBoardHandler::~GameBoardHandler()
 {
 
+	delete mH;
 	delete[] hookColl;
 
 }

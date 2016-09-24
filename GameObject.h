@@ -6,7 +6,8 @@
 
 namespace Resources
 {
-	enum GameObjectType{ GameObjectType_ROUTE, GameObjectType_SCENERY, GameObjectType_TRAVELING};
+	enum GameObjectType{ GameObjectType_ROUTE, GameObjectType_SCENERY, GameObjectType_TRAVELING, GameObjectType_NA
+	};
 
 	class GameObject : public PositionableObject, public SaveObject
 	{

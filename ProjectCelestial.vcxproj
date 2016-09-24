@@ -261,6 +261,7 @@
     <ClInclude Include="CelestialMathHeader.h" />
     <ClInclude Include="MemoryPool.h" />
     <ClInclude Include="MessageQueue.h" />
+    <ClInclude Include="MouseHandler.h" />
     <ClInclude Include="ObjectTree.h" />
     <ClInclude Include="PositionableObject.h" />
     <ClInclude Include="ResourceDictionary.h" />
@@ -371,6 +372,7 @@
     <ClCompile Include="InputHandler.cpp" />
     <ClCompile Include="MemoryPool.cpp" />
     <ClCompile Include="MessageQueue.cpp" />
+    <ClCompile Include="MouseHandler.cpp" />
     <ClCompile Include="ObjectTree.cpp" />
     <ClCompile Include="PositionableObject.cpp" />
     <ClCompile Include="ResourceDictionary.cpp" />

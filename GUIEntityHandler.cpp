@@ -455,6 +455,13 @@ void GUIEntityHandler::handleMouseAction(Message* currentMessage, unsigned int t
 			currentMessage->mess == GUIMess_WHEELOBJECT ? GameBoardMess_WHEELOBJECT :
 			GameBoardMess_MOUSEMOVE;
 
+		if (currentMessage->mess != GameBoardMess_MOUSEMOVE)
+		{
+
+			currentMessage->SetParams(&currentMessage->params[8], 0, 4);
+
+		}
+
 		outQueue->PushMessage(currentMessage);
 
 	}

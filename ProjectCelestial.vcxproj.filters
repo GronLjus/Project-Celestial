@@ -756,6 +756,9 @@
     <ClInclude Include="Route.h">
       <Filter>Header Files\Entities\Routing</Filter>
     </ClInclude>
+    <ClInclude Include="MouseHandler.h">
+      <Filter>Header Files\Entities\Handlers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Camera.cpp">
@@ -1045,6 +1048,9 @@
     </ClCompile>
     <ClCompile Include="Route.cpp">
       <Filter>Source Files\Entities\Routing</Filter>
+    </ClCompile>
+    <ClCompile Include="MouseHandler.cpp">
+      <Filter>Source Files\Entities\Handlers</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
