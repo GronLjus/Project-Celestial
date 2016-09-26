@@ -1744,6 +1744,70 @@ CelScriptCompiler::CelScriptCompiler()
 		new bool[operators[OperatorTypes_SAVE].params[0]]{ false, false }
 	};
 
+	operators[OperatorTypes_PAUSE].keyword = "pause";
+	operators[OperatorTypes_PAUSE].enumAmount = 1;
+	operators[OperatorTypes_PAUSE].enums = new std::string[operators[OperatorTypes_PAUSE].enumAmount]; operators[OperatorTypes_PAUSE].enums[0] = "game";
+	operators[OperatorTypes_PAUSE].byteCodes = new unsigned char[operators[OperatorTypes_PAUSE].enumAmount]{ opcode_PSEGME };
+	operators[OperatorTypes_PAUSE].params = new unsigned char[operators[OperatorTypes_PAUSE].enumAmount]{ 0 };
+	operators[OperatorTypes_PAUSE].minParams = new unsigned char[operators[OperatorTypes_PAUSE].enumAmount]{ 0 };
+	operators[OperatorTypes_PAUSE].paramsyntax = new VarType*[operators[OperatorTypes_PAUSE].enumAmount]{
+		nullptr
+	};
+	operators[OperatorTypes_PAUSE].paramTypes = new ParamType*[operators[OperatorTypes_PAUSE].enumAmount]{
+		nullptr
+	};
+	operators[OperatorTypes_PAUSE].optionalPar = new bool*[operators[OperatorTypes_PAUSE].enumAmount]{
+		nullptr
+	};
+	operators[OperatorTypes_PAUSE].readParam = new unsigned char[operators[OperatorTypes_PAUSE].enumAmount]{ 0 };
+	operators[OperatorTypes_PAUSE].returns = new VarType[operators[OperatorTypes_PAUSE].enumAmount]{ VarType_NA };
+	operators[OperatorTypes_PAUSE].returnType = new ParamType[operators[OperatorTypes_PAUSE].enumAmount]{ ParamType_NA };
+	operators[OperatorTypes_PAUSE].writeParam = new unsigned char[operators[OperatorTypes_PAUSE].enumAmount]{ 0 };
+	operators[OperatorTypes_PAUSE].priority = 0;
+	operators[OperatorTypes_PAUSE].shortHandsAmounts = 0;
+	operators[OperatorTypes_PAUSE].amountParOperators = new unsigned char[operators[OperatorTypes_PAUSE].enumAmount]{ 0 };
+	operators[OperatorTypes_PAUSE].parRepeatsMin = new unsigned char*[operators[OperatorTypes_PAUSE].enumAmount]{
+		nullptr
+	};
+	operators[OperatorTypes_PAUSE].parRepeatsMax = new unsigned char*[operators[OperatorTypes_PAUSE].enumAmount]{
+		nullptr
+	};
+	operators[OperatorTypes_PAUSE].parOperatorAppend = new bool*[operators[OperatorTypes_PAUSE].enumAmount]{
+		nullptr
+	};
+
+	operators[OperatorTypes_RESUME].keyword = "resume";
+	operators[OperatorTypes_RESUME].enumAmount = 1;
+	operators[OperatorTypes_RESUME].enums = new std::string[operators[OperatorTypes_RESUME].enumAmount]; operators[OperatorTypes_RESUME].enums[0] = "game";
+	operators[OperatorTypes_RESUME].byteCodes = new unsigned char[operators[OperatorTypes_RESUME].enumAmount]{ opcode_RSMGME };
+	operators[OperatorTypes_RESUME].params = new unsigned char[operators[OperatorTypes_RESUME].enumAmount]{ 0 };
+	operators[OperatorTypes_RESUME].minParams = new unsigned char[operators[OperatorTypes_RESUME].enumAmount]{ 0 };
+	operators[OperatorTypes_RESUME].paramsyntax = new VarType*[operators[OperatorTypes_RESUME].enumAmount]{
+		nullptr
+	};
+	operators[OperatorTypes_RESUME].paramTypes = new ParamType*[operators[OperatorTypes_RESUME].enumAmount]{
+		nullptr
+	};
+	operators[OperatorTypes_RESUME].optionalPar = new bool*[operators[OperatorTypes_RESUME].enumAmount]{
+		nullptr
+	};
+	operators[OperatorTypes_RESUME].readParam = new unsigned char[operators[OperatorTypes_RESUME].enumAmount]{ 0 };
+	operators[OperatorTypes_RESUME].returns = new VarType[operators[OperatorTypes_RESUME].enumAmount]{ VarType_NA };
+	operators[OperatorTypes_RESUME].returnType = new ParamType[operators[OperatorTypes_RESUME].enumAmount]{ ParamType_NA };
+	operators[OperatorTypes_RESUME].writeParam = new unsigned char[operators[OperatorTypes_RESUME].enumAmount]{ 0 };
+	operators[OperatorTypes_RESUME].priority = 0;
+	operators[OperatorTypes_RESUME].shortHandsAmounts = 0;
+	operators[OperatorTypes_RESUME].amountParOperators = new unsigned char[operators[OperatorTypes_RESUME].enumAmount]{ 0 };
+	operators[OperatorTypes_RESUME].parRepeatsMin = new unsigned char*[operators[OperatorTypes_RESUME].enumAmount]{
+		nullptr
+	};
+	operators[OperatorTypes_RESUME].parRepeatsMax = new unsigned char*[operators[OperatorTypes_RESUME].enumAmount]{
+		nullptr
+	};
+	operators[OperatorTypes_RESUME].parOperatorAppend = new bool*[operators[OperatorTypes_RESUME].enumAmount]{
+		nullptr
+	};
+
 	flowOps = new FlowController[FlowOperator_NA];
 
 	flowOps[FlowOperator_IF].keyword = "if";

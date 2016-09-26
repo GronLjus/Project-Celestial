@@ -15,6 +15,7 @@ GameBoardHandler::GameBoardHandler() : IHandleMessages(200, MessageSource_ENTITI
 	hookObject = false;
 	hookColl = new unsigned int[128];
 	mH = new MouseHandler();
+	lastTime = 0;
 
 }
 
@@ -665,6 +666,14 @@ void GameBoardHandler::Update(unsigned int time)
 
 		localGameBoard->FillInstanceBuffer(trackedObject);
 
+		if (lastTime == time)
+		{
+
+			return;
+
+		}
+
+		lastTime = time;
 		unsigned int scripts = 0;
 		unsigned int* scriptsToRun = routing->Update(time, scripts);
 

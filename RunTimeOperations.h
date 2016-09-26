@@ -72,6 +72,7 @@ namespace Logic
 		opcode_SVESCPE,
 		opcode_SVESTT, opcode_LDSTT,
 		opcode_CLRBRD,
+		opcode_PSEGME, opcode_RSMGME,
 
 		opcode_JMPINVVAR,opcode_JMPNOW,opCode_WTFRVR,
 

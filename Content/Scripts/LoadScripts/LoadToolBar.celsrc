@@ -11,7 +11,9 @@ button1 = load panel
 button2 = load panel
 button3 = load panel
 button4 = load panel
+button5 = load panel
 
+button5Text = load textbox
 button4Text = load textbox
 button3Text = load textbox
 button2Text = load textbox
@@ -21,6 +23,7 @@ button1Click = load script 'Content\Scripts\ToolBarScripts\Button1Click.celsrc'
 button2Click = load script 'Content\Scripts\ToolBarScripts\Button2Click.celsrc'
 button3Click = load script 'Content\Scripts\ToolBarScripts\Button3Click.celsrc'
 button4Click = load script 'Content\Scripts\ToolBarScripts\Button4Click.celsrc'
+button5Click = load script 'Content\Scripts\ToolBarScripts\PauseButtonClick.celsrc'
 
 button1UD = load script 'Content\Scripts\ToolBarScripts\Button1UpDown.celsrc'
 
@@ -52,6 +55,7 @@ link target button1 button1Text
 link target button2 button2Text
 link target button3 button3Text
 link target button4 button4Text
+link target button5 button5Text
 
 add ui toolbarLY button2
 pos button2 110.0 5.0
@@ -101,16 +105,34 @@ snap button4Text 0 1
 set content button4Text 0.0 0.0 0.0
 set text button4Text 'Save'
 
+add ui toolbarLY button5
+pos button5 410.0 5.0
+size button5 90.0 90.0
+set border button5 0.0 0.0 1.0
+accept mouse button5
+
+set leftclick button5 button5Click
+set mouseupdown button5 button1UD
+
+add ui button5 button5Text
+size button5Text 55.0 20.0
+pos button5Text 0.0 35.0
+snap button5Text 0 1
+set content button5Text 0.0 0.0 0.0
+set text button5Text 'Pause'
+
 scope sve toolbarLY 0
 scope sve button1 0
 scope sve button2 0
 scope sve button3 0
 scope sve button4 0
+scope sve button5 0
 
 scope sve button1Text 0
 scope sve button2Text 0
 scope sve button3Text 0
 scope sve button4Text 0
+scope sve button5Text 0
 
 scope sve button1UD 0
 

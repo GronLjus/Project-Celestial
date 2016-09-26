@@ -1202,6 +1202,9 @@
       <Filter>Resource Files\Content\Scripts\ToolBarScripts</Filter>
     </None>
     <None Include="saves\save3.clsv" />
+    <None Include="Content\Scripts\ToolBarScripts\PauseButtonClick.celsrc">
+      <Filter>Resource Files\Content\Scripts\ToolBarScripts</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Project Celestial.rc">

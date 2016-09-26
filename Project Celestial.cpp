@@ -37,8 +37,14 @@ std::thread lThread;
 
 unsigned int lFrameRate = 0;
 unsigned int lLastTime = 0;
+
+unsigned int currentTime = 0;
+unsigned int skipTime = 0;
+unsigned int pauseTime = 0;
+unsigned int stoppedTime = 0;
 bool showCursor = true;
 bool currentCursShow = true;
+bool paused = false;
 
 bool ignoreMouse = false;
 short iMouseX;
@@ -111,6 +117,21 @@ void dealWithCEMessages()
 			SetCursorPos(pt.x, pt.y);
 
 		}
+		else if (mess->mess == SystemMess_PAUSE)
+		{
+
+			stoppedTime = max(currentTime, lLastTime- pauseTime);
+			paused = mess->params[0] != 0;
+
+		}
+		else if (mess->mess == SystemMess_SKIP)
+		{
+
+			unsigned int skipTime;
+			memcpy(&skipTime, mess->params, sizeof(unsigned int));
+			pauseTime += skipTime;
+
+		}
 
 		mess = overlord->GetNextSystemMessage();
 
@@ -134,12 +155,21 @@ int runLogic(Overlord* lordie)
 	{
 
 		unsigned int time = clock();
+		currentTime = time - pauseTime;
 
 		if (time - lLastTime >= lFrameRate)
 		{
 
+			lordie->Update(paused ? stoppedTime : currentTime);
+
+			if (paused)
+			{
+
+				pauseTime += time - lLastTime;
+
+			}
+
 			lLastTime = time;
-			lordie->Update(time);
 
 		}
 		else

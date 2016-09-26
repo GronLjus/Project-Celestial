@@ -448,6 +448,7 @@
     <None Include="Content\Scripts\ToolBarScripts\Button2Click.celsrc" />
     <None Include="Content\Scripts\ToolBarScripts\Button3Click.celsrc" />
     <None Include="Content\Scripts\ToolBarScripts\Button4Click.celsrc" />
+    <None Include="Content\Scripts\ToolBarScripts\PauseButtonClick.celsrc" />
     <None Include="Content\Tile.clmsh" />
     <None Include="ErrorTest.celsrc" />
     <None Include="saves\save1.clsv" />

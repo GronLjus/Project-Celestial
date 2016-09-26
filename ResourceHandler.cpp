@@ -526,6 +526,15 @@ void ResourceHandler::Update(unsigned int time)
 void ResourceHandler::saveGameBoard(std::string path, unsigned int gameBoard)
 {
 
+	unsigned int startTime = clock();
+	messageBuffer[this->currentMessage].timeSent = clock();
+	messageBuffer[this->currentMessage].destination = MessageSource_SYSTEM;
+	messageBuffer[this->currentMessage].type = MessageType_SYSTEM;
+	messageBuffer[this->currentMessage].mess = SystemMess_SKIP;
+	messageBuffer[this->currentMessage].read = false;
+	outQueue->PushMessage(&messageBuffer[this->currentMessage]);
+	this->currentMessage = (this->currentMessage + 1) % outMessages;
+
 	GameBoard* board = (GameBoard*)gameObjects->GetValue(gameBoard);
 
 	unsigned int dicSize;
@@ -554,11 +563,22 @@ void ResourceHandler::saveGameBoard(std::string path, unsigned int gameBoard)
 	
 	delete[] data;
 
+	unsigned int passedTime = clock() - startTime;
+
+	memcpy(messageBuffer[this->currentMessage].params, &passedTime, sizeof(passedTime));
+	messageBuffer[this->currentMessage].timeSent = clock();
+	messageBuffer[this->currentMessage].destination = MessageSource_SYSTEM;
+	messageBuffer[this->currentMessage].type = MessageType_SYSTEM;
+	messageBuffer[this->currentMessage].mess = SystemMess_SKIP;
+	messageBuffer[this->currentMessage].read = false;
+	outQueue->PushMessage(&messageBuffer[this->currentMessage]);
+	this->currentMessage = (this->currentMessage + 1) % outMessages;
 }
 
 unsigned int ResourceHandler::loadGameBoard(std::string path, unsigned int gameBoard, unsigned int time)
 {
 
+	unsigned int startTime = clock();
 	unsigned int byteSize;
 	char* data = loader->LoadSaveFile(path, byteSize);
 
@@ -628,8 +648,18 @@ unsigned int ResourceHandler::loadGameBoard(std::string path, unsigned int gameB
 	delete saveDic;
 
 	delete[] data;
-	return localBoard->GetId();
+	unsigned int passedTime = clock() - startTime;
 
+	memcpy(messageBuffer[this->currentMessage].params, &passedTime, sizeof(passedTime));
+	messageBuffer[this->currentMessage].timeSent = clock();
+	messageBuffer[this->currentMessage].destination = MessageSource_SYSTEM;
+	messageBuffer[this->currentMessage].type = MessageType_SYSTEM;
+	messageBuffer[this->currentMessage].mess = SystemMess_SKIP;
+	messageBuffer[this->currentMessage].read = false;
+	outQueue->PushMessage(&messageBuffer[this->currentMessage]);
+	this->currentMessage = (this->currentMessage + 1) % outMessages;
+
+	return localBoard->GetId();
 }
 
 GameObject* ResourceHandler::loadGameObject(char* data, unsigned int &readBytes, Dictionary* translatedDictionary, GameBoard* board, unsigned int time)

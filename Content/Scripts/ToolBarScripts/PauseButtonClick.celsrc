@@ -1,0 +1,21 @@
+$
+{
+
+	psed = 0
+
+}
+
+if psed : 0
+{
+
+	pause game
+	psed = 1
+
+}
+else
+{
+
+	resume game
+	psed = 0
+
+}

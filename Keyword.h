@@ -61,6 +61,7 @@ namespace Logic
 		OperatorTypes_LINK,
 		OperatorTypes_SPAWN, OperatorTypes_TRAVEL,
 		OperatorTypes_SPLIT,
+		OperatorTypes_PAUSE, OperatorTypes_RESUME,
 		OperatorTypes_NA
 	};
 

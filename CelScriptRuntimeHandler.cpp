@@ -2849,6 +2849,32 @@ RunTimeError ImportOperator(unsigned int returnVar, unsigned char* params, unsig
 
 }
 
+RunTimeError PauseGameOperator(unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int mId, RunTimeCommons* rtc)
+{
+
+	Message mess;
+	mess.destination = MessageSource_SYSTEM;
+	mess.type = MessageType_SYSTEM;
+	mess.mess = SystemMess_PAUSE;
+	mess.params[0] = 1;
+
+	return sendMessageOut(mess, rtc);
+
+}
+
+RunTimeError ResumeGameOperator(unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int mId, RunTimeCommons* rtc)
+{
+
+	Message mess;
+	mess.destination = MessageSource_SYSTEM;
+	mess.type = MessageType_SYSTEM;
+	mess.mess = SystemMess_PAUSE;
+	mess.params[0] = 0;
+
+	return sendMessageOut(mess, rtc);
+
+}
+
 RunTimeError JumpInv(unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int mId, RunTimeCommons* rtc)
 {
 
@@ -3055,6 +3081,9 @@ CelScriptRuntimeHandler::CelScriptRuntimeHandler(MessageQueue* mQueue, Celestial
 	operators[opcode_SVESTT] = SaveStateOperator;
 	operators[opcode_LDSTT] = LoadStateOperator;
 	operators[opcode_CLRBRD] = ClearBoardOperator;
+
+	operators[opcode_PSEGME] = PauseGameOperator;
+	operators[opcode_RSMGME] = ResumeGameOperator;
 
 	operators[opcode_JMPINVVAR] = JumpInv;
 	operators[opcode_JMPNOW] = JumpNow;

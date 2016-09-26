@@ -45,7 +45,10 @@ namespace CrossHandlers
 		GameBoardMess_ADDROUTE, GameBoardMess_SPAWN, GameBoardMess_TRAVEL,
 		GameBoardMess_SPLITOBJECT,
 		GameBoardMess_NA };
-	enum SystemMess{SystemMess_GETSCREENRES, SystemMess_SETCURSOR, SystemMess_HIDECURSOR, SystemMess_SHOWCURSOR, SystemMess_MOVECURSOR,SystemMesss_NA};
+	enum SystemMess{SystemMess_GETSCREENRES, 
+		SystemMess_SETCURSOR, SystemMess_HIDECURSOR, SystemMess_SHOWCURSOR, SystemMess_MOVECURSOR,
+		SystemMess_PAUSE, SystemMess_SKIP,
+		SystemMesss_NA};
 
 	enum ObjectMess{
 		ObjectMess_MOVE, ObjectMess_POS, ObjectMess_PROPEL,

@@ -26,6 +26,7 @@ namespace Entities
 
 			bool hookObject;
 
+			unsigned int lastTime;
 			unsigned int hookTargets;
 			unsigned int* hookColl;
 
