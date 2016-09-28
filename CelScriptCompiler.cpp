@@ -35,26 +35,26 @@ CelScriptCompiler::CelScriptCompiler()
 	operators[OperatorTypes_SET].enums[18] = "cursor";
 	operators[OperatorTypes_SET].enums[19] = "nodearrival";
 	operators[OperatorTypes_SET].byteCodes = new unsigned char[operators[OperatorTypes_SET].enumAmount]{
-		opcode_SETCONST, 
-		opcode_SETVAR, 
-		opcode_SETGMEBRD, 
-		opcode_SETCMRA, 
-		opcode_SETLCLK, 
-		opcode_LNKDBG, 
-		opcode_STXT, 
-		opcode_SETUI, 
-		opcode_STCNTNT, 
-		opcode_STBRDR, 
-		opcode_STLYR,
-		opcode_SETMCLK,
-		opcode_SETRCLK,
-		opcode_SETLDRG,
-		opcode_SETMDRG,
-		opcode_SETRDRG,
-		opcode_SETMWHL,
-		opcode_SETUD,
-		opcode_SETCRS,
-		opcode_SETNDEARRVL};
+		bytecode_SETCONST, 
+		bytecode_SETVAR, 
+		bytecode_SETGMEBRD, 
+		bytecode_SETCMRA, 
+		bytecode_SETLCLK, 
+		bytecode_LNKDBG, 
+		bytecode_STXT, 
+		bytecode_SETUI, 
+		bytecode_STCNTNT, 
+		bytecode_STBRDR, 
+		bytecode_STLYR,
+		bytecode_SETMCLK,
+		bytecode_SETRCLK,
+		bytecode_SETLDRG,
+		bytecode_SETMDRG,
+		bytecode_SETRDRG,
+		bytecode_SETMWHL,
+		bytecode_SETUD,
+		bytecode_SETCRS,
+		bytecode_SETNDEARRVL};
 	operators[OperatorTypes_SET].params = new unsigned char[operators[OperatorTypes_SET].enumAmount]{2, 2, 1, 1, 2, 1, 2, 1, 4, 4, 2, 2, 2, 2, 2, 2, 2, 2, 1, 2};
 	operators[OperatorTypes_SET].minParams = new unsigned char[operators[OperatorTypes_SET].enumAmount]{ 2, 2, 1, 1, 2, 1, 2, 1, 4, 4, 2, 2, 2, 2, 2, 2, 2, 2, 1, 2};
 	operators[OperatorTypes_SET].paramsyntax = new VarType*[operators[OperatorTypes_SET].enumAmount]{
@@ -216,7 +216,7 @@ CelScriptCompiler::CelScriptCompiler()
 	operators[OperatorTypes_LOAD].enums[9] = "object";
 	operators[OperatorTypes_LOAD].enums[10] = "copyobject";
 	operators[OperatorTypes_LOAD].enums[11] = "state";
-	operators[OperatorTypes_LOAD].byteCodes = new unsigned char[operators[OperatorTypes_LOAD].enumAmount]{opcode_LOADLIGHT, opcode_LOADMESH, opcode_LOADSCRIPT, opcode_LOADTXTBX, opcode_LOADPANEL, opcode_LOADIMAGE, 0, opcode_LOADGMBRD, opcode_LOADCAM, opcode_LOADOBJCT,opcode_LOADCPY, opcode_LDSTT };
+	operators[OperatorTypes_LOAD].byteCodes = new unsigned char[operators[OperatorTypes_LOAD].enumAmount]{bytecode_LOADLIGHT, bytecode_LOADMESH, bytecode_LOADSCRIPT, bytecode_LOADTXTBX, bytecode_LOADPANEL, bytecode_LOADIMAGE, 0, bytecode_LOADGMBRD, bytecode_LOADCAM, bytecode_LOADOBJCT,bytecode_LOADCPY, bytecode_LDSTT };
 	operators[OperatorTypes_LOAD].params = new unsigned char[operators[OperatorTypes_LOAD].enumAmount]{3, 1,1,0,0,1,2,2,0, 2, 1, 2};
 	operators[OperatorTypes_LOAD].minParams = new unsigned char[operators[OperatorTypes_LOAD].enumAmount]{ 3, 1,1,0,0,1,2,1, 0, 2, 1, 2};
 	operators[OperatorTypes_LOAD].paramsyntax = new VarType*[operators[OperatorTypes_LOAD].enumAmount]{
@@ -317,8 +317,8 @@ CelScriptCompiler::CelScriptCompiler()
 	operators[OperatorTypes_ADD].enums[3] = "text";
 	operators[OperatorTypes_ADD].enums[4] = "line";
 	operators[OperatorTypes_ADD].enums[5] = "routegoal";
-	operators[OperatorTypes_ADD].byteCodes = new unsigned char[operators[OperatorTypes_ADD].enumAmount]{opcode_ADDOBJECT,opcode_2DADDCHLD,opcode_ADDMESH, opcode_ADDTXT, opcode_ADDLNE,
-		opcode_ADDRTOBJ };
+	operators[OperatorTypes_ADD].byteCodes = new unsigned char[operators[OperatorTypes_ADD].enumAmount]{bytecode_ADDOBJECT,bytecode_2DADDCHLD,bytecode_ADDMESH, bytecode_ADDTXT, bytecode_ADDLNE,
+		bytecode_ADDRTOBJ };
 	operators[OperatorTypes_ADD].params = new unsigned char[operators[OperatorTypes_ADD].enumAmount]{1, 2, 1, 2, 2, 4};
 	operators[OperatorTypes_ADD].minParams = new unsigned char[operators[OperatorTypes_ADD].enumAmount]{1, 2, 1, 2, 2, 4};
 	operators[OperatorTypes_ADD].paramsyntax = new VarType*[operators[OperatorTypes_ADD].enumAmount]{
@@ -378,7 +378,7 @@ CelScriptCompiler::CelScriptCompiler()
 	operators[OperatorTypes_POST].keyword = "post";
 	operators[OperatorTypes_POST].enumAmount = 3;
 	operators[OperatorTypes_POST].enums = new std::string[operators[OperatorTypes_POST].enumAmount]; operators[OperatorTypes_POST].enums[0] = ""; operators[OperatorTypes_POST].enums[1] = ""; operators[OperatorTypes_POST].enums[2] = "";
-	operators[OperatorTypes_POST].byteCodes = new unsigned char[operators[OperatorTypes_POST].enumAmount]{opcode_POSTSTR, opcode_POSTFLOAT, opcode_POSTNMBR};
+	operators[OperatorTypes_POST].byteCodes = new unsigned char[operators[OperatorTypes_POST].enumAmount]{bytecode_POSTSTR, bytecode_POSTFLOAT, bytecode_POSTNMBR};
 	operators[OperatorTypes_POST].params = new unsigned char[operators[OperatorTypes_POST].enumAmount]{1, 1, 1};
 	operators[OperatorTypes_POST].minParams = new unsigned char[operators[OperatorTypes_POST].enumAmount]{ 1, 1, 1};
 	operators[OperatorTypes_POST].paramsyntax = new VarType*[operators[OperatorTypes_POST].enumAmount]{
@@ -420,7 +420,7 @@ CelScriptCompiler::CelScriptCompiler()
 	operators[OperatorTypes_CAST].keyword = "cast";
 	operators[OperatorTypes_CAST].enumAmount = 1;
 	operators[OperatorTypes_CAST].enums = new std::string[operators[OperatorTypes_CAST].enumAmount]; operators[OperatorTypes_CAST].enums[0] = "";
-	operators[OperatorTypes_CAST].byteCodes = new unsigned char[operators[OperatorTypes_CAST].enumAmount]{opcode_CASTFLOAT};
+	operators[OperatorTypes_CAST].byteCodes = new unsigned char[operators[OperatorTypes_CAST].enumAmount]{bytecode_CASTFLOAT};
 	operators[OperatorTypes_CAST].params = new unsigned char[operators[OperatorTypes_CAST].enumAmount]{1};
 	operators[OperatorTypes_CAST].minParams = new unsigned char[operators[OperatorTypes_CAST].enumAmount]{1};
 	operators[OperatorTypes_CAST].paramsyntax = new VarType*[operators[OperatorTypes_CAST].enumAmount]{
@@ -452,7 +452,7 @@ CelScriptCompiler::CelScriptCompiler()
 	operators[OperatorTypes_EQUAL].keyword = "eql";
 	operators[OperatorTypes_EQUAL].enumAmount = 8;
 	operators[OperatorTypes_EQUAL].enums = new std::string[operators[OperatorTypes_EQUAL].enumAmount]; operators[OperatorTypes_EQUAL].enums[0] = ""; operators[OperatorTypes_EQUAL].enums[1] = ""; operators[OperatorTypes_EQUAL].enums[2] = "", operators[OperatorTypes_EQUAL].enums[3] = ""; operators[OperatorTypes_EQUAL].enums[4] = ""; operators[OperatorTypes_EQUAL].enums[5] = ""; operators[OperatorTypes_EQUAL].enums[6] = ""; operators[OperatorTypes_EQUAL].enums[7] = "";
-	operators[OperatorTypes_EQUAL].byteCodes = new unsigned char[operators[OperatorTypes_EQUAL].enumAmount]{opcode_NUMEQUAL2CONST, opcode_NUMEQUAL2CONST, opcode_NUMEQUALVAR, opcode_NUMEQUALFLOAT, opcode_NUMEQUALFLOAT, opcode_NUMEQUALFLOAT, opcode_STREQUAL2CONST, opcode_STREQUALVAR};
+	operators[OperatorTypes_EQUAL].byteCodes = new unsigned char[operators[OperatorTypes_EQUAL].enumAmount]{bytecode_NUMEQUAL2CONST, bytecode_NUMEQUAL2CONST, bytecode_NUMEQUALVAR, bytecode_NUMEQUALFLOAT, bytecode_NUMEQUALFLOAT, bytecode_NUMEQUALFLOAT, bytecode_STREQUAL2CONST, bytecode_STREQUALVAR};
 	operators[OperatorTypes_EQUAL].params = new unsigned char[operators[OperatorTypes_EQUAL].enumAmount]{2, 2, 2, 2, 2, 2, 2, 2};
 	operators[OperatorTypes_EQUAL].minParams = new unsigned char[operators[OperatorTypes_EQUAL].enumAmount]{ 2, 2, 2, 2, 2, 2, 2, 2 };
 	operators[OperatorTypes_EQUAL].paramsyntax = new VarType*[operators[OperatorTypes_EQUAL].enumAmount]{
@@ -551,7 +551,7 @@ CelScriptCompiler::CelScriptCompiler()
 	operators[OperatorTypes_GREATER].keyword = "grtr";
 	operators[OperatorTypes_GREATER].enumAmount = 6;
 	operators[OperatorTypes_GREATER].enums = new std::string[operators[OperatorTypes_GREATER].enumAmount]; operators[OperatorTypes_GREATER].enums[0] = ""; operators[OperatorTypes_GREATER].enums[1] = ""; operators[OperatorTypes_GREATER].enums[2] = ""; operators[OperatorTypes_GREATER].enums[3] = ""; operators[OperatorTypes_GREATER].enums[4] = ""; operators[OperatorTypes_GREATER].enums[5] = "";
-	operators[OperatorTypes_GREATER].byteCodes = new unsigned char[operators[OperatorTypes_GREATER].enumAmount]{opcode_NUMGRT2CONST, opcode_NUMGRT2CONST, opcode_NUMGRTFLOAT, opcode_NUMGRTVAR, opcode_NUMGRTFLOAT, opcode_NUMGRTFLOAT};
+	operators[OperatorTypes_GREATER].byteCodes = new unsigned char[operators[OperatorTypes_GREATER].enumAmount]{bytecode_NUMGRT2CONST, bytecode_NUMGRT2CONST, bytecode_NUMGRTFLOAT, bytecode_NUMGRTVAR, bytecode_NUMGRTFLOAT, bytecode_NUMGRTFLOAT};
 	operators[OperatorTypes_GREATER].params = new unsigned char[operators[OperatorTypes_GREATER].enumAmount]{2, 2, 2, 2, 2, 2};
 	operators[OperatorTypes_GREATER].minParams = new unsigned char[operators[OperatorTypes_GREATER].enumAmount]{ 2, 2, 2, 2, 2, 2};
 	operators[OperatorTypes_GREATER].paramsyntax = new VarType*[operators[OperatorTypes_GREATER].enumAmount]{
@@ -631,7 +631,7 @@ CelScriptCompiler::CelScriptCompiler()
 	operators[OperatorTypes_PARENT].keyword = "parent";
 	operators[OperatorTypes_PARENT].enumAmount = 1;
 	operators[OperatorTypes_PARENT].enums = new std::string[operators[OperatorTypes_PARENT].enumAmount]; operators[OperatorTypes_PARENT].enums[0] = "";
-	operators[OperatorTypes_PARENT].byteCodes = new unsigned char[operators[OperatorTypes_PARENT].enumAmount]{opcode_PRNT};
+	operators[OperatorTypes_PARENT].byteCodes = new unsigned char[operators[OperatorTypes_PARENT].enumAmount]{bytecode_PRNT};
 	operators[OperatorTypes_PARENT].params = new unsigned char[operators[OperatorTypes_PARENT].enumAmount]{1};
 	operators[OperatorTypes_PARENT].minParams = new unsigned char[operators[OperatorTypes_PARENT].enumAmount]{ 1 };
 	operators[OperatorTypes_PARENT].paramsyntax = new VarType*[operators[OperatorTypes_PARENT].enumAmount]{
@@ -657,7 +657,7 @@ CelScriptCompiler::CelScriptCompiler()
 	operators[OperatorTypes_SNAP].keyword = "snap";
 	operators[OperatorTypes_SNAP].enumAmount = 1;
 	operators[OperatorTypes_SNAP].enums = new std::string[operators[OperatorTypes_SNAP].enumAmount]; operators[OperatorTypes_SNAP].enums[0] = "";
-	operators[OperatorTypes_SNAP].byteCodes = new unsigned char[operators[OperatorTypes_SNAP].enumAmount]{opcode_RESNAP};
+	operators[OperatorTypes_SNAP].byteCodes = new unsigned char[operators[OperatorTypes_SNAP].enumAmount]{bytecode_RESNAP};
 	operators[OperatorTypes_SNAP].params = new unsigned char[operators[OperatorTypes_SNAP].enumAmount]{3};
 	operators[OperatorTypes_SNAP].minParams = new unsigned char[operators[OperatorTypes_SNAP].enumAmount]{ 3 };
 	operators[OperatorTypes_SNAP].paramsyntax = new VarType*[operators[OperatorTypes_SNAP].enumAmount]{
@@ -687,7 +687,7 @@ CelScriptCompiler::CelScriptCompiler()
 	operators[OperatorTypes_POS].keyword = "pos";
 	operators[OperatorTypes_POS].enumAmount = 2;
 	operators[OperatorTypes_POS].enums = new std::string[operators[OperatorTypes_POS].enumAmount]; operators[OperatorTypes_POS].enums[0] = ""; operators[OperatorTypes_POS].enums[1] = "";
-	operators[OperatorTypes_POS].byteCodes = new unsigned char[operators[OperatorTypes_POS].enumAmount]{opcode_POS,opcode_POS };
+	operators[OperatorTypes_POS].byteCodes = new unsigned char[operators[OperatorTypes_POS].enumAmount]{bytecode_POS,bytecode_POS };
 	operators[OperatorTypes_POS].params = new unsigned char[operators[OperatorTypes_POS].enumAmount]{4,4};
 	operators[OperatorTypes_POS].minParams = new unsigned char[operators[OperatorTypes_POS].enumAmount]{ 3,3 };
 	operators[OperatorTypes_POS].paramsyntax = new VarType*[operators[OperatorTypes_POS].enumAmount]{
@@ -731,7 +731,7 @@ CelScriptCompiler::CelScriptCompiler()
 	operators[OperatorTypes_MOVE].keyword = "move";
 	operators[OperatorTypes_MOVE].enumAmount = 2;
 	operators[OperatorTypes_MOVE].enums = new std::string[operators[OperatorTypes_MOVE].enumAmount]; operators[OperatorTypes_MOVE].enums[0] = ""; operators[OperatorTypes_MOVE].enums[1] = "";
-	operators[OperatorTypes_MOVE].byteCodes = new unsigned char[operators[OperatorTypes_MOVE].enumAmount]{ opcode_MVE,opcode_MVE };
+	operators[OperatorTypes_MOVE].byteCodes = new unsigned char[operators[OperatorTypes_MOVE].enumAmount]{ bytecode_MVE,bytecode_MVE };
 	operators[OperatorTypes_MOVE].params = new unsigned char[operators[OperatorTypes_MOVE].enumAmount]{ 4,4 };
 	operators[OperatorTypes_MOVE].minParams = new unsigned char[operators[OperatorTypes_MOVE].enumAmount]{ 3,3 };
 	operators[OperatorTypes_MOVE].paramsyntax = new VarType*[operators[OperatorTypes_MOVE].enumAmount]{
@@ -775,7 +775,7 @@ CelScriptCompiler::CelScriptCompiler()
 	operators[OperatorTypes_ROTATE].keyword = "rotate";
 	operators[OperatorTypes_ROTATE].enumAmount = 1;
 	operators[OperatorTypes_ROTATE].enums = new std::string[operators[OperatorTypes_ROTATE].enumAmount]; operators[OperatorTypes_ROTATE].enums[0] = "";
-	operators[OperatorTypes_ROTATE].byteCodes = new unsigned char[operators[OperatorTypes_ROTATE].enumAmount]{ opcode_RTE };
+	operators[OperatorTypes_ROTATE].byteCodes = new unsigned char[operators[OperatorTypes_ROTATE].enumAmount]{ bytecode_RTE };
 	operators[OperatorTypes_ROTATE].params = new unsigned char[operators[OperatorTypes_ROTATE].enumAmount]{ 4};
 	operators[OperatorTypes_ROTATE].minParams = new unsigned char[operators[OperatorTypes_ROTATE].enumAmount]{ 4 };
 	operators[OperatorTypes_ROTATE].paramsyntax = new VarType*[operators[OperatorTypes_ROTATE].enumAmount]{
@@ -805,7 +805,7 @@ CelScriptCompiler::CelScriptCompiler()
 	operators[OperatorTypes_ORBIT].keyword = "orbit";
 	operators[OperatorTypes_ORBIT].enumAmount = 1;
 	operators[OperatorTypes_ORBIT].enums = new std::string[operators[OperatorTypes_ORBIT].enumAmount]; operators[OperatorTypes_ORBIT].enums[0] = "";
-	operators[OperatorTypes_ORBIT].byteCodes = new unsigned char[operators[OperatorTypes_ORBIT].enumAmount]{ opcode_ORB };
+	operators[OperatorTypes_ORBIT].byteCodes = new unsigned char[operators[OperatorTypes_ORBIT].enumAmount]{ bytecode_ORB };
 	operators[OperatorTypes_ORBIT].params = new unsigned char[operators[OperatorTypes_ORBIT].enumAmount]{ 2 };
 	operators[OperatorTypes_ORBIT].minParams = new unsigned char[operators[OperatorTypes_ORBIT].enumAmount]{ 2 };
 	operators[OperatorTypes_ORBIT].paramsyntax = new VarType*[operators[OperatorTypes_ORBIT].enumAmount]{
@@ -835,7 +835,7 @@ CelScriptCompiler::CelScriptCompiler()
 	operators[OperatorTypes_PROPEL].keyword = "propel";
 	operators[OperatorTypes_PROPEL].enumAmount = 1;
 	operators[OperatorTypes_PROPEL].enums = new std::string[operators[OperatorTypes_PROPEL].enumAmount]; operators[OperatorTypes_PROPEL].enums[0] = "";
-	operators[OperatorTypes_PROPEL].byteCodes = new unsigned char[operators[OperatorTypes_PROPEL].enumAmount]{ opcode_PRPL };
+	operators[OperatorTypes_PROPEL].byteCodes = new unsigned char[operators[OperatorTypes_PROPEL].enumAmount]{ bytecode_PRPL };
 	operators[OperatorTypes_PROPEL].params = new unsigned char[operators[OperatorTypes_PROPEL].enumAmount]{ 2 };
 	operators[OperatorTypes_PROPEL].minParams = new unsigned char[operators[OperatorTypes_PROPEL].enumAmount]{ 2 };
 	operators[OperatorTypes_PROPEL].paramsyntax = new VarType*[operators[OperatorTypes_PROPEL].enumAmount]{
@@ -865,7 +865,7 @@ CelScriptCompiler::CelScriptCompiler()
 	operators[OperatorTypes_SIZE].keyword = "size";
 	operators[OperatorTypes_SIZE].enumAmount = 1;
 	operators[OperatorTypes_SIZE].enums = new std::string[operators[OperatorTypes_SIZE].enumAmount]; operators[OperatorTypes_SIZE].enums[0] = "";
-	operators[OperatorTypes_SIZE].byteCodes = new unsigned char[operators[OperatorTypes_SIZE].enumAmount]{opcode_SIZE};
+	operators[OperatorTypes_SIZE].byteCodes = new unsigned char[operators[OperatorTypes_SIZE].enumAmount]{bytecode_SIZE};
 	operators[OperatorTypes_SIZE].params = new unsigned char[operators[OperatorTypes_SIZE].enumAmount]{4};
 	operators[OperatorTypes_SIZE].minParams = new unsigned char[operators[OperatorTypes_SIZE].enumAmount]{ 3 };
 	operators[OperatorTypes_SIZE].paramsyntax = new VarType*[operators[OperatorTypes_SIZE].enumAmount]{
@@ -895,7 +895,7 @@ CelScriptCompiler::CelScriptCompiler()
 	operators[OperatorTypes_SCALE].keyword = "scale";
 	operators[OperatorTypes_SCALE].enumAmount = 1;
 	operators[OperatorTypes_SCALE].enums = new std::string[operators[OperatorTypes_SCALE].enumAmount]; operators[OperatorTypes_SCALE].enums[0] = "";
-	operators[OperatorTypes_SCALE].byteCodes = new unsigned char[operators[OperatorTypes_SCALE].enumAmount]{ opcode_SCL };
+	operators[OperatorTypes_SCALE].byteCodes = new unsigned char[operators[OperatorTypes_SCALE].enumAmount]{ bytecode_SCL };
 	operators[OperatorTypes_SCALE].params = new unsigned char[operators[OperatorTypes_SCALE].enumAmount]{ 4 };
 	operators[OperatorTypes_SCALE].minParams = new unsigned char[operators[OperatorTypes_SCALE].enumAmount]{ 3 };
 	operators[OperatorTypes_SCALE].paramsyntax = new VarType*[operators[OperatorTypes_SCALE].enumAmount]{
@@ -925,7 +925,7 @@ CelScriptCompiler::CelScriptCompiler()
 	operators[OperatorTypes_RUN].keyword = "run";
 	operators[OperatorTypes_RUN].enumAmount = 1;
 	operators[OperatorTypes_RUN].enums = new std::string[operators[OperatorTypes_RUN].enumAmount]; operators[OperatorTypes_RUN].enums[0] = "script";
-	operators[OperatorTypes_RUN].byteCodes = new unsigned char[operators[OperatorTypes_RUN].enumAmount]{opcode_RNSCRPT};
+	operators[OperatorTypes_RUN].byteCodes = new unsigned char[operators[OperatorTypes_RUN].enumAmount]{bytecode_RNSCRPT};
 	operators[OperatorTypes_RUN].params = new unsigned char[operators[OperatorTypes_RUN].enumAmount]{2};
 	operators[OperatorTypes_RUN].minParams = new unsigned char[operators[OperatorTypes_RUN].enumAmount]{ 1 };
 	operators[OperatorTypes_RUN].paramsyntax = new VarType*[operators[OperatorTypes_RUN].enumAmount]{
@@ -961,7 +961,7 @@ CelScriptCompiler::CelScriptCompiler()
 	operators[OperatorTypes_SETPARAM].keyword = "stprm";
 	operators[OperatorTypes_SETPARAM].enumAmount = 3;
 	operators[OperatorTypes_SETPARAM].enums = new std::string[operators[OperatorTypes_SETPARAM].enumAmount]; operators[OperatorTypes_SETPARAM].enums[0] = "num"; operators[OperatorTypes_SETPARAM].enums[1] = "str"; operators[OperatorTypes_SETPARAM].enums[2] = "float";
-	operators[OperatorTypes_SETPARAM].byteCodes = new unsigned char[operators[OperatorTypes_SETPARAM].enumAmount]{opcode_STSCRPTPRMNMBR,opcode_STSCRPTPRMSTR,opcode_STSCRPTPRMFLT};
+	operators[OperatorTypes_SETPARAM].byteCodes = new unsigned char[operators[OperatorTypes_SETPARAM].enumAmount]{bytecode_STSCRPTPRMNMBR,bytecode_STSCRPTPRMSTR,bytecode_STSCRPTPRMFLT};
 	operators[OperatorTypes_SETPARAM].params = new unsigned char[operators[OperatorTypes_SETPARAM].enumAmount]{2,2,2};
 	operators[OperatorTypes_SETPARAM].minParams = new unsigned char[operators[OperatorTypes_SETPARAM].enumAmount]{ 2,2,2 };
 	operators[OperatorTypes_SETPARAM].paramsyntax = new VarType*[operators[OperatorTypes_SETPARAM].enumAmount]{
@@ -1006,7 +1006,7 @@ CelScriptCompiler::CelScriptCompiler()
 	operators[OperatorTypes_EXPORT].keyword = "export";
 	operators[OperatorTypes_EXPORT].enumAmount = 2;
 	operators[OperatorTypes_EXPORT].enums = new std::string[operators[OperatorTypes_EXPORT].enumAmount]; operators[OperatorTypes_EXPORT].enums[0] = ""; operators[OperatorTypes_EXPORT].enums[1] = "";
-	operators[OperatorTypes_EXPORT].byteCodes = new unsigned char[operators[OperatorTypes_EXPORT].enumAmount]{opcode_EXPRTCNST, opcode_EXPRTVAR};
+	operators[OperatorTypes_EXPORT].byteCodes = new unsigned char[operators[OperatorTypes_EXPORT].enumAmount]{bytecode_EXPRTCNST, bytecode_EXPRTVAR};
 	operators[OperatorTypes_EXPORT].params = new unsigned char[operators[OperatorTypes_EXPORT].enumAmount]{2, 2};
 	operators[OperatorTypes_EXPORT].minParams = new unsigned char[operators[OperatorTypes_EXPORT].enumAmount]{2, 2};
 	operators[OperatorTypes_EXPORT].paramsyntax = new VarType*[operators[OperatorTypes_EXPORT].enumAmount]{
@@ -1044,7 +1044,7 @@ CelScriptCompiler::CelScriptCompiler()
 	operators[OperatorTypes_IMPORT].keyword = "import";
 	operators[OperatorTypes_IMPORT].enumAmount = 3;
 	operators[OperatorTypes_IMPORT].enums = new std::string[operators[OperatorTypes_IMPORT].enumAmount]; operators[OperatorTypes_IMPORT].enums[0] = "num"; operators[OperatorTypes_IMPORT].enums[1] = "float"; operators[OperatorTypes_IMPORT].enums[2] = "string";
-	operators[OperatorTypes_IMPORT].byteCodes = new unsigned char[operators[OperatorTypes_IMPORT].enumAmount]{opcode_IMPRT, opcode_IMPRT, opcode_IMPRT};
+	operators[OperatorTypes_IMPORT].byteCodes = new unsigned char[operators[OperatorTypes_IMPORT].enumAmount]{bytecode_IMPRT, bytecode_IMPRT, bytecode_IMPRT};
 	operators[OperatorTypes_IMPORT].params = new unsigned char[operators[OperatorTypes_IMPORT].enumAmount]{1, 1, 1};
 	operators[OperatorTypes_IMPORT].minParams = new unsigned char[operators[OperatorTypes_IMPORT].enumAmount]{1, 1, 1};
 	operators[OperatorTypes_IMPORT].paramsyntax = new VarType*[operators[OperatorTypes_IMPORT].enumAmount]{
@@ -1088,7 +1088,7 @@ CelScriptCompiler::CelScriptCompiler()
 	operators[OperatorTypes_FOCUS].keyword = "focus";
 	operators[OperatorTypes_FOCUS].enumAmount = 1;
 	operators[OperatorTypes_FOCUS].enums = new std::string[operators[OperatorTypes_FOCUS].enumAmount]; operators[OperatorTypes_FOCUS].enums[0] = "ui";
-	operators[OperatorTypes_FOCUS].byteCodes = new unsigned char[operators[OperatorTypes_FOCUS].enumAmount]{opcode_FCSUI };
+	operators[OperatorTypes_FOCUS].byteCodes = new unsigned char[operators[OperatorTypes_FOCUS].enumAmount]{bytecode_FCSUI };
 	operators[OperatorTypes_FOCUS].params = new unsigned char[operators[OperatorTypes_FOCUS].enumAmount]{1};
 	operators[OperatorTypes_FOCUS].minParams = new unsigned char[operators[OperatorTypes_FOCUS].enumAmount]{1};
 	operators[OperatorTypes_FOCUS].paramsyntax = new VarType*[operators[OperatorTypes_FOCUS].enumAmount]{
@@ -1121,7 +1121,7 @@ CelScriptCompiler::CelScriptCompiler()
 	operators[OperatorTypes_UNLOAD].keyword = "unload";
 	operators[OperatorTypes_UNLOAD].enumAmount = 1;
 	operators[OperatorTypes_UNLOAD].enums = new std::string[operators[OperatorTypes_UNLOAD].enumAmount]; operators[OperatorTypes_UNLOAD].enums[0] = "";
-	operators[OperatorTypes_UNLOAD].byteCodes = new unsigned char[operators[OperatorTypes_UNLOAD].enumAmount]{opcode_UNLOAD };
+	operators[OperatorTypes_UNLOAD].byteCodes = new unsigned char[operators[OperatorTypes_UNLOAD].enumAmount]{bytecode_UNLOAD };
 	operators[OperatorTypes_UNLOAD].params = new unsigned char[operators[OperatorTypes_UNLOAD].enumAmount]{1};
 	operators[OperatorTypes_UNLOAD].minParams = new unsigned char[operators[OperatorTypes_UNLOAD].enumAmount]{1};
 	operators[OperatorTypes_UNLOAD].paramsyntax = new VarType*[operators[OperatorTypes_UNLOAD].enumAmount]{
@@ -1153,7 +1153,7 @@ CelScriptCompiler::CelScriptCompiler()
 	operators[OperatorTypes_REMOVE].keyword = "remove";
 	operators[OperatorTypes_REMOVE].enumAmount = 1;
 	operators[OperatorTypes_REMOVE].enums = new std::string[operators[OperatorTypes_REMOVE].enumAmount]; operators[OperatorTypes_REMOVE].enums[0] = "";
-	operators[OperatorTypes_REMOVE].byteCodes = new unsigned char[operators[OperatorTypes_REMOVE].enumAmount]{opcode_RMVE };
+	operators[OperatorTypes_REMOVE].byteCodes = new unsigned char[operators[OperatorTypes_REMOVE].enumAmount]{bytecode_RMVE };
 	operators[OperatorTypes_REMOVE].params = new unsigned char[operators[OperatorTypes_REMOVE].enumAmount]{1};
 	operators[OperatorTypes_REMOVE].minParams = new unsigned char[operators[OperatorTypes_REMOVE].enumAmount]{1};
 	operators[OperatorTypes_REMOVE].paramsyntax = new VarType*[operators[OperatorTypes_REMOVE].enumAmount]{
@@ -1186,7 +1186,7 @@ CelScriptCompiler::CelScriptCompiler()
 	operators[OperatorTypes_HIDE].keyword = "hide";
 	operators[OperatorTypes_HIDE].enumAmount = 2;
 	operators[OperatorTypes_HIDE].enums = new std::string[operators[OperatorTypes_HIDE].enumAmount]; operators[OperatorTypes_HIDE].enums[0] = ""; operators[OperatorTypes_HIDE].enums[1] = "cursor";
-	operators[OperatorTypes_HIDE].byteCodes = new unsigned char[operators[OperatorTypes_HIDE].enumAmount]{opcode_HDE,opcode_HDECRS };
+	operators[OperatorTypes_HIDE].byteCodes = new unsigned char[operators[OperatorTypes_HIDE].enumAmount]{bytecode_HDE,bytecode_HDECRS };
 	operators[OperatorTypes_HIDE].params = new unsigned char[operators[OperatorTypes_HIDE].enumAmount]{1,0};
 	operators[OperatorTypes_HIDE].minParams = new unsigned char[operators[OperatorTypes_HIDE].enumAmount]{1,0};
 	operators[OperatorTypes_HIDE].paramsyntax = new VarType*[operators[OperatorTypes_HIDE].enumAmount]{
@@ -1224,7 +1224,7 @@ CelScriptCompiler::CelScriptCompiler()
 	operators[OperatorTypes_SHOW].keyword = "show";
 	operators[OperatorTypes_SHOW].enumAmount = 2;
 	operators[OperatorTypes_SHOW].enums = new std::string[operators[OperatorTypes_SHOW].enumAmount]; operators[OperatorTypes_SHOW].enums[0] = ""; operators[OperatorTypes_SHOW].enums[1] = "cursor";
-	operators[OperatorTypes_SHOW].byteCodes = new unsigned char[operators[OperatorTypes_SHOW].enumAmount]{opcode_SHW,opcode_SHWCRS };
+	operators[OperatorTypes_SHOW].byteCodes = new unsigned char[operators[OperatorTypes_SHOW].enumAmount]{bytecode_SHW,bytecode_SHWCRS };
 	operators[OperatorTypes_SHOW].params = new unsigned char[operators[OperatorTypes_SHOW].enumAmount]{1,0};
 	operators[OperatorTypes_SHOW].minParams = new unsigned char[operators[OperatorTypes_SHOW].enumAmount]{1,0};
 	operators[OperatorTypes_SHOW].paramsyntax = new VarType*[operators[OperatorTypes_SHOW].enumAmount]{
@@ -1262,7 +1262,7 @@ CelScriptCompiler::CelScriptCompiler()
 	operators[OperatorTypes_TRACK].keyword = "track";
 	operators[OperatorTypes_TRACK].enumAmount = 1;
 	operators[OperatorTypes_TRACK].enums = new std::string[operators[OperatorTypes_TRACK].enumAmount]; operators[OperatorTypes_TRACK].enums[0] = "";
-	operators[OperatorTypes_TRACK].byteCodes = new unsigned char[operators[OperatorTypes_TRACK].enumAmount]{ opcode_TRCK };
+	operators[OperatorTypes_TRACK].byteCodes = new unsigned char[operators[OperatorTypes_TRACK].enumAmount]{ bytecode_TRCK };
 	operators[OperatorTypes_TRACK].params = new unsigned char[operators[OperatorTypes_TRACK].enumAmount]{ 1 };
 	operators[OperatorTypes_TRACK].minParams = new unsigned char[operators[OperatorTypes_TRACK].enumAmount]{ 1 };
 	operators[OperatorTypes_TRACK].paramsyntax = new VarType*[operators[OperatorTypes_TRACK].enumAmount]{
@@ -1294,7 +1294,7 @@ CelScriptCompiler::CelScriptCompiler()
 	operators[OperatorTypes_CLEAR].keyword = "clear";
 	operators[OperatorTypes_CLEAR].enumAmount = 2;
 	operators[OperatorTypes_CLEAR].enums = new std::string[operators[OperatorTypes_CLEAR].enumAmount]; operators[OperatorTypes_CLEAR].enums[0] = "tracking"; operators[OperatorTypes_CLEAR].enums[1] = "gameboard";
-	operators[OperatorTypes_CLEAR].byteCodes = new unsigned char[operators[OperatorTypes_CLEAR].enumAmount]{ opcode_CRLTRCK, opcode_CLRBRD };
+	operators[OperatorTypes_CLEAR].byteCodes = new unsigned char[operators[OperatorTypes_CLEAR].enumAmount]{ bytecode_CRLTRCK, bytecode_CLRBRD };
 	operators[OperatorTypes_CLEAR].params = new unsigned char[operators[OperatorTypes_CLEAR].enumAmount]{ 0, 1 };
 	operators[OperatorTypes_CLEAR].minParams = new unsigned char[operators[OperatorTypes_CLEAR].enumAmount]{ 0, 1 };
 	operators[OperatorTypes_CLEAR].paramsyntax = new VarType*[operators[OperatorTypes_CLEAR].enumAmount]{
@@ -1332,7 +1332,7 @@ CelScriptCompiler::CelScriptCompiler()
 	operators[OperatorTypes_HOOK].keyword = "hook";
 	operators[OperatorTypes_HOOK].enumAmount = 1;
 	operators[OperatorTypes_HOOK].enums = new std::string[operators[OperatorTypes_HOOK].enumAmount]; operators[OperatorTypes_HOOK].enums[0] = "tracking";
-	operators[OperatorTypes_HOOK].byteCodes = new unsigned char[operators[OperatorTypes_HOOK].enumAmount]{ opcode_HCKTRCK};
+	operators[OperatorTypes_HOOK].byteCodes = new unsigned char[operators[OperatorTypes_HOOK].enumAmount]{ bytecode_HCKTRCK};
 	operators[OperatorTypes_HOOK].params = new unsigned char[operators[OperatorTypes_HOOK].enumAmount]{ 0 };
 	operators[OperatorTypes_HOOK].minParams = new unsigned char[operators[OperatorTypes_HOOK].enumAmount]{ 0 };
 	operators[OperatorTypes_HOOK].paramsyntax = new VarType*[operators[OperatorTypes_HOOK].enumAmount]{
@@ -1364,7 +1364,7 @@ CelScriptCompiler::CelScriptCompiler()
 	operators[OperatorTypes_GLUE].keyword = "glue";
 	operators[OperatorTypes_GLUE].enumAmount = 1;
 	operators[OperatorTypes_GLUE].enums = new std::string[operators[OperatorTypes_GLUE].enumAmount]; operators[OperatorTypes_GLUE].enums[0] = "";
-	operators[OperatorTypes_GLUE].byteCodes = new unsigned char[operators[OperatorTypes_GLUE].enumAmount]{ opcode_GLUOBJCT };
+	operators[OperatorTypes_GLUE].byteCodes = new unsigned char[operators[OperatorTypes_GLUE].enumAmount]{ bytecode_GLUOBJCT };
 	operators[OperatorTypes_GLUE].params = new unsigned char[operators[OperatorTypes_GLUE].enumAmount]{ 5 };
 	operators[OperatorTypes_GLUE].minParams = new unsigned char[operators[OperatorTypes_GLUE].enumAmount]{ 5 };
 	operators[OperatorTypes_GLUE].paramsyntax = new VarType*[operators[OperatorTypes_GLUE].enumAmount]{
@@ -1396,7 +1396,7 @@ CelScriptCompiler::CelScriptCompiler()
 	operators[OperatorTypes_INCREMENT].keyword = "increment";
 	operators[OperatorTypes_INCREMENT].enumAmount = 1;
 	operators[OperatorTypes_INCREMENT].enums = new std::string[operators[OperatorTypes_INCREMENT].enumAmount]; operators[OperatorTypes_INCREMENT].enums[0] = "layer";
-	operators[OperatorTypes_INCREMENT].byteCodes = new unsigned char[operators[OperatorTypes_INCREMENT].enumAmount]{opcode_INCRMNTLYR};
+	operators[OperatorTypes_INCREMENT].byteCodes = new unsigned char[operators[OperatorTypes_INCREMENT].enumAmount]{bytecode_INCRMNTLYR};
 	operators[OperatorTypes_INCREMENT].params = new unsigned char[operators[OperatorTypes_INCREMENT].enumAmount]{1};
 	operators[OperatorTypes_INCREMENT].minParams = new unsigned char[operators[OperatorTypes_INCREMENT].enumAmount]{1};
 	operators[OperatorTypes_INCREMENT].paramsyntax = new VarType*[operators[OperatorTypes_INCREMENT].enumAmount]{
@@ -1428,7 +1428,7 @@ CelScriptCompiler::CelScriptCompiler()
 	operators[OperatorTypes_DECREMENT].keyword = "decrement";
 	operators[OperatorTypes_DECREMENT].enumAmount = 1;
 	operators[OperatorTypes_DECREMENT].enums = new std::string[operators[OperatorTypes_DECREMENT].enumAmount]; operators[OperatorTypes_DECREMENT].enums[0] = "layer";
-	operators[OperatorTypes_DECREMENT].byteCodes = new unsigned char[operators[OperatorTypes_DECREMENT].enumAmount]{opcode_DCRMNLYR};
+	operators[OperatorTypes_DECREMENT].byteCodes = new unsigned char[operators[OperatorTypes_DECREMENT].enumAmount]{bytecode_DCRMNLYR};
 	operators[OperatorTypes_DECREMENT].params = new unsigned char[operators[OperatorTypes_DECREMENT].enumAmount]{1};
 	operators[OperatorTypes_DECREMENT].minParams = new unsigned char[operators[OperatorTypes_DECREMENT].enumAmount]{1};
 	operators[OperatorTypes_DECREMENT].paramsyntax = new VarType*[operators[OperatorTypes_DECREMENT].enumAmount]{
@@ -1460,7 +1460,7 @@ CelScriptCompiler::CelScriptCompiler()
 	operators[OperatorTypes_IGNORE].keyword = "ignore";
 	operators[OperatorTypes_IGNORE].enumAmount = 3;
 	operators[OperatorTypes_IGNORE].enums = new std::string[operators[OperatorTypes_IGNORE].enumAmount]; operators[OperatorTypes_IGNORE].enums[0] = "mouse"; operators[OperatorTypes_IGNORE].enums[1] = "keys"; operators[OperatorTypes_IGNORE].enums[2] = "input";
-	operators[OperatorTypes_IGNORE].byteCodes = new unsigned char[operators[OperatorTypes_IGNORE].enumAmount]{opcode_IGNRMS, opcode_IGNRKY, opcode_IGNRIN};
+	operators[OperatorTypes_IGNORE].byteCodes = new unsigned char[operators[OperatorTypes_IGNORE].enumAmount]{bytecode_IGNRMS, bytecode_IGNRKY, bytecode_IGNRIN};
 	operators[OperatorTypes_IGNORE].params = new unsigned char[operators[OperatorTypes_IGNORE].enumAmount]{1, 1, 1};
 	operators[OperatorTypes_IGNORE].minParams = new unsigned char[operators[OperatorTypes_IGNORE].enumAmount]{1, 1, 1};
 	operators[OperatorTypes_IGNORE].paramsyntax = new VarType*[operators[OperatorTypes_IGNORE].enumAmount]{
@@ -1504,7 +1504,7 @@ CelScriptCompiler::CelScriptCompiler()
 	operators[OperatorTypes_ACCEPT].keyword = "accept";
 	operators[OperatorTypes_ACCEPT].enumAmount = 3;
 	operators[OperatorTypes_ACCEPT].enums = new std::string[operators[OperatorTypes_ACCEPT].enumAmount]; operators[OperatorTypes_ACCEPT].enums[0] = "mouse"; operators[OperatorTypes_ACCEPT].enums[1] = "keys"; operators[OperatorTypes_ACCEPT].enums[2] = "input";
-	operators[OperatorTypes_ACCEPT].byteCodes = new unsigned char[operators[OperatorTypes_ACCEPT].enumAmount]{opcode_ACPTMS, opcode_ACPTKY, opcode_ACPTIN};
+	operators[OperatorTypes_ACCEPT].byteCodes = new unsigned char[operators[OperatorTypes_ACCEPT].enumAmount]{bytecode_ACPTMS, bytecode_ACPTKY, bytecode_ACPTIN};
 	operators[OperatorTypes_ACCEPT].params = new unsigned char[operators[OperatorTypes_ACCEPT].enumAmount]{1, 1, 1};
 	operators[OperatorTypes_ACCEPT].minParams = new unsigned char[operators[OperatorTypes_ACCEPT].enumAmount]{1, 1, 1};
 	operators[OperatorTypes_ACCEPT].paramsyntax = new VarType*[operators[OperatorTypes_ACCEPT].enumAmount]{
@@ -1548,7 +1548,7 @@ CelScriptCompiler::CelScriptCompiler()
 	operators[OperatorTypes_LINK].keyword = "link";
 	operators[OperatorTypes_LINK].enumAmount = 2;
 	operators[OperatorTypes_LINK].enums = new std::string[operators[OperatorTypes_LINK].enumAmount]; operators[OperatorTypes_LINK].enums[0] = "target"; operators[OperatorTypes_LINK].enums[1] = "out";
-	operators[OperatorTypes_LINK].byteCodes = new unsigned char[operators[OperatorTypes_LINK].enumAmount]{ opcode_LNKTRGT, opcode_LNKDBG};
+	operators[OperatorTypes_LINK].byteCodes = new unsigned char[operators[OperatorTypes_LINK].enumAmount]{ bytecode_LNKTRGT, bytecode_LNKDBG};
 	operators[OperatorTypes_LINK].params = new unsigned char[operators[OperatorTypes_LINK].enumAmount]{ 2, 1};
 	operators[OperatorTypes_LINK].minParams = new unsigned char[operators[OperatorTypes_LINK].enumAmount]{ 2, 1};
 	operators[OperatorTypes_LINK].paramsyntax = new VarType*[operators[OperatorTypes_LINK].enumAmount]{
@@ -1586,7 +1586,7 @@ CelScriptCompiler::CelScriptCompiler()
 	operators[OperatorTypes_SPAWN].keyword = "spawn";
 	operators[OperatorTypes_SPAWN].enumAmount = 1;
 	operators[OperatorTypes_SPAWN].enums = new std::string[operators[OperatorTypes_SPAWN].enumAmount]; operators[OperatorTypes_SPAWN].enums[0] = "object";
-	operators[OperatorTypes_SPAWN].byteCodes = new unsigned char[operators[OperatorTypes_SPAWN].enumAmount]{ opcode_SPWN };
+	operators[OperatorTypes_SPAWN].byteCodes = new unsigned char[operators[OperatorTypes_SPAWN].enumAmount]{ bytecode_SPWN };
 	operators[OperatorTypes_SPAWN].params = new unsigned char[operators[OperatorTypes_SPAWN].enumAmount]{ 2 };
 	operators[OperatorTypes_SPAWN].minParams = new unsigned char[operators[OperatorTypes_SPAWN].enumAmount]{ 2 };
 	operators[OperatorTypes_SPAWN].paramsyntax = new VarType*[operators[OperatorTypes_SPAWN].enumAmount]{
@@ -1618,7 +1618,7 @@ CelScriptCompiler::CelScriptCompiler()
 	operators[OperatorTypes_TRAVEL].keyword = "travel";
 	operators[OperatorTypes_TRAVEL].enumAmount = 1;
 	operators[OperatorTypes_TRAVEL].enums = new std::string[operators[OperatorTypes_TRAVEL].enumAmount]; operators[OperatorTypes_TRAVEL].enums[0] = "object";
-	operators[OperatorTypes_TRAVEL].byteCodes = new unsigned char[operators[OperatorTypes_TRAVEL].enumAmount]{ opcode_TRVL };
+	operators[OperatorTypes_TRAVEL].byteCodes = new unsigned char[operators[OperatorTypes_TRAVEL].enumAmount]{ bytecode_TRVL };
 	operators[OperatorTypes_TRAVEL].params = new unsigned char[operators[OperatorTypes_TRAVEL].enumAmount]{ 2 };
 	operators[OperatorTypes_TRAVEL].minParams = new unsigned char[operators[OperatorTypes_TRAVEL].enumAmount]{ 2 };
 	operators[OperatorTypes_TRAVEL].paramsyntax = new VarType*[operators[OperatorTypes_TRAVEL].enumAmount]{
@@ -1651,7 +1651,7 @@ CelScriptCompiler::CelScriptCompiler()
 	operators[OperatorTypes_SPLIT].keyword = "split";
 	operators[OperatorTypes_SPLIT].enumAmount = 1;
 	operators[OperatorTypes_SPLIT].enums = new std::string[operators[OperatorTypes_SPLIT].enumAmount]; operators[OperatorTypes_SPLIT].enums[0] = "route";
-	operators[OperatorTypes_SPLIT].byteCodes = new unsigned char[operators[OperatorTypes_SPLIT].enumAmount]{ opcode_SPLTRTE };
+	operators[OperatorTypes_SPLIT].byteCodes = new unsigned char[operators[OperatorTypes_SPLIT].enumAmount]{ bytecode_SPLTRTE };
 	operators[OperatorTypes_SPLIT].params = new unsigned char[operators[OperatorTypes_SPLIT].enumAmount]{ 2 };
 	operators[OperatorTypes_SPLIT].minParams = new unsigned char[operators[OperatorTypes_SPLIT].enumAmount]{ 2 };
 	operators[OperatorTypes_SPLIT].paramsyntax = new VarType*[operators[OperatorTypes_SPLIT].enumAmount]{
@@ -1683,7 +1683,7 @@ CelScriptCompiler::CelScriptCompiler()
 	operators[OperatorTypes_SCOPE].keyword = "scope";
 	operators[OperatorTypes_SCOPE].enumAmount = 1;
 	operators[OperatorTypes_SCOPE].enums = new std::string[operators[OperatorTypes_SCOPE].enumAmount]; operators[OperatorTypes_SCOPE].enums[0] = "sve";
-	operators[OperatorTypes_SCOPE].byteCodes = new unsigned char[operators[OperatorTypes_SCOPE].enumAmount]{ opcode_SVESCPE };
+	operators[OperatorTypes_SCOPE].byteCodes = new unsigned char[operators[OperatorTypes_SCOPE].enumAmount]{ bytecode_SVESCPE };
 	operators[OperatorTypes_SCOPE].params = new unsigned char[operators[OperatorTypes_SCOPE].enumAmount]{ 2 };
 	operators[OperatorTypes_SCOPE].minParams = new unsigned char[operators[OperatorTypes_SCOPE].enumAmount]{ 2 };
 	operators[OperatorTypes_SCOPE].paramsyntax = new VarType*[operators[OperatorTypes_SCOPE].enumAmount]{
@@ -1715,7 +1715,7 @@ CelScriptCompiler::CelScriptCompiler()
 	operators[OperatorTypes_SAVE].keyword = "save";
 	operators[OperatorTypes_SAVE].enumAmount = 1;
 	operators[OperatorTypes_SAVE].enums = new std::string[operators[OperatorTypes_SAVE].enumAmount]; operators[OperatorTypes_SAVE].enums[0] = "state";
-	operators[OperatorTypes_SAVE].byteCodes = new unsigned char[operators[OperatorTypes_SAVE].enumAmount]{ opcode_SVESTT };
+	operators[OperatorTypes_SAVE].byteCodes = new unsigned char[operators[OperatorTypes_SAVE].enumAmount]{ bytecode_SVESTT };
 	operators[OperatorTypes_SAVE].params = new unsigned char[operators[OperatorTypes_SAVE].enumAmount]{ 2 };
 	operators[OperatorTypes_SAVE].minParams = new unsigned char[operators[OperatorTypes_SAVE].enumAmount]{ 2 };
 	operators[OperatorTypes_SAVE].paramsyntax = new VarType*[operators[OperatorTypes_SAVE].enumAmount]{
@@ -1747,7 +1747,7 @@ CelScriptCompiler::CelScriptCompiler()
 	operators[OperatorTypes_PAUSE].keyword = "pause";
 	operators[OperatorTypes_PAUSE].enumAmount = 1;
 	operators[OperatorTypes_PAUSE].enums = new std::string[operators[OperatorTypes_PAUSE].enumAmount]; operators[OperatorTypes_PAUSE].enums[0] = "game";
-	operators[OperatorTypes_PAUSE].byteCodes = new unsigned char[operators[OperatorTypes_PAUSE].enumAmount]{ opcode_PSEGME };
+	operators[OperatorTypes_PAUSE].byteCodes = new unsigned char[operators[OperatorTypes_PAUSE].enumAmount]{ bytecode_PSEGME };
 	operators[OperatorTypes_PAUSE].params = new unsigned char[operators[OperatorTypes_PAUSE].enumAmount]{ 0 };
 	operators[OperatorTypes_PAUSE].minParams = new unsigned char[operators[OperatorTypes_PAUSE].enumAmount]{ 0 };
 	operators[OperatorTypes_PAUSE].paramsyntax = new VarType*[operators[OperatorTypes_PAUSE].enumAmount]{
@@ -1779,7 +1779,7 @@ CelScriptCompiler::CelScriptCompiler()
 	operators[OperatorTypes_RESUME].keyword = "resume";
 	operators[OperatorTypes_RESUME].enumAmount = 1;
 	operators[OperatorTypes_RESUME].enums = new std::string[operators[OperatorTypes_RESUME].enumAmount]; operators[OperatorTypes_RESUME].enums[0] = "game";
-	operators[OperatorTypes_RESUME].byteCodes = new unsigned char[operators[OperatorTypes_RESUME].enumAmount]{ opcode_RSMGME };
+	operators[OperatorTypes_RESUME].byteCodes = new unsigned char[operators[OperatorTypes_RESUME].enumAmount]{ bytecode_RSMGME };
 	operators[OperatorTypes_RESUME].params = new unsigned char[operators[OperatorTypes_RESUME].enumAmount]{ 0 };
 	operators[OperatorTypes_RESUME].minParams = new unsigned char[operators[OperatorTypes_RESUME].enumAmount]{ 0 };
 	operators[OperatorTypes_RESUME].paramsyntax = new VarType*[operators[OperatorTypes_RESUME].enumAmount]{
@@ -1929,7 +1929,7 @@ void CelScriptCompiler::setupArithmeticOps()
 	operators[OperatorTypes_SUM].keyword = "sum";
 	operators[OperatorTypes_SUM].enumAmount = 6;
 	operators[OperatorTypes_SUM].enums = new std::string[operators[OperatorTypes_SUM].enumAmount]; operators[OperatorTypes_SUM].enums[0] = ""; operators[OperatorTypes_SUM].enums[1] = ""; operators[OperatorTypes_SUM].enums[2] = ""; operators[OperatorTypes_SUM].enums[3] = ""; operators[OperatorTypes_SUM].enums[4] = ""; operators[OperatorTypes_SUM].enums[5] = "";
-	operators[OperatorTypes_SUM].byteCodes = new unsigned char[operators[OperatorTypes_SUM].enumAmount]{opcode_SUM2CONST, opcode_SUM2CONST, opcode_SUMVAR, opcode_SUMFLOAT, opcode_SUMFLOAT, opcode_SUMFLOAT};
+	operators[OperatorTypes_SUM].byteCodes = new unsigned char[operators[OperatorTypes_SUM].enumAmount]{bytecode_SUM2CONST, bytecode_SUM2CONST, bytecode_SUMVAR, bytecode_SUMFLOAT, bytecode_SUMFLOAT, bytecode_SUMFLOAT};
 	operators[OperatorTypes_SUM].params = new unsigned char[operators[OperatorTypes_SUM].enumAmount]{2, 2, 2, 2, 2, 2};
 	operators[OperatorTypes_SUM].minParams = new unsigned char[operators[OperatorTypes_SUM].enumAmount]{2, 2, 2, 2, 2, 2};
 	operators[OperatorTypes_SUM].paramsyntax = new VarType*[operators[OperatorTypes_SUM].enumAmount]{
@@ -2009,7 +2009,7 @@ void CelScriptCompiler::setupArithmeticOps()
 	operators[OperatorTypes_SUB].keyword = "sub";
 	operators[OperatorTypes_SUB].enumAmount = 10;
 	operators[OperatorTypes_SUB].enums = new std::string[operators[OperatorTypes_SUB].enumAmount]; operators[OperatorTypes_SUB].enums[0] = ""; operators[OperatorTypes_SUB].enums[1] = ""; operators[OperatorTypes_SUB].enums[2] = ""; operators[OperatorTypes_SUB].enums[3] = ""; operators[OperatorTypes_SUB].enums[4] = ""; operators[OperatorTypes_SUB].enums[5] = ""; operators[OperatorTypes_SUB].enums[6] = ""; operators[OperatorTypes_SUB].enums[7] = ""; operators[OperatorTypes_SUB].enums[8] = ""; operators[OperatorTypes_SUB].enums[9] = "";
-	operators[OperatorTypes_SUB].byteCodes = new unsigned char[operators[OperatorTypes_SUB].enumAmount]{opcode_SUB2CONST, opcode_SUB2CONST, opcode_SUBVAR, opcode_SUBFLOAT, opcode_SUBFLOAT, opcode_SUBFLOAT, opcode_NEGATECONST, opcode_NEGATECONST, opcode_NEGATEFLOAT, opcode_NEGATEVAR};
+	operators[OperatorTypes_SUB].byteCodes = new unsigned char[operators[OperatorTypes_SUB].enumAmount]{bytecode_SUB2CONST, bytecode_SUB2CONST, bytecode_SUBVAR, bytecode_SUBFLOAT, bytecode_SUBFLOAT, bytecode_SUBFLOAT, bytecode_NEGATECONST, bytecode_NEGATECONST, bytecode_NEGATEFLOAT, bytecode_NEGATEVAR};
 	operators[OperatorTypes_SUB].params = new unsigned char[operators[OperatorTypes_SUB].enumAmount]{2, 2, 2, 2, 2, 2, 1, 1, 1, 1};
 	operators[OperatorTypes_SUB].minParams = new unsigned char[operators[OperatorTypes_SUB].enumAmount]{2, 2, 2, 2, 2, 2, 1, 1, 1, 1};
 	operators[OperatorTypes_SUB].paramsyntax = new VarType*[operators[OperatorTypes_SUB].enumAmount]{
@@ -2126,7 +2126,7 @@ void CelScriptCompiler::setupArithmeticOps()
 	operators[OperatorTypes_MUL].keyword = "mul";
 	operators[OperatorTypes_MUL].enumAmount = 6;
 	operators[OperatorTypes_MUL].enums = new std::string[operators[OperatorTypes_MUL].enumAmount]; operators[OperatorTypes_MUL].enums[0] = ""; operators[OperatorTypes_MUL].enums[1] = ""; operators[OperatorTypes_MUL].enums[2] = ""; operators[OperatorTypes_MUL].enums[3] = ""; operators[OperatorTypes_MUL].enums[4] = ""; operators[OperatorTypes_MUL].enums[5] = "";
-	operators[OperatorTypes_MUL].byteCodes = new unsigned char[operators[OperatorTypes_MUL].enumAmount]{opcode_MUL2CONST, opcode_MUL2CONST, opcode_MULVAR, opcode_MULFLOAT, opcode_MULFLOAT, opcode_MULFLOAT};
+	operators[OperatorTypes_MUL].byteCodes = new unsigned char[operators[OperatorTypes_MUL].enumAmount]{bytecode_MUL2CONST, bytecode_MUL2CONST, bytecode_MULVAR, bytecode_MULFLOAT, bytecode_MULFLOAT, bytecode_MULFLOAT};
 	operators[OperatorTypes_MUL].params = new unsigned char[operators[OperatorTypes_MUL].enumAmount]{2, 2, 2, 2, 2, 2};
 	operators[OperatorTypes_MUL].minParams = new unsigned char[operators[OperatorTypes_MUL].enumAmount]{2, 2, 2, 2, 2, 2};
 	operators[OperatorTypes_MUL].paramsyntax = new VarType*[operators[OperatorTypes_MUL].enumAmount]{
@@ -2206,7 +2206,7 @@ void CelScriptCompiler::setupArithmeticOps()
 	operators[OperatorTypes_DIV].keyword = "div";
 	operators[OperatorTypes_DIV].enumAmount = 6;
 	operators[OperatorTypes_DIV].enums = new std::string[operators[OperatorTypes_DIV].enumAmount]; operators[OperatorTypes_DIV].enums[0] = ""; operators[OperatorTypes_DIV].enums[1] = ""; operators[OperatorTypes_DIV].enums[2] = ""; operators[OperatorTypes_DIV].enums[3] = ""; operators[OperatorTypes_DIV].enums[4] = ""; operators[OperatorTypes_DIV].enums[5] = "";
-	operators[OperatorTypes_DIV].byteCodes = new unsigned char[operators[OperatorTypes_DIV].enumAmount]{opcode_DIV2CONST, opcode_DIV2CONST, opcode_DIVVAR, opcode_DIVFLOAT, opcode_DIVFLOAT, opcode_DIVFLOAT};
+	operators[OperatorTypes_DIV].byteCodes = new unsigned char[operators[OperatorTypes_DIV].enumAmount]{bytecode_DIV2CONST, bytecode_DIV2CONST, bytecode_DIVVAR, bytecode_DIVFLOAT, bytecode_DIVFLOAT, bytecode_DIVFLOAT};
 	operators[OperatorTypes_DIV].params = new unsigned char[operators[OperatorTypes_DIV].enumAmount]{2, 2, 2, 2, 2, 2};
 	operators[OperatorTypes_DIV].minParams = new unsigned char[operators[OperatorTypes_DIV].enumAmount]{2, 2, 2, 2, 2, 2};
 	operators[OperatorTypes_DIV].paramsyntax = new VarType*[operators[OperatorTypes_DIV].enumAmount]{

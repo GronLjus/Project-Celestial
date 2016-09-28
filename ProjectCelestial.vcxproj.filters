@@ -759,6 +759,9 @@
     <ClInclude Include="MouseHandler.h">
       <Filter>Header Files\Entities\Handlers</Filter>
     </ClInclude>
+    <ClInclude Include="Content\Scripts\ToolBarScripts\KubLingMachine.h">
+      <Filter>Header Files\Logic\CelScript\RunTime</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Camera.cpp">

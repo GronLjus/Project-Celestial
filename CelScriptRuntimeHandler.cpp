@@ -2941,152 +2941,152 @@ CelScriptRuntimeHandler::CelScriptRuntimeHandler(MessageQueue* mQueue, Celestial
 	abort = false;
 	this->mQueue = mQueue;
 
-	this->operators = new ExecuteFunction[opcode_NA];
+	this->operators = new ExecuteFunction[bytecode_NA];
 
-	operators[opcode_SETCONST] = SetConstValOperator;
-	operators[opcode_SETVAR] = SetVarValOperator;
+	operators[bytecode_SETCONST] = SetConstValOperator;
+	operators[bytecode_SETVAR] = SetVarValOperator;
 
-	operators[opcode_LOADLIGHT] = LoadLightOperator;
-	operators[opcode_LOADMESH] = LoadMeshOperator;
-	operators[opcode_LOADSCRIPT] = LoadScriptOperator;
-	operators[opcode_LOADTXTBX] = LoadTextBoxOperator;
-	operators[opcode_LOADPANEL] = LoadPanelOperator;
-	operators[opcode_LOADIMAGE] = LoadImageOperator;
-	operators[opcode_LOADGMBRD] = LoadGameBoardOperator;
-	operators[opcode_LOADCAM] = LoadCameraOperator;
-	operators[opcode_LOADOBJCT] = LoadObjectOperator;
-	operators[opcode_LOADCPY] = LoadObjectCopyOperator;
+	operators[bytecode_LOADLIGHT] = LoadLightOperator;
+	operators[bytecode_LOADMESH] = LoadMeshOperator;
+	operators[bytecode_LOADSCRIPT] = LoadScriptOperator;
+	operators[bytecode_LOADTXTBX] = LoadTextBoxOperator;
+	operators[bytecode_LOADPANEL] = LoadPanelOperator;
+	operators[bytecode_LOADIMAGE] = LoadImageOperator;
+	operators[bytecode_LOADGMBRD] = LoadGameBoardOperator;
+	operators[bytecode_LOADCAM] = LoadCameraOperator;
+	operators[bytecode_LOADOBJCT] = LoadObjectOperator;
+	operators[bytecode_LOADCPY] = LoadObjectCopyOperator;
 
-	operators[opcode_UNLOAD] = UnLoadOperator;
+	operators[bytecode_UNLOAD] = UnLoadOperator;
 
-	operators[opcode_ADDOBJECT] = AddObjectOperator;
-	operators[opcode_ADDMESH] = AddMeshOperator;
-	operators[opcode_ADDRTOBJ] = AddRouteObjectOperator;
+	operators[bytecode_ADDOBJECT] = AddObjectOperator;
+	operators[bytecode_ADDMESH] = AddMeshOperator;
+	operators[bytecode_ADDRTOBJ] = AddRouteObjectOperator;
 
-	operators[opcode_RMVE] = RemoveOperator;
+	operators[bytecode_RMVE] = RemoveOperator;
 
-	operators[opcode_SETGMEBRD] = SetGameBoardOperator;
-	operators[opcode_SETCMRA] = SetCameraOperator;
+	operators[bytecode_SETGMEBRD] = SetGameBoardOperator;
+	operators[bytecode_SETCMRA] = SetCameraOperator;
 
-	operators[opcode_SETLCLK] = SetLeftClickOperator;
-	operators[opcode_SETMCLK] = SetMiddleClickOperator;
-	operators[opcode_SETRCLK] = SetRightClickOperator;
-	operators[opcode_SETLDRG] = SetLeftDragOperator;
-	operators[opcode_SETMDRG] = SetMiddleDragOperator;
-	operators[opcode_SETRDRG] = SetRightDragOperator;
-	operators[opcode_SETMWHL] = SetMouseWheelOperator;
-	operators[opcode_SETUD] = SetMouseUpDownOperator;
-	operators[opcode_SETNDEARRVL] = SetNodeArrivalOperator;
+	operators[bytecode_SETLCLK] = SetLeftClickOperator;
+	operators[bytecode_SETMCLK] = SetMiddleClickOperator;
+	operators[bytecode_SETRCLK] = SetRightClickOperator;
+	operators[bytecode_SETLDRG] = SetLeftDragOperator;
+	operators[bytecode_SETMDRG] = SetMiddleDragOperator;
+	operators[bytecode_SETRDRG] = SetRightDragOperator;
+	operators[bytecode_SETMWHL] = SetMouseWheelOperator;
+	operators[bytecode_SETUD] = SetMouseUpDownOperator;
+	operators[bytecode_SETNDEARRVL] = SetNodeArrivalOperator;
 
-	operators[opcode_SETUI] = SetUIOperator;
-	operators[opcode_SETCRS] = SetMouseCursor;
-	operators[opcode_FCSUI] = FocusUIOperator;
+	operators[bytecode_SETUI] = SetUIOperator;
+	operators[bytecode_SETCRS] = SetMouseCursor;
+	operators[bytecode_FCSUI] = FocusUIOperator;
 
-	operators[opcode_GETSCRNY] = GetScreenHeightOperator;
-	operators[opcode_PRNT] = ParentOperator;
+	operators[bytecode_GETSCRNY] = GetScreenHeightOperator;
+	operators[bytecode_PRNT] = ParentOperator;
 
-	operators[opcode_RESNAP] = ReSnapOperator;
-	operators[opcode_POS] = PosOperator;
-	operators[opcode_MVE] = MoveOperator;
-	operators[opcode_PRPL] =PropelOperator;
-	operators[opcode_RTE] = RotateOperator;
-	operators[opcode_ORB] = OrbitOperator;
-	operators[opcode_SIZE] = SizeOperator;
-	operators[opcode_SCL] = ScaleOperator;
-	operators[opcode_2DADDCHLD] = Add2DOperator;
+	operators[bytecode_RESNAP] = ReSnapOperator;
+	operators[bytecode_POS] = PosOperator;
+	operators[bytecode_MVE] = MoveOperator;
+	operators[bytecode_PRPL] =PropelOperator;
+	operators[bytecode_RTE] = RotateOperator;
+	operators[bytecode_ORB] = OrbitOperator;
+	operators[bytecode_SIZE] = SizeOperator;
+	operators[bytecode_SCL] = ScaleOperator;
+	operators[bytecode_2DADDCHLD] = Add2DOperator;
 
-	operators[opcode_POSTSTR] = PostStrOperator;
-	operators[opcode_POSTNMBR] = PostNumOperator;
-	operators[opcode_POSTFLOAT] = PostFloatOperator;
+	operators[bytecode_POSTSTR] = PostStrOperator;
+	operators[bytecode_POSTNMBR] = PostNumOperator;
+	operators[bytecode_POSTFLOAT] = PostFloatOperator;
 
-	operators[opcode_IGNRMS] = IgnoreMouseOperator; 
-	operators[opcode_IGNRKY] = IgnoreKeyboardOperator; 
-	operators[opcode_IGNRIN] = IgnoreInputOperator;
+	operators[bytecode_IGNRMS] = IgnoreMouseOperator; 
+	operators[bytecode_IGNRKY] = IgnoreKeyboardOperator; 
+	operators[bytecode_IGNRIN] = IgnoreInputOperator;
 
-	operators[opcode_ACPTMS] = AcceptMouseOperator;
-	operators[opcode_ACPTKY] = AcceptKeyboardOperator;
-	operators[opcode_ACPTIN] = AcceptInputOperator;
+	operators[bytecode_ACPTMS] = AcceptMouseOperator;
+	operators[bytecode_ACPTKY] = AcceptKeyboardOperator;
+	operators[bytecode_ACPTIN] = AcceptInputOperator;
 
-	operators[opcode_INCRMNTLYR] = IncrementLayerOperator;
-	operators[opcode_DCRMNLYR] = DecrementLayerOperator;
-	operators[opcode_STLYR] = SetLayerOperator;
+	operators[bytecode_INCRMNTLYR] = IncrementLayerOperator;
+	operators[bytecode_DCRMNLYR] = DecrementLayerOperator;
+	operators[bytecode_STLYR] = SetLayerOperator;
 
-	operators[opcode_NEGATECONST] = NegateConstOperator;
-	operators[opcode_NEGATEVAR] = NegateVarOperator;
-	operators[opcode_NEGATEFLOAT] = NegateFloatOperator;
+	operators[bytecode_NEGATECONST] = NegateConstOperator;
+	operators[bytecode_NEGATEVAR] = NegateVarOperator;
+	operators[bytecode_NEGATEFLOAT] = NegateFloatOperator;
 
-	operators[opcode_SUM2CONST] = SumConst2Operator;
-	operators[opcode_SUMFLOAT] = SumFloatOperator;
-	operators[opcode_SUMVAR] = SumVarOperator;
+	operators[bytecode_SUM2CONST] = SumConst2Operator;
+	operators[bytecode_SUMFLOAT] = SumFloatOperator;
+	operators[bytecode_SUMVAR] = SumVarOperator;
 
-	operators[opcode_SUB2CONST] = SubConst2Operator;
-	operators[opcode_SUBFLOAT] = SubFloatOperator;
-	operators[opcode_SUBVAR] = SubVarOperator;
+	operators[bytecode_SUB2CONST] = SubConst2Operator;
+	operators[bytecode_SUBFLOAT] = SubFloatOperator;
+	operators[bytecode_SUBVAR] = SubVarOperator;
 
-	operators[opcode_MUL2CONST] = MulConst2Operator;
-	operators[opcode_MULFLOAT] = MulFloatOperator;
-	operators[opcode_MULVAR] = MulVarOperator;
+	operators[bytecode_MUL2CONST] = MulConst2Operator;
+	operators[bytecode_MULFLOAT] = MulFloatOperator;
+	operators[bytecode_MULVAR] = MulVarOperator;
 
-	operators[opcode_DIV2CONST] = DivConst2Operator;
-	operators[opcode_DIVFLOAT] = DivFloatOperator;
-	operators[opcode_DIVVAR] = DivVarOperator;
+	operators[bytecode_DIV2CONST] = DivConst2Operator;
+	operators[bytecode_DIVFLOAT] = DivFloatOperator;
+	operators[bytecode_DIVVAR] = DivVarOperator;
 
-	operators[opcode_CASTFLOAT] = CastFloatOperator;
+	operators[bytecode_CASTFLOAT] = CastFloatOperator;
 
-	operators[opcode_NUMEQUAL2CONST] = NumEqlConst2Operator;
-	operators[opcode_NUMEQUALFLOAT] = FloatEqlVarOperator;
-	operators[opcode_NUMEQUALVAR] = NumEqlVarOperator;
-
-
-	operators[opcode_STREQUAL2CONST] = StrEqlConst2Operator;
-	operators[opcode_STREQUALVAR] = StrEqlVarOperator;
-
-	operators[opcode_NUMGRT2CONST] = NumGrtConst2Operator;
-	operators[opcode_NUMGRTFLOAT] = NumGrtFloaOperator;
-	operators[opcode_NUMGRTVAR] = NumGrtVarOperator;
-
-	operators[opcode_RNSCRPT] = RunScriptOperator;
-	operators[opcode_STSCRPTPRMNMBR] = SetScriptParNumOperator;
-	operators[opcode_STSCRPTPRMSTR] = SetScriptParStrOperator;
-
-	operators[opcode_EXPRTCNST] = ExportConstOperator;
-	operators[opcode_EXPRTVAR] = ExportVarOperator;
-	operators[opcode_IMPRT] = ImportOperator;
-
-	operators[opcode_HDE] = HideOperator;
-	operators[opcode_SHW] = ShowOperator;
-	operators[opcode_HDECRS] = HideCursorOperator;
-	operators[opcode_SHWCRS] = ShowCursorOperator;
-
-	operators[opcode_LNKDBG] = LinkDBGOperator;
-	operators[opcode_LNKTRGT] = LinkTargetOperator;
+	operators[bytecode_NUMEQUAL2CONST] = NumEqlConst2Operator;
+	operators[bytecode_NUMEQUALFLOAT] = FloatEqlVarOperator;
+	operators[bytecode_NUMEQUALVAR] = NumEqlVarOperator;
 
 
-	operators[opcode_STXT] = SetTextOperator;
-	operators[opcode_ADDTXT] = AppendTextOperator;
-	operators[opcode_ADDLNE] = AddTextLineOperator;
-	operators[opcode_STCNTNT] = SetContentOperator;
-	operators[opcode_STBRDR] = SetBorderOperator;
+	operators[bytecode_STREQUAL2CONST] = StrEqlConst2Operator;
+	operators[bytecode_STREQUALVAR] = StrEqlVarOperator;
 
-	operators[opcode_SPLTRTE] = SplitRouteOperator;
+	operators[bytecode_NUMGRT2CONST] = NumGrtConst2Operator;
+	operators[bytecode_NUMGRTFLOAT] = NumGrtFloaOperator;
+	operators[bytecode_NUMGRTVAR] = NumGrtVarOperator;
 
-	operators[opcode_TRCK] = TrackObjectOperator;
-	operators[opcode_CRLTRCK] = ClearTrackingOperator;
-	operators[opcode_HCKTRCK] = HockTrackingOperator;
-	operators[opcode_SPWN] = SpawnObjectOperator;
-	operators[opcode_TRVL] = TravelObjectOperator;
-	operators[opcode_GLUOBJCT] = GlueObjectOperator;
+	operators[bytecode_RNSCRPT] = RunScriptOperator;
+	operators[bytecode_STSCRPTPRMNMBR] = SetScriptParNumOperator;
+	operators[bytecode_STSCRPTPRMSTR] = SetScriptParStrOperator;
 
-	operators[opcode_SVESCPE] = ScopeSaveOperator;
-	operators[opcode_SVESTT] = SaveStateOperator;
-	operators[opcode_LDSTT] = LoadStateOperator;
-	operators[opcode_CLRBRD] = ClearBoardOperator;
+	operators[bytecode_EXPRTCNST] = ExportConstOperator;
+	operators[bytecode_EXPRTVAR] = ExportVarOperator;
+	operators[bytecode_IMPRT] = ImportOperator;
 
-	operators[opcode_PSEGME] = PauseGameOperator;
-	operators[opcode_RSMGME] = ResumeGameOperator;
+	operators[bytecode_HDE] = HideOperator;
+	operators[bytecode_SHW] = ShowOperator;
+	operators[bytecode_HDECRS] = HideCursorOperator;
+	operators[bytecode_SHWCRS] = ShowCursorOperator;
 
-	operators[opcode_JMPINVVAR] = JumpInv;
-	operators[opcode_JMPNOW] = JumpNow;
+	operators[bytecode_LNKDBG] = LinkDBGOperator;
+	operators[bytecode_LNKTRGT] = LinkTargetOperator;
+
+
+	operators[bytecode_STXT] = SetTextOperator;
+	operators[bytecode_ADDTXT] = AppendTextOperator;
+	operators[bytecode_ADDLNE] = AddTextLineOperator;
+	operators[bytecode_STCNTNT] = SetContentOperator;
+	operators[bytecode_STBRDR] = SetBorderOperator;
+
+	operators[bytecode_SPLTRTE] = SplitRouteOperator;
+
+	operators[bytecode_TRCK] = TrackObjectOperator;
+	operators[bytecode_CRLTRCK] = ClearTrackingOperator;
+	operators[bytecode_HCKTRCK] = HockTrackingOperator;
+	operators[bytecode_SPWN] = SpawnObjectOperator;
+	operators[bytecode_TRVL] = TravelObjectOperator;
+	operators[bytecode_GLUOBJCT] = GlueObjectOperator;
+
+	operators[bytecode_SVESCPE] = ScopeSaveOperator;
+	operators[bytecode_SVESTT] = SaveStateOperator;
+	operators[bytecode_LDSTT] = LoadStateOperator;
+	operators[bytecode_CLRBRD] = ClearBoardOperator;
+
+	operators[bytecode_PSEGME] = PauseGameOperator;
+	operators[bytecode_RSMGME] = ResumeGameOperator;
+
+	operators[bytecode_JMPINVVAR] = JumpInv;
+	operators[bytecode_JMPNOW] = JumpNow;
 
 	operators[opCode_WTFRVR] = WaitForVar;
 

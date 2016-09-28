@@ -70,7 +70,7 @@ CelestialList<CelestialList<unsigned char>*>* CelScriptCodeGenerator::generateCo
 	CelestialList<CelestialList<unsigned char>*>* commands = new CelestialList<CelestialList<unsigned char>*>();
 	CelestialListNode<CelestialTreeNode<syntax>*>* branch = node->GetLeafs()->GetFirstNode();
 	unsigned char opCode = std::stoi(node->GetNodeObject().val);
-	bool apuConstOp = opCode == opcode_SUM2CONST || opCode == opcode_SUB2CONST || opCode == opcode_MUL2CONST || opCode == opcode_DIV2CONST || opCode == opcode_NUMEQUAL2CONST || opCode == opcode_NUMGRT2CONST || opCode == opcode_NEGATECONST;
+	bool apuConstOp = opCode == bytecode_SUM2CONST || opCode == bytecode_SUB2CONST || opCode == bytecode_MUL2CONST || opCode == bytecode_DIV2CONST || opCode == bytecode_NUMEQUAL2CONST || opCode == bytecode_NUMGRT2CONST || opCode == bytecode_NEGATECONST;
 	CelestialList<int>* varClear = new CelestialList<int>();
 
 	line->AddElement(opRetVar >> 0);
@@ -103,7 +103,7 @@ CelestialList<CelestialList<unsigned char>*>* CelScriptCodeGenerator::generateCo
 			if (std::stoi(branch->GetNodeObject()->GetNodeObject().val) == FlowType_COND)
 			{
 
-				line->AddElement(opcode_JMPINVVAR);
+				line->AddElement(bytecode_JMPINVVAR);
 				CelestialListNode<CelestialTreeNode<syntax>*>* conLine = branch->GetNodeObject()->GetLeafs()->GetFirstNode();
 				startCheck = codeCount;
 
@@ -214,7 +214,7 @@ CelestialList<CelestialList<unsigned char>*>* CelScriptCodeGenerator::generateCo
 					finishLine->AddElement((unsigned char)0);
 					finishLine->AddElement((unsigned char)0);
 					codeCount++;
-					finishLine->AddElement(opcode_JMPNOW);
+					finishLine->AddElement(bytecode_JMPNOW);
 
 					finishLine->AddElement(startCheck >> 0);
 					finishLine->AddElement(startCheck >> 8);
@@ -239,7 +239,7 @@ CelestialList<CelestialList<unsigned char>*>* CelScriptCodeGenerator::generateCo
 					codeCount++;
 
 					bodLine++;
-					finishLine->AddElement(opcode_JMPNOW);
+					finishLine->AddElement(bytecode_JMPNOW);
 					CelestialList<CelestialList<unsigned char>*>* generatedLines = generateCode(branch->GetNodeObject(), symbolTable, codeCount);
 
 					finishLine->AddElement(codeCount >> 0);
@@ -343,7 +343,7 @@ CelestialList<CelestialList<unsigned char>*>* CelScriptCodeGenerator::generateCo
 					addLine->AddElement((unsigned char)0);
 					addLine->AddElement((unsigned char)0);
 
-					addLine->AddElement((unsigned char)opcode_SETCONST);//Set operator
+					addLine->AddElement((unsigned char)bytecode_SETCONST);//Set operator
 
 					addLine->AddElement(tempVar >> 0);
 					addLine->AddElement(tempVar >> 8);
@@ -456,9 +456,9 @@ CelestialList<CelestialList<unsigned char>*>* CelScriptCodeGenerator::generateCo
 			{
 
 				int opRet = symbolTable->GetValue(varAdr).address;
-				setOpVar = opCode == opcode_SETVAR;
+				setOpVar = opCode == bytecode_SETVAR;
 
-				if (opCode != opcode_SETVAR)
+				if (opCode != bytecode_SETVAR)
 				{
 
 					opRet = holes->GetFirstNode() != nullptr ? holes->PopElement() : var;
@@ -491,7 +491,7 @@ CelestialList<CelestialList<unsigned char>*>* CelScriptCodeGenerator::generateCo
 				CelestialList<CelestialList<unsigned char>*>* subCommands = generateCode(branch->GetNodeObject(), symbolTable, codeCount);
 				commands->AddElement(subCommands);
 
-				if (opCode != opcode_SETVAR)
+				if (opCode != bytecode_SETVAR)
 				{
 
 					CelestialList<unsigned char>* addLine = new CelestialList<unsigned char>();
@@ -531,47 +531,47 @@ CelestialList<CelestialList<unsigned char>*>* CelScriptCodeGenerator::generateCo
 
 		}
 
-		if (opCode == opcode_SUM2CONST)
+		if (opCode == bytecode_SUM2CONST)
 		{
 
 			opRetConst = apuFloat ? 'f' + std::to_string(apuConst1 + apuConst2) :
 				'n' + std::to_string((int)(apuConst1 + apuConst2));
 
 		}
-		else if (opCode == opcode_SUB2CONST)
+		else if (opCode == bytecode_SUB2CONST)
 		{
 
 			opRetConst = apuFloat ? 'f' + std::to_string(apuConst1 - apuConst2) :
 				'n' + std::to_string((int)(apuConst1 - apuConst2));
 
 		}
-		else if (opCode == opcode_MUL2CONST)
+		else if (opCode == bytecode_MUL2CONST)
 		{
 
 			opRetConst = apuFloat ? 'f' + std::to_string(apuConst1 * apuConst2) :
 				'n' + std::to_string((int)(apuConst1 * apuConst2));
 
 		}
-		else if (opCode == opcode_DIV2CONST)
+		else if (opCode == bytecode_DIV2CONST)
 		{
 
 			opRetConst = apuFloat ? 'f' + std::to_string(apuConst1 / apuConst2) :
 				'n' + std::to_string((int)(apuConst1 / apuConst2));
 
 		}
-		else if (opCode == opcode_NUMEQUAL2CONST)
+		else if (opCode == bytecode_NUMEQUAL2CONST)
 		{
 
 			opRetConst = 'n' + std::to_string(apuConst1 == apuConst2 ? 1 : 0);
 
 		}
-		else if (opCode == opcode_NUMGRT2CONST)
+		else if (opCode == bytecode_NUMGRT2CONST)
 		{
 
 			opRetConst = 'n' + std::to_string(apuConst1 > apuConst2 ? 1 : 0);
 
 		}
-		else if (opCode == opcode_NEGATECONST)
+		else if (opCode == bytecode_NEGATECONST)
 		{
 
 			opRetConst = apuFloat ? 'f' + std::to_string(-apuConst1) :

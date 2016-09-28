@@ -188,6 +188,7 @@
     <ClInclude Include="CLSVLoader.h" />
     <ClInclude Include="ColourLoader.h" />
     <ClInclude Include="CommonParticle.h" />
+    <ClInclude Include="Content\Scripts\ToolBarScripts\KubLingMachine.h" />
     <ClInclude Include="CrossHandlerHeader.h" />
     <ClInclude Include="CelscriptHandler.h" />
     <ClInclude Include="CrossScriptMemoryObject.h" />

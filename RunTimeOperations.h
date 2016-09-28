@@ -3,80 +3,80 @@
 namespace Logic
 {
 	///<summary>The code for each operator</summary>
-	enum opcode : unsigned char {
-		opcode_SETCONST, opcode_SETVAR,
+	enum bytecode : unsigned char {
+		bytecode_SETCONST, bytecode_SETVAR,
 
-		opcode_LOADLIGHT, opcode_LOADMESH, opcode_LOADSCRIPT,
-		opcode_LOADTXTBX, opcode_LOADPANEL, opcode_LOADIMAGE,
-		opcode_LOADGMBRD, opcode_LOADCAM, opcode_LOADOBJCT,
-		opcode_LOADCPY,
+		bytecode_LOADLIGHT, bytecode_LOADMESH, bytecode_LOADSCRIPT,
+		bytecode_LOADTXTBX, bytecode_LOADPANEL, bytecode_LOADIMAGE,
+		bytecode_LOADGMBRD, bytecode_LOADCAM, bytecode_LOADOBJCT,
+		bytecode_LOADCPY,
 
-		opcode_UNLOAD,
+		bytecode_UNLOAD,
 
-		opcode_ADDOBJECT, opcode_ADDMESH,
-		opcode_ADDRTOBJ,
+		bytecode_ADDOBJECT, bytecode_ADDMESH,
+		bytecode_ADDRTOBJ,
 
-		opcode_RMVE,
-		opcode_SETGMEBRD, opcode_SETCMRA,
-		opcode_SETLCLK, opcode_SETMCLK, opcode_SETRCLK,
-		opcode_SETLDRG, opcode_SETMDRG, opcode_SETRDRG,
-		opcode_SETMWHL, opcode_SETUD,
-		opcode_SETNDEARRVL,
-		opcode_SETUI,
-		opcode_SETCRS,
-		opcode_FCSUI,
+		bytecode_RMVE,
+		bytecode_SETGMEBRD, bytecode_SETCMRA,
+		bytecode_SETLCLK, bytecode_SETMCLK, bytecode_SETRCLK,
+		bytecode_SETLDRG, bytecode_SETMDRG, bytecode_SETRDRG,
+		bytecode_SETMWHL, bytecode_SETUD,
+		bytecode_SETNDEARRVL,
+		bytecode_SETUI,
+		bytecode_SETCRS,
+		bytecode_FCSUI,
 
-		opcode_GETSCRNY,
-		opcode_PRNT,
+		bytecode_GETSCRNY,
+		bytecode_PRNT,
 
-		opcode_RESNAP,
-		opcode_POS, opcode_MVE, opcode_PRPL,
-		opcode_RTE, opcode_ORB,
-		opcode_SIZE, opcode_SCL,
-		opcode_2DADDCHLD,
+		bytecode_RESNAP,
+		bytecode_POS, bytecode_MVE, bytecode_PRPL,
+		bytecode_RTE, bytecode_ORB,
+		bytecode_SIZE, bytecode_SCL,
+		bytecode_2DADDCHLD,
 
-		opcode_POSTSTR, opcode_POSTNMBR, opcode_POSTFLOAT,
+		bytecode_POSTSTR, bytecode_POSTNMBR, bytecode_POSTFLOAT,
 
-		opcode_IGNRMS, opcode_IGNRKY, opcode_IGNRIN,
-		opcode_ACPTMS, opcode_ACPTKY, opcode_ACPTIN,
-		opcode_INCRMNTLYR, opcode_DCRMNLYR, opcode_STLYR,
+		bytecode_IGNRMS, bytecode_IGNRKY, bytecode_IGNRIN,
+		bytecode_ACPTMS, bytecode_ACPTKY, bytecode_ACPTIN,
+		bytecode_INCRMNTLYR, bytecode_DCRMNLYR, bytecode_STLYR,
 
-		opcode_NEGATECONST, opcode_NEGATEVAR, opcode_NEGATEFLOAT,
-		opcode_SUM2CONST, opcode_SUMFLOAT, opcode_SUMVAR,
-		opcode_SUB2CONST, opcode_SUBFLOAT, opcode_SUBVAR,
-		opcode_MUL2CONST, opcode_MULFLOAT, opcode_MULVAR,
-		opcode_DIV2CONST, opcode_DIVFLOAT, opcode_DIVVAR,
-		opcode_CASTFLOAT,
+		bytecode_NEGATECONST, bytecode_NEGATEVAR, bytecode_NEGATEFLOAT,
+		bytecode_SUM2CONST, bytecode_SUMFLOAT, bytecode_SUMVAR,
+		bytecode_SUB2CONST, bytecode_SUBFLOAT, bytecode_SUBVAR,
+		bytecode_MUL2CONST, bytecode_MULFLOAT, bytecode_MULVAR,
+		bytecode_DIV2CONST, bytecode_DIVFLOAT, bytecode_DIVVAR,
+		bytecode_CASTFLOAT,
 
-		opcode_NUMEQUAL2CONST, opcode_NUMEQUALFLOAT, opcode_NUMEQUALVAR,
-		opcode_STREQUAL2CONST, opcode_STREQUALVAR,
+		bytecode_NUMEQUAL2CONST, bytecode_NUMEQUALFLOAT, bytecode_NUMEQUALVAR,
+		bytecode_STREQUAL2CONST, bytecode_STREQUALVAR,
 
-		opcode_NUMGRT2CONST, opcode_NUMGRTFLOAT, opcode_NUMGRTVAR,
+		bytecode_NUMGRT2CONST, bytecode_NUMGRTFLOAT, bytecode_NUMGRTVAR,
 
-		opcode_RNSCRPT, opcode_STSCRPTPRMNMBR, opcode_STSCRPTPRMSTR, opcode_STSCRPTPRMFLT,
+		bytecode_RNSCRPT, bytecode_STSCRPTPRMNMBR, bytecode_STSCRPTPRMSTR, bytecode_STSCRPTPRMFLT,
 
-		opcode_EXPRTCNST, opcode_EXPRTVAR, opcode_IMPRT,
-		opcode_HDE, opcode_SHW,
-		opcode_HDECRS, opcode_SHWCRS,
+		bytecode_EXPRTCNST, bytecode_EXPRTVAR, bytecode_IMPRT,
+		bytecode_HDE, bytecode_SHW,
+		bytecode_HDECRS, bytecode_SHWCRS,
 
-		opcode_LNKDBG, opcode_LNKTRGT,
-		opcode_STXT, opcode_ADDTXT, opcode_ADDLNE,
-		opcode_STCNTNT, opcode_STBRDR,
+		bytecode_LNKDBG, bytecode_LNKTRGT,
+		bytecode_STXT, bytecode_ADDTXT, bytecode_ADDLNE,
+		bytecode_STCNTNT, bytecode_STBRDR,
 		
-		opcode_SPLTRTE,
+		bytecode_SPLTRTE,
 
-		opcode_TRCK, opcode_CRLTRCK, opcode_HCKTRCK, 
-		opcode_SPWN, opcode_TRVL,
-		opcode_GLUOBJCT,
+		bytecode_TRCK, bytecode_CRLTRCK, bytecode_HCKTRCK, 
+		bytecode_SPWN, bytecode_TRVL,
+		bytecode_GLUOBJCT,
 
-		opcode_SVESCPE,
-		opcode_SVESTT, opcode_LDSTT,
-		opcode_CLRBRD,
-		opcode_PSEGME, opcode_RSMGME,
+		bytecode_SVESCPE,
+		bytecode_SVESTT, bytecode_LDSTT,
+		bytecode_CLRBRD,
+		bytecode_PSEGME, bytecode_RSMGME,
 
-		opcode_JMPINVVAR,opcode_JMPNOW,opCode_WTFRVR,
+		bytecode_JMPINVVAR,bytecode_JMPNOW,opCode_WTFRVR,
 
-		opcode_NA
+		bytecode_NA
 	};
 
 	///<summary>The different types of runtime errors</summary>
