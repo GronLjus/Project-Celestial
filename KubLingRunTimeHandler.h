@@ -1,11 +1,11 @@
 #pragma once
-#include "CelScriptCompiled.h"
-#include "CelScriptRuntime.h"
+#include "KubLingCompiled.h"
+#include "KubLingRuntime.h"
 
 namespace Logic
 {
 
-	class CelScriptRuntimeHandler
+	class KubLingRuntimeHandler
 	{ 
 
 	private:
@@ -33,8 +33,8 @@ namespace Logic
 		///<summary>An array of methods to use as operators</summary>
 		ExecuteFunction* operators;
 		bool abort;
-		RunTimeError commonScripts(unsigned int end, RunTimeCommons* rtc, Resources::CelScriptCompiled* script);
-		RunTimeError initScript(Resources::CelScriptCompiled* script, unsigned int id);
+		RunTimeError commonScripts(unsigned int end, RunTimeCommons* rtc, Resources::KubLingCompiled* script);
+		RunTimeError initScript(Resources::KubLingCompiled* script, unsigned int id);
 		CrossHandlers::MessageQueue* mQueue;
 		unsigned int maxOutMessages;
 		unsigned int scriptIds;
@@ -42,7 +42,7 @@ namespace Logic
 
 	public:
 
-		CelScriptRuntimeHandler(CrossHandlers::MessageQueue* mQueue, CrossHandlers::CelestialSlicedList<Resources::BaseObject*>* gameObjects, unsigned int crossScriptObject);
+		KubLingRuntimeHandler(CrossHandlers::MessageQueue* mQueue, CrossHandlers::CelestialSlicedList<Resources::BaseObject*>* gameObjects, unsigned int crossScriptObject);
 		///<summary>Run a script</summary>
 		///<param val='id'>[in]The id of the script to run</param>
 		///<returns>Any runtime errors</returns>
@@ -56,7 +56,7 @@ namespace Logic
 		void SetWaitingScriptVar(unsigned int scriptId, unsigned int scriptVar, int value);
 		unsigned int GetGlobalId(unsigned int localId) const;
 		void KillExecutions();
-		~CelScriptRuntimeHandler();
+		~KubLingRuntimeHandler();
 
 	};
 }

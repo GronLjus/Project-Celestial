@@ -1,8 +1,8 @@
 #include "stdafx.h"
-#include "CelScriptSource.h"
+#include "KubLingSource.h"
 using namespace Resources;
 
-CelScriptSource::CelScriptSource(int totalLines, std::string** lines)
+KubLingSource::KubLingSource(int totalLines, std::string** lines)
 {
 
 	this->totalLines = totalLines;
@@ -10,7 +10,7 @@ CelScriptSource::CelScriptSource(int totalLines, std::string** lines)
 
 }
 
-std::string CelScriptSource::GetLine(int line)
+std::string KubLingSource::GetLine(int line)
 {
 
 	if (line < totalLines)
@@ -24,7 +24,7 @@ std::string CelScriptSource::GetLine(int line)
 
 }
 
-std::string CelScriptSource::GetFile(int line)
+std::string KubLingSource::GetFile(int line)
 {
 
 	if (line < totalLines)
@@ -38,28 +38,28 @@ std::string CelScriptSource::GetFile(int line)
 
 }
 
-int CelScriptSource::GetLines()
+int KubLingSource::GetLines()
 {
 
 	return totalLines;
 
 }
 
-int CelScriptSource::GetId() const
+int KubLingSource::GetId() const
 {
 
 	return id;
 
 }
 
-void CelScriptSource::SetId(int id)
+void KubLingSource::SetId(int id)
 {
 
 	this->id = id;
 
 }
 
-CelScriptSource::~CelScriptSource()
+KubLingSource::~KubLingSource()
 {
 	
 	for (unsigned int i = 0; i < totalLines; i++)

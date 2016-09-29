@@ -1,10 +1,10 @@
 #include "stdafx.h"
-#include "CelScriptParser.h"
+#include "KubLingParser.h"
 
 using namespace Logic;
 using namespace CrossHandlers;
 
-CelScriptParser::CelScriptParser(Keyword* keywords, int keyWordsSize, FlowController* flowOps, int flowSize)
+KubLingParser::KubLingParser(Keyword* keywords, int keyWordsSize, FlowController* flowOps, int flowSize)
 {
 
 	this->flowOps = flowOps;
@@ -14,7 +14,7 @@ CelScriptParser::CelScriptParser(Keyword* keywords, int keyWordsSize, FlowContro
 	
 }
 
-int CelScriptParser::addChildrenTooTree(CelestialListNode<Token>* &tokenNode, CompileError &err, CelestialTreeNode<Token>* parent)
+int KubLingParser::addChildrenTooTree(CelestialListNode<Token>* &tokenNode, CompileError &err, CelestialTreeNode<Token>* parent)
 {
 
 	int retVal = 0;
@@ -206,7 +206,7 @@ int CelScriptParser::addChildrenTooTree(CelestialListNode<Token>* &tokenNode, Co
 
 }
 
-CelestialTreeNode<Token>* CelScriptParser::handleFlowNode(CelestialListNode<Token>* &tokenNode, CompileError &err, CelestialTreeNode<Token>* parent)
+CelestialTreeNode<Token>* KubLingParser::handleFlowNode(CelestialListNode<Token>* &tokenNode, CompileError &err, CelestialTreeNode<Token>* parent)
 {
 
 	CelestialTreeNode<Token>* newNode = new CelestialTreeNode<Token>(tokenNode->GetNodeObject(), parent);
@@ -310,7 +310,7 @@ CelestialTreeNode<Token>* CelScriptParser::handleFlowNode(CelestialListNode<Toke
 
 }
 
-CelestialTreeNode<Token>* CelScriptParser::orderTree(CelestialTreeNode<Token>* treeRoot, CompileError &err )
+CelestialTreeNode<Token>* KubLingParser::orderTree(CelestialTreeNode<Token>* treeRoot, CompileError &err )
 {
 
 	if (treeRoot->GetLeafs() == nullptr)
@@ -401,7 +401,7 @@ CelestialTreeNode<Token>* CelScriptParser::orderTree(CelestialTreeNode<Token>* t
 
 }
 
-void CelScriptParser::pruneBrackets(CelestialTreeNode<Token>* node)
+void KubLingParser::pruneBrackets(CelestialTreeNode<Token>* node)
 {
 
 	if (node->GetLeafs() != nullptr)
@@ -436,7 +436,7 @@ void CelScriptParser::pruneBrackets(CelestialTreeNode<Token>* node)
 	}
 }
 
-CelestialList<CelestialTree<Token>*>* CelScriptParser::ParseTokens(CelestialList<Token>* tokens, CompileError &err)
+CelestialList<CelestialTree<Token>*>* KubLingParser::ParseTokens(CelestialList<Token>* tokens, CompileError &err)
 {
 
 	CelestialListNode<Token>* node = tokens->GetFirstNode();
@@ -503,7 +503,7 @@ CelestialList<CelestialTree<Token>*>* CelScriptParser::ParseTokens(CelestialList
 
 }
 
-CelScriptParser::~CelScriptParser()
+KubLingParser::~KubLingParser()
 {
 
 

@@ -1,11 +1,11 @@
 #include "stdafx.h"
-#include "CelScriptAnalyzer.h"
+#include "KubLingAnalyzer.h"
 
 using namespace Logic;
 using namespace CrossHandlers;
 using namespace std;
 
-CelestialTreeNode<syntax>* CelScriptAnalyzer::analyzeFlow(CelestialTreeNode<Token>* node, CelestialTreeNode<syntax>* parent, CompileError &err)
+CelestialTreeNode<syntax>* KubLingAnalyzer::analyzeFlow(CelestialTreeNode<Token>* node, CelestialTreeNode<syntax>* parent, CompileError &err)
 {
 
 	int fl = -1;
@@ -317,7 +317,7 @@ CelestialTreeNode<syntax>* CelScriptAnalyzer::analyzeFlow(CelestialTreeNode<Toke
 
 }
 
-CelScriptAnalyzer::operatorParams CelScriptAnalyzer::analyzeOperatorParams(CompileError &err, OperatorTypes op, CelestialList<CelestialTreeNode<Token>*>* leafs, CelestialTreeNode<syntax>* newtree)
+KubLingAnalyzer::operatorParams KubLingAnalyzer::analyzeOperatorParams(CompileError &err, OperatorTypes op, CelestialList<CelestialTreeNode<Token>*>* leafs, CelestialTreeNode<syntax>* newtree)
 {
 	
 	operatorParams retParams;
@@ -550,7 +550,7 @@ CelScriptAnalyzer::operatorParams CelScriptAnalyzer::analyzeOperatorParams(Compi
 
 }
 
-CelScriptAnalyzer::operatorParams CelScriptAnalyzer::getOperatorVariation(CompileError &err, unsigned int line, OperatorTypes op, operatorParams ops)
+KubLingAnalyzer::operatorParams KubLingAnalyzer::getOperatorVariation(CompileError &err, unsigned int line, OperatorTypes op, operatorParams ops)
 {
 
 	if (!ops.hasEnum && err.errorType == ScriptError_OK)
@@ -630,7 +630,7 @@ CelScriptAnalyzer::operatorParams CelScriptAnalyzer::getOperatorVariation(Compil
 
 }
 
-CelestialTreeNode<syntax>* CelScriptAnalyzer::analyzeSyntaxNode(CompileError &err, CelestialTreeNode<syntax>* synTree)
+CelestialTreeNode<syntax>* KubLingAnalyzer::analyzeSyntaxNode(CompileError &err, CelestialTreeNode<syntax>* synTree)
 {
 
 	syntax syn = synTree->GetNodeObject();
@@ -667,7 +667,7 @@ CelestialTreeNode<syntax>* CelScriptAnalyzer::analyzeSyntaxNode(CompileError &er
 
 }
 
-CelScriptAnalyzer::operatorParams CelScriptAnalyzer::expandTree(CompileError &err, unsigned int line, OperatorTypes op, operatorParams ops, CelestialTreeNode<syntax>* newtree)
+KubLingAnalyzer::operatorParams KubLingAnalyzer::expandTree(CompileError &err, unsigned int line, OperatorTypes op, operatorParams ops, CelestialTreeNode<syntax>* newtree)
 {
 
 	if (operators[op].amountParOperators[ops.opVar] > 0)
@@ -815,7 +815,7 @@ CelScriptAnalyzer::operatorParams CelScriptAnalyzer::expandTree(CompileError &er
 
 }
 
-CelScriptAnalyzer::operatorParams CelScriptAnalyzer::getTypeCheck(CompileError &err, unsigned int line, OperatorTypes op, operatorParams ops)
+KubLingAnalyzer::operatorParams KubLingAnalyzer::getTypeCheck(CompileError &err, unsigned int line, OperatorTypes op, operatorParams ops)
 {
 
 	if (err.errorType == ScriptError_OK)
@@ -885,7 +885,7 @@ CelScriptAnalyzer::operatorParams CelScriptAnalyzer::getTypeCheck(CompileError &
 
 }
 
-CelScriptAnalyzer::operatorParams CelScriptAnalyzer::makeTreeConst(CompileError &err, OperatorTypes op, operatorParams ops, CelestialTreeNode<syntax>* newtree)
+KubLingAnalyzer::operatorParams KubLingAnalyzer::makeTreeConst(CompileError &err, OperatorTypes op, operatorParams ops, CelestialTreeNode<syntax>* newtree)
 {
 
 	if (err.errorType == ScriptError_OK)
@@ -929,7 +929,7 @@ CelScriptAnalyzer::operatorParams CelScriptAnalyzer::makeTreeConst(CompileError 
 
 }
 
-CelScriptAnalyzer::operatorParams CelScriptAnalyzer::checkVarInit(CompileError &err, unsigned int line, OperatorTypes op, operatorParams ops)
+KubLingAnalyzer::operatorParams KubLingAnalyzer::checkVarInit(CompileError &err, unsigned int line, OperatorTypes op, operatorParams ops)
 {
 
 	if (err.errorType == ScriptError_OK)
@@ -995,7 +995,7 @@ CelScriptAnalyzer::operatorParams CelScriptAnalyzer::checkVarInit(CompileError &
 
 }
 
-void CelScriptAnalyzer::finalizeNode(CompileError &err, unsigned int line, OperatorTypes op, operatorParams ops, CelestialTreeNode<syntax>* node, VarType &returnType, ParamType& returnSource)
+void KubLingAnalyzer::finalizeNode(CompileError &err, unsigned int line, OperatorTypes op, operatorParams ops, CelestialTreeNode<syntax>* node, VarType &returnType, ParamType& returnSource)
 {
 
 	ops = getTypeCheck(err, line, op, ops);
@@ -1033,7 +1033,7 @@ void CelScriptAnalyzer::finalizeNode(CompileError &err, unsigned int line, Opera
 
 }
 
-CelestialTreeNode<syntax>* CelScriptAnalyzer::analyzeOperator(CelestialTreeNode<Token>* node, CelestialTreeNode<syntax>* parent, CompileError &err, VarType &returnType, ParamType& returnSource)
+CelestialTreeNode<syntax>* KubLingAnalyzer::analyzeOperator(CelestialTreeNode<Token>* node, CelestialTreeNode<syntax>* parent, CompileError &err, VarType &returnType, ParamType& returnSource)
 {
 
 	empty = false;
@@ -1101,7 +1101,7 @@ CelestialTreeNode<syntax>* CelScriptAnalyzer::analyzeOperator(CelestialTreeNode<
 
 }
 
-CelScriptAnalyzer::CelScriptAnalyzer(Keyword* keywords, int keyWordsSize, Operator* operators, int operatorSize, FlowController* flowOps, int flowSize, RuntimeParameter* rParams, int rPSize)
+KubLingAnalyzer::KubLingAnalyzer(Keyword* keywords, int keyWordsSize, Operator* operators, int operatorSize, FlowController* flowOps, int flowSize, RuntimeParameter* rParams, int rPSize)
 {
 
 	this->keywords = keywords;
@@ -1120,7 +1120,7 @@ CelScriptAnalyzer::CelScriptAnalyzer(Keyword* keywords, int keyWordsSize, Operat
 
 }
 
-AST CelScriptAnalyzer::AnalyzeTrees(CelestialList<CelestialTree<Token>*>* parseTrees, CompileError &err)
+AST KubLingAnalyzer::AnalyzeTrees(CelestialList<CelestialTree<Token>*>* parseTrees, CompileError &err)
 {
 
 	AST ast;
@@ -1184,7 +1184,7 @@ AST CelScriptAnalyzer::AnalyzeTrees(CelestialList<CelestialTree<Token>*>* parseT
 
 }
 
-CelScriptAnalyzer::~CelScriptAnalyzer()
+KubLingAnalyzer::~KubLingAnalyzer()
 {
 
 	delete symbolTable;

@@ -106,11 +106,11 @@ namespace Resources
 			///<summary>Loads celscript from a file</summary>
 			///<param val='path'>[in]The path of the file to load</param>
 			///<returns>A pointer to the compiled script</returns>
-			CelScriptCompiled* LoadCLScript(std::string path);
+			KubLingCompiled* LoadCLScript(std::string path);
 			///<summary>Saves a compiled script to file</summary>
 			///<param val='path'>[in]The path to a file to save in</param>
 			///<param val='script'>[in]A pointer to the script to save</param>
-			void SaveCompiledScript(std::string path, CelScriptCompiled* script);
+			void SaveCompiledScript(std::string path, KubLingCompiled* script);
 
 			///<summary>Loads a light</summary>
 			///<param val='lightDesc'>[in]How the light should look</param>

@@ -1,10 +1,10 @@
 #include "stdafx.h"
-#include "CelScriptCodeGenerator.h"
+#include "KubLingCodeGenerator.h"
 
 using namespace CrossHandlers;
 using namespace Logic;
 
-int CelScriptCodeGenerator::handleVariable(CelestialSlicedList<symbol>* symbolTable, int varAdr, CelestialList<int>* varClear, CelestialList<CelestialList<unsigned char>*>* commands, unsigned int &codeCount)
+int KubLingCodeGenerator::handleVariable(CelestialSlicedList<symbol>* symbolTable, int varAdr, CelestialList<int>* varClear, CelestialList<CelestialList<unsigned char>*>* commands, unsigned int &codeCount)
 {
 
 	symbol sym = symbolTable->GetValue(varAdr);
@@ -62,7 +62,7 @@ int CelScriptCodeGenerator::handleVariable(CelestialSlicedList<symbol>* symbolTa
 
 }
 
-CelestialList<CelestialList<unsigned char>*>* CelScriptCodeGenerator::generateCode(CelestialTreeNode<syntax>* ast, CelestialSlicedList<symbol>* symbolTable,unsigned int &codeCount)
+CelestialList<CelestialList<unsigned char>*>* KubLingCodeGenerator::generateCode(CelestialTreeNode<syntax>* ast, CelestialSlicedList<symbol>* symbolTable,unsigned int &codeCount)
 {
 
 	CelestialTreeNode<syntax>* node = ast;
@@ -604,7 +604,7 @@ CelestialList<CelestialList<unsigned char>*>* CelScriptCodeGenerator::generateCo
 
 }
 
-CelScriptCodeGenerator::CelScriptCodeGenerator(Keyword* keywords, int keyWordsSize)
+KubLingCodeGenerator::KubLingCodeGenerator(Keyword* keywords, int keyWordsSize)
 {
 
 	this->keywords = keywords;
@@ -613,7 +613,7 @@ CelScriptCodeGenerator::CelScriptCodeGenerator(Keyword* keywords, int keyWordsSi
 
 }
 
-CelestialList<CelestialList<unsigned char>*>* CelScriptCodeGenerator::GenerateCode(AST ast)
+CelestialList<CelestialList<unsigned char>*>* KubLingCodeGenerator::GenerateCode(AST ast)
 {
 
 	holes = new CelestialList<int>;
@@ -665,7 +665,7 @@ CelestialList<CelestialList<unsigned char>*>* CelScriptCodeGenerator::GenerateCo
 
 }
 
-CelScriptCodeGenerator::~CelScriptCodeGenerator()
+KubLingCodeGenerator::~KubLingCodeGenerator()
 {
 
 

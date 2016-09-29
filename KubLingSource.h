@@ -6,7 +6,7 @@ namespace Resources
 {
 
 	///<summary>The class contains the source code of a celscript</summary>
-	class CelScriptSource : public IContainable
+	class KubLingSource : public IContainable
 	{
 
 	private:
@@ -21,7 +21,7 @@ namespace Resources
 		public:
 			///<param val='totalLines'>[in]The total amount of lines</param>
 			///<param val='lines'>[in]An array containing all the lines</param>
-			CelScriptSource(int totalLines,std::string** lines);
+			KubLingSource(int totalLines,std::string** lines);
 			///<summary>Gets a line from the source</summary>
 			///<param val='line'>[in]The line to retreive</param>
 			///<returns>The line</returns>
@@ -33,7 +33,7 @@ namespace Resources
 
 			virtual int GetId() const;
 			virtual void SetId(int id);
-			~CelScriptSource();
+			~KubLingSource();
 
 	};
 }

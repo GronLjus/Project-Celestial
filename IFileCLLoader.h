@@ -2,7 +2,7 @@
 
 #include "IFileLoader.h"
 #include "GUIObject.h"
-#include "CelScriptCompiled.h"
+#include "KubLingCompiled.h"
 
 namespace Resources
 {
@@ -11,7 +11,7 @@ namespace Resources
 	{
 
 	public:
-		virtual CelScriptCompiled* Load(std::string path) = 0;
+		virtual KubLingCompiled* Load(std::string path) = 0;
 		virtual ~IFileCLLoader(){}
 
 	};

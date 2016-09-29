@@ -7,7 +7,7 @@ namespace Resources
 {
 
 	///<summary>The class contains the bytecode of the script</summary>
-	class CelScriptCompiled : public BaseObject
+	class KubLingCompiled : public BaseObject
 	{
 	public:
 
@@ -20,7 +20,7 @@ namespace Resources
 
 		};
 
-		CelScriptCompiled(unsigned int maxParams, unsigned int maxStringParams, unsigned int maxFloatParams);
+		KubLingCompiled(unsigned int maxParams, unsigned int maxStringParams, unsigned int maxFloatParams);
 		///<summary>Add a compiled command to the script</summary>
 		///<param val='code'>[in]An array of bytes</param>
 		///<param val='codeSize'>[in]The amount of bytes in the array</param>
@@ -55,7 +55,7 @@ namespace Resources
 
 		unsigned int GetScriptId() const;
 		void SetScriptId(unsigned int scriptId);
-		virtual ~CelScriptCompiled();
+		virtual ~KubLingCompiled();
 
 		private:
 

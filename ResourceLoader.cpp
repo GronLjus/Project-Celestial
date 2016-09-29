@@ -10,8 +10,8 @@
 #include "LightParticleEmitter.h"
 #include "SkyboxParticle.h"
 #include "PointLight.h"
-#include "CelScriptBinLoader.h"
-#include "CelScriptSourceLoader.h"
+#include "KubLingBinLoader.h"
+#include "KubLingSourceLoader.h"
 #include "GridLoader.h"
 #include "CLMSHFileLoader.h"
 
@@ -105,8 +105,8 @@ ResourceLoader::ResourceLoader()
 	gUILoads[GUIObjects_IMAGE] = new GUIImageLoader(this);
 
 	scriptFileLoaders = new IFileCLLoader*[fileScriptLoaders];
-	scriptFileLoaders[0] = new CelScriptBinLoader();
-	scriptFileLoaders[1] = new CelScriptSourceLoader();
+	scriptFileLoaders[0] = new KubLingBinLoader();
+	scriptFileLoaders[1] = new KubLingSourceLoader();
 
 	saveLoader = new CLSVLoader();
 
@@ -349,10 +349,10 @@ GUIObject* ResourceLoader::LoadGUIObject(GUIObjects type, GUISnap hor, GUISnap v
 	return nullptr;
 }
 
-CelScriptCompiled* ResourceLoader::LoadCLScript(std::string path)
+KubLingCompiled* ResourceLoader::LoadCLScript(std::string path)
 {
 
-	CelScriptCompiled* compiled = nullptr;
+	KubLingCompiled* compiled = nullptr;
 	std::string  ext = getExtension(path);
 	bool found = false;
 	string extension = getExtension(path);
@@ -381,13 +381,13 @@ CelScriptCompiled* ResourceLoader::LoadCLScript(std::string path)
 	return compiled;
 }
 
-void ResourceLoader::SaveCompiledScript(string path, CelScriptCompiled* script)
+void ResourceLoader::SaveCompiledScript(string path, KubLingCompiled* script)
 {
 
 	if (scriptFileLoaders[0] != nullptr)
 	{
 
-		((CelScriptBinLoader*)scriptFileLoaders[0])->SaveBinary(path, script);
+		((KubLingBinLoader*)scriptFileLoaders[0])->SaveBinary(path, script);
 
 	}
 }

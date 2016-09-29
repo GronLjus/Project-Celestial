@@ -224,7 +224,7 @@ void ResourceHandler::handleMess(Message* currentMessage, unsigned int time)
 	{
 
 		std::string stringParam((char*)currentMessage->params);
-		CelScriptCompiled* bo = loader->LoadCLScript(stringParam);
+		KubLingCompiled* bo = loader->LoadCLScript(stringParam);
 
 		if (bo != nullptr)
 		{

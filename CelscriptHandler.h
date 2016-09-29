@@ -1,7 +1,7 @@
 #pragma once
 #include "GUITextBox.h"
-#include "CelScriptCompiler.h"
-#include "CelScriptRunTimeHandler.h"
+#include "KubLingCompiler.h"
+#include "KubLingRunTimeHandler.h"
 #include "IHandleMessages.h"
 #include "CelestialStack.h"
 
@@ -44,7 +44,7 @@ namespace Logic
 
 			RunTimeError handleRTErr(RunTimeError err, unsigned int scriptId);
 			///<summary>A pointer to the runtime of the scripts</summary>
-			CelScriptRuntimeHandler* runTime;
+			KubLingRuntimeHandler* runTime;
 
 	};
 }

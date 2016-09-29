@@ -1,12 +1,12 @@
 #include "stdafx.h"
-#include "CelScriptLexer.h"
+#include "KubLingLexer.h"
 #include "CelestialDoubleList.h"
 
 using namespace Logic;
 using namespace CrossHandlers;
 using namespace std;
 
-CelScriptLexer::CelScriptLexer(Keyword* keywords, int keyWordsSize, Operator* operators, int operatorSize)
+KubLingLexer::KubLingLexer(Keyword* keywords, int keyWordsSize, Operator* operators, int operatorSize)
 {
 
 	this->keywords = keywords;
@@ -29,7 +29,7 @@ CelScriptLexer::CelScriptLexer(Keyword* keywords, int keyWordsSize, Operator* op
 
 }
 
-CelestialList<string>* CelScriptLexer::extractWords(string line)
+CelestialList<string>* KubLingLexer::extractWords(string line)
 {
 
 	CelestialList<std::string>* stack = new CelestialList<std::string>();
@@ -85,7 +85,7 @@ CelestialList<string>* CelScriptLexer::extractWords(string line)
 
 }
 
-Token CelScriptLexer::translateWord(string word, CompileError &err, int lNumber)
+Token KubLingLexer::translateWord(string word, CompileError &err, int lNumber)
 {
 
 	bool found = false;
@@ -180,7 +180,7 @@ Token CelScriptLexer::translateWord(string word, CompileError &err, int lNumber)
 
 }
 
-CelestialDoubleList<Token>* CelScriptLexer::tokenizeWord(string word, int lNumber, CompileError &err)
+CelestialDoubleList<Token>* KubLingLexer::tokenizeWord(string word, int lNumber, CompileError &err)
 {
 
 	bool breakSearch = false;
@@ -327,7 +327,7 @@ CelestialDoubleList<Token>* CelScriptLexer::tokenizeWord(string word, int lNumbe
 
 }
 
-void CelScriptLexer::moveParamsOfOp(CelestialDoubleListNode<Token>* shortHandNode, unsigned char totLeftParams)
+void KubLingLexer::moveParamsOfOp(CelestialDoubleListNode<Token>* shortHandNode, unsigned char totLeftParams)
 {
 
 	unsigned char leftParams = 0;
@@ -376,7 +376,7 @@ void CelScriptLexer::moveParamsOfOp(CelestialDoubleListNode<Token>* shortHandNod
 	}
 }
 
-void CelScriptLexer::flipParamsAroundOp(CelestialDoubleListNode<Token>* shortHandNode, unsigned char totLeftParams, unsigned char totRightParams)
+void KubLingLexer::flipParamsAroundOp(CelestialDoubleListNode<Token>* shortHandNode, unsigned char totLeftParams, unsigned char totRightParams)
 {
 
 	unsigned char leftParams = 0;
@@ -512,7 +512,7 @@ void CelScriptLexer::flipParamsAroundOp(CelestialDoubleListNode<Token>* shortHan
 	}
 }
 
-void CelScriptLexer::breakOutBrackets(CelestialDoubleListNode<Token>* tok, int lNumber)
+void KubLingLexer::breakOutBrackets(CelestialDoubleListNode<Token>* tok, int lNumber)
 {
 
 	Token startBracket;
@@ -574,7 +574,7 @@ void CelScriptLexer::breakOutBrackets(CelestialDoubleListNode<Token>* tok, int l
 
 }
 
-unsigned int CelScriptLexer::getShortHand(string word)
+unsigned int KubLingLexer::getShortHand(string word)
 {
 
 	unsigned int shortHand = 0;
@@ -633,7 +633,7 @@ unsigned int CelScriptLexer::getShortHand(string word)
 
 }
 
-unsigned int CelScriptLexer::getBracketLevels(CelestialDoubleList<Token>* tokens)
+unsigned int KubLingLexer::getBracketLevels(CelestialDoubleList<Token>* tokens)
 {
 
 	unsigned char bracketLevels = 0;
@@ -683,7 +683,7 @@ unsigned int CelScriptLexer::getBracketLevels(CelestialDoubleList<Token>* tokens
 
 }
 
-CelestialDoubleListNode<Token>* CelScriptLexer::extractRights(CelestialDoubleListNode<Token>* token, CelestialDoubleList<Token>* tokens, unsigned int shorthand, int lNumber, CompileError &err)
+CelestialDoubleListNode<Token>* KubLingLexer::extractRights(CelestialDoubleListNode<Token>* token, CelestialDoubleList<Token>* tokens, unsigned int shorthand, int lNumber, CompileError &err)
 {
 	string rightOfShort = "";
 
@@ -723,7 +723,7 @@ CelestialDoubleListNode<Token>* CelScriptLexer::extractRights(CelestialDoubleLis
 
 }
 
-CelestialDoubleListNode<Token>* CelScriptLexer::breakOutShortHand(CelestialDoubleListNode<Token>* token, CelestialDoubleList<Token>* tokens, unsigned int shorthand, int lNumber, CompileError &err)
+CelestialDoubleListNode<Token>* KubLingLexer::breakOutShortHand(CelestialDoubleListNode<Token>* token, CelestialDoubleList<Token>* tokens, unsigned int shorthand, int lNumber, CompileError &err)
 {
 
 	string leftOfShort = "";
@@ -779,7 +779,7 @@ CelestialDoubleListNode<Token>* CelScriptLexer::breakOutShortHand(CelestialDoubl
 
 }
 
-void CelScriptLexer::extractOps(CelestialDoubleList<Token>* tokens, int lNumber, CompileError &err)
+void KubLingLexer::extractOps(CelestialDoubleList<Token>* tokens, int lNumber, CompileError &err)
 {
 
 	if (err.errorType != ScriptError_OK)
@@ -1040,7 +1040,7 @@ void CelScriptLexer::extractOps(CelestialDoubleList<Token>* tokens, int lNumber,
 
 }
 
-CelestialDoubleList<Token>* CelScriptLexer::TokenizeLine(string line, int lNumber, CompileError &err)
+CelestialDoubleList<Token>* KubLingLexer::TokenizeLine(string line, int lNumber, CompileError &err)
 {
 
 	CelestialDoubleList<Token>* returnVal = new CelestialDoubleList<Token>();
@@ -1169,7 +1169,7 @@ CelestialDoubleList<Token>* CelScriptLexer::TokenizeLine(string line, int lNumbe
 
 }
 
-CelScriptLexer::~CelScriptLexer()
+KubLingLexer::~KubLingLexer()
 {
 
 	delete[] numbers;

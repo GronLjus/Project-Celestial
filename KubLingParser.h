@@ -5,7 +5,7 @@ namespace Logic
 {
 
 	///<summary>The module that parses a list of tokens into a tree</summary>
-	class CelScriptParser
+	class KubLingParser
 	{
 		
 		public:
@@ -15,13 +15,13 @@ namespace Logic
 			///<param val='flowSize'>[in]The amount of flowcontrollers</param>
 			///<param val='operators'>[in]A list of operators the language uses</param>
 			///<param val='operatorSize'>[in]The amount of operators</param>
-			CelScriptParser(Keyword* keywords, int keyWordsSize, FlowController* flowOps, int flowSize);
+			KubLingParser(Keyword* keywords, int keyWordsSize, FlowController* flowOps, int flowSize);
 			///<summary>Parse a list of tokens and create a tree</summary>
 			///<param val='tokens'>[in]A pointer to the list of tokens to parse</param>
 			///<param val='err'>[out]Any errors that happened</param>
 			///<returns>A pointer to the parsetree</returns>
 			CrossHandlers::CelestialList<CrossHandlers::CelestialTree<Token>*>* ParseTokens(CrossHandlers::CelestialList<Token>* tokens, CompileError &err);
-			~CelScriptParser();
+			~KubLingParser();
 
 		private:
 			///<summary>Analyze a node and create a tree</summary>

@@ -5,7 +5,7 @@ namespace Logic
 {
 
 	///<summary>The module that analyses and typechecks parse trees, compiles it into abstract syntax trees and creates a symboltable</summary>
-	class CelScriptAnalyzer
+	class KubLingAnalyzer
 	{
 
 		public:
@@ -15,13 +15,13 @@ namespace Logic
 			///<param val='operatorSize'>[in]The amount of operators</param>
 			///<param val='flowOps'>[in]A list of flow operators the language uses</param>
 			///<param val='flowSize'>[in]The amount of flowcontrollers</param>
-			CelScriptAnalyzer(Keyword* keywords, int keyWordsSize, Operator* operators, int operatorSize, FlowController* flowOps, int flowSize, RuntimeParameter* rParams, int rPSize);
+			KubLingAnalyzer(Keyword* keywords, int keyWordsSize, Operator* operators, int operatorSize, FlowController* flowOps, int flowSize, RuntimeParameter* rParams, int rPSize);
 			///<summary>Anylyses a list of parsetree, outputs a list of abstract syntax tree and creates the symboltable</summary>
 			///<param val='parseTrees'>[in]A pointer to a list of parsetrees to analyse</param>
 			///<param val='err'>[out]Any errors that happened</param>
 			///<returns>The new abstract syntax tree</returns>
 			AST AnalyzeTrees(CrossHandlers::CelestialList<CrossHandlers::CelestialTree<Token>*>* parseTrees, CompileError &err);
-			~CelScriptAnalyzer();
+			~KubLingAnalyzer();
 
 		private:
 			///<summary>The list of keywords to check for</summary>

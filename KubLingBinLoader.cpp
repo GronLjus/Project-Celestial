@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "CelScriptBinLoader.h"
+#include "KubLingBinLoader.h"
 #include "CelestialList.h"
 #include <fstream>
 #include <iostream>
@@ -8,7 +8,7 @@
 using namespace Resources;
 using namespace std;
 
-CelScriptBinLoader::CelScriptBinLoader()
+KubLingBinLoader::KubLingBinLoader()
 {
 
 	extens = 1;
@@ -17,26 +17,26 @@ CelScriptBinLoader::CelScriptBinLoader()
 
 }
 
-string* CelScriptBinLoader::Extension() const
+string* KubLingBinLoader::Extension() const
 {
 
 	return extensions;
 
 }
 
-int CelScriptBinLoader::GetNrExtensions() const
+int KubLingBinLoader::GetNrExtensions() const
 {
 
 	return extens;
 
 }
 
-void CelScriptBinLoader::Init(Graphics::CardHandler* &card, TextContainer* outText)
+void KubLingBinLoader::Init(Graphics::CardHandler* &card, TextContainer* outText)
 {
 
 }
 
-void CelScriptBinLoader::SaveBinary(std::string path, CelScriptCompiled* binary)
+void KubLingBinLoader::SaveBinary(std::string path, KubLingCompiled* binary)
 {
 
 	ofstream fileOut;
@@ -90,12 +90,12 @@ void CelScriptBinLoader::SaveBinary(std::string path, CelScriptCompiled* binary)
 
 }
 
-CelScriptCompiled* CelScriptBinLoader::Load(std::string path)
+KubLingCompiled* KubLingBinLoader::Load(std::string path)
 {
 
 	ifstream fileIn;
 	fileIn.open(path, ios::in | ios::binary | ios::ate);
-	CelScriptCompiled* retVal = nullptr;
+	KubLingCompiled* retVal = nullptr;
 
 	if (fileIn.is_open())
 	{
@@ -116,7 +116,7 @@ CelScriptCompiled* CelScriptBinLoader::Load(std::string path)
 			readbytes += sizeof(int);
 			unsigned int fltParams = memblock[readbytes] | ((int)memblock[readbytes + 1] << 8) | ((int)memblock[readbytes + 2] << 16) | ((int)memblock[readbytes + 3] << 24);
 			readbytes += sizeof(int);
-			retVal = new CelScriptCompiled(numParams, strParams, fltParams);
+			retVal = new KubLingCompiled(numParams, strParams, fltParams);
 
 			for (int i = 0; i < numParams; i++)
 			{
@@ -168,7 +168,7 @@ CelScriptCompiled* CelScriptBinLoader::Load(std::string path)
 
 }
 
-CelScriptBinLoader::~CelScriptBinLoader()
+KubLingBinLoader::~KubLingBinLoader()
 {
 
 	delete[] extensions;

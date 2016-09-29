@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "CelScriptSourceLoader.h"
+#include "KubLingSourceLoader.h"
 #include "CelestialList.h"
 #include <fstream>
 #include <iostream>
@@ -7,38 +7,38 @@
 using namespace Resources;
 using namespace std;
 
-CelScriptSourceLoader::CelScriptSourceLoader()
+KubLingSourceLoader::KubLingSourceLoader()
 {
 
 	extens = 1;
 	extensions = new string[extens];
 	extensions[0] = "celsrc";
-	celCompiler = new Logic::CelScriptCompiler();
+	celCompiler = new Logic::KubLingCompiler();
 
 }
 
-string* CelScriptSourceLoader::Extension() const
+string* KubLingSourceLoader::Extension() const
 {
 
 	return extensions;
 
 }
 
-int CelScriptSourceLoader::GetNrExtensions() const
+int KubLingSourceLoader::GetNrExtensions() const
 {
 
 	return extens;
 
 }
 
-void CelScriptSourceLoader::Init(Graphics::CardHandler* &card, TextContainer* outText)
+void KubLingSourceLoader::Init(Graphics::CardHandler* &card, TextContainer* outText)
 {
 
 	celCompiler->Init(outText);
 
 }
 
-void CelScriptSourceLoader::SaveSource(string path, CelScriptSource* source)
+void KubLingSourceLoader::SaveSource(string path, KubLingSource* source)
 {
 
 	ofstream fileOut;
@@ -62,7 +62,7 @@ void CelScriptSourceLoader::SaveSource(string path, CelScriptSource* source)
 	}
 }
 
-CelestialList<string*>* CelScriptSourceLoader::putFileIntoList(string path)
+CelestialList<string*>* KubLingSourceLoader::putFileIntoList(string path)
 {
 	ifstream fileIn;
 	fileIn.open(path, ios::in);
@@ -121,10 +121,10 @@ CelestialList<string*>* CelScriptSourceLoader::putFileIntoList(string path)
 
 }
 
-CelScriptSource* CelScriptSourceLoader::LoadSource(string path)
+KubLingSource* KubLingSourceLoader::LoadSource(string path)
 {
 
-	CelScriptSource* retVal = nullptr;
+	KubLingSource* retVal = nullptr;
 
 	CelestialList<string*>* input = putFileIntoList(path);
 
@@ -141,26 +141,26 @@ CelScriptSource* CelScriptSourceLoader::LoadSource(string path)
 
 	}
 
-	retVal = new CelScriptSource(input->GetCount(), src);
+	retVal = new KubLingSource(input->GetCount(), src);
 	delete input;
 	return retVal;
 
 }
 
-CelScriptCompiled* CelScriptSourceLoader::Load(string path)
+KubLingCompiled* KubLingSourceLoader::Load(string path)
 {
 
-	CelScriptSource* retVal = LoadSource(path);
+	KubLingSource* retVal = LoadSource(path);
 
 	Logic::CompileError compileErr;
 	compileErr.errorType = Logic::ScriptError_OK;
-	CelScriptCompiled* retComp = celCompiler->CompileSource(retVal,compileErr);
+	KubLingCompiled* retComp = celCompiler->CompileSource(retVal,compileErr);
 	delete retVal;
 	return retComp;
 
 }
 
-CelScriptSourceLoader::~CelScriptSourceLoader()
+KubLingSourceLoader::~KubLingSourceLoader()
 {
 
 	delete[] extensions;

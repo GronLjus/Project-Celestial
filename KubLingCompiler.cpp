@@ -1,11 +1,11 @@
 #include "stdafx.h"
-#include "CelScriptCompiler.h"
+#include "KubLingCompiler.h"
 
 using namespace Logic;
 using namespace Resources;
 
 
-CelScriptCompiler::CelScriptCompiler()
+KubLingCompiler::KubLingCompiler()
 {
 
 	this->outText = nullptr;
@@ -1916,14 +1916,14 @@ CelScriptCompiler::CelScriptCompiler()
 
 	}
 
-	parser = new CelScriptParser(keywords, keyWordsSize, flowOps, FlowOperator_NA);
-	lexer = new CelScriptLexer(keywords, keyWordsSize, operators, OperatorTypes_NA);
-	analyzer = new CelScriptAnalyzer(keywords, keyWordsSize, operators, OperatorTypes_NA, flowOps, FlowOperator_NA,rParams,RunTimeParams_NA);
-	generator = new CelScriptCodeGenerator(keywords, keyWordsSize);
+	parser = new KubLingParser(keywords, keyWordsSize, flowOps, FlowOperator_NA);
+	lexer = new KubLingLexer(keywords, keyWordsSize, operators, OperatorTypes_NA);
+	analyzer = new KubLingAnalyzer(keywords, keyWordsSize, operators, OperatorTypes_NA, flowOps, FlowOperator_NA,rParams,RunTimeParams_NA);
+	generator = new KubLingCodeGenerator(keywords, keyWordsSize);
 
 }
 
-void CelScriptCompiler::setupArithmeticOps()
+void KubLingCompiler::setupArithmeticOps()
 {
 
 	operators[OperatorTypes_SUM].keyword = "sum";
@@ -2284,14 +2284,14 @@ void CelScriptCompiler::setupArithmeticOps()
 	};
 }
 
-void CelScriptCompiler::Init(CrossHandlers::TextContainer* outText)
+void KubLingCompiler::Init(CrossHandlers::TextContainer* outText)
 {
 
 	this->outText = outText;
 
 }
 
-unsigned int CelScriptCompiler::getParam(std::string param) const
+unsigned int KubLingCompiler::getParam(std::string param) const
 {
 
 	bool isRP = false;
@@ -2331,10 +2331,10 @@ unsigned int CelScriptCompiler::getParam(std::string param) const
 	return ret;
 }
 
-CelScriptCompiled* CelScriptCompiler::CompileSource(CelScriptSource* source, CompileError &error)
+KubLingCompiled* KubLingCompiler::CompileSource(KubLingSource* source, CompileError &error)
 {
 
-	CelScriptCompiled* compiledSource = nullptr;
+	KubLingCompiled* compiledSource = nullptr;
 	error.errorType = ScriptError_OK;
 	CelestialList<Token>* lexedcode = new CelestialList<Token>();
 
@@ -2436,7 +2436,7 @@ CelScriptCompiled* CelScriptCompiler::CompileSource(CelScriptSource* source, Com
 					if (k == 0)
 					{
 						
-						compiledSource = new CelScriptCompiled(scriptParams, scriptStringParams, scriptFloatParams);
+						compiledSource = new KubLingCompiled(scriptParams, scriptStringParams, scriptFloatParams);
 
 					}
 				}
@@ -2607,7 +2607,7 @@ CelScriptCompiled* CelScriptCompiler::CompileSource(CelScriptSource* source, Com
 
 }
 
-CelScriptCompiler::~CelScriptCompiler()
+KubLingCompiler::~KubLingCompiler()
 {
 
 	delete parser;

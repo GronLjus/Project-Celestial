@@ -1,7 +1,7 @@
 #include "stdafx.h"
-#include "CelScriptRunTimeHandler.h"
+#include "KubLingRunTimeHandler.h"
 #include "GUIObject.h"
-#include "CelScriptCompiled.h"
+#include "KubLingCompiled.h"
 #include "CrossScriptMemoryObject.h"
 #include "GUILayout.h"
 #include <thread>
@@ -2933,7 +2933,7 @@ RunTimeError WaitForVar(unsigned int returnVar, unsigned char* params, unsigned 
 }
 #pragma endregion
 
-CelScriptRuntimeHandler::CelScriptRuntimeHandler(MessageQueue* mQueue, CelestialSlicedList<BaseObject*>* gameObjects, unsigned int crossScriptObject)
+KubLingRuntimeHandler::KubLingRuntimeHandler(MessageQueue* mQueue, CelestialSlicedList<BaseObject*>* gameObjects, unsigned int crossScriptObject)
 {
 
 	this->crossScriptObject = crossScriptObject;
@@ -3104,7 +3104,7 @@ CelScriptRuntimeHandler::CelScriptRuntimeHandler(MessageQueue* mQueue, Celestial
 
 }
 
-unsigned int CelScriptRuntimeHandler::GetGlobalId(unsigned int localId) const
+unsigned int KubLingRuntimeHandler::GetGlobalId(unsigned int localId) const
 {
 
 	RunTimeCommons* rt = rtc->GetValue(localId);
@@ -3119,7 +3119,7 @@ unsigned int CelScriptRuntimeHandler::GetGlobalId(unsigned int localId) const
 	return 0;
 }
 
-RunTimeError CelScriptRuntimeHandler::initScript(Resources::CelScriptCompiled* script, unsigned int id)
+RunTimeError KubLingRuntimeHandler::initScript(Resources::KubLingCompiled* script, unsigned int id)
 {
 	RunTimeError er = RunTimeError_OK;
 
@@ -3168,10 +3168,10 @@ RunTimeError CelScriptRuntimeHandler::initScript(Resources::CelScriptCompiled* s
 
 }
 
-RunTimeError CelScriptRuntimeHandler::AddScriptFloatParam(int scriptId, unsigned char* value)
+RunTimeError KubLingRuntimeHandler::AddScriptFloatParam(int scriptId, unsigned char* value)
 {
 
-	CelScriptCompiled* script = (CelScriptCompiled*)gameObjects->GetValue(scriptId);
+	KubLingCompiled* script = (KubLingCompiled*)gameObjects->GetValue(scriptId);
 	RunTimeError er = initScript(script, scriptId);
 
 	unsigned int par = scriptFloatParams->GetValue(script->GetScriptId() - 1);
@@ -3185,10 +3185,10 @@ RunTimeError CelScriptRuntimeHandler::AddScriptFloatParam(int scriptId, unsigned
 
 }
 
-RunTimeError CelScriptRuntimeHandler::AddScriptNumParam(int scriptId, unsigned char* value)
+RunTimeError KubLingRuntimeHandler::AddScriptNumParam(int scriptId, unsigned char* value)
 {
 
-	CelScriptCompiled* script = (CelScriptCompiled*)gameObjects->GetValue(scriptId); 
+	KubLingCompiled* script = (KubLingCompiled*)gameObjects->GetValue(scriptId); 
 	RunTimeError er = initScript(script, scriptId);
 
 	unsigned int par = scriptNumParams->GetValue(script->GetScriptId() - 1);
@@ -3202,10 +3202,10 @@ RunTimeError CelScriptRuntimeHandler::AddScriptNumParam(int scriptId, unsigned c
 
 }
 
-RunTimeError CelScriptRuntimeHandler::AddScriptStrParam(int scriptId, std::string value)
+RunTimeError KubLingRuntimeHandler::AddScriptStrParam(int scriptId, std::string value)
 {
 
-	CelScriptCompiled* script = (CelScriptCompiled*)gameObjects->GetValue(scriptId);
+	KubLingCompiled* script = (KubLingCompiled*)gameObjects->GetValue(scriptId);
 	RunTimeError er = initScript(script, scriptId);
 
 	unsigned int par = scriptStrParams->GetValue(script->GetScriptId() - 1);
@@ -3229,7 +3229,7 @@ RunTimeError CelScriptRuntimeHandler::AddScriptStrParam(int scriptId, std::strin
 
 }
 
-RunTimeError CelScriptRuntimeHandler::commonScripts(unsigned int end, RunTimeCommons* thisRtc, CelScriptCompiled* script)
+RunTimeError KubLingRuntimeHandler::commonScripts(unsigned int end, RunTimeCommons* thisRtc, KubLingCompiled* script)
 {
 
 	RunTimeError er = RunTimeError_OK;
@@ -3289,10 +3289,10 @@ RunTimeError CelScriptRuntimeHandler::commonScripts(unsigned int end, RunTimeCom
 
 }
 
-RunTimeError CelScriptRuntimeHandler::FinalizeParams(int id)
+RunTimeError KubLingRuntimeHandler::FinalizeParams(int id)
 {
 
-	CelScriptCompiled* script = (CelScriptCompiled*)gameObjects->GetValue(id);
+	KubLingCompiled* script = (KubLingCompiled*)gameObjects->GetValue(id);
 	RunTimeError er = initScript(script, id);
 
 	if (er != RunTimeError_OK)
@@ -3316,10 +3316,10 @@ RunTimeError CelScriptRuntimeHandler::FinalizeParams(int id)
 
 }
 
-RunTimeError CelScriptRuntimeHandler::RunScript(int id,unsigned int stackId, unsigned int eTime)
+RunTimeError KubLingRuntimeHandler::RunScript(int id,unsigned int stackId, unsigned int eTime)
 {
 
-	CelScriptCompiled* script = (CelScriptCompiled*)gameObjects->GetValue(id);
+	KubLingCompiled* script = (KubLingCompiled*)gameObjects->GetValue(id);
 	RunTimeError er = initScript(script, id);
 
 	if (er != RunTimeError_OK)
@@ -3348,7 +3348,7 @@ RunTimeError CelScriptRuntimeHandler::RunScript(int id,unsigned int stackId, uns
 
 			}
 
-			CelestialStack<CelScriptCompiled::Param>* paramList = script->GetParamList();
+			CelestialStack<KubLingCompiled::Param>* paramList = script->GetParamList();
 			CelestialStack<unsigned int>* params = script->GetParams();
 
 			if (params->GetCount() > 0)
@@ -3359,7 +3359,7 @@ RunTimeError CelScriptRuntimeHandler::RunScript(int id,unsigned int stackId, uns
 				for (unsigned int i = 0; i < nrParams && paramList->GetCount() > 0; i++)
 				{
 
-					CelScriptCompiled::Param param = paramList->PopElement();
+					KubLingCompiled::Param param = paramList->PopElement();
 
 					if (param.adr > 0)
 					{
@@ -3382,11 +3382,11 @@ RunTimeError CelScriptRuntimeHandler::RunScript(int id,unsigned int stackId, uns
 
 }
 
-void CelScriptRuntimeHandler::SetWaitingScriptVar(unsigned int scriptId, unsigned int scriptVar, int value)
+void KubLingRuntimeHandler::SetWaitingScriptVar(unsigned int scriptId, unsigned int scriptVar, int value)
 {
 
 	RunTimeCommons* thisRtc = rtc->GetValue(scriptId);
-	CelScriptCompiled* script = (CelScriptCompiled*)gameObjects->GetValue(thisRtc->boundObject);
+	KubLingCompiled* script = (KubLingCompiled*)gameObjects->GetValue(thisRtc->boundObject);
 	thisRtc->pause = true;
 	unsigned char commandVal[8];
 
@@ -3411,14 +3411,14 @@ void CelScriptRuntimeHandler::SetWaitingScriptVar(unsigned int scriptId, unsigne
 	
 }
 
-void CelScriptRuntimeHandler::KillExecutions()
+void KubLingRuntimeHandler::KillExecutions()
 {
 
 	abort = true;
 
 }
 
-CelScriptRuntimeHandler::~CelScriptRuntimeHandler()
+KubLingRuntimeHandler::~KubLingRuntimeHandler()
 {
 
 	rtc->KillList();

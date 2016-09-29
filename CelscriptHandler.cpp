@@ -23,7 +23,7 @@ void CelscriptHandler::Init(CelestialSlicedList<BaseObject*>* objectContainer, u
 {
 
 	this->objectContainer = objectContainer;
-	runTime = new CelScriptRuntimeHandler(outQueue, objectContainer, crossScriptObject);
+	runTime = new KubLingRuntimeHandler(outQueue, objectContainer, crossScriptObject);
 
 }
 
@@ -59,7 +59,7 @@ void CelscriptHandler::Update(unsigned int time)
 
 		if (currentMessage->mess == ScriptMess_RUN)
 		{
-			CelScriptCompiled* script = (CelScriptCompiled*)objectContainer->GetValue(param1);
+			KubLingCompiled* script = (KubLingCompiled*)objectContainer->GetValue(param1);
 
 			if (script != nullptr)
 			{

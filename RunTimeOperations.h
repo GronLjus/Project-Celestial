@@ -79,6 +79,40 @@ namespace Logic
 		bytecode_NA
 	};
 
+	enum opcode : unsigned char
+	{
+
+		opcode_STOP,
+		
+		opcode_HEAP,
+
+		opcode_PLACE,
+		opcode_LOAD,
+		opcode_STORE,
+		opcode_SAVE,
+		opcode_MOV,
+		
+		opcode_SEND,
+		opcode_STPRM,
+
+		opcode_ADD,
+		opcode_SUB,
+		opcode_MUL,
+		opcode_DIV,
+
+		opcode_CMPRE,
+		opcode_BITCMP,
+
+		opcode_RETURN,
+
+		opcode_ALLOC,
+		opcode_MALLOC,
+		
+		opcode_JMP,
+		opcode_JMPINV
+
+	};
+
 	///<summary>The different types of runtime errors</summary>
 	enum RunTimeError{
 		RunTimeError_OK, RunTimeError_MSGFULL,

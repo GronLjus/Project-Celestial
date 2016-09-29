@@ -205,12 +205,6 @@
     <Filter Include="Source Files\Logic\CelScript\Compiler">
       <UniqueIdentifier>{e6f68e7d-0927-46e9-b93e-1541dd60c3fa}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Resources\Objects\CelScript">
-      <UniqueIdentifier>{9046fad6-eb8d-4628-bb9e-81989bf9a9f7}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Resources\Objects\CelScript">
-      <UniqueIdentifier>{8ecb3ecf-4b57-472b-8363-9f436edb1dca}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\Logic\CelScript\RunTime">
       <UniqueIdentifier>{35fc9e05-7069-4e31-9d11-00cc71ad2ec9}</UniqueIdentifier>
     </Filter>
@@ -288,6 +282,12 @@
     </Filter>
     <Filter Include="Resource Files\Content\Scripts\ObjectScripts">
       <UniqueIdentifier>{41a9b08e-f5ab-48ea-9686-ce23428b2b6e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Resources\Objects\KubLing">
+      <UniqueIdentifier>{9046fad6-eb8d-4628-bb9e-81989bf9a9f7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Resources\Objects\KubLing">
+      <UniqueIdentifier>{8ecb3ecf-4b57-472b-8363-9f436edb1dca}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -567,32 +567,11 @@
     <ClInclude Include="MemoryPool.h">
       <Filter>Header Files\Logic\CelScript</Filter>
     </ClInclude>
-    <ClInclude Include="CelScriptAnalyzer.h">
-      <Filter>Header Files\Logic\CelScript\Compiler</Filter>
-    </ClInclude>
-    <ClInclude Include="CelScriptCompiler.h">
-      <Filter>Header Files\Logic\CelScript\Compiler</Filter>
-    </ClInclude>
-    <ClInclude Include="CelScriptLexer.h">
-      <Filter>Header Files\Logic\CelScript\Compiler</Filter>
-    </ClInclude>
-    <ClInclude Include="CelScriptParser.h">
-      <Filter>Header Files\Logic\CelScript\Compiler</Filter>
-    </ClInclude>
     <ClInclude Include="CelestialTree.h">
       <Filter>Header Files\CrossHandler-Tools\Container</Filter>
     </ClInclude>
     <ClInclude Include="CelestialTreeNode.h">
       <Filter>Header Files\CrossHandler-Tools\Container</Filter>
-    </ClInclude>
-    <ClInclude Include="CelScriptCodeGenerator.h">
-      <Filter>Header Files\Logic\CelScript\Compiler</Filter>
-    </ClInclude>
-    <ClInclude Include="CelScriptSource.h">
-      <Filter>Header Files\Resources\Objects\CelScript</Filter>
-    </ClInclude>
-    <ClInclude Include="CelScriptCompiled.h">
-      <Filter>Header Files\Resources\Objects\CelScript</Filter>
     </ClInclude>
     <ClInclude Include="Keyword.h">
       <Filter>Header Files\Logic\CelScript\KeyWords</Filter>
@@ -602,12 +581,6 @@
     </ClInclude>
     <ClInclude Include="CelscriptHandler.h">
       <Filter>Header Files\Logic\CelScript</Filter>
-    </ClInclude>
-    <ClInclude Include="CelScriptSourceLoader.h">
-      <Filter>Header Files\Resources\Loaders\FileLoaders</Filter>
-    </ClInclude>
-    <ClInclude Include="CelScriptBinLoader.h">
-      <Filter>Header Files\Resources\Loaders\FileLoaders</Filter>
     </ClInclude>
     <ClInclude Include="Message.h">
       <Filter>Header Files\CrossHandler-Tools\Messaging</Filter>
@@ -629,12 +602,6 @@
     </ClInclude>
     <ClInclude Include="Triggers.h">
       <Filter>Header Files\Resources\Objects\Triggers</Filter>
-    </ClInclude>
-    <ClInclude Include="CelScriptRunTimeHandler.h">
-      <Filter>Header Files\Logic\CelScript\RunTime</Filter>
-    </ClInclude>
-    <ClInclude Include="CelScriptRuntime.h">
-      <Filter>Header Files\Logic\CelScript\RunTime</Filter>
     </ClInclude>
     <ClInclude Include="IFileCLLoader.h">
       <Filter>Header Files\Resources\Loaders\FileLoaders\Interfaces</Filter>
@@ -759,8 +726,44 @@
     <ClInclude Include="MouseHandler.h">
       <Filter>Header Files\Entities\Handlers</Filter>
     </ClInclude>
-    <ClInclude Include="Content\Scripts\ToolBarScripts\KubLingMachine.h">
+    <ClInclude Include="KubLingMachine.h">
       <Filter>Header Files\Logic\CelScript\RunTime</Filter>
+    </ClInclude>
+    <ClInclude Include="HeapMemory.h">
+      <Filter>Header Files\Logic\CelScript\RunTime</Filter>
+    </ClInclude>
+    <ClInclude Include="KubLingAnalyzer.h">
+      <Filter>Header Files\Logic\CelScript\Compiler</Filter>
+    </ClInclude>
+    <ClInclude Include="KubLingCodeGenerator.h">
+      <Filter>Header Files\Logic\CelScript\Compiler</Filter>
+    </ClInclude>
+    <ClInclude Include="KubLingCompiler.h">
+      <Filter>Header Files\Logic\CelScript\Compiler</Filter>
+    </ClInclude>
+    <ClInclude Include="KubLingLexer.h">
+      <Filter>Header Files\Logic\CelScript\Compiler</Filter>
+    </ClInclude>
+    <ClInclude Include="KubLingParser.h">
+      <Filter>Header Files\Logic\CelScript\Compiler</Filter>
+    </ClInclude>
+    <ClInclude Include="KubLingRuntime.h">
+      <Filter>Header Files\Logic\CelScript\RunTime</Filter>
+    </ClInclude>
+    <ClInclude Include="KubLingRunTimeHandler.h">
+      <Filter>Header Files\Logic\CelScript\RunTime</Filter>
+    </ClInclude>
+    <ClInclude Include="KubLingCompiled.h">
+      <Filter>Header Files\Resources\Objects\KubLing</Filter>
+    </ClInclude>
+    <ClInclude Include="KubLingSource.h">
+      <Filter>Header Files\Resources\Objects\KubLing</Filter>
+    </ClInclude>
+    <ClInclude Include="KubLingBinLoader.h">
+      <Filter>Header Files\Resources\Loaders\FileLoaders</Filter>
+    </ClInclude>
+    <ClInclude Include="KubLingSourceLoader.h">
+      <Filter>Header Files\Resources\Loaders\FileLoaders</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -914,35 +917,8 @@
     <ClCompile Include="MemoryPool.cpp">
       <Filter>Source Files\Logic\CelScript</Filter>
     </ClCompile>
-    <ClCompile Include="CelScriptAnalyzer.cpp">
-      <Filter>Source Files\Logic\CelScript\Compiler</Filter>
-    </ClCompile>
-    <ClCompile Include="CelScriptLexer.cpp">
-      <Filter>Source Files\Logic\CelScript\Compiler</Filter>
-    </ClCompile>
-    <ClCompile Include="CelScriptParser.cpp">
-      <Filter>Source Files\Logic\CelScript\Compiler</Filter>
-    </ClCompile>
-    <ClCompile Include="CelScriptCodeGenerator.cpp">
-      <Filter>Source Files\Logic\CelScript\Compiler</Filter>
-    </ClCompile>
-    <ClCompile Include="CelScriptSource.cpp">
-      <Filter>Source Files\Resources\Objects\CelScript</Filter>
-    </ClCompile>
-    <ClCompile Include="CelScriptCompiled.cpp">
-      <Filter>Source Files\Resources\Objects\CelScript</Filter>
-    </ClCompile>
-    <ClCompile Include="CelScriptCompiler.cpp">
-      <Filter>Source Files\Logic\CelScript\Compiler</Filter>
-    </ClCompile>
     <ClCompile Include="CelscriptHandler.cpp">
       <Filter>Source Files\Logic\CelScript</Filter>
-    </ClCompile>
-    <ClCompile Include="CelScriptSourceLoader.cpp">
-      <Filter>Source Files\Resources\Loaders\FileLoaders</Filter>
-    </ClCompile>
-    <ClCompile Include="CelScriptBinLoader.cpp">
-      <Filter>Source Files\Resources\Loaders\FileLoaders</Filter>
     </ClCompile>
     <ClCompile Include="MessageQueue.cpp">
       <Filter>Source Files\CrossHandler-Tools\Messaging</Filter>
@@ -958,9 +934,6 @@
     </ClCompile>
     <ClCompile Include="ResourceObject.cpp">
       <Filter>Source Files\Resources\Objects</Filter>
-    </ClCompile>
-    <ClCompile Include="CelScriptRuntimeHandler.cpp">
-      <Filter>Source Files\Logic\CelScript\CelScriptRuntime</Filter>
     </ClCompile>
     <ClCompile Include="GUIObject.cpp">
       <Filter>Source Files\Resources\Objects\GUIObjects</Filter>
@@ -1054,6 +1027,42 @@
     </ClCompile>
     <ClCompile Include="MouseHandler.cpp">
       <Filter>Source Files\Entities\Handlers</Filter>
+    </ClCompile>
+    <ClCompile Include="KubLingMachine.cpp">
+      <Filter>Source Files\Logic\CelScript\CelScriptRuntime</Filter>
+    </ClCompile>
+    <ClCompile Include="HeapMemory.cpp">
+      <Filter>Source Files\Logic\CelScript\CelScriptRuntime</Filter>
+    </ClCompile>
+    <ClCompile Include="KubLingRuntimeHandler.cpp">
+      <Filter>Source Files\Logic\CelScript\CelScriptRuntime</Filter>
+    </ClCompile>
+    <ClCompile Include="KubLingAnalyzer.cpp">
+      <Filter>Source Files\Logic\CelScript\Compiler</Filter>
+    </ClCompile>
+    <ClCompile Include="KubLingCodeGenerator.cpp">
+      <Filter>Source Files\Logic\CelScript\Compiler</Filter>
+    </ClCompile>
+    <ClCompile Include="KubLingCompiler.cpp">
+      <Filter>Source Files\Logic\CelScript\Compiler</Filter>
+    </ClCompile>
+    <ClCompile Include="KubLingLexer.cpp">
+      <Filter>Source Files\Logic\CelScript\Compiler</Filter>
+    </ClCompile>
+    <ClCompile Include="KubLingParser.cpp">
+      <Filter>Source Files\Logic\CelScript\Compiler</Filter>
+    </ClCompile>
+    <ClCompile Include="KubLingCompiled.cpp">
+      <Filter>Source Files\Resources\Objects\KubLing</Filter>
+    </ClCompile>
+    <ClCompile Include="KubLingSource.cpp">
+      <Filter>Source Files\Resources\Objects\KubLing</Filter>
+    </ClCompile>
+    <ClCompile Include="KubLingBinLoader.cpp">
+      <Filter>Source Files\Resources\Loaders\FileLoaders</Filter>
+    </ClCompile>
+    <ClCompile Include="KubLingSourceLoader.cpp">
+      <Filter>Source Files\Resources\Loaders\FileLoaders</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

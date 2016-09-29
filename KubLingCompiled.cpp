@@ -1,10 +1,10 @@
 #include "stdafx.h"
-#include "CelScriptCompiled.h"
+#include "KubLingCompiled.h"
 
 using namespace Resources;
 using namespace CrossHandlers;
 
-CelScriptCompiled::CelScriptCompiled(unsigned int maxParams, unsigned int maxStringParams, unsigned int maxFloatParams)
+KubLingCompiled::KubLingCompiled(unsigned int maxParams, unsigned int maxStringParams, unsigned int maxFloatParams)
 {
 
 	maxCodeSize = 100;
@@ -33,7 +33,7 @@ CelScriptCompiled::CelScriptCompiled(unsigned int maxParams, unsigned int maxStr
 
 }
 
-void CelScriptCompiled::AddParam(unsigned char byteSize, unsigned char* byteVal, unsigned int adr)
+void KubLingCompiled::AddParam(unsigned char byteSize, unsigned char* byteVal, unsigned int adr)
 {
 
 	Param par;
@@ -46,7 +46,7 @@ void CelScriptCompiled::AddParam(unsigned char byteSize, unsigned char* byteVal,
 
 }
 
-void CelScriptCompiled::FinishParams()
+void KubLingCompiled::FinishParams()
 {
 	
 	if (currentParams > 0)
@@ -58,21 +58,21 @@ void CelScriptCompiled::FinishParams()
 	}
 }
 
-CelestialStack<CelScriptCompiled::Param>* CelScriptCompiled::GetParamList() const
+CelestialStack<KubLingCompiled::Param>* KubLingCompiled::GetParamList() const
 {
 
 	return paramList;
 
 }
 
-CelestialStack<unsigned int>* CelScriptCompiled::GetParams() const
+CelestialStack<unsigned int>* KubLingCompiled::GetParams() const
 {
 
 	return params;
 
 }
 
-void CelScriptCompiled::AddCommand(unsigned char* code, int codeSize)
+void KubLingCompiled::AddCommand(unsigned char* code, int codeSize)
 {
 
 	if (this->codeSize == maxCodeSize)
@@ -104,7 +104,7 @@ void CelScriptCompiled::AddCommand(unsigned char* code, int codeSize)
 
 }
 
-void CelScriptCompiled::AddParamAdr(unsigned int param, unsigned int adr, char type)
+void KubLingCompiled::AddParamAdr(unsigned int param, unsigned int adr, char type)
 {
 
 	if(type == 's' && param <maxStringParams)
@@ -127,7 +127,7 @@ void CelScriptCompiled::AddParamAdr(unsigned int param, unsigned int adr, char t
 	}
 }
 
-void CelScriptCompiled::AddSystemParamAdr(Logic::RunTimeParams rtp, unsigned int adr)
+void KubLingCompiled::AddSystemParamAdr(Logic::RunTimeParams rtp, unsigned int adr)
 {
 
 	if (rtp != Logic::RunTimeParams_NA)
@@ -138,14 +138,14 @@ void CelScriptCompiled::AddSystemParamAdr(Logic::RunTimeParams rtp, unsigned int
 	}
 }
 
-unsigned int CelScriptCompiled::GetMaxParams(bool string) const
+unsigned int KubLingCompiled::GetMaxParams(bool string) const
 {
 
 	return string ? maxStringParams :maxParams;
 
 }
 
-unsigned int CelScriptCompiled::GetAdr(unsigned int param, char type) const
+unsigned int KubLingCompiled::GetAdr(unsigned int param, char type) const
 {
 
 	switch (type)
@@ -181,7 +181,7 @@ unsigned int CelScriptCompiled::GetAdr(unsigned int param, char type) const
 
 }
 
-unsigned int CelScriptCompiled::GetAdr(Logic::RunTimeParams rtp) const
+unsigned int KubLingCompiled::GetAdr(Logic::RunTimeParams rtp) const
 {
 	
 	if (rtp != Logic::RunTimeParams_NA)
@@ -196,21 +196,21 @@ unsigned int CelScriptCompiled::GetAdr(Logic::RunTimeParams rtp) const
 }
 
 
-void CelScriptCompiled::SetOffset(int off)
+void KubLingCompiled::SetOffset(int off)
 {
 
 	offset = off;
 
 }
 
-int CelScriptCompiled::GetCodeSize()
+int KubLingCompiled::GetCodeSize()
 {
 
 	return codeSize;
 
 }
 
-unsigned char* CelScriptCompiled::GetCode(int &size, int place)
+unsigned char* KubLingCompiled::GetCode(int &size, int place)
 {
 
 	if (place < maxCodeSize)
@@ -225,28 +225,28 @@ unsigned char* CelScriptCompiled::GetCode(int &size, int place)
 
 }
 
-int CelScriptCompiled::GetOffset()
+int KubLingCompiled::GetOffset()
 {
 
 	return offset;
 
 }
 
-unsigned int CelScriptCompiled::GetScriptId() const
+unsigned int KubLingCompiled::GetScriptId() const
 {
 
 	return scriptId;
 
 }
 
-void CelScriptCompiled::SetScriptId(unsigned int scriptId)
+void KubLingCompiled::SetScriptId(unsigned int scriptId)
 {
 
 	this->scriptId = scriptId;
 
 }
 
-CelScriptCompiled::~CelScriptCompiled()
+KubLingCompiled::~KubLingCompiled()
 {
 
 	for (int i = 0; i < codeSize; i++)
