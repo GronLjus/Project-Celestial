@@ -105,6 +105,24 @@ void GameBoardHandler::UpdateMessages(unsigned int time)
 			localGameBoard->AddObject((GameObject*)(gameObjects->GetValue(param1)));
 
 		}
+		else if (currentMessage->mess == GameBoardMess_GLUEOBJECT && localGameBoard != nullptr)
+		{
+
+			unsigned int param2;
+			Vector3 pos;
+
+			memcpy(&param2, &currentMessage->params[4], sizeof(unsigned int));
+			memcpy(&pos.x, &currentMessage->params[8], sizeof(float));
+			memcpy(&pos.y, &currentMessage->params[12], sizeof(float));
+			memcpy(&pos.z, &currentMessage->params[16], sizeof(float));
+
+			GameObject* parent = (GameObject*)(gameObjects->GetValue(param1));
+			GameObject* child = (GameObject*)(gameObjects->GetValue(param2));
+
+			localGameBoard->AddObject(child);
+			parent->AddSubObject(child, pos);
+
+		}
 		else if (currentMessage->mess == GameBoardMess_CLICKOBJECT && 
 			localGameBoard != nullptr && localGameBoard->GetCam() != nullptr)
 		{

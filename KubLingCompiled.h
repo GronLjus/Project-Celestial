@@ -20,7 +20,7 @@ namespace Resources
 
 		};
 
-		KubLingCompiled(unsigned int maxParams, unsigned int maxStringParams, unsigned int maxFloatParams);
+		KubLingCompiled(unsigned int maxParams, unsigned int maxStringParams, unsigned int maxFloatParams, std::string name);
 		///<summary>Add a compiled command to the script</summary>
 		///<param val='code'>[in]An array of bytes</param>
 		///<param val='codeSize'>[in]The amount of bytes in the array</param>
@@ -33,10 +33,24 @@ namespace Resources
 
 		void AddParamAdr(unsigned int param, unsigned int adr, char type);
 		void AddSystemParamAdr(Logic::RunTimeParams rtp, unsigned int adr);
+		void UpParam(char type);
+		void ResetParam(char type);
 
-		unsigned int GetMaxParams(bool string) const;
+		std::string GetName() const;
+
+		void AddStackPlaceHolder(unsigned int line);
+		void AddMemOffsetPlaceHolder(unsigned int line);
+		void SetMaxVar(unsigned int var);
+		void SetMemOffset(unsigned int offset);
+		unsigned int GetStackPHLine() const;
+		unsigned int GetMemOffsetPHLine() const;
+
+		unsigned char GetCurrentParam(char type) const;
+		unsigned int GetMaxParams(char type) const;
 		unsigned int GetAdr(unsigned int param, char type) const;
 		unsigned int GetAdr(Logic::RunTimeParams rtp) const;
+		unsigned int GetMaxVar() const;
+		unsigned int GetMemOffset() const;
 
 		///<summary>Sets the offset of the script</summary>
 		///<param val='off'>[in]The offset</param>
@@ -80,7 +94,18 @@ namespace Resources
 			unsigned int scriptId;
 			CrossHandlers::CelestialStack<Param>* paramList;
 			CrossHandlers::CelestialStack<unsigned int>* params;
+
+			CrossHandlers::CelestialStack<unsigned int>* placeHolders;
+			CrossHandlers::CelestialStack<unsigned int>* memOffsetplaceHolders;
 			unsigned int currentParams;
+			unsigned int maxVar;
+			unsigned int memOffset;
+
+			unsigned char cIP;
+			unsigned char cFP;
+			unsigned char cSP;
 		
+			std::string name;
+
 	};
 }

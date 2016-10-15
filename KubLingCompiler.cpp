@@ -929,9 +929,9 @@ KubLingCompiler::KubLingCompiler()
 	operators[OperatorTypes_RUN].params = new unsigned char[operators[OperatorTypes_RUN].enumAmount]{2};
 	operators[OperatorTypes_RUN].minParams = new unsigned char[operators[OperatorTypes_RUN].enumAmount]{ 1 };
 	operators[OperatorTypes_RUN].paramsyntax = new VarType*[operators[OperatorTypes_RUN].enumAmount]{
-		new VarType[operators[OperatorTypes_RUN].params[0]]{VarType_NUMBER, VarType_NA}};
+		new VarType[operators[OperatorTypes_RUN].params[0]]{VarType_STRING, VarType_NA}};
 	operators[OperatorTypes_RUN].paramTypes = new ParamType*[operators[OperatorTypes_RUN].enumAmount]{
-		new ParamType[operators[OperatorTypes_RUN].params[0]]{ParamType_NA, ParamType_NA}};
+		new ParamType[operators[OperatorTypes_RUN].params[0]]{ParamType_CONST, ParamType_NA}};
 	operators[OperatorTypes_RUN].optionalPar = new bool*[operators[OperatorTypes_RUN].enumAmount]{
 		new bool[operators[OperatorTypes_RUN].params[0]]{ false, true }
 	};
@@ -965,14 +965,14 @@ KubLingCompiler::KubLingCompiler()
 	operators[OperatorTypes_SETPARAM].params = new unsigned char[operators[OperatorTypes_SETPARAM].enumAmount]{2,2,2};
 	operators[OperatorTypes_SETPARAM].minParams = new unsigned char[operators[OperatorTypes_SETPARAM].enumAmount]{ 2,2,2 };
 	operators[OperatorTypes_SETPARAM].paramsyntax = new VarType*[operators[OperatorTypes_SETPARAM].enumAmount]{
-		new VarType[operators[OperatorTypes_SETPARAM].params[0]]{VarType_NUMBER, VarType_NUMBER},
-			new VarType[operators[OperatorTypes_SETPARAM].params[1]]{VarType_STRING, VarType_NUMBER},
-		new VarType[operators[OperatorTypes_SETPARAM].params[2]]{ VarType_FLOAT, VarType_NUMBER }
+		new VarType[operators[OperatorTypes_SETPARAM].params[0]]{VarType_NUMBER, VarType_STRING},
+			new VarType[operators[OperatorTypes_SETPARAM].params[1]]{VarType_STRING, VarType_STRING },
+		new VarType[operators[OperatorTypes_SETPARAM].params[2]]{ VarType_FLOAT, VarType_STRING }
 	};
 	operators[OperatorTypes_SETPARAM].paramTypes = new ParamType*[operators[OperatorTypes_SETPARAM].enumAmount]{
-		new ParamType[operators[OperatorTypes_SETPARAM].params[0]]{ParamType_NA, ParamType_NA},
-		new ParamType[operators[OperatorTypes_SETPARAM].params[1]]{ParamType_NA, ParamType_NA},
-		new ParamType[operators[OperatorTypes_SETPARAM].params[2]]{ ParamType_NA, ParamType_NA }
+		new ParamType[operators[OperatorTypes_SETPARAM].params[0]]{ParamType_NA, ParamType_CONST },
+		new ParamType[operators[OperatorTypes_SETPARAM].params[1]]{ParamType_NA, ParamType_CONST },
+		new ParamType[operators[OperatorTypes_SETPARAM].params[2]]{ ParamType_NA, ParamType_CONST }
 	};
 	operators[OperatorTypes_SETPARAM].optionalPar = new bool*[operators[OperatorTypes_SETPARAM].enumAmount]{
 		new bool[operators[OperatorTypes_SETPARAM].params[0]]{ false, false },
@@ -1004,47 +1004,53 @@ KubLingCompiler::KubLingCompiler()
 
 
 	operators[OperatorTypes_EXPORT].keyword = "export";
-	operators[OperatorTypes_EXPORT].enumAmount = 2;
-	operators[OperatorTypes_EXPORT].enums = new std::string[operators[OperatorTypes_EXPORT].enumAmount]; operators[OperatorTypes_EXPORT].enums[0] = ""; operators[OperatorTypes_EXPORT].enums[1] = "";
-	operators[OperatorTypes_EXPORT].byteCodes = new unsigned char[operators[OperatorTypes_EXPORT].enumAmount]{bytecode_EXPRTCNST, bytecode_EXPRTVAR};
-	operators[OperatorTypes_EXPORT].params = new unsigned char[operators[OperatorTypes_EXPORT].enumAmount]{2, 2};
-	operators[OperatorTypes_EXPORT].minParams = new unsigned char[operators[OperatorTypes_EXPORT].enumAmount]{2, 2};
+	operators[OperatorTypes_EXPORT].enumAmount = 3;
+	operators[OperatorTypes_EXPORT].enums = new std::string[operators[OperatorTypes_EXPORT].enumAmount]; operators[OperatorTypes_EXPORT].enums[0] = "num"; operators[OperatorTypes_EXPORT].enums[1] = "float"; operators[OperatorTypes_EXPORT].enums[2] = "str";
+	operators[OperatorTypes_EXPORT].byteCodes = new unsigned char[operators[OperatorTypes_EXPORT].enumAmount]{bytecode_EXPRTNUM, bytecode_EXPRTNUM, bytecode_EXPRTSTR};
+	operators[OperatorTypes_EXPORT].params = new unsigned char[operators[OperatorTypes_EXPORT].enumAmount]{2, 2, 2};
+	operators[OperatorTypes_EXPORT].minParams = new unsigned char[operators[OperatorTypes_EXPORT].enumAmount]{2, 2, 2};
 	operators[OperatorTypes_EXPORT].paramsyntax = new VarType*[operators[OperatorTypes_EXPORT].enumAmount]{
-		new VarType[operators[OperatorTypes_EXPORT].params[0]]{VarType_STRING, VarType_NA},
-		new VarType[operators[OperatorTypes_EXPORT].params[1]]{VarType_STRING, VarType_NA}
+		new VarType[operators[OperatorTypes_EXPORT].params[0]]{VarType_STRING, VarType_NUMBER},
+		new VarType[operators[OperatorTypes_EXPORT].params[1]]{VarType_STRING, VarType_FLOAT},
+		new VarType[operators[OperatorTypes_EXPORT].params[2]]{ VarType_STRING, VarType_STRING }
 	};
 	operators[OperatorTypes_EXPORT].paramTypes = new ParamType*[operators[OperatorTypes_EXPORT].enumAmount]{
-		new ParamType[operators[OperatorTypes_EXPORT].params[0]]{ParamType_NA, ParamType_CONST},
-		new ParamType[operators[OperatorTypes_EXPORT].params[1]]{ParamType_NA, ParamType_VAR}
+		new ParamType[operators[OperatorTypes_EXPORT].params[0]]{ ParamType_CONST, ParamType_NA },
+		new ParamType[operators[OperatorTypes_EXPORT].params[1]]{ ParamType_CONST, ParamType_NA },
+		new ParamType[operators[OperatorTypes_EXPORT].params[2]]{ ParamType_CONST, ParamType_NA }
 	};
 	operators[OperatorTypes_EXPORT].optionalPar = new bool*[operators[OperatorTypes_EXPORT].enumAmount]{
 		new bool[operators[OperatorTypes_EXPORT].params[0]]{ false, false },
-		new bool[operators[OperatorTypes_EXPORT].params[1]]{ false, false }
+		new bool[operators[OperatorTypes_EXPORT].params[1]]{ false, false },
+		new bool[operators[OperatorTypes_EXPORT].params[2]]{ false, false }
 	};
-	operators[OperatorTypes_EXPORT].readParam = new unsigned char[operators[OperatorTypes_EXPORT].enumAmount]{0,0};
-	operators[OperatorTypes_EXPORT].returns = new VarType[operators[OperatorTypes_EXPORT].enumAmount]{VarType_NA, VarType_NA};
-	operators[OperatorTypes_EXPORT].returnType = new ParamType[operators[OperatorTypes_EXPORT].enumAmount]{ParamType_NA, ParamType_NA};
+	operators[OperatorTypes_EXPORT].readParam = new unsigned char[operators[OperatorTypes_EXPORT].enumAmount]{0,0,0};
+	operators[OperatorTypes_EXPORT].returns = new VarType[operators[OperatorTypes_EXPORT].enumAmount]{VarType_NA, VarType_NA,VarType_NA };
+	operators[OperatorTypes_EXPORT].returnType = new ParamType[operators[OperatorTypes_EXPORT].enumAmount]{ParamType_NA, ParamType_NA,ParamType_NA };
 	operators[OperatorTypes_EXPORT].writeParam = new unsigned char[operators[OperatorTypes_EXPORT].enumAmount]{0, 0};
 	operators[OperatorTypes_EXPORT].priority = 0;
 	operators[OperatorTypes_EXPORT].shortHandsAmounts = 0;
-	operators[OperatorTypes_EXPORT].amountParOperators = new unsigned char[operators[OperatorTypes_EXPORT].enumAmount]{0, 0};
+	operators[OperatorTypes_EXPORT].amountParOperators = new unsigned char[operators[OperatorTypes_EXPORT].enumAmount]{0, 0,0};
 	operators[OperatorTypes_EXPORT].parRepeatsMin = new unsigned char*[operators[OperatorTypes_EXPORT].enumAmount]{
 		new unsigned char[operators[OperatorTypes_EXPORT].params[0]]{0, 0},
-		new unsigned char[operators[OperatorTypes_EXPORT].params[1]]{0, 0}
+		new unsigned char[operators[OperatorTypes_EXPORT].params[1]]{0, 0},
+		new unsigned char[operators[OperatorTypes_EXPORT].params[2]]{ 0, 0 }
 	};
 	operators[OperatorTypes_EXPORT].parRepeatsMax = new unsigned char*[operators[OperatorTypes_EXPORT].enumAmount]{
 		new unsigned char[operators[OperatorTypes_EXPORT].params[0]]{0, 0},
-		new unsigned char[operators[OperatorTypes_EXPORT].params[1]]{0, 0}
+		new unsigned char[operators[OperatorTypes_EXPORT].params[1]]{0, 0},
+		new unsigned char[operators[OperatorTypes_EXPORT].params[2]]{ 0, 0 }
 	};
 	operators[OperatorTypes_EXPORT].parOperatorAppend = new bool*[operators[OperatorTypes_EXPORT].enumAmount]{
 		new bool[operators[OperatorTypes_EXPORT].params[0]]{false, false},
-		new bool[operators[OperatorTypes_EXPORT].params[1]]{false, false}
+		new bool[operators[OperatorTypes_EXPORT].params[1]]{false, false},
+		new bool[operators[OperatorTypes_EXPORT].params[2]]{ false, false }
 	};
 
 	operators[OperatorTypes_IMPORT].keyword = "import";
 	operators[OperatorTypes_IMPORT].enumAmount = 3;
 	operators[OperatorTypes_IMPORT].enums = new std::string[operators[OperatorTypes_IMPORT].enumAmount]; operators[OperatorTypes_IMPORT].enums[0] = "num"; operators[OperatorTypes_IMPORT].enums[1] = "float"; operators[OperatorTypes_IMPORT].enums[2] = "string";
-	operators[OperatorTypes_IMPORT].byteCodes = new unsigned char[operators[OperatorTypes_IMPORT].enumAmount]{bytecode_IMPRT, bytecode_IMPRT, bytecode_IMPRT};
+	operators[OperatorTypes_IMPORT].byteCodes = new unsigned char[operators[OperatorTypes_IMPORT].enumAmount]{bytecode_IMPRTNUM, bytecode_IMPRTNUM, bytecode_IMPRTSTR};
 	operators[OperatorTypes_IMPORT].params = new unsigned char[operators[OperatorTypes_IMPORT].enumAmount]{1, 1, 1};
 	operators[OperatorTypes_IMPORT].minParams = new unsigned char[operators[OperatorTypes_IMPORT].enumAmount]{1, 1, 1};
 	operators[OperatorTypes_IMPORT].paramsyntax = new VarType*[operators[OperatorTypes_IMPORT].enumAmount]{
@@ -1053,9 +1059,9 @@ KubLingCompiler::KubLingCompiler()
 		new VarType[operators[OperatorTypes_IMPORT].params[2]]{VarType_STRING}
 	};
 	operators[OperatorTypes_IMPORT].paramTypes = new ParamType*[operators[OperatorTypes_IMPORT].enumAmount]{
-		new ParamType[operators[OperatorTypes_IMPORT].params[0]]{ParamType_NA},
-		new ParamType[operators[OperatorTypes_IMPORT].params[1]]{ParamType_NA},
-		new ParamType[operators[OperatorTypes_IMPORT].params[2]]{ParamType_NA}
+		new ParamType[operators[OperatorTypes_IMPORT].params[0]]{ParamType_CONST},
+		new ParamType[operators[OperatorTypes_IMPORT].params[1]]{ ParamType_CONST },
+		new ParamType[operators[OperatorTypes_IMPORT].params[2]]{ ParamType_CONST }
 	};
 	operators[OperatorTypes_IMPORT].optionalPar = new bool*[operators[OperatorTypes_IMPORT].enumAmount]{
 		new bool[operators[OperatorTypes_IMPORT].params[0]]{ false },
@@ -2426,6 +2432,7 @@ KubLingCompiled* KubLingCompiler::CompileSource(KubLingSource* source, CompileEr
 									{
 
 										compiledSource->AddSystemParamAdr(RunTimeParams(j), abstractSyntaxTree.symbolTable->GetValue(i).address);
+										compiledSource->SetMaxVar(abstractSyntaxTree.symbols);
 
 									}
 								}
@@ -2436,7 +2443,7 @@ KubLingCompiled* KubLingCompiler::CompileSource(KubLingSource* source, CompileEr
 					if (k == 0)
 					{
 						
-						compiledSource = new KubLingCompiled(scriptParams, scriptStringParams, scriptFloatParams);
+						compiledSource = new KubLingCompiled(scriptParams, scriptStringParams, scriptFloatParams, source->GetName());
 
 					}
 				}

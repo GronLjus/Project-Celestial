@@ -1,6 +1,7 @@
 #pragma once
 #include "CelestialSlicedList.h"
 #include "CelestialStack.h"
+#include "KubLingCompiled.h"
 #include <string>
 
 namespace Logic
@@ -58,6 +59,8 @@ namespace Logic
 			///<param val='valSize'>[in]The size of the variable in bytes</param>
 			///<returns>The starting address to start writing</returns>
 			unsigned int findAddress(unsigned int var, unsigned int valSize);
+			unsigned int sysAdr;
+			unsigned int maxVar;
 
 		public:
 			///<param val='pageSize'>[in]How big a page of memory should be</param>
@@ -88,6 +91,16 @@ namespace Logic
 			MemErrorCode CopyVariable(unsigned int dst, unsigned int src);
 
 			unsigned int GetVarLength(unsigned int var) const;
+			unsigned int GetMaxVar() const;
+
+			void AddSystemMem(Resources::KubLingCompiled* compiled);
+			unsigned int GetStartingAdr() const;
+			unsigned int GetMemorySize() const;
+
+			unsigned int GetVarSize(unsigned int var) const;
+			unsigned int GetVarAdr(unsigned int var) const;
+
+			unsigned char* GetBlock(unsigned int start, unsigned int length);
 			~MemoryPool();
 
 	};

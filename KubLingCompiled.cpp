@@ -4,9 +4,10 @@
 using namespace Resources;
 using namespace CrossHandlers;
 
-KubLingCompiled::KubLingCompiled(unsigned int maxParams, unsigned int maxStringParams, unsigned int maxFloatParams)
+KubLingCompiled::KubLingCompiled(unsigned int maxParams, unsigned int maxStringParams, unsigned int maxFloatParams, std::string name)
 {
 
+	this->name = name;
 	maxCodeSize = 100;
 	
 	this->maxParams = maxParams;
@@ -29,7 +30,90 @@ KubLingCompiled::KubLingCompiled(unsigned int maxParams, unsigned int maxStringP
 	scriptId = 0;
 	paramList = new CelestialStack<Param>(false);
 	params = new CelestialStack<unsigned int>(false);
+	placeHolders = new CelestialStack<unsigned int>(false);
+	memOffsetplaceHolders = new CelestialStack<unsigned int>(false);
 	currentParams = 0;
+
+	cIP = 0;
+	cFP = 0;
+	cSP = 0;
+
+}
+
+unsigned int KubLingCompiled::GetMaxVar() const
+{
+
+	return maxVar;
+
+}
+
+unsigned int KubLingCompiled::GetMemOffset() const
+{
+
+	return memOffset;
+
+}
+
+void KubLingCompiled::SetMaxVar(unsigned int var)
+{
+
+	maxVar = var;
+
+}
+
+void KubLingCompiled::SetMemOffset(unsigned int offset)
+{
+
+	memOffset = offset;
+
+}
+
+std::string KubLingCompiled::GetName() const
+{
+
+	return name;
+
+}
+
+void KubLingCompiled::AddStackPlaceHolder(unsigned int line)
+{
+
+	placeHolders->PushElement(line);
+
+}
+
+void KubLingCompiled::AddMemOffsetPlaceHolder(unsigned int line)
+{
+
+	memOffsetplaceHolders->PushElement(line);
+
+}
+
+unsigned int KubLingCompiled::GetStackPHLine() const
+{
+
+	if (placeHolders->GetCount() > 0)
+	{
+
+		return placeHolders->PopElement();
+
+	}
+
+	return 0;
+
+}
+
+unsigned int KubLingCompiled::GetMemOffsetPHLine() const
+{
+
+	if (memOffsetplaceHolders->GetCount() > 0)
+	{
+
+		return memOffsetplaceHolders->PopElement();
+
+	}
+
+	return 0;
 
 }
 
@@ -138,10 +222,82 @@ void KubLingCompiled::AddSystemParamAdr(Logic::RunTimeParams rtp, unsigned int a
 	}
 }
 
-unsigned int KubLingCompiled::GetMaxParams(bool string) const
+void KubLingCompiled::UpParam(char type)
 {
 
-	return string ? maxStringParams :maxParams;
+	switch (type)
+	{
+
+	case 'n':
+		cIP++;
+		break;
+	case 's':
+		cSP++;
+		break;
+	case 'f':
+		cFP++;
+		break;
+	}
+}
+
+void KubLingCompiled::ResetParam(char type)
+{
+
+	switch (type)
+	{
+
+	case 'n':
+		cIP = 0;
+		break;
+	case 's':
+		cSP = 0;
+		break;
+	case 'f':
+		cFP = 0;
+		break;
+	}
+
+}
+
+unsigned int KubLingCompiled::GetMaxParams(char type) const
+{
+
+	switch (type)
+	{
+
+	case 'n':
+		return maxParams;
+		break;
+	case 's':
+		return maxStringParams;
+		break;
+	case 'f':
+		return maxFloatParams;
+		break;
+	}
+
+	return 0;
+
+}
+
+unsigned char KubLingCompiled::GetCurrentParam(char type) const
+{
+
+	switch (type)
+	{
+
+	case 'n':
+		return cIP;
+		break;
+	case 's':
+		return cSP;
+		break;
+	case 'f':
+		return cFP;
+		break;
+	}
+
+	return 0;
 
 }
 
@@ -267,5 +423,7 @@ KubLingCompiled::~KubLingCompiled()
 
 	delete paramList;
 	delete params;
+	delete placeHolders;
+	delete memOffsetplaceHolders;
 
 }

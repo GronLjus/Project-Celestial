@@ -3,17 +3,40 @@
 
 using namespace Logic;
 
-HeapMemory::HeapMemory(unsigned int size)
+HeapMemory::HeapMemory(unsigned int size, unsigned int addresses)
 {
 
 	incrSize = size;
 	blockSize = size;
 	memoryBlock = new char[blockSize];
+	addressSpace = new unsigned int[addresses];
+
+	for (unsigned int i = 0; i < addresses; i++)
+	{
+
+		addressSpace[i] = 0;
+
+	}
 
 	block startBlock;
 	startBlock.adr = 1;
 	startBlock.size = blockSize;
 	holes.push(startBlock);
+
+}
+
+unsigned int HeapMemory::SetAddress(unsigned int var, unsigned int address)
+{
+
+	addressSpace[var] = address;
+	return addressSpace[var];
+
+}
+
+unsigned int HeapMemory::GetAddress(unsigned int var) const
+{
+
+	return addressSpace[var];
 
 }
 
@@ -84,11 +107,15 @@ unsigned int HeapMemory::Allocate(unsigned int blockSize)
 void HeapMemory::DeAllocate(unsigned int address, unsigned int size)
 {
 
-	block mem;
-	mem.adr = address;
-	mem.size = size;
-	holes.push(mem);
+	if (address != 0)
+	{
 
+		block mem;
+		mem.adr = address;
+		mem.size = size;
+		holes.push(mem);
+
+	}
 }
 
 char* HeapMemory::GetMemory(unsigned int adress)
@@ -102,5 +129,6 @@ HeapMemory::~HeapMemory()
 {
 
 	delete[] memoryBlock;
+	delete[] addressSpace;
 
 }

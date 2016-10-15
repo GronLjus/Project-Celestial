@@ -181,6 +181,9 @@
     <ClInclude Include="KubLingCompiler.h" />
     <ClInclude Include="KubLingLexer.h" />
     <ClInclude Include="KubLingParser.h" />
+    <ClInclude Include="KubLingRaw.h" />
+    <ClInclude Include="KubLingRawGenerator.h" />
+    <ClInclude Include="KubLingRawTranslator.h" />
     <ClInclude Include="KubLingRuntime.h" />
     <ClInclude Include="KubLingRunTimeHandler.h" />
     <ClInclude Include="KubLingSource.h" />
@@ -337,6 +340,9 @@
     <ClCompile Include="KubLingCompiler.cpp" />
     <ClCompile Include="KubLingLexer.cpp" />
     <ClCompile Include="KubLingParser.cpp" />
+    <ClCompile Include="KubLingRaw.cpp" />
+    <ClCompile Include="KubLingRawGenerator.cpp" />
+    <ClCompile Include="KubLingRawTranslator.cpp" />
     <ClCompile Include="KubLingRuntimeHandler.cpp" />
     <ClCompile Include="KubLingSource.cpp" />
     <ClCompile Include="KubLingSourceLoader.cpp" />

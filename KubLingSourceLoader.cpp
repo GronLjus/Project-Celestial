@@ -141,7 +141,7 @@ KubLingSource* KubLingSourceLoader::LoadSource(string path)
 
 	}
 
-	retVal = new KubLingSource(input->GetCount(), src);
+	retVal = new KubLingSource(input->GetCount(), src, path.substr(0,path.find_last_of('.')));
 	delete input;
 	return retVal;
 

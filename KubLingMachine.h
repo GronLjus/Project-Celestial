@@ -12,7 +12,7 @@ namespace Logic
 		private:
 
 			float fReg[4];
-			int iReg[4];
+			int iReg[5];
 			char cReg[4];
 
 			CrossHandlers::MessageQueue* queue;
@@ -22,7 +22,7 @@ namespace Logic
 			CrossHandlers::Message* lastMess;
 
 			unsigned int time;
-			void sendMessage(unsigned int mess, CrossHandlers::MessageSource dest);
+			void sendMessage(unsigned int mess, CrossHandlers::MessageSource dest, unsigned int returnAdr);
 
 			const unsigned short wait = 512;
 			unsigned char stackMem[524287];
@@ -32,7 +32,8 @@ namespace Logic
 			KubLingMachine(CrossHandlers::MessageQueue* queue,
 				CrossHandlers::Message* mBuffer,
 				unsigned int maxMess,
-				unsigned int currentMess);
+				unsigned int currentMess,
+				unsigned int heapVars);
 
 			RunTimeError RunScript(unsigned long long* code, unsigned int &counter, unsigned int time);
 

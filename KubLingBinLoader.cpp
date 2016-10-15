@@ -116,7 +116,7 @@ KubLingCompiled* KubLingBinLoader::Load(std::string path)
 			readbytes += sizeof(int);
 			unsigned int fltParams = memblock[readbytes] | ((int)memblock[readbytes + 1] << 8) | ((int)memblock[readbytes + 2] << 16) | ((int)memblock[readbytes + 3] << 24);
 			readbytes += sizeof(int);
-			retVal = new KubLingCompiled(numParams, strParams, fltParams);
+			retVal = new KubLingCompiled(numParams, strParams, fltParams,path);
 
 			for (int i = 0; i < numParams; i++)
 			{

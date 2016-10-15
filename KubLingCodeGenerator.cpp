@@ -47,7 +47,7 @@ int KubLingCodeGenerator::handleVariable(CelestialSlicedList<symbol>* symbolTabl
 		addLine->AddElement((unsigned char)0);
 		addLine->AddElement((unsigned char)0);
 		addLine->AddElement((unsigned char)0);
-		addLine->AddElement(opCode_WTFRVR);
+		addLine->AddElement(bytecode_WTFRVR);
 		addLine->AddElement(sym.address >> 0);
 		addLine->AddElement(sym.address >> 8);
 		addLine->AddElement(sym.address >> 16);
@@ -499,7 +499,7 @@ CelestialList<CelestialList<unsigned char>*>* KubLingCodeGenerator::generateCode
 					addLine->AddElement((unsigned char)0);
 					addLine->AddElement((unsigned char)0);
 					addLine->AddElement((unsigned char)0);
-					addLine->AddElement(opCode_WTFRVR);
+					addLine->AddElement(bytecode_WTFRVR);
 					addLine->AddElement(opRet >> 0);
 					addLine->AddElement(opRet >> 8);
 					addLine->AddElement(opRet >> 16);

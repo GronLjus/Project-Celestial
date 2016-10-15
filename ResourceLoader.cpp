@@ -15,10 +15,13 @@
 #include "GridLoader.h"
 #include "CLMSHFileLoader.h"
 
+#include <locale>
+
 using namespace std;
 using namespace Resources;
 using namespace CrossHandlers;
 using namespace CelestialMath;
+using namespace Logic;
 
 int ResourceLoader::matID = 0;
 
@@ -109,6 +112,8 @@ ResourceLoader::ResourceLoader()
 	scriptFileLoaders[1] = new KubLingSourceLoader();
 
 	saveLoader = new CLSVLoader();
+
+	rawGen = new KubLingRawGenerator();
 
 }
 
@@ -481,6 +486,122 @@ MeshObject::Material* ResourceLoader::LoadMaterialsFromColour(int* colours,std::
 
 }
 
+std::string* ResourceLoader::getFilePaths(std::string path, unsigned int &size)
+{
+
+	size = 0;
+	std::string tempPath = path + "/*";
+	std::wstring stemp = std::wstring(tempPath.begin(), tempPath.end());
+	WIN32_FIND_DATA findFileData;
+	HANDLE hFind = FindFirstFile(stemp.c_str(), &findFileData);
+
+	std::string* paths = nullptr;
+
+	do
+	{
+
+		std::wstring fileN = findFileData.cFileName;
+		std::string fileName = string(fileN.begin(), fileN.end());
+
+		if (findFileData.cFileName[0] == '.' ||
+			findFileData.cFileName == (wchar_t*)"..")
+		{
+
+			unsigned int i = 0;
+
+		}
+		else if (findFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
+		{
+
+			std::string newPath = path + "/" + fileName;
+			unsigned int subSize = 0;
+			std::string* subFiles = getFilePaths(newPath, subSize);
+			size += subSize;
+
+			std::string* temp = new string[size];
+			
+			for (unsigned int i = 0; i < size - subSize; i++)
+			{
+
+				temp[i] = paths[i];
+
+			}
+
+			for (unsigned int i = 0; i < subSize; i++)
+			{
+
+				temp[(size - subSize) + i] = subFiles[i];
+
+			}
+
+			delete[] subFiles;
+
+			if (paths != nullptr)
+			{
+
+				delete[] paths;
+
+			}
+
+			paths = temp;
+
+		}
+		else if (getExtension(fileName) == scriptFileLoaders[1]->Extension()[0])
+		{
+
+			std::string* temp = new string[size + 1];
+
+			for (unsigned int i = 0; i < size; i++)
+			{
+
+				temp[i] = paths[i];
+
+			}
+
+			if (paths != nullptr)
+			{
+
+				delete[] paths;
+
+			}
+
+			paths = temp;
+			paths[size] = path + '/' + fileName;
+			size++;
+
+		}
+
+	} while (FindNextFile(hFind, &findFileData) != 0);
+
+	FindClose(hFind);
+
+	return paths;
+
+}
+
+
+KubLingRaw* ResourceLoader::CompileFolder(std::string path)
+{
+
+	unsigned int size = 0;
+	std::string* files = getFilePaths(path, size);
+	KubLingCompiled** code = new KubLingCompiled*[size];
+
+	for (unsigned int i = 0; i < size; i++)
+	{
+
+		std::string file = files[i];
+		code[i] = this->LoadCLScript(file);
+
+	}
+
+	delete[] files;
+	KubLingRaw* raw = rawGen->Assemble(code, size);
+	delete[] code;
+	return raw;
+
+}
+
 ResourceLoader::~ResourceLoader()
 {
 
@@ -544,5 +665,6 @@ ResourceLoader::~ResourceLoader()
 	delete[] scriptFileLoaders;
 
 	delete saveLoader;
+	delete rawGen;
 
 }

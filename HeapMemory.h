@@ -155,10 +155,15 @@ namespace Logic
 			unsigned int blockSize;
 			unsigned int incrSize;
 
+			unsigned int* addressSpace;
+
 			void expandMemory();
 
 		public:
-			HeapMemory(unsigned int size);
+			HeapMemory(unsigned int size, unsigned int addresses);
+
+			unsigned int SetAddress(unsigned int var, unsigned int address);
+			unsigned int GetAddress(unsigned int var) const;
 
 			unsigned int Allocate(unsigned int blockSize);
 			void DeAllocate(unsigned int address, unsigned int size);

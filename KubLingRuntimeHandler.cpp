@@ -3049,9 +3049,10 @@ KubLingRuntimeHandler::KubLingRuntimeHandler(MessageQueue* mQueue, CelestialSlic
 	operators[bytecode_STSCRPTPRMNMBR] = SetScriptParNumOperator;
 	operators[bytecode_STSCRPTPRMSTR] = SetScriptParStrOperator;
 
-	operators[bytecode_EXPRTCNST] = ExportConstOperator;
-	operators[bytecode_EXPRTVAR] = ExportVarOperator;
-	operators[bytecode_IMPRT] = ImportOperator;
+	operators[bytecode_EXPRTSTR] = ExportVarOperator;
+	operators[bytecode_EXPRTNUM] = ExportVarOperator;
+	operators[bytecode_IMPRTSTR] = ImportOperator;
+	operators[bytecode_IMPRTNUM] = ImportOperator;
 
 	operators[bytecode_HDE] = HideOperator;
 	operators[bytecode_SHW] = ShowOperator;
@@ -3088,7 +3089,7 @@ KubLingRuntimeHandler::KubLingRuntimeHandler(MessageQueue* mQueue, CelestialSlic
 	operators[bytecode_JMPINVVAR] = JumpInv;
 	operators[bytecode_JMPNOW] = JumpNow;
 
-	operators[opCode_WTFRVR] = WaitForVar;
+	operators[bytecode_WTFRVR] = WaitForVar;
 
 	rtc = new CelestialSlicedList<RunTimeCommons*>(20,nullptr);
 	this->gameObjects = gameObjects;

@@ -12,6 +12,7 @@
 #include "ResourceObject.h"
 #include "TextContainer.h"
 #include "CLSVLoader.h"
+#include "KubLingRawGenerator.h"
 
 namespace Resources
 {
@@ -59,6 +60,10 @@ namespace Resources
 			IFileCLLoader** scriptFileLoaders;
 
 			CLSVLoader* saveLoader;
+
+			Logic::KubLingRawGenerator* rawGen;
+
+			std::string* getFilePaths(std::string path, unsigned int &size);
 
 
 		public:
@@ -111,6 +116,8 @@ namespace Resources
 			///<param val='path'>[in]The path to a file to save in</param>
 			///<param val='script'>[in]A pointer to the script to save</param>
 			void SaveCompiledScript(std::string path, KubLingCompiled* script);
+
+			KubLingRaw* CompileFolder(std::string path);
 
 			///<summary>Loads a light</summary>
 			///<param val='lightDesc'>[in]How the light should look</param>

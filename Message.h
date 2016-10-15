@@ -22,7 +22,7 @@ namespace CrossHandlers
 		EventMess_LNKDBG, EventMess_WAITFORFRAME,
 		EventMess_NA };
 	enum GUIMess{
-		GUIMess_SETUI, 
+		GUIMess_SETUI, GUIMess_ADDCHILD,
 		GUIMess_CLICKOBJECT, GUIMess_MOVEMOUSE, 
 		GUIMess_STARTDRAGGING, GUIMess_DRAGOBJECT, GUIMess_STOPDRAGGING, 
 		GUIMess_WHEELOBJECT, GUIMess_MOUSEDOWN, GUIMess_MOUSEUP,
@@ -43,7 +43,8 @@ namespace CrossHandlers
 		GameBoardMess_HOOKTRACK, GameBoardMess_UNHOOKTRACK,
 		GameBoardMess_ORBITOBJECT, 
 		GameBoardMess_ADDROUTE, GameBoardMess_SPAWN, GameBoardMess_TRAVEL,
-		GameBoardMess_SPLITOBJECT,
+		GameBoardMess_SPLITOBJECT, GameBoardMess_GLUEOBJECT,
+		GameBoardMess_GETPARENT,
 		GameBoardMess_NA };
 	enum SystemMess{SystemMess_GETSCREENRES, 
 		SystemMess_SETCURSOR, SystemMess_HIDECURSOR, SystemMess_SHOWCURSOR, SystemMess_MOVECURSOR,

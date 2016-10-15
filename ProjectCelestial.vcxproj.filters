@@ -289,6 +289,24 @@
     <Filter Include="Source Files\Resources\Objects\KubLing">
       <UniqueIdentifier>{8ecb3ecf-4b57-472b-8363-9f436edb1dca}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Logic\CelScript\Compiler\FrontEnd">
+      <UniqueIdentifier>{5b2df781-2881-42b1-bd09-5159a0f7facb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Logic\CelScript\Compiler\FrontEnd">
+      <UniqueIdentifier>{92f454f6-79bd-4dae-adea-7c477b01e6b1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Logic\CelScript\Compiler\MiddleEnd">
+      <UniqueIdentifier>{8aa9f9de-53a4-4dd4-a6ee-5d8e3c1ae69c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Logic\CelScript\Compiler\MiddleEnd">
+      <UniqueIdentifier>{436eb323-c44b-48bf-8200-9bb3e95707a7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Logic\CelScript\Compiler\BackEnd">
+      <UniqueIdentifier>{46553387-ff5f-4b1c-97e2-2f893f5f2b3d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Logic\CelScript\Compiler\BackEnd">
+      <UniqueIdentifier>{8eb9dc67-b6e4-448f-b328-49f44fccd33c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Project Celestial.h">
@@ -564,9 +582,6 @@
     <ClInclude Include="CelestialSlicedList.h">
       <Filter>Header Files\CrossHandler-Tools\Container</Filter>
     </ClInclude>
-    <ClInclude Include="MemoryPool.h">
-      <Filter>Header Files\Logic\CelScript</Filter>
-    </ClInclude>
     <ClInclude Include="CelestialTree.h">
       <Filter>Header Files\CrossHandler-Tools\Container</Filter>
     </ClInclude>
@@ -732,21 +747,6 @@
     <ClInclude Include="HeapMemory.h">
       <Filter>Header Files\Logic\CelScript\RunTime</Filter>
     </ClInclude>
-    <ClInclude Include="KubLingAnalyzer.h">
-      <Filter>Header Files\Logic\CelScript\Compiler</Filter>
-    </ClInclude>
-    <ClInclude Include="KubLingCodeGenerator.h">
-      <Filter>Header Files\Logic\CelScript\Compiler</Filter>
-    </ClInclude>
-    <ClInclude Include="KubLingCompiler.h">
-      <Filter>Header Files\Logic\CelScript\Compiler</Filter>
-    </ClInclude>
-    <ClInclude Include="KubLingLexer.h">
-      <Filter>Header Files\Logic\CelScript\Compiler</Filter>
-    </ClInclude>
-    <ClInclude Include="KubLingParser.h">
-      <Filter>Header Files\Logic\CelScript\Compiler</Filter>
-    </ClInclude>
     <ClInclude Include="KubLingRuntime.h">
       <Filter>Header Files\Logic\CelScript\RunTime</Filter>
     </ClInclude>
@@ -764,6 +764,33 @@
     </ClInclude>
     <ClInclude Include="KubLingSourceLoader.h">
       <Filter>Header Files\Resources\Loaders\FileLoaders</Filter>
+    </ClInclude>
+    <ClInclude Include="KubLingParser.h">
+      <Filter>Header Files\Logic\CelScript\Compiler\FrontEnd</Filter>
+    </ClInclude>
+    <ClInclude Include="KubLingLexer.h">
+      <Filter>Header Files\Logic\CelScript\Compiler\FrontEnd</Filter>
+    </ClInclude>
+    <ClInclude Include="KubLingAnalyzer.h">
+      <Filter>Header Files\Logic\CelScript\Compiler\FrontEnd</Filter>
+    </ClInclude>
+    <ClInclude Include="KubLingCompiler.h">
+      <Filter>Header Files\Logic\CelScript\Compiler\MiddleEnd</Filter>
+    </ClInclude>
+    <ClInclude Include="KubLingCodeGenerator.h">
+      <Filter>Header Files\Logic\CelScript\Compiler\MiddleEnd</Filter>
+    </ClInclude>
+    <ClInclude Include="KubLingRawGenerator.h">
+      <Filter>Header Files\Logic\CelScript\Compiler\BackEnd</Filter>
+    </ClInclude>
+    <ClInclude Include="KubLingRaw.h">
+      <Filter>Header Files\Resources\Objects\KubLing</Filter>
+    </ClInclude>
+    <ClInclude Include="KubLingRawTranslator.h">
+      <Filter>Header Files\Logic\CelScript\Compiler\BackEnd</Filter>
+    </ClInclude>
+    <ClInclude Include="MemoryPool.h">
+      <Filter>Header Files\Logic\CelScript\Compiler\BackEnd</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -914,9 +941,6 @@
     <ClCompile Include="Celestial2DDrawer.cpp">
       <Filter>Source Files\Graphics\2D</Filter>
     </ClCompile>
-    <ClCompile Include="MemoryPool.cpp">
-      <Filter>Source Files\Logic\CelScript</Filter>
-    </ClCompile>
     <ClCompile Include="CelscriptHandler.cpp">
       <Filter>Source Files\Logic\CelScript</Filter>
     </ClCompile>
@@ -1037,21 +1061,6 @@
     <ClCompile Include="KubLingRuntimeHandler.cpp">
       <Filter>Source Files\Logic\CelScript\CelScriptRuntime</Filter>
     </ClCompile>
-    <ClCompile Include="KubLingAnalyzer.cpp">
-      <Filter>Source Files\Logic\CelScript\Compiler</Filter>
-    </ClCompile>
-    <ClCompile Include="KubLingCodeGenerator.cpp">
-      <Filter>Source Files\Logic\CelScript\Compiler</Filter>
-    </ClCompile>
-    <ClCompile Include="KubLingCompiler.cpp">
-      <Filter>Source Files\Logic\CelScript\Compiler</Filter>
-    </ClCompile>
-    <ClCompile Include="KubLingLexer.cpp">
-      <Filter>Source Files\Logic\CelScript\Compiler</Filter>
-    </ClCompile>
-    <ClCompile Include="KubLingParser.cpp">
-      <Filter>Source Files\Logic\CelScript\Compiler</Filter>
-    </ClCompile>
     <ClCompile Include="KubLingCompiled.cpp">
       <Filter>Source Files\Resources\Objects\KubLing</Filter>
     </ClCompile>
@@ -1063,6 +1072,33 @@
     </ClCompile>
     <ClCompile Include="KubLingSourceLoader.cpp">
       <Filter>Source Files\Resources\Loaders\FileLoaders</Filter>
+    </ClCompile>
+    <ClCompile Include="KubLingAnalyzer.cpp">
+      <Filter>Source Files\Logic\CelScript\Compiler\FrontEnd</Filter>
+    </ClCompile>
+    <ClCompile Include="KubLingLexer.cpp">
+      <Filter>Source Files\Logic\CelScript\Compiler\FrontEnd</Filter>
+    </ClCompile>
+    <ClCompile Include="KubLingParser.cpp">
+      <Filter>Source Files\Logic\CelScript\Compiler\FrontEnd</Filter>
+    </ClCompile>
+    <ClCompile Include="KubLingCodeGenerator.cpp">
+      <Filter>Source Files\Logic\CelScript\Compiler\MiddleEnd</Filter>
+    </ClCompile>
+    <ClCompile Include="KubLingCompiler.cpp">
+      <Filter>Source Files\Logic\CelScript\Compiler\MiddleEnd</Filter>
+    </ClCompile>
+    <ClCompile Include="KubLingRaw.cpp">
+      <Filter>Source Files\Resources\Objects\KubLing</Filter>
+    </ClCompile>
+    <ClCompile Include="KubLingRawGenerator.cpp">
+      <Filter>Source Files\Logic\CelScript\Compiler\BackEnd</Filter>
+    </ClCompile>
+    <ClCompile Include="MemoryPool.cpp">
+      <Filter>Source Files\Logic\CelScript\Compiler\BackEnd</Filter>
+    </ClCompile>
+    <ClCompile Include="KubLingRawTranslator.cpp">
+      <Filter>Source Files\Logic\CelScript\Compiler\BackEnd</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1210,12 +1246,12 @@
       <Filter>Resource Files\Content\Scripts\ToolBarScripts</Filter>
     </None>
     <None Include="saves\save2.clsv" />
-    <None Include="Content\Scripts\PreLoad.celsrc">
-      <Filter>Resource Files\Content\Scripts\ToolBarScripts</Filter>
-    </None>
     <None Include="saves\save3.clsv" />
     <None Include="Content\Scripts\ToolBarScripts\PauseButtonClick.celsrc">
       <Filter>Resource Files\Content\Scripts\ToolBarScripts</Filter>
+    </None>
+    <None Include="Content\Scripts\PreLoad.celsrc">
+      <Filter>Resource Files\Content\Scripts</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

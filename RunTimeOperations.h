@@ -55,7 +55,7 @@ namespace Logic
 
 		bytecode_RNSCRPT, bytecode_STSCRPTPRMNMBR, bytecode_STSCRPTPRMSTR, bytecode_STSCRPTPRMFLT,
 
-		bytecode_EXPRTCNST, bytecode_EXPRTVAR, bytecode_IMPRT,
+		bytecode_EXPRTSTR, bytecode_EXPRTNUM, bytecode_IMPRTSTR, bytecode_IMPRTNUM,
 		bytecode_HDE, bytecode_SHW,
 		bytecode_HDECRS, bytecode_SHWCRS,
 
@@ -74,7 +74,7 @@ namespace Logic
 		bytecode_CLRBRD,
 		bytecode_PSEGME, bytecode_RSMGME,
 
-		bytecode_JMPINVVAR,bytecode_JMPNOW,opCode_WTFRVR,
+		bytecode_JMPINVVAR,bytecode_JMPNOW, bytecode_WTFRVR,
 
 		bytecode_NA
 	};
@@ -85,10 +85,13 @@ namespace Logic
 		opcode_STOP,
 		
 		opcode_HEAP,
-
+		opcode_TO,
+		opcode_CAST,
 		opcode_PLACE,
 		opcode_LOAD,
 		opcode_STORE,
+
+		opcode_COPY,
 		opcode_SAVE,
 		opcode_MOV,
 		
@@ -99,15 +102,21 @@ namespace Logic
 		opcode_SUB,
 		opcode_MUL,
 		opcode_DIV,
+		opcode_MOD,
 
 		opcode_CMPRE,
+		opcode_GRTR,
 		opcode_BITCMP,
 
 		opcode_RETURN,
 
+		opcode_FTS,
+
+		opcode_ADR,
 		opcode_ALLOC,
-		opcode_MALLOC,
+		opcode_DALLOC,
 		
+		opcode_INV,
 		opcode_JMP,
 		opcode_JMPINV
 

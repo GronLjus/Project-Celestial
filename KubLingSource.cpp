@@ -2,11 +2,13 @@
 #include "KubLingSource.h"
 using namespace Resources;
 
-KubLingSource::KubLingSource(int totalLines, std::string** lines)
+KubLingSource::KubLingSource(int totalLines, std::string** lines, std::string name)
 {
 
 	this->totalLines = totalLines;
 	this->lines = lines;
+
+	this->name = name;
 
 }
 
@@ -35,6 +37,13 @@ std::string KubLingSource::GetFile(int line)
 	}
 
 	return "";
+
+}
+
+std::string KubLingSource::GetName()
+{
+
+	return name;
 
 }
 

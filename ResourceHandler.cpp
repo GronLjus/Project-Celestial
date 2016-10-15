@@ -44,6 +44,15 @@ void ResourceHandler::Init(Graphics::CardHandler* &card, TextContainer* outText,
 
 }
 
+unsigned int ResourceHandler::AssembleRaws(std::string path)
+{
+
+	KubLingRaw* rawCode = loader->CompileFolder(path);
+	rawCode->SetId(gameObjects->Add(rawCode));
+	return rawCode->GetId();
+
+}
+
 CelestialSlicedList<BaseObject*>* ResourceHandler::GetObjectContainer() const
 {
 

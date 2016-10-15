@@ -12,6 +12,7 @@ MemoryPool::MemoryPool(unsigned int pageSize)
 	variables = new CelestialSlicedList<memBlock>(100);
 	holeVal = 0;
 	adrLast = 0;
+	sysAdr = 0;
 
 }
 
@@ -282,6 +283,133 @@ MemErrorCode MemoryPool::CopyVariable(unsigned int dst, unsigned int src)
 	}
 
 	return err;
+
+}
+
+unsigned int MemoryPool::GetMemorySize() const
+{
+
+	return adrLast;
+
+}
+
+unsigned char* MemoryPool::GetBlock(unsigned int start, unsigned int length)
+{
+
+	unsigned char* block = new unsigned char[length];
+
+	unsigned int totalBytes = length;
+	unsigned int globalPlace = start;
+	unsigned int writtenBytes = 0;
+
+	while (totalBytes > 0)
+	{
+
+		unsigned int localPlace = globalPlace % memoryA->GetSliceSize();
+		unsigned int toend = memoryA->GetSliceSize() - localPlace;
+		unsigned int readBytes = toend > totalBytes ? totalBytes : toend;
+
+		memcpy(&block[writtenBytes], &(memoryA->GetSlice(globalPlace)[localPlace]), readBytes);
+
+		totalBytes -= readBytes;
+		globalPlace += readBytes;
+		writtenBytes += readBytes;
+
+	}
+
+	return block;
+
+}
+
+void MemoryPool::AddSystemMem(Resources::KubLingCompiled* compiled)
+{
+
+	maxVar = compiled->GetMaxVar();
+	unsigned char* startData = new unsigned char[maxVar];
+	AddVariable(maxVar, startData, maxVar);
+	delete[] startData;
+	maxVar++;
+
+	for (unsigned int i = 0; i < compiled->GetMaxParams('n'); i++)
+	{
+
+		unsigned int adr = compiled->GetAdr(i, 'n');
+		unsigned char data[sizeof(unsigned int)];
+		AddVariable(adr, data, sizeof(unsigned int));
+		memBlock varMem = variables->GetValue(adr);
+		compiled->AddParamAdr(i, varMem.place, 'n');
+
+	}
+
+	for (unsigned int i = 0; i < compiled->GetMaxParams('f'); i++)
+	{
+
+		unsigned int adr = compiled->GetAdr(i, 'f');
+		unsigned char data[sizeof(float)];
+		AddVariable(adr, data, sizeof(float));
+		memBlock varMem = variables->GetValue(adr);
+		compiled->AddParamAdr(i, varMem.place, 'f');
+
+	}
+
+	for (unsigned int i = 0; i < RunTimeParams_NA; i++)
+	{
+
+		unsigned int adr = compiled->GetAdr(RunTimeParams(i));
+		unsigned char data[sizeof(unsigned int)];
+		AddVariable(adr, data, sizeof(unsigned int));
+		memBlock varMem = variables->GetValue(adr);
+		compiled->AddSystemParamAdr(RunTimeParams(i), varMem.place);
+
+	}
+
+	for (unsigned int i = 0; i < compiled->GetMaxParams('s'); i++)
+	{
+
+		unsigned int adr = compiled->GetAdr(i, 's');
+		unsigned char data[64];
+		AddVariable(adr, data, 64);
+		memBlock varMem = variables->GetValue(adr);
+		compiled->AddParamAdr(i, varMem.place, 's');
+
+	}
+
+
+	maxVar = compiled->GetMaxVar();
+	unsigned char data[64];
+	AddVariable(maxVar, data, 64);
+
+	sysAdr = adrLast;
+
+}
+
+unsigned int MemoryPool::GetMaxVar() const
+{
+
+	return maxVar;
+
+}
+
+unsigned int MemoryPool::GetVarSize(unsigned int var) const
+{
+
+	memBlock varMem = variables->GetValue(var);
+	return varMem.length;
+
+}
+
+unsigned int MemoryPool::GetVarAdr(unsigned int var) const
+{
+
+	memBlock varMem = variables->GetValue(var);
+	return varMem.place;
+
+}
+
+unsigned int MemoryPool::GetStartingAdr() const
+{
+
+	return sysAdr;
 
 }
 

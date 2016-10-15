@@ -511,6 +511,22 @@ void GUIEntityHandler::Update(unsigned int time)
 			handleMouseAction(currentMessage, time, CelestialMath::vectorUI2(mouseX, mouseY));
 			
 		}
+		else if (currentMessage->mess == GUIMess_ADDCHILD)
+		{
+
+			unsigned int parent = currentMessage->params[0] | ((int)currentMessage->params[1] << 8) | ((int)currentMessage->params[2] << 16) | ((int)currentMessage->params[3] << 24);
+			unsigned int child = currentMessage->params[4] | ((int)currentMessage->params[5] << 8) | ((int)currentMessage->params[6] << 16) | ((int)currentMessage->params[7] << 24);
+
+			GUIObject* pObject = (GUIObject*)gameObjects->GetValue(parent);
+			GUIObject* cObject = (GUIObject*)gameObjects->GetValue(child);
+
+			if (pObject->GetType() == GUIObjects_LAYOUT)
+			{
+
+				((GUILayout*)pObject)->AddChild(cObject);
+
+			}
+		}
 		else if ((currentMessage->mess == GUIMess_POST || 
 			currentMessage->mess == GUIMess_APPEND || 
 			currentMessage->mess == GUIMess_CLEAR || 

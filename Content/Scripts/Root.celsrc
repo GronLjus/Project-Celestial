@@ -11,10 +11,10 @@ scriptLoad = load script 'Content\Scripts\LoadScripts\LoadScripts.celsrc'
 
 cam = load camera
 export 'cmra' cam
-run gameBoardLoad
+run 'Content\Scripts\LoadScripts\LoadGameBoard'
 endTile = load mesh 'Content\EndTile.clmsh'
-run toolbarLoad
-run scriptLoad
+run 'Content\Scripts\LoadScripts\LoadToolBar'
+run 'Content\Scripts\LoadScripts\LoadScripts'
 
 export 'endTile' endTile
 export 'planeMesh' load mesh 'Content\Plane1.clmsh'

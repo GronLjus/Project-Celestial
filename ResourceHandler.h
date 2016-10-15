@@ -20,6 +20,7 @@ namespace Resources
 		CrossHandlers::CelestialSlicedList<BaseObject*>* GetObjectContainer() const;
 		void Update(unsigned int time);
 		unsigned int GetCrossScriptObject() const;
+		unsigned int AssembleRaws(std::string path);
 		~ResourceHandler();
 
 	private:

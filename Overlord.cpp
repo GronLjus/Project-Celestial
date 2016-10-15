@@ -31,150 +31,6 @@ unsigned int lTimeLast = 0;
 Overlord::Overlord(void)
 {
 
-	KubLingMachine* machine = new KubLingMachine(nullptr, nullptr, 0, 0);
-
-	unsigned long long code = opcode_PLACE;
-	unsigned long long r1 = 0;
-	unsigned long long r2 = 1;
-	unsigned long long r3 = 2;
-	unsigned long long type = 0;
-
-	unsigned long long scale = 10;
-
-	unsigned long long testCode[]
-	{
-		0,
-		0,
-		0,
-		0,
-		0,
-		0,
-		0,
-		0,
-		0,
-		0,
-		0,
-		0,
-		0
-	};
-
-	unsigned long long line = (code << 59) |
-		(r1 << 62) >> 5 |
-		(r2 << 62) >> 7 |
-		(r3 << 62) >> 9 |
-		(type << 62) >> 11|
-		(scale << 32) >> 32;
-	testCode[0] = line; 
-	
-	line = (code << 59) |
-		(r2 << 62) >> 5 |
-		(r2 << 62) >> 7 |
-		(r3 << 62) >> 9 |
-		(type << 62) >> 11 |
-		(scale << 32) >> 32;
-	testCode[1] = line;
-
-	code = opcode_ADD;
-	line = (code << 59) |
-		(r1 << 62) >> 5 |
-		(r2 << 62) >> 7 |
-		(r3 << 62) >> 9 |
-		(type << 62) >> 11 |
-		(scale << 32) >> 32;
-	testCode[2] = line;
-
-	code = opcode_PLACE;
-	scale = 1;
-	line = (code << 59) |
-		(r1 << 62) >> 5 |
-		(r2 << 62) >> 7 |
-		(r3 << 62) >> 9 |
-		(type << 62) >> 11 |
-		(scale << 32) >> 32;
-	testCode[3] = line;
-
-	scale = 4;
-	line = (code << 59) |
-		(r2 << 62) >> 5 |
-		(r2 << 62) >> 7 |
-		(r3 << 62) >> 9 |
-		(type << 62) >> 11 |
-		(scale << 32) >> 32;
-	testCode[4] = line;
-
-	code = opcode_SAVE;
-	scale = 1;
-	line = (code << 59) |
-		(r1 << 62) >> 5 |
-		(r2 << 62) >> 7 |
-		(r3 << 62) >> 9 |
-		(type << 62) >> 11 |
-		(scale << 32) >> 32;
-	testCode[5] = line;
-
-	code = opcode_ALLOC;
-	scale = 4;
-	line = (code << 59) |
-		(r3 << 62) >> 5 |
-		(r2 << 62) >> 7 |
-		(r3 << 62) >> 9 |
-		(type << 62) >> 11 |
-		(scale << 32) >> 32;
-	testCode[6] = line;
-
-	code = opcode_HEAP;
-	scale = 1;
-	line = (code << 59) |
-		(r3 << 62) >> 5 |
-		(r1 << 62) >> 7 |
-		(r2 << 62) >> 9 |
-		(type << 62) >> 11 |
-		(scale << 32) >> 32;
-	testCode[7] = line;
-
-	code = opcode_MOV;
-	scale = 1;
-	line = (code << 59) |
-		(r1 << 62) >> 5 |
-		(r3 << 62) >> 7 |
-		(r2 << 62) >> 9 |
-		(type << 62) >> 11 |
-		(scale << 32) >> 32;
-	testCode[8] = line;
-
-	code = opcode_LOAD;
-	scale = 1;
-	line = (code << 59) |
-		(r2 << 62) >> 5 |
-		(r1 << 62) >> 7 |
-		(r2 << 62) >> 9 |
-		(type << 62) >> 11 |
-		(scale << 32) >> 32;
-	testCode[9] = line;
-	unsigned int counter = 0;
-
-	code = opcode_PLACE;
-	scale = 5;
-	line = (code << 59) |
-		(r1 << 62) >> 5 |
-		(r2 << 62) >> 7 |
-		(r3 << 62) >> 9 |
-		(type << 62) >> 11 |
-		(scale << 32) >> 32;
-	testCode[10] = line;
-
-	code = opcode_SUB;
-	line = (code << 59) |
-		(r1 << 62) >> 5 |
-		(r2 << 62) >> 7 |
-		(r3 << 62) >> 9 |
-		(type << 62) >> 11 |
-		(scale << 32) >> 32;
-	testCode[11] = line;
-	machine->RunScript(testCode, counter, 0);
-
-	delete machine;
-
 	unsigned int flip = 2;
 	die = false;
 	okToDraw = false;
@@ -240,6 +96,8 @@ HRESULT Overlord::Init(HWND hwnd)
 	rH->Init(tempCard, dbgOut, vectorUI2(gQ.resolutionX, gQ.resolutionY),32,32*1.0f,maxInstances);
 	cH->Init(rH->GetObjectContainer(), rH->GetCrossScriptObject());
 	guiH->Init(rH->GetObjectContainer());
+
+	unsigned int rawCode = rH->AssembleRaws("Content/Scripts");
 
 	Message mess;
 	mess.source = MessageSource_NA;
