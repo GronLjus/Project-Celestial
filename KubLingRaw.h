@@ -1,18 +1,9 @@
 #pragma once
-#include "BaseObject.h"
-#include "RunTimeOperations.h"
-#include "CelestialStack.h"
+#include "Message.h"
+#include "KubLingLabel.h"
 
 namespace Resources
 {
-
-	struct KubLingLabel
-	{
-
-		std::string script;
-		unsigned int start;
-
-	};
 
 	///<summary>The class contains the rawcode of the script</summary>
 	class KubLingRaw : public BaseObject
@@ -25,14 +16,20 @@ namespace Resources
 			KubLingLabel* labels;
 			unsigned int totalLabels;
 
+			unsigned int heapVars;
+
 		public:
 			KubLingRaw(unsigned long long* code, unsigned int codes,
-				KubLingLabel* labels, unsigned int totalLabels);
+				KubLingLabel* labels, unsigned int totalLabels,
+				unsigned int heapVars);
 
 			unsigned int GetStart(std::string label) const;
+			unsigned int GetHeapVars() const;
 			unsigned long long* GetCode() const;
-
+			KubLingLabel GetLabel(std::string label) const;
 			virtual void Update(CrossHandlers::Message* mess) {}
+
+			virtual ~KubLingRaw();
 
 	};
 }

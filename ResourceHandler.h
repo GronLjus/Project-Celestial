@@ -19,7 +19,7 @@ namespace Resources
 		void Init(Graphics::CardHandler* &card, TextContainer* outText, CelestialMath::vectorUI2 screen,unsigned int , unsigned int gameBoardGridSize, unsigned int maxInstances);
 		CrossHandlers::CelestialSlicedList<BaseObject*>* GetObjectContainer() const;
 		void Update(unsigned int time);
-		unsigned int GetCrossScriptObject() const;
+		unsigned int GetHeapContainer() const;
 		unsigned int AssembleRaws(std::string path);
 		~ResourceHandler();
 
@@ -32,7 +32,7 @@ namespace Resources
 		unsigned int copyObject(GameObject* objectToCopy, unsigned int time);
 		void handleMess(CrossHandlers::Message* mess,unsigned int time);
 		void unloadObject(unsigned int param1, unsigned int time);
-		unsigned int crossScript;
+		unsigned int heapObject;
 		ResourceLoader* loader;
 		GameObject* loadGameObject(unsigned int meshId, GameObjectType type);
 		CrossHandlers::CelestialSlicedList<BaseObject*>* gameObjects;
@@ -43,6 +43,8 @@ namespace Resources
 
 		CrossHandlers::CelestialSlicedList<GUIObject*>* activeGUI;
 		ResourceDictionary* currentDic;
+
+		unsigned int rawCode;
 
 	};
 }

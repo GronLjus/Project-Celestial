@@ -174,11 +174,13 @@
     <ClInclude Include="CelestialTree.h" />
     <ClInclude Include="CelestialTreeNode.h" />
     <ClInclude Include="CelMesh.h" />
+    <ClInclude Include="HeapMemContainer.h" />
     <ClInclude Include="KubLingAnalyzer.h" />
     <ClInclude Include="KubLingBinLoader.h" />
     <ClInclude Include="KubLingCodeGenerator.h" />
     <ClInclude Include="KubLingCompiled.h" />
     <ClInclude Include="KubLingCompiler.h" />
+    <ClInclude Include="KubLingLabel.h" />
     <ClInclude Include="KubLingLexer.h" />
     <ClInclude Include="KubLingParser.h" />
     <ClInclude Include="KubLingRaw.h" />
@@ -333,11 +335,13 @@
     <ClCompile Include="CelestialShader.cpp" />
     <ClCompile Include="Celestial2DDrawer.cpp" />
     <ClCompile Include="CelMesh.cpp" />
+    <ClCompile Include="HeapMemContainer.cpp" />
     <ClCompile Include="KubLingAnalyzer.cpp" />
     <ClCompile Include="KubLingBinLoader.cpp" />
     <ClCompile Include="KubLingCodeGenerator.cpp" />
     <ClCompile Include="KubLingCompiled.cpp" />
     <ClCompile Include="KubLingCompiler.cpp" />
+    <ClCompile Include="KubLingLabel.cpp" />
     <ClCompile Include="KubLingLexer.cpp" />
     <ClCompile Include="KubLingParser.cpp" />
     <ClCompile Include="KubLingRaw.cpp" />

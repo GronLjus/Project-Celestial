@@ -28,8 +28,7 @@ void KubLingRawGenerator::expandLabels()
 		for (unsigned int i = 0; i < totalLabels; i++)
 		{
 
-			newLabels[i].script = labels[i].script;
-			newLabels[i].start = labels[i].start;
+			newLabels[i] = KubLingLabel(labels[i]);
 
 		}
 
@@ -398,7 +397,7 @@ rawCode KubLingRawGenerator::createFooterBlock()
 
 }
 
-rawCode KubLingRawGenerator::assemble(KubLingCompiled* byteCode, unsigned int current , CelestialSlicedList<heapVar>* heap)
+void KubLingRawGenerator::addLabel(KubLingCompiled* byteCode)
 {
 
 	if (totalLabels >= maxLabels)
@@ -408,9 +407,47 @@ rawCode KubLingRawGenerator::assemble(KubLingCompiled* byteCode, unsigned int cu
 
 	}
 
-	labels[totalLabels].script = byteCode->GetName();
-	labels[totalLabels].start = totalCode;
+	unsigned int* tempParams[4];
+	tempParams[0] = byteCode->GetMaxParams('n') > 0 ? new unsigned int[byteCode->GetMaxParams('n')] : nullptr;
+	tempParams[1] = byteCode->GetMaxParams('f') > 0 ? new unsigned int[byteCode->GetMaxParams('f')] : nullptr;;
+	tempParams[2] = byteCode->GetMaxParams('s') > 0 ? new unsigned int[byteCode->GetMaxParams('n')] : nullptr;;
+	tempParams[3] = new unsigned int[RunTimeParams_NA];
+	
+	for (unsigned int i = 0; i < byteCode->GetMaxParams('n'); i++)
+	{
+
+		tempParams[0][i] = byteCode->GetAdr(i, 'n');
+
+	}
+
+	for (unsigned int i = 0; i < byteCode->GetMaxParams('f'); i++)
+	{
+
+		tempParams[1][i] = byteCode->GetAdr(i, 'f');
+
+	}
+
+	for (unsigned int i = 0; i < byteCode->GetMaxParams('s'); i++)
+	{
+
+		tempParams[2][i] = byteCode->GetAdr(i, 's');
+
+	}
+
+	for (unsigned int i = 0; i < RunTimeParams_NA; i++)
+	{
+
+		tempParams[3][i] = byteCode->GetAdr(RunTimeParams(i));
+
+	}
+
+	labels[totalLabels] = KubLingLabel(byteCode->GetName(), totalCode, tempParams);
 	totalLabels++;
+
+}
+
+rawCode KubLingRawGenerator::assemble(KubLingCompiled* byteCode, unsigned int current , CelestialSlicedList<heapVar>* heap)
+{
 
 	unsigned int* jmpPlaceHolders = new unsigned int[byteCode->GetCodeSize()];
 	unsigned int* lineTranslation = new unsigned int[byteCode->GetCodeSize()];
@@ -430,6 +467,8 @@ rawCode KubLingRawGenerator::assemble(KubLingCompiled* byteCode, unsigned int cu
 
 	MemoryPool* stackMem = new MemoryPool(1024);
 	stackMem->AddSystemMem(byteCode);
+
+	addLabel(byteCode);
 
 	int size;
 	unsigned char* line = byteCode->GetCode(size, 0);
@@ -579,15 +618,16 @@ KubLingRaw* KubLingRawGenerator::Assemble(KubLingCompiled** byteCodes, unsigned 
 	for (unsigned int i = 0; i < totalLabels; i++)
 	{
 
-		rawLabels[i].script = labels[i].script;
-		rawLabels[i].start = labels[i].start;
+		rawLabels[i] = KubLingLabel(labels[i]);
+		rawLabels[i].Reset();
+		unsigned int x = 0;
 
 	}
 
+	KubLingRaw* retVal = new KubLingRaw(code, totalCode, rawLabels, totalLabels, heap->GetHighest());
+
 	delete[] raws;
 	delete heap;
-	KubLingRaw* retVal = new KubLingRaw(code, totalCode, rawLabels, totalLabels);
-
 	totalOffset = 0;
 	totalCode = 0;
 	totalLabels = 0;

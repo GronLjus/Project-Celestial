@@ -792,6 +792,12 @@
     <ClInclude Include="MemoryPool.h">
       <Filter>Header Files\Logic\CelScript\Compiler\BackEnd</Filter>
     </ClInclude>
+    <ClInclude Include="KubLingLabel.h">
+      <Filter>Header Files\Resources\Objects\KubLing</Filter>
+    </ClInclude>
+    <ClInclude Include="HeapMemContainer.h">
+      <Filter>Header Files\Resources\Objects\KubLing</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Camera.cpp">
@@ -1099,6 +1105,12 @@
     </ClCompile>
     <ClCompile Include="KubLingRawTranslator.cpp">
       <Filter>Source Files\Logic\CelScript\Compiler\BackEnd</Filter>
+    </ClCompile>
+    <ClCompile Include="KubLingLabel.cpp">
+      <Filter>Source Files\Resources\Objects\KubLing</Filter>
+    </ClCompile>
+    <ClCompile Include="HeapMemContainer.cpp">
+      <Filter>Source Files\Resources\Objects\KubLing</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

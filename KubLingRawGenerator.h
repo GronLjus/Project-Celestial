@@ -47,6 +47,7 @@ namespace Logic
 
 			rawCode createFooterBlock();
 
+			void addLabel(Resources::KubLingCompiled* byteCode);
 			rawCode assemble(Resources::KubLingCompiled* byteCode,
 				unsigned int current,
 				CrossHandlers::CelestialSlicedList<heapVar>* heap);

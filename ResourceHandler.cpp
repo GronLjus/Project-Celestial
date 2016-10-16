@@ -1,9 +1,9 @@
 #include "stdafx.h"
 #include "ResourceHandler.h"
 #include "CameraObject.h"
-#include "CrossScriptMemoryObject.h"
 #include "GameRouteObject.h"
 #include "GameTravelObject.h"
+#include "HeapMemContainer.h"
 
 using namespace Resources;
 using namespace CrossHandlers;
@@ -15,19 +15,20 @@ ResourceHandler::ResourceHandler(unsigned int bufferFlips) : IHandleMessages(200
 	loader = new ResourceLoader();
 	gameObjects = new CelestialSlicedList<BaseObject*>(32, nullptr);
 	
-	crossScript = gameObjects->Add(new CrossScriptMemoryObject());
 	filter = MessageType_RESOURCES;
 	this->bufferFlips = bufferFlips;
 
 	activeGUI = new CelestialSlicedList<GUIObject*>(32, nullptr);
 	currentDic = new ResourceDictionary();
 
+	this->rawCode = 0;
+
 }
 
-unsigned int ResourceHandler::GetCrossScriptObject() const
+unsigned int ResourceHandler::GetHeapContainer() const
 {
 
-	return crossScript;
+	return heapObject;
 
 }
 
@@ -39,7 +40,7 @@ void ResourceHandler::Init(Graphics::CardHandler* &card, TextContainer* outText,
 	this->maxInstances = maxInstances;
 	loader->Init(card,outText);
 	gameBoardGridMesh = loader->LoadGrid(gameBoardGridCells, gameBoardGridSize);
-	((BaseObject*)gameBoardGridMesh)->SetId(gameObjects->Add(gameBoardGridMesh));
+	((BaseObject*)gameBoardGridMesh)->SetId(gameObjects->Add(gameBoardGridMesh,2));
 	this->screen = screen;
 
 }
@@ -47,9 +48,27 @@ void ResourceHandler::Init(Graphics::CardHandler* &card, TextContainer* outText,
 unsigned int ResourceHandler::AssembleRaws(std::string path)
 {
 
-	KubLingRaw* rawCode = loader->CompileFolder(path);
-	rawCode->SetId(gameObjects->Add(rawCode));
-	return rawCode->GetId();
+	if (gameObjects->GetValue(0) != nullptr)
+	{
+
+		gameObjects->Kill(0);
+		gameObjects->Kill(1);
+
+	}
+	else
+	{
+
+		KubLingRaw* rawCode = loader->CompileFolder(path);
+		HeapMemContainer* container = new HeapMemContainer(new Logic::HeapMemory(10240, rawCode->GetHeapVars()));
+		container->SetId(0);
+		heapObject = gameObjects->Add(container, 0);
+
+		rawCode->SetId(gameObjects->Add(rawCode, 1));
+		this->rawCode = rawCode->GetId();
+
+	}
+
+	return this->rawCode;
 
 }
 
@@ -233,14 +252,18 @@ void ResourceHandler::handleMess(Message* currentMessage, unsigned int time)
 	{
 
 		std::string stringParam((char*)currentMessage->params);
-		KubLingCompiled* bo = loader->LoadCLScript(stringParam);
+		outId = 0;
 
-		if (bo != nullptr)
+		if (rawCode > 0)
 		{
 
-			bo->SetId(gameObjects->Add(bo));
-			currentDic->AddResource(bo->GetId(), stringParam);
-			outId = bo->GetId();
+			KubLingRaw* raw = (KubLingRaw*)gameObjects->GetValue(rawCode);
+			KubLingLabel label = raw->GetLabel(stringParam);
+			KubLingLabel* point = new KubLingLabel(label);
+
+			point->SetId(gameObjects->Add(point));
+			currentDic->AddResource(point->GetId(), stringParam);
+			outId = point->GetId();
 
 		}
 	}

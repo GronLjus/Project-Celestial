@@ -94,10 +94,10 @@ HRESULT Overlord::Init(HWND hwnd)
 
 	CardHandler* tempCard = gH->GetCardHandler();
 	rH->Init(tempCard, dbgOut, vectorUI2(gQ.resolutionX, gQ.resolutionY),32,32*1.0f,maxInstances);
-	cH->Init(rH->GetObjectContainer(), rH->GetCrossScriptObject());
+	unsigned int rawCode = rH->AssembleRaws("Content/Scripts");
+	cH->Init(rH->GetObjectContainer(), rH->GetHeapContainer());
 	guiH->Init(rH->GetObjectContainer());
 
-	unsigned int rawCode = rH->AssembleRaws("Content/Scripts");
 
 	Message mess;
 	mess.source = MessageSource_NA;
