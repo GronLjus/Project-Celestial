@@ -24,6 +24,7 @@ namespace Resources
 				unsigned int heapVars);
 
 			unsigned int GetStart(std::string label) const;
+			unsigned int GetLength() const;
 			unsigned int GetHeapVars() const;
 			unsigned long long* GetCode() const;
 			KubLingLabel GetLabel(std::string label) const;

@@ -38,14 +38,14 @@ Overlord::Overlord(void)
 	gH = new GraphicHandler(flip);
 	rH = new ResourceHandler(flip);
 	iH = new InputHandler();
-	cH = new CelscriptHandler();
+	klH = new KubLingHandler();
 	guiH = new GUIEntityHandler();
 
 	messageHandlers = new IHandleMessages*[MessageSource_NA];
 	messageHandlers[MessageSource_RESOURCES] = rH;
 	messageHandlers[MessageSource_ENTITIES] = gBH;
 	messageHandlers[MessageSource_GUIENTITIES] = guiH;
-	messageHandlers[MessageSource_CELSCRIPT] = cH;
+	messageHandlers[MessageSource_CELSCRIPT] = klH;
 	messageHandlers[MessageSource_GRAPHICS] = gH;
 	messageHandlers[MessageSource_INPUT] = iH;
 	messageHandlers[MessageSource_MASTER] = nullptr;
@@ -94,17 +94,32 @@ HRESULT Overlord::Init(HWND hwnd)
 
 	CardHandler* tempCard = gH->GetCardHandler();
 	rH->Init(tempCard, dbgOut, vectorUI2(gQ.resolutionX, gQ.resolutionY),32,32*1.0f,maxInstances);
-	unsigned int rawCode = rH->AssembleRaws("Content/Scripts");
-	cH->Init(rH->GetObjectContainer(), rH->GetHeapContainer());
+	unsigned int rawCode = rH->AssembleRaws("Content\\Scripts");
+	unsigned int heap = rH->GetHeapContainer();
+
+	unsigned char kubInit[8];
+	memcpy(&kubInit[0], &rawCode, 4);
+	memcpy(&kubInit[4], &heap, 4);
+	klH->Init(rH->GetObjectContainer());
 	guiH->Init(rH->GetObjectContainer());
 
 
 	Message mess;
 	mess.source = MessageSource_NA;
+	mess.type = MessageType_SCRIPT;
+	mess.destination = MessageSource_CELSCRIPT;
+	mess.source = MessageSource_CELSCRIPT;
+	mess.SetParams(kubInit, 0, 8);
+	mess.mess = ScriptMess_SETCODE;
+	klH->HandleMessage(&mess);
+	klH->Update(0);
+
+
+	mess.source = MessageSource_NA;
 	mess.type = MessageType_RESOURCES;
 	mess.destination = MessageSource_RESOURCES;
 	mess.source = MessageSource_CELSCRIPT;
-	mess.SetParams((unsigned char*)"Content/Scripts/PreLoad.celsrc", 0, 31);
+	mess.SetParams((unsigned char*)"Content\\Scripts\\PreLoad", 0, 31);
 	mess.mess = ResourceMess_LOADSCRIPT;
 	rH->HandleMessage(&mess);
 	rH->Update(0);
@@ -119,12 +134,12 @@ HRESULT Overlord::Init(HWND hwnd)
 		firstMessage.type = MessageType_SCRIPT;
 		firstMessage.mess = ScriptMess_RUN;
 		firstMessage.SetParams(&(retMess->params[8]), 0, 4);
-		cH->HandleMessage(&firstMessage);
+		klH->HandleMessage(&firstMessage);
 
 		do
 		{
 		
-			cH->Update(0);
+			klH->Update(0);
 			updateMessages(MessageSource_CELSCRIPT);
 			rH->Update(0);
 			updateMessages(MessageSource_RESOURCES);
@@ -133,7 +148,7 @@ HRESULT Overlord::Init(HWND hwnd)
 			gH->Update(0);
 			updateMessages(MessageSource_GRAPHICS);
 
-		} while (!cH->AllStopped());
+		} while (!klH->AllStopped());
 	}
 
 	okToDraw = true;
@@ -146,7 +161,7 @@ HRESULT Overlord::Init(HWND hwnd)
 	dbgOut->AddTextLine("Engine Loaded!");
 	dbgOut->AddTextLine("Loading root script");
 
-	mess.SetParams((unsigned char*)"Content/Scripts/Root.celsrc", 0, 28);
+	mess.SetParams((unsigned char*)"Content\\Scripts\\Root", 0, 28);
 	rH->HandleMessage(&mess);
 	rH->Update(0);
 	retMess = rH->GetMessages()->PopMessage();
@@ -160,8 +175,8 @@ HRESULT Overlord::Init(HWND hwnd)
 		firstMessage.type = MessageType_SCRIPT;
 		firstMessage.mess = ScriptMess_RUN;
 		firstMessage.SetParams(&(retMess->params[8]),0,4);
-		cH->HandleMessage(&firstMessage);
-		//cH->Update(0);
+		klH->HandleMessage(&firstMessage);
+		//klH->Update(0);
 
 	}
 	
@@ -208,7 +223,7 @@ void Overlord::Kill()
 {
 
 	gH->Kill();
-	cH->Kill();
+	klH->Kill();
 	die = true;
 
 }
@@ -368,7 +383,7 @@ void Overlord::Update(unsigned int time)
 		gBH->UpdateMessages(time);
 		updateMessages(MessageSource_ENTITIES);
 
-		cH->Update(time);
+		klH->Update(time);
 		updateMessages(MessageSource_CELSCRIPT);
 		unsigned int start3 = clock();
 		rH->Update(time);
@@ -401,7 +416,7 @@ Overlord::~Overlord()
 	delete gBH;
 	delete iH;
 	delete gH;
-	delete cH;
+	delete klH;
 	delete guiH;
 	delete rH;
 

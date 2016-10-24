@@ -40,6 +40,9 @@ void ResourceHandler::Init(Graphics::CardHandler* &card, TextContainer* outText,
 	this->maxInstances = maxInstances;
 	loader->Init(card,outText);
 	gameBoardGridMesh = loader->LoadGrid(gameBoardGridCells, gameBoardGridSize);
+	gameObjects->Add(nullptr);
+	gameObjects->Add(nullptr);
+	gameObjects->Add(nullptr);
 	((BaseObject*)gameBoardGridMesh)->SetId(gameObjects->Add(gameBoardGridMesh,2));
 	this->screen = screen;
 
@@ -55,18 +58,16 @@ unsigned int ResourceHandler::AssembleRaws(std::string path)
 		gameObjects->Kill(1);
 
 	}
-	else
-	{
 
-		KubLingRaw* rawCode = loader->CompileFolder(path);
-		HeapMemContainer* container = new HeapMemContainer(new Logic::HeapMemory(10240, rawCode->GetHeapVars()));
-		container->SetId(0);
-		heapObject = gameObjects->Add(container, 0);
+	KubLingRaw* rawCode = loader->CompileFolder(path);
+	HeapMemContainer* container = new HeapMemContainer(new Logic::HeapMemory(10240, rawCode->GetHeapVars()));
+	container->SetId(0);
+	gameObjects->Add(container, 0);
+	heapObject = container->GetId();
 
-		rawCode->SetId(gameObjects->Add(rawCode, 1));
-		this->rawCode = rawCode->GetId();
+	rawCode->SetId(gameObjects->Add(rawCode, 1));
+	this->rawCode = rawCode->GetId();
 
-	}
 
 	return this->rawCode;
 
@@ -433,9 +434,10 @@ void ResourceHandler::handleMess(Message* currentMessage, unsigned int time)
 		messageBuffer[this->currentMessage].mess = ScriptMess_RESUME;
 		unsigned char tempBuff[]{ currentMessage->senderId >> 0, currentMessage->senderId >> 8, currentMessage->senderId >> 16, currentMessage->senderId >> 24,
 			currentMessage->returnParam >> 0, currentMessage->returnParam >> 8, currentMessage->returnParam >> 16, currentMessage->returnParam >> 24,
-			outId >> 0, outId >> 8, outId >> 16, outId >> 24
+			outId >> 0, outId >> 8, outId >> 16, outId >> 24,
+			currentMessage->returnMess >> 0, currentMessage->returnMess >> 8, currentMessage->returnMess >> 16, currentMessage->returnMess >> 24
 		};
-		messageBuffer[this->currentMessage].SetParams(tempBuff, 0, 12);
+		messageBuffer[this->currentMessage].SetParams(tempBuff, 0, 16);
 		messageBuffer[this->currentMessage].read = false;
 		outQueue->PushMessage(&messageBuffer[this->currentMessage]);
 		this->currentMessage = (this->currentMessage + 1) % outMessages;

@@ -19,13 +19,13 @@ button3Text = load textbox
 button2Text = load textbox
 button1Text = load textbox
 
-button1Click = load script 'Content\Scripts\ToolBarScripts\Button1Click.celsrc'
-button2Click = load script 'Content\Scripts\ToolBarScripts\Button2Click.celsrc'
-button3Click = load script 'Content\Scripts\ToolBarScripts\Button3Click.celsrc'
-button4Click = load script 'Content\Scripts\ToolBarScripts\Button4Click.celsrc'
-button5Click = load script 'Content\Scripts\ToolBarScripts\PauseButtonClick.celsrc'
+button1Click = load script 'Content\Scripts\ToolBarScripts\Button1Click'
+button2Click = load script 'Content\Scripts\ToolBarScripts\Button2Click'
+button3Click = load script 'Content\Scripts\ToolBarScripts\Button3Click'
+button4Click = load script 'Content\Scripts\ToolBarScripts\Button4Click'
+button5Click = load script 'Content\Scripts\ToolBarScripts\PauseButtonClick'
 
-button1UD = load script 'Content\Scripts\ToolBarScripts\Button1UpDown.celsrc'
+button1UD = load script 'Content\Scripts\ToolBarScripts\Button1UpDown'
 
 add ui screenLayout toolbarLY
 snap toolbarLY 0 1

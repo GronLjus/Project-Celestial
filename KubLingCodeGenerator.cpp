@@ -613,7 +613,7 @@ KubLingCodeGenerator::KubLingCodeGenerator(Keyword* keywords, int keyWordsSize)
 
 }
 
-CelestialList<CelestialList<unsigned char>*>* KubLingCodeGenerator::GenerateCode(AST ast)
+CelestialList<CelestialList<unsigned char>*>* KubLingCodeGenerator::GenerateCode(AST ast, unsigned int &maxVars)
 {
 
 	holes = new CelestialList<int>;
@@ -660,6 +660,7 @@ CelestialList<CelestialList<unsigned char>*>* KubLingCodeGenerator::GenerateCode
 	initBlock->AddElement(initSize[1]);
 	initBlock->AddElement(initSize[2]);
 	initBlock->AddElement(initSize[3]);
+	maxVars = var;
 	delete holes;
 	return byteCode;
 

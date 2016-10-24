@@ -7,30 +7,41 @@ using namespace CrossHandlers;
 KubLingMachine::KubLingMachine(MessageQueue* queue,
 	Message* mBuffer,
 	unsigned int maxMess,
-	unsigned int currentMess,
-	unsigned int heapVars)
+	unsigned int &currentMess,
+	unsigned char* stackMem,
+	CelestialSlicedList<Resources::BaseObject*>* objectContainer)
 {
 
+	this->objectContainer = objectContainer;
 	this->queue = queue;
 	this->mBuffer = mBuffer;
 	this->maxMess = maxMess;
 	this->currentMess = currentMess;
-
-	//lastMess = &(mBuffer[0]);
+	lastMess = &(mBuffer[currentMess]);
 
 	iReg[4] = 0;
 
-	heapMem = new HeapMemory(1024000, heapVars);
+	this->stackMem = stackMem;
+	kill = false;
 
 }
 
-void KubLingMachine::sendMessage(unsigned int mess, MessageSource dest, unsigned int returnAdr)
+void KubLingMachine::SetHeap(HeapMemory* heap)
+{
+
+	this->heapMem = heap;
+
+}
+
+void KubLingMachine::sendMessage(unsigned int mess, unsigned int retVar, MessageSource dest, unsigned int returnAdr, unsigned int sender)
 {
 
 	lastMess->timeSent = time;
 	lastMess->destination = dest;
 	lastMess->mess = mess;
 	lastMess->returnParam = returnAdr;
+	lastMess->returnMess = retVar;
+	lastMess->senderId = sender;
 
 	lastMess->type = dest == MessageSource_CELSCRIPT ? MessageType_SCRIPT :
 		dest == MessageSource_ENTITIES ? MessageType_ENTITIES :
@@ -41,15 +52,42 @@ void KubLingMachine::sendMessage(unsigned int mess, MessageSource dest, unsigned
 		dest == MessageSource_RESOURCES ? MessageType_RESOURCES :
 		MessageType_SYSTEM;
 
-	queue->PushMessage(lastMess);
+	if (dest != MessageSource_OBJECT)
+	{
 
-	currentMess++;
-	currentMess %= maxMess;
-	lastMess = &(mBuffer[currentMess]);
+		queue->PushMessage(lastMess);
+
+		currentMess++;
+		currentMess %= maxMess;
+		lastMess = &(mBuffer[currentMess]);
+
+	}
+	else
+	{
+
+		unsigned int objId;
+		memcpy(&objId, &stackMem[returnAdr], 4);
+		Resources::BaseObject* obj = objectContainer->GetValue(objId);
+		obj->Update(lastMess);
+
+	}
+}
+
+void KubLingMachine::Kill()
+{
+
+	kill = true;
 
 }
 
-RunTimeError KubLingMachine::RunScript(unsigned long long* code, unsigned int &counter, unsigned int time)
+void KubLingMachine::SetRegister(unsigned char reg, unsigned int value)
+{
+
+	iReg[reg] = value;
+
+}
+
+RunTimeError KubLingMachine::RunScript(unsigned long long* code, unsigned int &counter, unsigned int time, unsigned int sender)
 {
 
 	std::string s = "";
@@ -58,7 +96,7 @@ RunTimeError KubLingMachine::RunScript(unsigned long long* code, unsigned int &c
 	this->time = time;
 	bool stop = false;
 
-	while (!stop)
+	while (!stop && !kill)
 	{
 
 		unsigned long long line = code[counter];
@@ -168,10 +206,16 @@ RunTimeError KubLingMachine::RunScript(unsigned long long* code, unsigned int &c
 				memcpy(&fReg[reg1], &scal, sizeof(float));
 
 			}
+			else if(type == 2)
+			{
+
+				memcpy(&cReg[reg1], &scal, 1);
+
+			}
 			else
 			{
 
-				memcpy(&cReg[reg1], &scal, sizeof(float));
+				iReg[4] = scal;
 
 			}
 			break;
@@ -188,7 +232,7 @@ RunTimeError KubLingMachine::RunScript(unsigned long long* code, unsigned int &c
 			memcpy(&stackMem[iReg[reg1] + iReg[4]], &stackMem[iReg[reg2] + iReg[4]], iReg[reg3]);
 			break;
 		case Logic::opcode_SEND:
-			sendMessage(iReg[reg1], MessageSource(iReg[reg2]), iReg[reg3] + iReg[4]);
+			sendMessage(iReg[reg1], cReg[0] + iReg[4], MessageSource(iReg[reg2]), iReg[reg3] + iReg[4],sender);
 			break;
 		case Logic::opcode_STPRM:
 			lastMess->SetParams(&stackMem[iReg[reg1] + iReg[4]], iReg[reg2], iReg[reg3]);
@@ -354,13 +398,13 @@ RunTimeError KubLingMachine::RunScript(unsigned long long* code, unsigned int &c
 			if (type == 0)
 			{
 
-				iReg[reg1] = !iReg[reg1];
+				iReg[reg1] = ~iReg[reg1];
 
 			}
 			else if (type == 2)
 			{
 
-				cReg[reg1] = !cReg[reg1];
+				cReg[reg1] = ~cReg[reg1];
 
 			}
 			break;
@@ -376,6 +420,7 @@ RunTimeError KubLingMachine::RunScript(unsigned long long* code, unsigned int &c
 			counter = iReg[reg2] - 1;
 			break;
 		case Logic::opcode_RETURN:
+			counter++;
 			return RunTimeError(iReg[reg1]);
 			break;
 		case Logic::opcode_FTS:
@@ -405,13 +450,12 @@ RunTimeError KubLingMachine::RunScript(unsigned long long* code, unsigned int &c
 
 	}
 
-	return RunTimeError_OK;
+	return RunTimeError_ABORT;
 
 }
 
 KubLingMachine::~KubLingMachine()
 {
 
-	delete heapMem;
 
 }

@@ -490,7 +490,7 @@ std::string* ResourceLoader::getFilePaths(std::string path, unsigned int &size)
 {
 
 	size = 0;
-	std::string tempPath = path + "/*";
+	std::string tempPath = path + "\\*";
 	std::wstring stemp = std::wstring(tempPath.begin(), tempPath.end());
 	WIN32_FIND_DATA findFileData;
 	HANDLE hFind = FindFirstFile(stemp.c_str(), &findFileData);
@@ -513,7 +513,7 @@ std::string* ResourceLoader::getFilePaths(std::string path, unsigned int &size)
 		else if (findFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
 		{
 
-			std::string newPath = path + "/" + fileName;
+			std::string newPath = path + "\\" + fileName;
 			unsigned int subSize = 0;
 			std::string* subFiles = getFilePaths(newPath, subSize);
 			size += subSize;
@@ -566,7 +566,7 @@ std::string* ResourceLoader::getFilePaths(std::string path, unsigned int &size)
 			}
 
 			paths = temp;
-			paths[size] = path + '/' + fileName;
+			paths[size] = path + '\\' + fileName;
 			size++;
 
 		}
@@ -597,6 +597,14 @@ KubLingRaw* ResourceLoader::CompileFolder(std::string path)
 
 	delete[] files;
 	KubLingRaw* raw = rawGen->Assemble(code, size);
+
+	for (unsigned int i = 0; i < size; i++)
+	{
+
+		delete code[i];
+
+	}
+
 	delete[] code;
 	return raw;
 

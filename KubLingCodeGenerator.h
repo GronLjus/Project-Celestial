@@ -39,7 +39,7 @@ namespace Logic
 			///<summary>Outputs bytecode from an abstract syntax tree and a symbol table</summary>
 			///<param val='ast'>[in]The abstract syntax tree and symboltable</param>
 			///<returns>The bytecode generated</returns>
-			CrossHandlers::CelestialList<CrossHandlers::CelestialList<unsigned char>*>* GenerateCode(AST ast);
+			CrossHandlers::CelestialList<CrossHandlers::CelestialList<unsigned char>*>* GenerateCode(AST ast, unsigned int &maxVars);
 			~KubLingCodeGenerator();
 
 	};

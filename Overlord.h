@@ -1,5 +1,5 @@
 #pragma once
-#include "CelscriptHandler.h"
+#include "KubLingHandler.h"
 #include "GameBoardHandler.h"
 #include "GraphicHandler.h"
 #include "ResourceHandler.h"
@@ -53,7 +53,7 @@ namespace Logic
 			///<summary>The pointer to the inputhandler being used by this</summary>
 			Input::InputHandler* iH;
 			Entities::GameBoardHandler* gBH;
-			CelscriptHandler* cH;
+			KubLingHandler* klH;
 			Entities::GUIEntityHandler* guiH;
 			Message firstMessage;
 

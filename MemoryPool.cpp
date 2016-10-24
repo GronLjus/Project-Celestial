@@ -334,44 +334,68 @@ void MemoryPool::AddSystemMem(Resources::KubLingCompiled* compiled)
 	{
 
 		unsigned int adr = compiled->GetAdr(i, 'n');
-		unsigned char data[sizeof(unsigned int)];
-		AddVariable(adr, data, sizeof(unsigned int));
-		memBlock varMem = variables->GetValue(adr);
-		compiled->AddParamAdr(i, varMem.place, 'n');
 
+		if (adr != 0)
+		{
+
+			adr--;
+			unsigned char data[sizeof(unsigned int)];
+			AddVariable(adr, data, sizeof(unsigned int));
+			memBlock varMem = variables->GetValue(adr);
+			compiled->AddParamAdr(i, varMem.place, 'n');
+
+		}
 	}
 
 	for (unsigned int i = 0; i < compiled->GetMaxParams('f'); i++)
 	{
 
 		unsigned int adr = compiled->GetAdr(i, 'f');
-		unsigned char data[sizeof(float)];
-		AddVariable(adr, data, sizeof(float));
-		memBlock varMem = variables->GetValue(adr);
-		compiled->AddParamAdr(i, varMem.place, 'f');
 
+		if (adr != 0)
+		{
+
+			adr--;
+			unsigned char data[sizeof(float)];
+			AddVariable(adr, data, sizeof(float));
+			memBlock varMem = variables->GetValue(adr);
+			compiled->AddParamAdr(i, varMem.place, 'f');
+
+		}
 	}
 
 	for (unsigned int i = 0; i < RunTimeParams_NA; i++)
 	{
 
 		unsigned int adr = compiled->GetAdr(RunTimeParams(i));
-		unsigned char data[sizeof(unsigned int)];
-		AddVariable(adr, data, sizeof(unsigned int));
-		memBlock varMem = variables->GetValue(adr);
-		compiled->AddSystemParamAdr(RunTimeParams(i), varMem.place);
 
+		if (adr != 0)
+		{
+
+			adr--;
+			unsigned char data[sizeof(unsigned int)];
+			AddVariable(adr, data, sizeof(unsigned int));
+			memBlock varMem = variables->GetValue(adr);
+			compiled->AddSystemParamAdr(RunTimeParams(i), varMem.place);
+
+		}
 	}
 
 	for (unsigned int i = 0; i < compiled->GetMaxParams('s'); i++)
 	{
 
 		unsigned int adr = compiled->GetAdr(i, 's');
-		unsigned char data[64];
-		AddVariable(adr, data, 64);
-		memBlock varMem = variables->GetValue(adr);
-		compiled->AddParamAdr(i, varMem.place, 's');
 
+		if (adr != 0)
+		{
+
+			adr--;
+			unsigned char data[64];
+			AddVariable(adr, data, 64);
+			memBlock varMem = variables->GetValue(adr);
+			compiled->AddParamAdr(i, varMem.place, 's');
+
+		}
 	}
 
 

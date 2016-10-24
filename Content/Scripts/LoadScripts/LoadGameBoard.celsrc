@@ -1,10 +1,10 @@
 
 tile = load mesh 'content\Tile.clmsh'
-localGameboard = load gameboard 1024 tile
 
-cameraPanScript = load script 'Content\Scripts\CameraScripts\CameraPanning.celsrc'
-cameraRotScript = load script 'Content\Scripts\CameraScripts\CameraRotation.celsrc'
-cameraZoomScript = load script 'Content\Scripts\CameraScripts\CameraZoom.celsrc'
+cameraPanScript = load script 'Content\Scripts\CameraScripts\CameraPanning'
+cameraRotScript = load script 'Content\Scripts\CameraScripts\CameraRotation'
+cameraZoomScript = load script 'Content\Scripts\CameraScripts\CameraZoom'
+localGameboard = load gameboard 1024 tile
 
 set rightdrag localGameboard cameraPanScript
 set middledrag localGameboard cameraRotScript

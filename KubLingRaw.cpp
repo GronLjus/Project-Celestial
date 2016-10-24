@@ -24,7 +24,7 @@ KubLingLabel KubLingRaw::GetLabel(std::string label) const
 	bool found = false;
 	unsigned int i;
 
-	for (i = 0; i < totalLabels && found; i++)
+	for (i = 0; i < totalLabels && !found; i++)
 	{
 
 		found = labels[i].GetName() == label;
@@ -56,6 +56,13 @@ unsigned int KubLingRaw::GetHeapVars() const
 
 }
 
+unsigned int KubLingRaw::GetLength() const
+{
+
+	return codes;
+
+}
+
 unsigned long long* KubLingRaw::GetCode() const
 {
 
@@ -72,4 +79,8 @@ KubLingRaw::~KubLingRaw()
 		labels[i].Delete();
 
 	}
+
+	delete[] code;
+	delete[] labels;
+
 }

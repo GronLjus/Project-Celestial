@@ -83,6 +83,7 @@ void GameBoardHandler::UpdateMessages(unsigned int time)
 	while (currentMessage->type != MessageType_NA)
 	{
 
+		unsigned int outId = 0;
 		unsigned int param1 = currentMessage->params[0] | ((int)currentMessage->params[1] << 8) | ((int)currentMessage->params[2] << 16) | ((int)currentMessage->params[3] << 24);
 
 		if (currentMessage->mess == GameBoardMess_ADDMESH && localGameBoard != nullptr)
@@ -305,7 +306,7 @@ void GameBoardHandler::UpdateMessages(unsigned int time)
 			unsigned int amount = 0;
 
 			unsigned int* collided = localGameBoard->GetCollidedObject(&sphere, GameObjectType_ROUTE, amount);
-			unsigned int retVal = localGameBoard->AddRouteNode(pos, width, collided, amount);
+			outId = localGameBoard->AddRouteNode(pos, width, collided, amount) + 1;
 
 			for (unsigned int i = 0; i < amount; i++)
 			{
@@ -319,24 +320,6 @@ void GameBoardHandler::UpdateMessages(unsigned int time)
 					splitObject(routeObj, middleNode->GetPosition(), width, time);
 
 				}
-			}
-
-			if (currentMessage->source == MessageSource_CELSCRIPT && currentMessage->returnParam > 0)
-			{
-
-				messageBuffer[this->currentMessage].timeSent = time;
-				messageBuffer[this->currentMessage].destination = MessageSource_CELSCRIPT;
-				messageBuffer[this->currentMessage].type = MessageType_SCRIPT;
-				messageBuffer[this->currentMessage].mess = ScriptMess_RESUME;
-				unsigned char tempBuff[]{ currentMessage->senderId >> 0, currentMessage->senderId >> 8, currentMessage->senderId >> 16, currentMessage->senderId >> 24,
-					currentMessage->returnParam >> 0, currentMessage->returnParam >> 8, currentMessage->returnParam >> 16, currentMessage->returnParam >> 24,
-					retVal >> 0, retVal >> 8, retVal >> 16, retVal >> 24
-				};
-				messageBuffer[this->currentMessage].SetParams(tempBuff, 0, 12);
-				messageBuffer[this->currentMessage].read = false;
-				outQueue->PushMessage(&messageBuffer[this->currentMessage]);
-				this->currentMessage = (this->currentMessage + 1) % outMessages;
-
 			}
 		}
 		else if (currentMessage->mess == GameBoardMess_TRAVEL)
@@ -371,6 +354,34 @@ void GameBoardHandler::UpdateMessages(unsigned int time)
 		}
 		else if (currentMessage->mess == GameBoardMess_SPLITOBJECT)
 		{
+
+		}
+		else if (currentMessage->mess == GameBoardMess_GETPARENT)
+		{
+
+			BaseObject* obj = gameObjects->GetValue(param1);
+			outId = obj->GetParentId() + 1;
+
+		}
+
+		if (currentMessage->source == MessageSource_CELSCRIPT && currentMessage->returnParam > 0 &&
+			outId > 0)
+		{
+
+			outId--;
+			messageBuffer[this->currentMessage].timeSent = time;
+			messageBuffer[this->currentMessage].destination = MessageSource_CELSCRIPT;
+			messageBuffer[this->currentMessage].type = MessageType_SCRIPT;
+			messageBuffer[this->currentMessage].mess = ScriptMess_RESUME;
+			unsigned char tempBuff[]{ currentMessage->senderId >> 0, currentMessage->senderId >> 8, currentMessage->senderId >> 16, currentMessage->senderId >> 24,
+				currentMessage->returnParam >> 0, currentMessage->returnParam >> 8, currentMessage->returnParam >> 16, currentMessage->returnParam >> 24,
+				outId >> 0, outId >> 8, outId >> 16, outId >> 24,
+				currentMessage->returnMess >> 0, currentMessage->returnMess >> 8, currentMessage->returnMess >> 16, currentMessage->returnMess >> 24
+			};
+			messageBuffer[this->currentMessage].SetParams(tempBuff, 0, 16);
+			messageBuffer[this->currentMessage].read = false;
+			outQueue->PushMessage(&messageBuffer[this->currentMessage]);
+			this->currentMessage = (this->currentMessage + 1) % outMessages;
 
 		}
 

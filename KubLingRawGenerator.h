@@ -34,8 +34,6 @@ namespace Logic
 				unsigned int current,
 				MemoryPool* memPol);
 
-			rawCode createInitLowerFoot(heapVar initData, heapVar initDataSize, MemoryPool* memPol);
-			rawCode createInitUpperFoot(heapVar initData, heapVar initDataSize, MemoryPool* memPol);
 			rawCode createInitHeader(heapVar initData);
 			rawCode createInitBlock(Resources::KubLingCompiled* byteCode,
 				unsigned int current,

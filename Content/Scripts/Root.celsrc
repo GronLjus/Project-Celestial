@@ -5,9 +5,9 @@ screenLayout = import 'screenLayout'
 outTextBox = import 'dbgout'
 focus outTextBox
 
-gameBoardLoad = load script 'Content\Scripts\LoadScripts\LoadGameBoard.celsrc'
-toolbarLoad = load script 'Content\Scripts\LoadScripts\LoadToolBar.celsrc'
-scriptLoad = load script 'Content\Scripts\LoadScripts\LoadScripts.celsrc'
+gameBoardLoad = load script 'Content\Scripts\LoadScripts\LoadGameBoard'
+toolbarLoad = load script 'Content\Scripts\LoadScripts\LoadToolBar'
+scriptLoad = load script 'Content\Scripts\LoadScripts\LoadScripts'
 
 cam = load camera
 export 'cmra' cam

@@ -2371,7 +2371,8 @@ KubLingCompiled* KubLingCompiler::CompileSource(KubLingSource* source, CompileEr
 			if (error.errorType == ScriptError_OK)
 			{
 
-				CelestialList<CelestialList<unsigned char>*>* compiledCode = generator->GenerateCode(abstractSyntaxTree);
+				unsigned int maxVars = 0;
+				CelestialList<CelestialList<unsigned char>*>* compiledCode = generator->GenerateCode(abstractSyntaxTree, maxVars);
 				unsigned int scriptParams = 0;
 				unsigned int scriptStringParams = 0;
 				unsigned int scriptFloatParams = 0;
@@ -2379,7 +2380,7 @@ KubLingCompiled* KubLingCompiler::CompileSource(KubLingSource* source, CompileEr
 				for (int k = 0; k < 2; k++)
 				{
 
-					for (int i = 0; i < abstractSyntaxTree.symbols; i++)
+					for (int i = 0; i < abstractSyntaxTree.symbolTable->GetHighest(); i++)
 					{
 
 						std::string symbol = abstractSyntaxTree.symbolTable->GetValue(i).name;
@@ -2432,7 +2433,7 @@ KubLingCompiled* KubLingCompiler::CompileSource(KubLingSource* source, CompileEr
 									{
 
 										compiledSource->AddSystemParamAdr(RunTimeParams(j), abstractSyntaxTree.symbolTable->GetValue(i).address);
-										compiledSource->SetMaxVar(abstractSyntaxTree.symbols);
+										compiledSource->SetMaxVar(maxVars);
 
 									}
 								}
