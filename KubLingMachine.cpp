@@ -8,7 +8,7 @@ KubLingMachine::KubLingMachine(MessageQueue* queue,
 	Message* mBuffer,
 	unsigned int maxMess,
 	unsigned int &currentMess,
-	unsigned char* stackMem,
+	char* stackMem,
 	CelestialSlicedList<Resources::BaseObject*>* objectContainer)
 {
 
@@ -87,6 +87,23 @@ void KubLingMachine::SetRegister(unsigned char reg, unsigned int value)
 
 }
 
+char* KubLingMachine::getMem(unsigned int adr) const
+{
+
+	if (adr- iReg[4] > heapMem->GetOffset())
+	{
+
+		return heapMem->GetMemory(adr - heapMem->GetOffset()- iReg[4]);
+
+	}
+	else
+	{
+
+		return &stackMem[adr];
+
+	}
+}
+
 RunTimeError KubLingMachine::RunScript(unsigned long long* code, unsigned int &counter, unsigned int time, unsigned int sender)
 {
 
@@ -119,19 +136,19 @@ RunTimeError KubLingMachine::RunScript(unsigned long long* code, unsigned int &c
 			if (type == 0)
 			{
 
-				memcpy(&iReg[reg1], &stackMem[iReg[reg2] + iReg[4]], sizeof(unsigned int));
+				memcpy(&iReg[reg1], getMem(iReg[reg2] + iReg[4]), sizeof(unsigned int));
 
 			}
 			else if (type == 1)
 			{
 
-				memcpy(&fReg[reg1], &stackMem[iReg[reg2] + iReg[4]], sizeof(float));
+				memcpy(&fReg[reg1], getMem(iReg[reg2] + iReg[4]), sizeof(float));
 
 			}
 			else
 			{
 
-				memcpy(&cReg[reg1], &stackMem[iReg[reg2] + iReg[4]], sizeof(char));
+				memcpy(&cReg[reg1], getMem(iReg[reg2] + iReg[4]), sizeof(char));
 
 			}
 			break;
@@ -176,19 +193,19 @@ RunTimeError KubLingMachine::RunScript(unsigned long long* code, unsigned int &c
 			if (type == 0)
 			{
 
-				memcpy(&stackMem[iReg[reg2] + iReg[4]], &iReg[reg1], sizeof(unsigned int));
+				memcpy(getMem(iReg[reg2] + iReg[4]), &iReg[reg1], sizeof(unsigned int));
 
 			}
 			else if (type == 1)
 			{
 
-				memcpy(&stackMem[iReg[reg2] + iReg[4]], &fReg[reg1], sizeof(float));
+				memcpy(getMem(iReg[reg2] + iReg[4]), &fReg[reg1], sizeof(float));
 
 			}
 			else
 			{
 
-				memcpy(&stackMem[iReg[reg2] + iReg[4]], &cReg[reg1], sizeof(char));
+				memcpy(getMem(iReg[reg2] + iReg[4]), &cReg[reg1], sizeof(char));
 
 			}
 			break;
@@ -219,23 +236,17 @@ RunTimeError KubLingMachine::RunScript(unsigned long long* code, unsigned int &c
 
 			}
 			break;
-		case Logic::opcode_HEAP:
-			memcpy(heapMem->GetMemory(iReg[reg1]), &stackMem[iReg[reg2] + iReg[4]], iReg[reg3]);
-			break;
-		case Logic::opcode_MOV:
-			memcpy(&stackMem[iReg[reg1] + iReg[4]], heapMem->GetMemory(iReg[reg2]), iReg[reg3]);
-			break;
 		case Logic::opcode_SAVE:
-			memcpy(&stackMem[iReg[reg1] + iReg[4]], &scal, iReg[reg2]);
+			memcpy(getMem(iReg[reg1] + iReg[4]), &scal, iReg[reg2]);
 			break;
 		case Logic::opcode_COPY:
-			memcpy(&stackMem[iReg[reg1] + iReg[4]], &stackMem[iReg[reg2] + iReg[4]], iReg[reg3]);
+			memcpy(getMem(iReg[reg1] + iReg[4]), getMem(iReg[reg2] + iReg[4]), iReg[reg3]);
 			break;
 		case Logic::opcode_SEND:
 			sendMessage(iReg[reg1], cReg[0] + iReg[4], MessageSource(iReg[reg2]), iReg[reg3] + iReg[4],sender);
 			break;
 		case Logic::opcode_STPRM:
-			lastMess->SetParams(&stackMem[iReg[reg1] + iReg[4]], iReg[reg2], iReg[reg3]);
+			lastMess->SetParams((unsigned char*)getMem(iReg[reg1] + iReg[4]), iReg[reg2], iReg[reg3]);
 			break;
 		case Logic::opcode_ADD:
 
@@ -427,8 +438,8 @@ RunTimeError KubLingMachine::RunScript(unsigned long long* code, unsigned int &c
 			s = std::to_string(fReg[reg1]);
 			st = s.c_str();
 			s.size();
-			memcpy(&stackMem[iReg[reg2] + iReg[4]], &size,4);
-			memcpy(&stackMem[iReg[reg2] + iReg[4] + 4], st, s.size());
+			memcpy(getMem(iReg[reg2] + iReg[4]), &size,4);
+			memcpy(getMem(iReg[reg2] + iReg[4] + 4), st, s.size());
 			break;
 		case Logic::opcode_ADR:
 			iReg[reg2] = heapMem->GetAddress(iReg[reg1]);

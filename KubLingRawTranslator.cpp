@@ -1395,8 +1395,8 @@ RunTimeError ExportNumOperator(rawCode* raw, unsigned int returnVar, unsigned ch
 	line.scale = rtv.memory->GetVarAdr(sValue - 1);
 	raw->code[raw->codeSize] = line;
 	raw->codeSize++;
-	//Place the const from the stack at adr i1 to the heap at adr i3 with size i2
-	line.code = opcode_HEAP;
+	//Copy i2 bytes at i1 to i3
+	line.code = opcode_COPY;
 	line.r1 = 2;
 	line.r2 = 0;
 	line.r3 = 1;
@@ -1494,7 +1494,7 @@ RunTimeError ExportStrOperator(rawCode* raw, unsigned int returnVar, unsigned ch
 	raw->code[raw->codeSize] = line;
 	raw->codeSize++;
 	//Place the const from the stack at adr i1 to the heap at adr i3 with size i2
-	line.code = opcode_HEAP;
+	line.code = opcode_COPY;
 	line.r1 = 2;
 	line.r2 = 0;
 	line.r3 = 1;
@@ -1835,8 +1835,8 @@ RunTimeError ImportNumOperator(rawCode* raw, unsigned int returnVar, unsigned ch
 	line.scale = rtv.memory->GetVarAdr(returnVar - 1);
 	raw->code[raw->codeSize] = line;
 	raw->codeSize++;
-	//Move the value from the heap at i3 to the stack at i1
-	line.code = opcode_MOV;
+	//Copy i2 bytes from i3 to i1
+	line.code = opcode_COPY;
 	line.r1 = 0;
 	line.r2 = 2;
 	line.r3 = 1;
@@ -1897,8 +1897,8 @@ RunTimeError ImportStrOperator(rawCode* raw, unsigned int returnVar, unsigned ch
 	line.scale = returnVar - 1;
 	raw->code[raw->codeSize] = line;
 	raw->codeSize++;
-	//Move the value from the heap at i3 to the stack at i1 with the size in i2
-	line.code = opcode_MOV;
+	//Copy i2 bytes from i3 to i1
+	line.code = opcode_COPY;
 	line.r1 = 0;
 	line.r2 = 2;
 	line.r3 = 1;
@@ -1924,8 +1924,8 @@ RunTimeError ImportStrOperator(rawCode* raw, unsigned int returnVar, unsigned ch
 	line.scale = rtv.memory->GetVarAdr(returnVar - 1);
 	raw->code[raw->codeSize] = line;
 	raw->codeSize++;
-	//Move the value from the heap at i3 to the stack at i1 with the size in i2
-	line.code = opcode_MOV;
+	//Copy i2 bytes from i3 to i1
+	line.code = opcode_COPY;
 	line.r1 = 0;
 	line.r2 = 2;
 	line.r3 = 1;
@@ -4893,7 +4893,8 @@ void KubLingRawTranslator::SetRTV(CelestialSlicedList<heapVar>* heap,
 	KubLingCompiled** byteCodes,
 	unsigned int compiled,
 	unsigned int current,
-	MemoryPool* memPool)
+	MemoryPool* memPool,
+	CelestialStack<unsigned int>* memoffsetPH)
 {
 
 	rtv.byteCodes = byteCodes;
@@ -4903,6 +4904,7 @@ void KubLingRawTranslator::SetRTV(CelestialSlicedList<heapVar>* heap,
 	rtv.jmpPlaceHolders = jmpPlaceHolders;
 	rtv.memory = memPool;
 	rtv.translation = translation;
+	rtv.memoffsetPH = memoffsetPH;
 
 }
 

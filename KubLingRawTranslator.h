@@ -1,7 +1,7 @@
 #pragma once
 #include "KubLingCompiled.h"
 #include "KubLingRaw.h"
-#include "CelestialSlicedList.h"
+#include "CelestialStack.h"
 #include "MemoryPool.h"
 
 namespace Logic
@@ -48,6 +48,7 @@ namespace Logic
 		unsigned int current;
 		unsigned int compiled;
 		MemoryPool* memory;
+		CrossHandlers::CelestialStack<unsigned int>* memoffsetPH;
 
 	};
 
@@ -70,7 +71,8 @@ namespace Logic
 				Resources::KubLingCompiled** byteCodes,
 				unsigned int compiled,
 				unsigned int current,
-				MemoryPool* memPool);
+				MemoryPool* memPool,
+				CrossHandlers::CelestialStack<unsigned int>* memoffsetPH);
 
 			rawCode Translate(unsigned char* bytes,
 				unsigned int byteSize,

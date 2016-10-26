@@ -6,7 +6,7 @@ using namespace Resources;
 
 KubLingRaw::KubLingRaw(unsigned long long* code, unsigned int codes,
 	KubLingLabel* labels, unsigned int totalLabels,
-	unsigned int heapVars)
+	unsigned int heapVars, unsigned int stackSpace)
 {
 
 	this->code = code;
@@ -15,6 +15,14 @@ KubLingRaw::KubLingRaw(unsigned long long* code, unsigned int codes,
 	this->totalLabels = totalLabels;
 
 	this->heapVars = heapVars;
+	this->stackSpace = stackSpace;
+
+}
+
+unsigned int KubLingRaw::GetMemOffset() const
+{
+
+	return stackSpace;
 
 }
 

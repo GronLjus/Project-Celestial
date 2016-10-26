@@ -50,7 +50,7 @@ namespace Logic
 		unsigned long long* code;
 		unsigned int totalCode;
 
-		unsigned char stackMem[524287];
+		char stackMem[524287];
 
 	public:
 

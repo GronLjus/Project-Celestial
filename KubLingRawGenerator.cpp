@@ -61,11 +61,8 @@ rawCode KubLingRawGenerator::expandBlock(rawCode code, unsigned int newMax)
 rawCode KubLingRawGenerator::translateBlock(KubLingCompiled* byteCode,
 	CelestialSlicedList<heapVar>* heap,
 	unsigned int start,
-	unsigned stop,
-	unsigned int* jmpPlaceHolder,
-	unsigned int* translations,
-	unsigned int current,
-	MemoryPool* memPool)
+	unsigned int stop,
+	unsigned int* translations)
 {
 
 	rawCode block;
@@ -73,7 +70,6 @@ rawCode KubLingRawGenerator::translateBlock(KubLingCompiled* byteCode,
 	block.maxLines = 100;
 	block.code = new rawCode::line[block.maxLines];
 	block.start = totalCode;
-	translator->SetRTV(heap, jmpPlaceHolder, translations, byteCodes, compiled, current, memPool);
 
 	for (unsigned int i = start; i < stop; i++)
 	{
@@ -173,12 +169,9 @@ rawCode KubLingRawGenerator::createInitHeader(heapVar initData)
 }
 
 rawCode KubLingRawGenerator::createInitBlock(KubLingCompiled* byteCode,
-	unsigned int current,
 	CelestialSlicedList<heapVar>* heap,
 	unsigned int initLength,
-	unsigned int* jmpPlaceHolders,
-	unsigned int* translation,
-	MemoryPool* memPool)
+	unsigned int* translation)
 {
 
 	rawCode initBlock;
@@ -190,7 +183,7 @@ rawCode KubLingRawGenerator::createInitBlock(KubLingCompiled* byteCode,
 
 	rawCode initHeader = createInitHeader(isInit);
 	totalCode += initHeader.codeSize;
-	rawCode userInit = translateBlock(byteCode, heap, 1, initLength, jmpPlaceHolders, translation,current, memPool);
+	rawCode userInit = translateBlock(byteCode, heap, 1, initLength, translation);
 	initHeader.code[4].scale = totalCode;
 
 
@@ -304,7 +297,7 @@ void KubLingRawGenerator::addLabel(KubLingCompiled* byteCode)
 
 }
 
-rawCode KubLingRawGenerator::assemble(KubLingCompiled* byteCode, unsigned int current , CelestialSlicedList<heapVar>* heap)
+rawCode KubLingRawGenerator::assemble(KubLingCompiled* byteCode, unsigned int current, CelestialSlicedList<heapVar>* heap)
 {
 
 	unsigned int* jmpPlaceHolders = new unsigned int[byteCode->GetCodeSize()];
@@ -333,10 +326,12 @@ rawCode KubLingRawGenerator::assemble(KubLingCompiled* byteCode, unsigned int cu
 	unsigned int scriptStart;
 	memcpy(&scriptStart, line, size);
 
+	translator->SetRTV(heap, jmpPlaceHolders, lineTranslation, byteCodes, compiled, current, stackMem, nullptr);
+
 	if (scriptStart != 1)
 	{
 
-		rawCode initBlock = createInitBlock(byteCode, current, heap, scriptStart, jmpPlaceHolders, lineTranslation, stackMem);
+		rawCode initBlock = createInitBlock(byteCode, heap, scriptStart, lineTranslation);
 
 		if (initBlock.codeSize > assembled.maxLines - assembled.codeSize)//Expand the block
 		{
@@ -351,7 +346,7 @@ rawCode KubLingRawGenerator::assemble(KubLingCompiled* byteCode, unsigned int cu
 		
 	}
 
-	rawCode code = translateBlock(byteCode, heap, scriptStart, byteCode->GetCodeSize(), jmpPlaceHolders, lineTranslation, current, stackMem);
+	rawCode code = translateBlock(byteCode, heap, scriptStart, byteCode->GetCodeSize(), lineTranslation);
 	rawCode footer = createFooterBlock();
 
 	if (code.codeSize + footer.codeSize > assembled.maxLines - assembled.codeSize)//Expand the block
@@ -366,8 +361,8 @@ rawCode KubLingRawGenerator::assemble(KubLingCompiled* byteCode, unsigned int cu
 	memcpy(&assembled.code[assembled.codeSize], footer.code, footer.codeSize * sizeof(rawCode::line));
 	assembled.codeSize += footer.codeSize;
 
-	totalOffset += stackMem->GetMemorySize();
 	byteCode->SetMemOffset(totalOffset);
+	totalOffset += stackMem->GetMemorySize();
 
 	delete[] code.code;
 	delete[] footer.code;
@@ -491,7 +486,7 @@ KubLingRaw* KubLingRawGenerator::Assemble(KubLingCompiled** byteCodes, unsigned 
 
 	}
 
-	KubLingRaw* retVal = new KubLingRaw(code, totalCode, rawLabels, totalLabels, heap->GetHighest());
+	KubLingRaw* retVal = new KubLingRaw(code, totalCode, rawLabels, totalLabels, heap->GetHighest(), totalOffset);
 
 	delete[] lines;
 	delete[] raws;

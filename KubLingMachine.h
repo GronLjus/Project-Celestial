@@ -29,17 +29,19 @@ namespace Logic
 			void sendMessage(unsigned int mess, unsigned int retVar, CrossHandlers::MessageSource dest, unsigned int returnAdr, unsigned int sender);
 
 			const unsigned short wait = 512;
-			unsigned char* stackMem;
+			char* stackMem;
 			HeapMemory* heapMem;
 
 			bool kill;
+
+			char* getMem(unsigned int adr) const;
 
 		public:
 			KubLingMachine(CrossHandlers::MessageQueue* queue,
 				CrossHandlers::Message* mBuffer,
 				unsigned int maxMess,
 				unsigned int &currentMess, 
-				unsigned char* stackMem,
+				char* stackMem,
 				CrossHandlers::CelestialSlicedList<Resources::BaseObject*>* objectContainer);
 
 			void SetHeap(HeapMemory* heap);

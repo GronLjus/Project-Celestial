@@ -61,6 +61,7 @@ unsigned int ResourceHandler::AssembleRaws(std::string path)
 
 	KubLingRaw* rawCode = loader->CompileFolder(path);
 	HeapMemContainer* container = new HeapMemContainer(new Logic::HeapMemory(10240, rawCode->GetHeapVars()));
+	container->GetHeap()->SetOffset(rawCode->GetMemOffset());
 	container->SetId(0);
 	gameObjects->Add(container, 0);
 	heapObject = container->GetId();

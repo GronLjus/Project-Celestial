@@ -84,7 +84,6 @@ namespace Logic
 
 		opcode_STOP,
 		
-		opcode_HEAP,
 		opcode_TO,
 		opcode_CAST,
 		opcode_PLACE,
@@ -93,7 +92,6 @@ namespace Logic
 
 		opcode_COPY,
 		opcode_SAVE,
-		opcode_MOV,
 		
 		opcode_SEND,
 		opcode_STPRM,

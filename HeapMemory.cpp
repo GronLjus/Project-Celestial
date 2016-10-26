@@ -23,6 +23,8 @@ HeapMemory::HeapMemory(unsigned int size, unsigned int addresses)
 	startBlock.size = blockSize;
 	holes.push(startBlock);
 
+	adrOffset = 0;
+
 }
 
 unsigned int HeapMemory::SetAddress(unsigned int var, unsigned int address)
@@ -37,6 +39,20 @@ unsigned int HeapMemory::GetAddress(unsigned int var) const
 {
 
 	return addressSpace[var];
+
+}
+
+unsigned int HeapMemory::GetOffset() const
+{
+
+	return adrOffset;
+
+}
+
+void HeapMemory::SetOffset(unsigned int offset)
+{
+
+	adrOffset = offset;
 
 }
 
@@ -100,7 +116,7 @@ unsigned int HeapMemory::Allocate(unsigned int blockSize)
 
 	}
 
-	return adr;
+	return adr + adrOffset;
 
 }
 
