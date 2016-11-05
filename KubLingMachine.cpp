@@ -9,6 +9,7 @@ KubLingMachine::KubLingMachine(MessageQueue* queue,
 	unsigned int maxMess,
 	unsigned int &currentMess,
 	char* stackMem,
+	unsigned int maxStack,
 	CelestialSlicedList<Resources::BaseObject*>* objectContainer)
 {
 
@@ -22,6 +23,7 @@ KubLingMachine::KubLingMachine(MessageQueue* queue,
 	iReg[4] = 0;
 
 	this->stackMem = stackMem;
+	this->maxStack = maxStack;
 	kill = false;
 
 }
@@ -55,6 +57,15 @@ void KubLingMachine::sendMessage(unsigned int mess, unsigned int retVar, Message
 	if (dest != MessageSource_OBJECT)
 	{
 
+		if (returnAdr - iReg[4] >= maxStack)
+		{
+
+			unsigned int var = returnAdr - iReg[4] - maxStack;
+			unsigned int offset = var != 0 ? heapMem->GetOffset() : 0;
+			lastMess->returnParam = maxStack + heapMem->GetAddress(var) + offset;
+
+		}
+
 		queue->PushMessage(lastMess);
 
 		currentMess++;
@@ -66,7 +77,28 @@ void KubLingMachine::sendMessage(unsigned int mess, unsigned int retVar, Message
 	{
 
 		unsigned int objId;
-		memcpy(&objId, &stackMem[returnAdr], 4);
+		unsigned int var = 0;
+		unsigned int offset = 0;
+		unsigned int adr = 0;
+
+		if (returnAdr - iReg[4] >= maxStack)
+		{
+
+
+			var = returnAdr - iReg[4] - maxStack;
+			offset = var != 0 ? heapMem->GetOffset() : 0;
+			adr = heapMem->GetAddress(var);
+
+			memcpy(&objId, heapMem->GetMemory(adr + offset), 4);
+
+		}
+		else
+		{
+
+			memcpy(&objId, &stackMem[returnAdr], 4);
+
+		}
+
 		Resources::BaseObject* obj = objectContainer->GetValue(objId);
 		obj->Update(lastMess);
 
@@ -90,10 +122,13 @@ void KubLingMachine::SetRegister(unsigned char reg, unsigned int value)
 char* KubLingMachine::getMem(unsigned int adr) const
 {
 
-	if (adr- iReg[4] > heapMem->GetOffset())
+	if (adr - iReg[4] >= maxStack)
 	{
 
-		return heapMem->GetMemory(adr - heapMem->GetOffset()- iReg[4]);
+		unsigned int var = adr - iReg[4] - maxStack;
+		unsigned int offset = var != 0 ? heapMem->GetOffset() : 0;
+		unsigned int adr = heapMem->GetAddress(var);
+		return heapMem->GetMemory(adr + offset);
 
 	}
 	else
@@ -126,6 +161,8 @@ RunTimeError KubLingMachine::RunScript(unsigned long long* code, unsigned int &c
 
 		unsigned int scal = (line & 0xFFFFFFFF);
 
+		char* src;
+		char* dst;
 
 		switch (op)
 		{
@@ -240,7 +277,9 @@ RunTimeError KubLingMachine::RunScript(unsigned long long* code, unsigned int &c
 			memcpy(getMem(iReg[reg1] + iReg[4]), &scal, iReg[reg2]);
 			break;
 		case Logic::opcode_COPY:
-			memcpy(getMem(iReg[reg1] + iReg[4]), getMem(iReg[reg2] + iReg[4]), iReg[reg3]);
+			dst = getMem(iReg[reg1] + iReg[4]);
+			src = getMem(iReg[reg2] + iReg[4]);
+			memcpy(dst, src, iReg[reg3]);
 			break;
 		case Logic::opcode_SEND:
 			sendMessage(iReg[reg1], cReg[0] + iReg[4], MessageSource(iReg[reg2]), iReg[reg3] + iReg[4],sender);
@@ -445,10 +484,11 @@ RunTimeError KubLingMachine::RunScript(unsigned long long* code, unsigned int &c
 			iReg[reg2] = heapMem->GetAddress(iReg[reg1]);
 			break;
 		case Logic::opcode_ALLOC:
-			iReg[reg3] = heapMem->SetAddress(iReg[reg1], heapMem->Allocate(iReg[reg2]));
+			heapMem->SetAddress(iReg[reg1], heapMem->Allocate(iReg[reg2]));
+			iReg[reg3] = iReg[reg1] + maxStack;
 			break;
 		case Logic::opcode_DALLOC:
-			heapMem->DeAllocate(iReg[reg1], iReg[reg2]);
+			heapMem->DeAllocate(heapMem->GetAddress(iReg[reg1]), iReg[reg2]);
 			break;
 		default:
 			return RunTimeError_OHNO;

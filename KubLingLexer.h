@@ -50,12 +50,13 @@ namespace Logic
 
 			void moveParamsOfOp(CrossHandlers::CelestialDoubleListNode<Token>* shortHandNode, unsigned char totLeftParams);
 			void flipParamsAroundOp(CrossHandlers::CelestialDoubleListNode<Token>* shortHandNode, unsigned char totLeftParams, unsigned char totRightParams);
+			bool getShortHand(char val);
 			unsigned int getShortHand(std::string word);
 			unsigned int getBracketLevels(CrossHandlers::CelestialDoubleList<Token>* tokens);
 			CrossHandlers::CelestialDoubleListNode<Token>* extractRights(CrossHandlers::CelestialDoubleListNode<Token>* token, CrossHandlers::CelestialDoubleList<Token>* tokens, unsigned int shorthand, int lNumber, CompileError &err);
 			CrossHandlers::CelestialDoubleListNode<Token>* breakOutShortHand(CrossHandlers::CelestialDoubleListNode<Token>* token, CrossHandlers::CelestialDoubleList<Token>* tokens, unsigned int shorthand, int lNumber, CompileError &err);
 
-			void breakOutBrackets(CrossHandlers::CelestialDoubleListNode<Token>* token, int lNumber);
+			unsigned int breakOutBrackets(CrossHandlers::CelestialDoubleListNode<Token>* token, int lNumber, CompileError &err);
 
 			void extractOps(CrossHandlers::CelestialDoubleList<Token>* tokens, int lNumber, CompileError &err);
 

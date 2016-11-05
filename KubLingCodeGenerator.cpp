@@ -31,7 +31,7 @@ int KubLingCodeGenerator::handleVariable(CelestialSlicedList<symbol>* symbolTabl
 
 	sym.codeCount++;
 
-	if (sym.codeCount == sym.symCount && sym.gC)
+	if (sym.codeCount == sym.symCount && false)// sym.gC)
 	{
 
 		varClear->PushElement(sym.address);
@@ -299,6 +299,15 @@ CelestialList<CelestialList<unsigned char>*>* KubLingCodeGenerator::generateCode
 				line->AddElement(adr >> 16);
 				line->AddElement(adr >> 24);
 
+				if (branch->GetNodeObject()->GetLeafs()->GetCount() > 0)
+				{
+
+					CelestialList<CelestialList<unsigned char>*>* subCommands = generateCode(branch->GetNodeObject()->GetLeafs()->GetFirstNode()->GetNodeObject()
+						, symbolTable, codeCount);
+					commands->AddElement(subCommands);
+					delete subCommands;
+
+				}
 			}
 			else if (syn.type == SyntaxType_CONST || syn.type == SyntaxType_CONSTPASS || syn.type == SyntaxType_OPERATORCONST || syn.type == SyntaxType_OPERATORCONSTPASS)
 			{

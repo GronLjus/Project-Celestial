@@ -5,14 +5,14 @@ using namespace Logic;
 using namespace std;
 using namespace CrossHandlers;
 
-MemoryPool::MemoryPool(unsigned int pageSize)
+MemoryPool::MemoryPool(unsigned int pageSize, unsigned int maxStack)
 {
 
-	memoryA = new CelestialSlicedList<unsigned char>(pageSize,0);
 	variables = new CelestialSlicedList<memBlock>(100);
 	holeVal = 0;
 	adrLast = 0;
 	sysAdr = 0;
+	this->maxStack = maxStack;
 
 }
 
@@ -158,10 +158,8 @@ unsigned int MemoryPool::findAddress(unsigned int var, unsigned int valSize)
 
 }
 
-MemErrorCode MemoryPool::AddVariable(unsigned int var, unsigned char* val, unsigned int valSize)
+unsigned int MemoryPool::AddVariable(unsigned int var, unsigned int valSize)
 {
-
-	MemErrorCode err = ErrorCode_OK;
 
 	unsigned int adress = findAddress(var, valSize);
 
@@ -176,62 +174,18 @@ MemErrorCode MemoryPool::AddVariable(unsigned int var, unsigned char* val, unsig
 	varMem.place = adress;
 	varMem.length = valSize;
 	variables->Add(varMem, var);
-	writeData(var, valSize, val);
-
-	return err;
+	return adress;
 
 }
 
-void MemoryPool::writeData(unsigned int var, unsigned int bytes, unsigned char* val)
+unsigned int MemoryPool::AddVariable(unsigned int var, unsigned int adr, unsigned int valSize)
 {
 
-	memBlock mem = variables->GetValue(var);
-	unsigned int totalBytes = bytes;
-	unsigned int globalPlace = mem.place;
-	unsigned int writtenBytes = 0;
-
-	while (totalBytes > 0)
-	{
-
-		unsigned int localPlace = globalPlace % memoryA->GetSliceSize();
-		unsigned int toend = memoryA->GetSliceSize() - localPlace;
-		unsigned int readBytes = toend > totalBytes ? totalBytes : toend;
-
-		memcpy(&(memoryA->GetSlice(globalPlace)[localPlace]), &(val[writtenBytes]), readBytes);
-
-		totalBytes -= readBytes;
-		globalPlace += readBytes;
-		writtenBytes += readBytes;
-
-	}
-}
-
-MemErrorCode MemoryPool::readData(unsigned int var, unsigned int offset, unsigned int bytes, unsigned char* &val)
-{
-
-	MemErrorCode err = ErrorCode_OK;
-	memBlock mem = variables->GetValue(var);
-
-	unsigned int totalBytes = bytes;
-	unsigned int globalPlace = mem.place+offset;
-	unsigned int writtenBytes = 0;
-
-	while (totalBytes > 0)
-	{
-
-		unsigned int localPlace = globalPlace % memoryA->GetSliceSize();
-		unsigned int toend = memoryA->GetSliceSize() - localPlace;
-		unsigned int readBytes = toend > totalBytes ? totalBytes : toend;
-
-		memcpy(&(val[writtenBytes]), &(memoryA->GetSlice(globalPlace)[localPlace]), readBytes);
-
-		totalBytes -= readBytes;
-		globalPlace += readBytes;
-		writtenBytes += readBytes;
-
-	}
-
-	return err;
+	memBlock varMem = variables->GetValue(var);
+	varMem.place = adr;
+	varMem.length = valSize;
+	variables->Add(varMem, var);
+	return adr;
 
 }
 
@@ -242,50 +196,6 @@ unsigned int MemoryPool::GetVarLength(unsigned int var) const
 
 }
 
-MemErrorCode MemoryPool::ReadVariable(unsigned int var, unsigned int offset, unsigned int &bytes, unsigned char* &val)
-{
-
-	bytes = offset + bytes > variables->GetValue(var).length ? variables->GetValue(var).length-(offset-bytes) : bytes;
-	return readData(var, offset, bytes, val);
-
-}
-
-MemErrorCode MemoryPool::ReadVariable(unsigned int var, unsigned char* &val, unsigned int &valSize)
-{
-
-	memBlock varH = variables->GetValue(var);
-	valSize = varH.length < valSize ? varH.length: valSize;
-	return ReadVariable(var, 0, valSize, val);
-
-}
-
-MemErrorCode MemoryPool::CopyVariable(unsigned int dst, unsigned int src)
-{
-
-	MemErrorCode err = ErrorCode_OK;
-	memBlock mem = variables->GetValue(src);
-
-	unsigned int totalBytes = mem.length;
-	unsigned int globalPlace = mem.place;
-
-	while (totalBytes > 0)
-	{
-
-		unsigned int localPlace = globalPlace % memoryA->GetSliceSize();
-		unsigned int toend = memoryA->GetSliceSize() - localPlace;
-		unsigned int readBytes = toend > totalBytes ? totalBytes : toend;
-
-		writeData(dst, readBytes, &(memoryA->GetSlice(globalPlace)[localPlace]));
-
-		totalBytes -= readBytes;
-		globalPlace += readBytes;
-
-	}
-
-	return err;
-
-}
-
 unsigned int MemoryPool::GetMemorySize() const
 {
 
@@ -293,41 +203,11 @@ unsigned int MemoryPool::GetMemorySize() const
 
 }
 
-unsigned char* MemoryPool::GetBlock(unsigned int start, unsigned int length)
-{
-
-	unsigned char* block = new unsigned char[length];
-
-	unsigned int totalBytes = length;
-	unsigned int globalPlace = start;
-	unsigned int writtenBytes = 0;
-
-	while (totalBytes > 0)
-	{
-
-		unsigned int localPlace = globalPlace % memoryA->GetSliceSize();
-		unsigned int toend = memoryA->GetSliceSize() - localPlace;
-		unsigned int readBytes = toend > totalBytes ? totalBytes : toend;
-
-		memcpy(&block[writtenBytes], &(memoryA->GetSlice(globalPlace)[localPlace]), readBytes);
-
-		totalBytes -= readBytes;
-		globalPlace += readBytes;
-		writtenBytes += readBytes;
-
-	}
-
-	return block;
-
-}
-
 void MemoryPool::AddSystemMem(Resources::KubLingCompiled* compiled)
 {
 
 	maxVar = compiled->GetMaxVar();
-	unsigned char* startData = new unsigned char[maxVar];
-	AddVariable(maxVar, startData, maxVar);
-	delete[] startData;
+	AddVariable(maxVar, maxVar);
 	maxVar++;
 
 	for (unsigned int i = 0; i < compiled->GetMaxParams('n'); i++)
@@ -339,8 +219,7 @@ void MemoryPool::AddSystemMem(Resources::KubLingCompiled* compiled)
 		{
 
 			adr--;
-			unsigned char data[sizeof(unsigned int)];
-			AddVariable(adr, data, sizeof(unsigned int));
+			AddVariable(adr, sizeof(unsigned int));
 			memBlock varMem = variables->GetValue(adr);
 			compiled->AddParamAdr(i, varMem.place, 'n');
 
@@ -356,8 +235,7 @@ void MemoryPool::AddSystemMem(Resources::KubLingCompiled* compiled)
 		{
 
 			adr--;
-			unsigned char data[sizeof(float)];
-			AddVariable(adr, data, sizeof(float));
+			AddVariable(adr, sizeof(float));
 			memBlock varMem = variables->GetValue(adr);
 			compiled->AddParamAdr(i, varMem.place, 'f');
 
@@ -373,8 +251,7 @@ void MemoryPool::AddSystemMem(Resources::KubLingCompiled* compiled)
 		{
 
 			adr--;
-			unsigned char data[sizeof(unsigned int)];
-			AddVariable(adr, data, sizeof(unsigned int));
+			AddVariable(adr, sizeof(unsigned int));
 			memBlock varMem = variables->GetValue(adr);
 			compiled->AddSystemParamAdr(RunTimeParams(i), varMem.place);
 
@@ -390,8 +267,7 @@ void MemoryPool::AddSystemMem(Resources::KubLingCompiled* compiled)
 		{
 
 			adr--;
-			unsigned char data[64];
-			AddVariable(adr, data, 64);
+			AddVariable(adr, 64);
 			memBlock varMem = variables->GetValue(adr);
 			compiled->AddParamAdr(i, varMem.place, 's');
 
@@ -400,10 +276,16 @@ void MemoryPool::AddSystemMem(Resources::KubLingCompiled* compiled)
 
 
 	maxVar = compiled->GetMaxVar();
-	unsigned char data[64];
-	AddVariable(maxVar, data, 64);
+	AddVariable(maxVar, 64);
 
 	sysAdr = adrLast;
+
+}
+
+unsigned int MemoryPool::GetMaxStack() const
+{
+
+	return maxStack;
 
 }
 
@@ -440,7 +322,6 @@ unsigned int MemoryPool::GetStartingAdr() const
 MemoryPool::~MemoryPool()
 {
 
-	delete memoryA;
 	delete variables;
 
 }

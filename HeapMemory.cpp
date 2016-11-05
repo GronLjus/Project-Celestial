@@ -18,12 +18,13 @@ HeapMemory::HeapMemory(unsigned int size, unsigned int addresses)
 
 	}
 
+	unsigned int offst = 0;
+	memcpy(memoryBlock, &offst, 4);
+
 	block startBlock;
-	startBlock.adr = 1;
+	startBlock.adr = 4;
 	startBlock.size = blockSize;
 	holes.push(startBlock);
-
-	adrOffset = 0;
 
 }
 
@@ -45,14 +46,15 @@ unsigned int HeapMemory::GetAddress(unsigned int var) const
 unsigned int HeapMemory::GetOffset() const
 {
 
-	return adrOffset;
+	unsigned int offset = 0;
+	memcpy(&offset, &memoryBlock[0], 4);
 
-}
+	memoryBlock[0] = 0;
+	memoryBlock[1] = 0;
+	memoryBlock[2] = 0;
+	memoryBlock[3] = 0;
 
-void HeapMemory::SetOffset(unsigned int offset)
-{
-
-	adrOffset = offset;
+	return offset;
 
 }
 
@@ -116,7 +118,7 @@ unsigned int HeapMemory::Allocate(unsigned int blockSize)
 
 	}
 
-	return adr + adrOffset;
+	return adr;
 
 }
 

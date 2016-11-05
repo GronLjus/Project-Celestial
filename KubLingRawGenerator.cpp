@@ -4,7 +4,7 @@
 using namespace Logic;
 using namespace Resources;
 
-KubLingRawGenerator::KubLingRawGenerator()
+KubLingRawGenerator::KubLingRawGenerator(unsigned int maxStack)
 {
 
 	maxLabels = 0;
@@ -13,6 +13,7 @@ KubLingRawGenerator::KubLingRawGenerator()
 	expandLabels();
 	totalCode = 0;
 	translator = new KubLingRawTranslator();
+	this->maxStack = maxStack;
 
 }
 
@@ -316,7 +317,7 @@ rawCode KubLingRawGenerator::assemble(KubLingCompiled* byteCode, unsigned int cu
 	assembled.start = totalCode;
 	assembled.code = new rawCode::line[assembled.maxLines];
 
-	MemoryPool* stackMem = new MemoryPool(1024);
+	MemoryPool* stackMem = new MemoryPool(1024, maxStack);
 	stackMem->AddSystemMem(byteCode);
 
 	addLabel(byteCode);

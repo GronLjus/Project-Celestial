@@ -23,7 +23,7 @@ namespace Logic
 	};
 	
 	///<summary>The different types of tokens</summary>
-	enum TokenType{ TokenType_KEYWORD, TokenType_SEPERATOR, TokenType_BRACKET, TokenType_WORD, TokenType_PARAM, TokenType_VAR, TokenType_FLOW, TokenType_COND, TokenType_BODY, TokenType_UNARY, TokenType_NA };
+	enum TokenType{ TokenType_KEYWORD, TokenType_SEPERATOR, TokenType_OFFSET, TokenType_BRACKET, TokenType_WORD, TokenType_SEQ, TokenType_PARAM, TokenType_VAR, TokenType_FLOW, TokenType_COND, TokenType_BODY, TokenType_UNARY, TokenType_NA };
 	///<summary>The different types of syntaxes</summary>
 	enum SyntaxType{ SyntaxType_OPERATORCONST, SyntaxType_OPERATORCONSTPASS, SyntaxType_OPERATORVAR, SyntaxType_OPERATORNA,
 		SyntaxType_VAR, SyntaxType_CONST, SyntaxType_CONSTPASS,
@@ -62,6 +62,7 @@ namespace Logic
 		OperatorTypes_SPAWN, OperatorTypes_TRAVEL,
 		OperatorTypes_SPLIT,
 		OperatorTypes_PAUSE, OperatorTypes_RESUME,
+		OperatorTypes_ARRAY, OperatorTypes_OFFSET,
 		OperatorTypes_NA
 	};
 

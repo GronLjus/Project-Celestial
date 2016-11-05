@@ -73,6 +73,7 @@ namespace Logic
 		bytecode_SVESTT, bytecode_LDSTT,
 		bytecode_CLRBRD,
 		bytecode_PSEGME, bytecode_RSMGME,
+		bytecode_NUMARR, bytecode_STRARR,bytecode_NUMOFFST, bytecode_STROFFST,
 
 		bytecode_JMPINVVAR,bytecode_JMPNOW, bytecode_WTFRVR,
 

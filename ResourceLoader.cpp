@@ -14,6 +14,7 @@
 #include "KubLingSourceLoader.h"
 #include "GridLoader.h"
 #include "CLMSHFileLoader.h"
+#include "KubLingMachineHandler.h"
 
 #include <locale>
 
@@ -113,7 +114,7 @@ ResourceLoader::ResourceLoader()
 
 	saveLoader = new CLSVLoader();
 
-	rawGen = new KubLingRawGenerator();
+	rawGen = new KubLingRawGenerator(Logic::KubLingMachineHandler::MAXSTACK);
 
 }
 

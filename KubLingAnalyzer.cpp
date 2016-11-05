@@ -509,7 +509,22 @@ KubLingAnalyzer::operatorParams KubLingAnalyzer::analyzeOperatorParams(CompileEr
 			syntax newSyn;
 			newSyn.type = SyntaxType_VAR;
 			newSyn.val = to_string(foundSymbol);
-			newtree->AddLeaf(new CelestialTreeNode<syntax>(newSyn, newtree));
+			CelestialTreeNode<syntax>* leaf = new CelestialTreeNode<syntax>(newSyn, newtree);
+
+			if (parameter->GetNodeObject()->GetLeafs()->GetCount() > 0)
+			{
+
+				VarType nullVar;
+				ParamType nullParam;
+
+				CelestialTreeNode<syntax>* analyzedNode = analyzeOperator(parameter->GetNodeObject()->GetLeafs()->GetFirstNode()->GetNodeObject()
+					, leaf, err, nullVar, nullParam);
+
+				leaf->AddLeaf(analyzedNode);
+
+			}
+
+			newtree->AddLeaf(leaf);
 
 		}
 		else if (val.type == TokenType_WORD)

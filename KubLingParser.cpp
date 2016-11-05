@@ -99,7 +99,35 @@ int KubLingParser::addChildrenTooTree(CelestialListNode<Token>* &tokenNode, Comp
 				return 1;
 
 			}
-			
+		}
+		else if (tokenNode->GetNodeObject().type == TokenType_OFFSET)
+		{
+
+			if (tokenNode->GetNodeObject().val[0] == '[')
+			{
+
+				Token offsetTok;
+				offsetTok.val = "¤offset";
+				offsetTok.line = tokenNode->GetNodeObject().line;
+				offsetTok.type = TokenType_KEYWORD;
+
+				newNode = new CelestialTreeNode<Token>(offsetTok, parent);
+				retVal = addChildrenTooTree(tokenNode, err, newNode);
+				parent->AddLeaf(newNode);
+
+				if (retVal == 3)
+				{
+
+					return 0;
+
+				}
+			}
+			else
+			{
+
+				return 3;
+
+			}
 		}
 		else if (tokenNode->GetNodeObject().type == TokenType_SEPERATOR)
 		{
@@ -124,6 +152,18 @@ int KubLingParser::addChildrenTooTree(CelestialListNode<Token>* &tokenNode, Comp
 
 			newNode = new CelestialTreeNode<Token>(tokenNode->GetNodeObject(), parent);
 
+			if (tokenNode->GetNext() != nullptr && 
+				tokenNode->GetNext()->GetNodeObject().type == TokenType_OFFSET &&
+				tokenNode->GetNext()->GetNodeObject().val[0] == '[')
+			{
+
+				addChildrenTooTree(tokenNode, err, newNode);
+
+				CelestialTreeNode<Token>* opNode = newNode->GetLeafs()->GetFirstNode()->GetNodeObject();
+				CelestialTreeNode<Token>* copyNode = new CelestialTreeNode<Token>(newNode->GetNodeObject(), parent);
+				opNode->AddLeaf(copyNode);
+
+			}
 		}
 		else if (tokenNode->GetNodeObject().type == TokenType_BODY)
 		{

@@ -35,13 +35,15 @@ namespace Logic
 			bool kill;
 
 			char* getMem(unsigned int adr) const;
+			unsigned int maxStack;
 
 		public:
 			KubLingMachine(CrossHandlers::MessageQueue* queue,
 				CrossHandlers::Message* mBuffer,
 				unsigned int maxMess,
-				unsigned int &currentMess, 
+				unsigned int &currentMess,
 				char* stackMem,
+				unsigned int maxStack,
 				CrossHandlers::CelestialSlicedList<Resources::BaseObject*>* objectContainer);
 
 			void SetHeap(HeapMemory* heap);

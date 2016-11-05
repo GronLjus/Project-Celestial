@@ -47,12 +47,15 @@ namespace Logic
 		CrossHandlers::CelestialStack<machineContainer>* runningMachines;
 		CrossHandlers::CelestialStack<machineContainer>* runningMachinesSecondary;
 
+		HeapMemory* heap;
 		unsigned long long* code;
 		unsigned int totalCode;
 
 		char stackMem[524287];
 
 	public:
+
+		static const unsigned int MAXSTACK = 524287;
 
 		KubLingMachineHandler(CrossHandlers::MessageQueue* queue,
 			CrossHandlers::Message* mBuffer,

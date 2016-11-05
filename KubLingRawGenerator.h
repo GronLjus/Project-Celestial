@@ -14,7 +14,8 @@ namespace Logic
 			unsigned int maxLabels;
 
 			unsigned int totalCode;
-			unsigned int totalOffset;
+			unsigned int totalOffset; 
+			unsigned int maxStack;
 
 			void expandLabels();
 
@@ -45,7 +46,7 @@ namespace Logic
 				CrossHandlers::CelestialSlicedList<heapVar>* heap);
 
 		public:
-			KubLingRawGenerator();
+			KubLingRawGenerator(unsigned int maxStack);
 
 			Resources::KubLingRaw* Assemble(
 				Resources::KubLingCompiled** byteCodes,

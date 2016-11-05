@@ -11,6 +11,8 @@ const unsigned int waitingLines = 3;
 const unsigned int sendLines = 5;
 const unsigned int addMessParLines = 4;
 const unsigned int addMessStrParLines = 5;
+const unsigned int commonArrayLines = 9;
+const unsigned int commonOffsetLines = 6;
 const unsigned int addMessTempParLines = 3 + addMessParLines;
 const unsigned int castIToSLines = 46;
 const unsigned int commonMathLines = 10;
@@ -315,8 +317,7 @@ unsigned int getHeapVal(runTimeVal &rtv, std::string name, bool &inited)
 void commonLoad(unsigned int returnVar, runTimeVal &rtv)
 {
 
-	unsigned char tempVal[4];
-	rtv.memory->AddVariable(returnVar, tempVal, 4);
+	rtv.memory->AddVariable(returnVar, 4);
 
 }
 
@@ -875,6 +876,115 @@ void commonPar(unsigned int var, unsigned int scriptValue, unsigned int offset, 
 
 }
 
+//9
+void commonArray(unsigned int var, unsigned int returnVar, unsigned int memSize, runTimeVal &rtv, rawCode* currentCode)
+{
+
+	bool init;
+	std::string arrName = "¤array" + std::to_string(rtv.heap->GetHighest());
+	unsigned int arrayVar = getHeapVal(rtv, arrName, init);
+
+	rtv.memory->AddVariable(returnVar, rtv.memory->GetMaxStack() + arrayVar, 4);
+
+	rawCode::line line;
+	//Place the adress of the var in i1
+	line.code = opcode_PLACE;
+	line.r1 = 0;
+	line.type = 0;
+	line.scale = rtv.memory->GetVarAdr(var);
+	currentCode->code[currentCode->codeSize] = line;
+	currentCode->codeSize++;
+	//Load the value from i1 and place it in i1
+	line.code = opcode_LOAD;
+	line.r1 = 0;
+	line.r2 = 0;
+	line.type = 0;
+	currentCode->code[currentCode->codeSize] = line;
+	currentCode->codeSize++;
+	//Place the size of each element in i2
+	line.code = opcode_PLACE;
+	line.r1 = 1;
+	line.type = 0;
+	line.scale = memSize;
+	currentCode->code[currentCode->codeSize] = line;
+	currentCode->codeSize++;
+	//Multiply i1 with i2 and store in i3
+	line.code = opcode_MUL;
+	line.r1 = 0;
+	line.r2 = 1;
+	line.r3 = 2;
+	line.type = 0;
+	currentCode->code[currentCode->codeSize] = line;
+	currentCode->codeSize++;
+	//Place the arrayvar in i2
+	line.code = opcode_PLACE;
+	line.r1 = 1;
+	line.type = 0;
+	line.scale = arrayVar;
+	currentCode->code[currentCode->codeSize] = line;
+	currentCode->codeSize++;
+	//Allocate the var in i2 with size i3
+	line.code = opcode_ALLOC;
+	line.r1 = 1;
+	line.r2 = 2;
+	currentCode->code[currentCode->codeSize] = line;
+	currentCode->codeSize++;
+
+	finishWaiting(returnVar, currentCode);
+
+}
+
+//6
+void commonOffset(unsigned int var, unsigned int memSize, runTimeVal &rtv, rawCode* currentCode)
+{
+
+	rawCode::line line;
+	//Place the offset var in i1
+	line.code = opcode_PLACE;
+	line.r1 = 0;
+	line.type = 0;
+	line.scale = rtv.memory->GetVarAdr(var);
+	currentCode->code[currentCode->codeSize] = line;
+	currentCode->codeSize++;
+	//Place the size in i3
+	line.code = opcode_PLACE;
+	line.r1 = 2;
+	line.type = 0;
+	line.scale = memSize;
+	currentCode->code[currentCode->codeSize] = line;
+	currentCode->codeSize++;
+	//Load from adr i1 and place in i2
+	line.code = opcode_LOAD;
+	line.r1 = 1;
+	line.r2 = 0;
+	line.type = 0;
+	currentCode->code[currentCode->codeSize] = line;
+	currentCode->codeSize++;
+	//Multiply i3 with i2 and store in i2
+	line.code = opcode_MUL;
+	line.r1 = 1;
+	line.r2 = 2;
+	line.r3 = 1;
+	line.type = 0;
+	currentCode->code[currentCode->codeSize] = line;
+	currentCode->codeSize++;
+	//Place the offset heap in i1
+	line.code = opcode_PLACE;
+	line.r1 = 0;
+	line.type = 0;
+	line.scale = rtv.memory->GetMaxStack();
+	currentCode->code[currentCode->codeSize] = line;
+	currentCode->codeSize++;
+	//Store i2 at adr i1
+	line.code = opcode_STORE;
+	line.r1 = 1;
+	line.r2 = 0;
+	line.type = 0;
+	currentCode->code[currentCode->codeSize] = line;
+	currentCode->codeSize++;
+
+}
+
 RunTimeError AcceptInputOperator(rawCode* raw, unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int offset, unsigned int byteLine, runTimeVal &rtv)
 {
 
@@ -1156,6 +1266,48 @@ RunTimeError AppendTextOperator(rawCode* raw, unsigned int returnVar, unsigned c
 
 }
 
+RunTimeError ArrayNumOperator(rawCode* raw, unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int offset, unsigned int byteLine, runTimeVal &rtv)
+{
+
+	if (paramSize < 4)
+	{
+
+		return RunTimeError_BADPARAMS;
+
+	}
+
+
+	unsigned int var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
+	raw->maxLines = commonArrayLines + 1;
+	raw->code = new rawCode::line[raw->maxLines];
+
+	commonArray(var - 1, returnVar - 1, 4, rtv, raw);
+
+	return RunTimeError_OK;
+
+}
+
+RunTimeError ArrayStrOperator(rawCode* raw, unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int offset, unsigned int byteLine, runTimeVal &rtv)
+{
+
+	if (paramSize < 4)
+	{
+
+		return RunTimeError_BADPARAMS;
+
+	}
+
+
+	unsigned int var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
+	raw->maxLines = commonArrayLines + 1;
+	raw->code = new rawCode::line[raw->maxLines];
+
+	commonArray(var - 1, returnVar - 1, 64, rtv, raw);
+
+	return RunTimeError_OK;
+
+}
+
 RunTimeError CastFloatOperator(rawCode* raw, unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int offset, unsigned int byteLine, runTimeVal &rtv)
 {
 
@@ -1367,15 +1519,9 @@ RunTimeError ExportNumOperator(rawCode* raw, unsigned int returnVar, unsigned ch
 	raw->code[raw->codeSize] = line;
 	raw->codeSize++;
 
-	//Get the adr for the var in i1 and store it in i3
-	line.code = opcode_ADR;
-	line.r1 = 0;
-	line.r2 = 2;
-	raw->code[raw->codeSize] = line;
-	raw->codeSize++;
-	//Deallocate the adr at i3 with the size i2
+	//Deallocate the adr at i1 with the size i2
 	line.code = opcode_DALLOC;
-	line.r1 = 2;
+	line.r1 = 0;
 	line.r2 = 1;
 	raw->code[raw->codeSize] = line;
 	raw->codeSize++;
@@ -1427,6 +1573,41 @@ RunTimeError ExportStrOperator(rawCode* raw, unsigned int returnVar, unsigned ch
 	raw->code = new rawCode::line[raw->maxLines];
 
 	rawCode::line line;
+	//Place 64 in i1
+	line.code = opcode_PLACE;
+	line.r1 = 0;
+	line.type = 0;
+	line.scale = 64;
+	raw->code[raw->codeSize] = line;
+	raw->codeSize++;
+	//Place the heap var in i2
+	line.code = opcode_PLACE;
+	line.r1 = 1;
+	line.type = 0;
+	line.scale = hVar;
+	raw->code[raw->codeSize] = line;
+	raw->codeSize++;
+	//Deallocate the adr at i2 with the size i1
+	line.code = opcode_DALLOC;
+	line.r1 = 1;
+	line.r2 = 0;
+	raw->code[raw->codeSize] = line;
+	raw->codeSize++;
+	//Allocate and adress in the heap for the var in i2 with the size i1 and store in i3
+	line.code = opcode_ALLOC;
+	line.r1 = 1;
+	line.r2 = 0;
+	line.r3 = 2;
+	raw->code[raw->codeSize] = line;
+	raw->codeSize++;
+
+	//Place the stack var in i2
+	line.code = opcode_PLACE;
+	line.r1 = 1;
+	line.type = 0;
+	line.scale = rtv.memory->GetVarAdr(sValue - 1);
+	raw->code[raw->codeSize] = line;
+	raw->codeSize++;
 	//Place 4 in i1
 	line.code = opcode_PLACE;
 	line.r1 = 0;
@@ -1434,70 +1615,33 @@ RunTimeError ExportStrOperator(rawCode* raw, unsigned int returnVar, unsigned ch
 	line.scale = 4;
 	raw->code[raw->codeSize] = line;
 	raw->codeSize++;
-	//Place the const adr in i2
+	//Load from i2 to i2
+	line.code = opcode_LOAD;
+	line.r1 = 1;
+	line.r2 = 1;
+	line.type = 0;
+	raw->code[raw->codeSize] = line;
+	raw->codeSize++;
+	//Add i1 to i2 and store in i1
+	line.code = opcode_ADD;
+	line.r1 = 0;
+	line.r1 = 1;
+	line.r1 = 0;
+	line.type = 0;
+	raw->code[raw->codeSize] = line;
+	raw->codeSize++;
+	//Place the stack var in i2
 	line.code = opcode_PLACE;
 	line.r1 = 1;
 	line.type = 0;
 	line.scale = rtv.memory->GetVarAdr(sValue - 1);
 	raw->code[raw->codeSize] = line;
 	raw->codeSize++;
-	//Load the size of the var from the stack at adr i2 in i3
-	line.code = opcode_LOAD;
-	line.r1 = 2;
-	line.r2 = 1;
-	line.type = 0;
-	raw->code[raw->codeSize] = line;
-	raw->codeSize++;
-	//Add i1 to i3 and store it in i2
-	line.code = opcode_LOAD;
-	line.r1 = 2;
-	line.r2 = 0;
-	line.r3 = 1;
-	line.type = 0;
-	raw->code[raw->codeSize] = line;
-	raw->codeSize++;
-	//Place the heap var in i1
-	line.code = opcode_PLACE;
-	line.r1 = 0;
-	line.type = 0;
-	line.scale = hVar;
-	raw->code[raw->codeSize] = line;
-	raw->codeSize++;
-
-	//Get the adr for the var in i1 and store it in i3
-	line.code = opcode_ADR;
-	line.r1 = 0;
-	line.r2 = 2;
-	raw->code[raw->codeSize] = line;
-	raw->codeSize++;
-	//Deallocate the adr at i3 with the size i2
-	line.code = opcode_DALLOC;
-	line.r1 = 2;
-	line.r2 = 1;
-	raw->code[raw->codeSize] = line;
-	raw->codeSize++;
-
-
-	//Allocate and adress in the heap for the var in i1 with the size i2 and store in i3
-	line.code = opcode_ALLOC;
-	line.r1 = 0;
-	line.r2 = 1;
-	line.r3 = 2;
-	raw->code[raw->codeSize] = line;
-	raw->codeSize++;
-
-	//Place the const adr in i1
-	line.code = opcode_PLACE;
-	line.r1 = 0;
-	line.type = 0;
-	line.scale = rtv.memory->GetVarAdr(sValue - 1);
-	raw->code[raw->codeSize] = line;
-	raw->codeSize++;
-	//Place the const from the stack at adr i1 to the heap at adr i3 with size i2
+	//Copy i1 bytes from i2 to i3
 	line.code = opcode_COPY;
 	line.r1 = 2;
-	line.r2 = 0;
-	line.r3 = 1;
+	line.r2 = 1;
+	line.r3 = 0;
 	raw->code[raw->codeSize] = line;
 	raw->codeSize++;
 
@@ -1798,7 +1942,7 @@ RunTimeError ImportNumOperator(rawCode* raw, unsigned int returnVar, unsigned ch
 
 	}
 
-	raw->maxLines = 6 + waitingLines + 1;
+	raw->maxLines = 5 + waitingLines + 1;
 	raw->code = new rawCode::line[raw->maxLines];
 
 	unsigned int size = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
@@ -1808,11 +1952,11 @@ RunTimeError ImportNumOperator(rawCode* raw, unsigned int returnVar, unsigned ch
 	unsigned int hVar = getHeapVal(rtv, name, init);
 
 	rawCode::line line;
-	//Place the adr of the var in i1
+	//Place the adr of the var in i3
 	line.code = opcode_PLACE;
-	line.r1 = 0;
+	line.r1 = 2;
 	line.type = 0;
-	line.scale = hVar;
+	line.scale = hVar + rtv.memory->GetMaxStack();;
 	raw->code[raw->codeSize] = line;
 	raw->codeSize++;
 	//Place 4 in i2
@@ -1820,12 +1964,6 @@ RunTimeError ImportNumOperator(rawCode* raw, unsigned int returnVar, unsigned ch
 	line.r1 = 1;
 	line.type = 0;
 	line.scale = 4;
-	raw->code[raw->codeSize] = line;
-	raw->codeSize++;
-	//Get the adr of i1 in i3
-	line.code = opcode_ADR;
-	line.r1 = 0;
-	line.r2 = 2;
 	raw->code[raw->codeSize] = line;
 	raw->codeSize++;
 	//Place the adr of the stack var in i1
@@ -1858,12 +1996,10 @@ RunTimeError ImportStrOperator(rawCode* raw, unsigned int returnVar, unsigned ch
 
 	}
 
-	raw->maxLines = 9 + waitingLines + 1;
+	raw->maxLines = 6 + waitingLines + 1;
 	raw->code = new rawCode::line[raw->maxLines];
 
-	unsigned char tempStr[64];
-
-	rtv.memory->AddVariable(returnVar - 1, tempStr, 64);
+	rtv.memory->AddVariable(returnVar - 1, 64);
 	unsigned int size = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
 	std::string name = getString((char*)params);
 
@@ -1871,11 +2007,11 @@ RunTimeError ImportStrOperator(rawCode* raw, unsigned int returnVar, unsigned ch
 	unsigned int hVar = getHeapVal(rtv, name, init);
 
 	rawCode::line line;
-	//Place the adr of the var in i1
+	//Place the adr of the var in i3
 	line.code = opcode_PLACE;
-	line.r1 = 0;
+	line.r1 = 2;
 	line.type = 0;
-	line.scale = hVar;
+	line.scale = hVar + rtv.memory->GetMaxStack();
 	raw->code[raw->codeSize] = line;
 	raw->codeSize++;
 	//Place 4 in i2
@@ -1885,50 +2021,33 @@ RunTimeError ImportStrOperator(rawCode* raw, unsigned int returnVar, unsigned ch
 	line.scale = 4;
 	raw->code[raw->codeSize] = line;
 	raw->codeSize++;
-	//Get the adr of i1 in i3
-	line.code = opcode_ADR;
-	line.r1 = 2;
-	raw->code[raw->codeSize] = line;
-	raw->codeSize++;
-	//Place the adr of the stack var in i1
-	line.code = opcode_PLACE;
-	line.r1 = 0;
-	line.type = 0;
-	line.scale = returnVar - 1;
-	raw->code[raw->codeSize] = line;
-	raw->codeSize++;
-	//Copy i2 bytes from i3 to i1
-	line.code = opcode_COPY;
-	line.r1 = 0;
-	line.r2 = 2;
-	line.r3 = 1;
-	raw->code[raw->codeSize] = line;
-	raw->codeSize++;
-	//Load the value from the stack at adr i1 to i1
+	//Load the value from i3 to i1
 	line.code = opcode_LOAD;
 	line.r1 = 0;
-	line.r2 = 0;
+	line.r2 = 2;
+	line.type = 0;
 	raw->code[raw->codeSize] = line;
 	raw->codeSize++;
-	//Add i1 to i2 end store it in 12
+	//Add i1 to i2 and store it in 11
 	line.code = opcode_ADD;
 	line.r1 = 1;
 	line.r2 = 0;
 	line.r2 = 1;
 	raw->code[raw->codeSize] = line;
 	raw->codeSize++;
-	//Place the adr of the stack var in i1
+
+	//Place the adr of the stack var in i2
 	line.code = opcode_PLACE;
-	line.r1 = 0;
+	line.r1 = 1;
 	line.type = 0;
 	line.scale = rtv.memory->GetVarAdr(returnVar - 1);
 	raw->code[raw->codeSize] = line;
 	raw->codeSize++;
-	//Copy i2 bytes from i3 to i1
+	//Copy i1 bytes from i3 to i2
 	line.code = opcode_COPY;
-	line.r1 = 0;
+	line.r1 = 1;
 	line.r2 = 2;
-	line.r3 = 1;
+	line.r3 = 0;
 	raw->code[raw->codeSize] = line;
 	raw->codeSize++;
 
@@ -2769,6 +2888,46 @@ RunTimeError NumEqlVarOperator(rawCode* raw, unsigned int returnVar, unsigned ch
 
 }
 
+RunTimeError OffsetNumOperator(rawCode* raw, unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int offset, unsigned int byteLine, runTimeVal &rtv)
+{
+
+	if (paramSize < 4)
+	{
+
+		return RunTimeError_BADPARAMS;
+
+	}
+
+	raw->maxLines = commonMathLines + 1;
+	raw->code = new rawCode::line[raw->maxLines];
+
+	unsigned int var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
+
+	commonOffset(var - 1, 4, rtv, raw);
+	return RunTimeError_OK;
+
+}
+
+RunTimeError OffsetStrOperator(rawCode* raw, unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int offset, unsigned int byteLine, runTimeVal &rtv)
+{
+
+	if (paramSize < 4)
+	{
+
+		return RunTimeError_BADPARAMS;
+
+	}
+
+	raw->maxLines = commonMathLines + 1;
+	raw->code = new rawCode::line[raw->maxLines];
+
+	unsigned int var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
+
+	commonOffset(var - 1, 64, rtv, raw);
+	return RunTimeError_OK;
+
+}
+
 RunTimeError OrbitOperator(rawCode* raw, unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int offset, unsigned int byteLine, runTimeVal &rtv)
 {
 
@@ -3460,7 +3619,7 @@ RunTimeError SetConstValOperator(rawCode* raw,unsigned int returnVar, unsigned c
 
 
 	unsigned int var = params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24);
-	rtv.memory->AddVariable(var - 1, &params[4], paramSize - 4);
+	rtv.memory->AddVariable(var - 1, paramSize - 4);
 
 	unsigned int bytes = paramSize - 4;
 	unsigned int writtenBytes = 0;
@@ -3938,8 +4097,6 @@ RunTimeError SetVarValOperator(rawCode* raw,unsigned int returnVar, unsigned cha
 
 	unsigned int var1 = params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24);
 	unsigned int var2 = params[4] | ((int)params[5] << 8) | ((int)params[6] << 16) | ((int)params[7] << 24);
-
-	rtv.memory->CopyVariable(var1 - 1, var2 - 1);
 
 	rawCode::line line;
 	//Place the adress of var1 in i1
@@ -4879,6 +5036,11 @@ KubLingRawTranslator::KubLingRawTranslator()
 
 	translator[bytecode_PSEGME] = PauseGameOperator;
 	translator[bytecode_RSMGME] = ResumeGameOperator;
+
+	translator[bytecode_NUMARR] = ArrayNumOperator;
+	translator[bytecode_STRARR] = ArrayStrOperator;
+	translator[bytecode_NUMOFFST] = OffsetNumOperator;
+	translator[bytecode_STROFFST] = OffsetStrOperator;
 
 	translator[bytecode_JMPINVVAR] = JumpInv;
 	translator[bytecode_JMPNOW] = JumpNow;

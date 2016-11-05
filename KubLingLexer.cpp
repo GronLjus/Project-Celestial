@@ -6,6 +6,8 @@ using namespace Logic;
 using namespace CrossHandlers;
 using namespace std;
 
+bool hasOffset;
+
 KubLingLexer::KubLingLexer(Keyword* keywords, int keyWordsSize, Operator* operators, int operatorSize)
 {
 
@@ -42,13 +44,13 @@ CelestialList<string>* KubLingLexer::extractWords(string line)
 
 		isQoutes = line[i] == '\'' ? !isQoutes : isQoutes;
 		
-		if (line[i] == '(')
+		if (line[i] == '(' || line[i] == '[')
 		{
 
 			bracketLevel++;
 
 		}
-		else if (line[i] == ')')
+		else if (line[i] == ')' || line[i] == ']')
 		{
 
 			if (bracketLevel != 0)
@@ -118,9 +120,83 @@ Token KubLingLexer::translateWord(string word, CompileError &err, int lNumber)
 	if (!found)
 	{
 
-		bool isNumber = true;
 		bool isParam = word[0] == '?';
 		bool isFloat = false;
+
+		bool isOffset = false;
+
+		//Check if bracket
+		bool hasBracket = false;
+		bool isBracket = word[0] == '(';
+		unsigned char brLvl = 0;
+
+		for (int k = 0; k < word.length() && isBracket; k++)
+		{
+
+			hasBracket = true;
+
+			if (word[k] == ')')
+			{
+
+				brLvl--;
+
+			}
+			else if (word[k] == '(')
+			{
+
+				brLvl++;
+
+			}
+			else if (brLvl == 0)
+			{
+
+				isBracket = false;
+
+			}
+		}
+
+		//Check if offset
+
+		if (!isBracket)
+		{
+
+			isOffset = !getShortHand(word[0]);
+
+			if (isOffset)
+			{
+
+				unsigned int firstPlace = word.find('[');
+				isOffset = firstPlace != std::string::npos;
+				unsigned char offLvl = 0;
+
+				for (unsigned int k = firstPlace; k < word.length(); k++)
+				{
+
+					if (word[k] == '[')
+					{
+
+						hasBracket = true;
+						offLvl++;
+
+					}
+					else if (word[k] == ']')
+					{
+
+						offLvl--;
+
+					}
+					else if (offLvl == 0)
+					{
+
+						isOffset = false;
+					}
+
+				}
+			}
+		}
+
+
+		bool isNumber = !hasBracket;
 
 		for (int k = isParam ? 1 : 0; k < word.length() && isNumber; k++)
 		{
@@ -143,6 +219,8 @@ Token KubLingLexer::translateWord(string word, CompileError &err, int lNumber)
 			}
 		}
 
+		unsigned char bracketLevel = 0;
+
 		if (word[0] == '\'' || isNumber)
 		{
 
@@ -163,6 +241,24 @@ Token KubLingLexer::translateWord(string word, CompileError &err, int lNumber)
 				val = 's' + val;
 
 			}
+		}
+		else if (isBracket)
+		{
+
+			type = TokenType_BRACKET;
+
+		}
+		else if (isOffset)
+		{
+
+			type = TokenType_OFFSET;
+
+		}
+		else if (hasBracket)
+		{
+
+			type = TokenType_SEQ;
+
 		}
 		else
 		{
@@ -186,7 +282,10 @@ CelestialDoubleList<Token>* KubLingLexer::tokenizeWord(string word, int lNumber,
 	bool breakSearch = false;
 	bool isQoutes = false;
 	CelestialDoubleList<Token>* returnVal = new CelestialDoubleList<Token>();
-	unsigned char bracketLevel = 0;
+
+	CelestialStack<char>* lastBracket = new CelestialStack<char>(false);
+	lastBracket->PushElement(' ');
+
 	string temWord = "";
 
 	for (unsigned int i = 0; i < word.length() && !breakSearch; i++)
@@ -210,6 +309,7 @@ CelestialDoubleList<Token>* KubLingLexer::tokenizeWord(string word, int lNumber,
 			bool isSep = word[i] == ';' || word[i] == ',';
 			bool isBracket = word[i] == '(' || word[i] == ')';
 			bool isBod = word[i] == '{' || word[i] == '}';
+			bool isOffset = word[i] == '[' || word[i] == ']';
 
 			if (isSep)
 			{
@@ -226,25 +326,24 @@ CelestialDoubleList<Token>* KubLingLexer::tokenizeWord(string word, int lNumber,
 
 				}
 			}
-			else if (isBracket)
+			else if (isBracket || isOffset)
 			{
 
-				if (word[i] == '(')
+				if (word[i] == '(' || word[i] == '[')
 				{
 
-					bracketLevel++;
+					lastBracket->PushElement(word[i]);
 
 				}
 				else
 				{
 
-					if (bracketLevel != 0)
-					{
+					char lastBr = lastBracket->PeekElement() != ' ' ? lastBracket->PopElement() : ' ';
+					bool lastMatch = lastBr != ' ' && (
+						(lastBr == '(' && word[i] == ')') || 
+						(lastBr == '[' && word[i] == ']'));
 
-						bracketLevel--;
-
-					}
-					else
+					if (!lastMatch)
 					{
 
 						err.errorType = ScriptError_UNCLOSED;
@@ -281,7 +380,7 @@ CelestialDoubleList<Token>* KubLingLexer::tokenizeWord(string word, int lNumber,
 		}
 	}
 
-	if (isQoutes || bracketLevel > 0)
+	if (isQoutes || lastBracket->PopElement() != ' ')
 	{
 
 		err.errorType = ScriptError_UNCLOSED;
@@ -316,13 +415,15 @@ CelestialDoubleList<Token>* KubLingLexer::tokenizeWord(string word, int lNumber,
 
 		lt.type = lt.type == TokenType_PARAM ||
 			lt.type == TokenType_VAR ||
-			lt.type == TokenType_WORD ? TokenType_WORD : lt.type;
+			lt.type == TokenType_WORD ||
+			lt.type == TokenType_SEQ ? TokenType_WORD : lt.type;
 
 		lt.line = lNumber;
 		returnVal->PushElement(lt); 
 
 	}
 
+	delete lastBracket;
 	return returnVal;
 
 }
@@ -512,65 +613,193 @@ void KubLingLexer::flipParamsAroundOp(CelestialDoubleListNode<Token>* shortHandN
 	}
 }
 
-void KubLingLexer::breakOutBrackets(CelestialDoubleListNode<Token>* tok, int lNumber)
+unsigned int KubLingLexer::breakOutBrackets(CelestialDoubleListNode<Token>* tok, int lNumber, CompileError &err)
 {
+
+	unsigned int increased = 0;
+	Token tokn = tok->GetNodeObject();
+	char startBrack = '(';
+	char endBrack = ')';
+	TokenType type = TokenType_BRACKET;
+
+	if (tokn.type == TokenType_BRACKET)
+	{
+
+		if (tokn.val[0] == '(' && tokn.val[tokn.val.length()-1] == ')')
+		{
+
+			tokn.val = tokn.val.substr(1, tokn.val.length() - 2);
+			tokn.type = TokenType_WORD;
+
+		}
+	}
+	else if (tokn.type == TokenType_OFFSET)
+	{
+
+		if (hasOffset)
+		{
+
+			err.errorType = ScriptError_TOMANYPARAM;
+			err.line = lNumber;
+
+		}
+
+		hasOffset = true;
+		if (tokn.val[tokn.val.length() - 1] == ']')
+		{
+
+			unsigned int start = 0;
+
+			for (unsigned int i = 0; i < tokn.val.length(); i++)
+			{
+
+				if (tokn.val[i] == '[')
+				{
+
+					start = i;
+
+				}
+			}
+
+			if (start != 0)
+			{
+
+				increased++;
+				string var = tokn.val.substr(0,start);
+				Token varTok = translateWord(var, err, lNumber);
+				CelestialDoubleListNode<Token>* varPointer = new CelestialDoubleListNode<Token>(varTok);
+
+				if (tok->GetPrev() != nullptr)
+				{
+
+					tok->GetPrev()->SetNext(varPointer);
+					varPointer->SetPrev(tok->GetPrev());
+
+				}
+
+				varPointer->SetNext(tok);
+				tok->SetPrev(varPointer);
+
+				startBrack = '[';
+				endBrack = ']';
+				type = TokenType_OFFSET;
+
+				tokn.val = tokn.val.substr(start + 1, tokn.val.length() - 1 - (start + 1));
+				tokn.type = TokenType_WORD;
+
+			}
+		}
+	}
+
+	tok->SetNodeObject(tokn);
 
 	Token startBracket;
 	startBracket.line = lNumber;
-	startBracket.type = TokenType_BRACKET;
-	startBracket.val = '(';
+	startBracket.type = type;
+	startBracket.val = startBrack;
+	CelestialDoubleListNode<Token>* startNode = new CelestialDoubleListNode<Token>(startBracket);
 
-	CelestialDoubleListNode<Token>* tempPrev = tok->GetPrev();
-	tok->SetPrev(new CelestialDoubleListNode<Token>(startBracket));
-	tok->GetPrev()->SetNext(tok);
-	tok->GetPrev()->SetPrev(tempPrev);
-
-	if (tempPrev != nullptr)
+	if (tok->GetPrev() != nullptr)
 	{
 
-		tempPrev->SetNext(tok->GetPrev());
+		tok->GetPrev()->SetNext(startNode);
+		startNode->SetPrev(tok->GetPrev());
 
 	}
 
-	unsigned int startRemove = 1;
-
-	for (unsigned int i = 1; i < tok->GetNodeObject().val.length() && tok->GetNodeObject().val[i] == ' '; i++)
-	{
-
-		startRemove++;
-
-	}
+	startNode->SetNext(tok);
+	tok->SetPrev(startNode);
 
 	Token endBracket;
 	endBracket.line = lNumber;
-	endBracket.type = TokenType_BRACKET;
-	endBracket.val = ')';
+	endBracket.type = type;
+	endBracket.val = endBrack;
+	CelestialDoubleListNode<Token>* endNode = new CelestialDoubleListNode<Token>(endBracket);
 
-	CelestialDoubleListNode<Token>* tempNext = tok->GetNext();
-	tok->SetNext(new CelestialDoubleListNode<Token>(endBracket));
-	tok->GetNext()->SetPrev(tok);
-	tok->GetNext()->SetNext(tempNext);
-
-	if (tempNext != nullptr)
+	if (tok->GetNext() != nullptr)
 	{
 
-		tempNext->SetPrev(tok->GetNext());
+		tok->GetNext()->SetPrev(endNode);
+		endNode->SetNext(tok->GetNext());
 
 	}
 
-	Token tokenVal = tok->GetNodeObject();
+	endNode->SetPrev(tok);
+	tok->SetNext(endNode);
 
-	unsigned int endRemove = 1;
+	increased += 2;
 
-	for (unsigned int i = tokenVal.val.length() - 2; i >= 0 && tok->GetNodeObject().val[i] == ' '; i--)
+	CelestialList<string>* words = extractWords(tokn.val);
+	CelestialListNode<string>* word = words->GetFirstNode();
+	CelestialDoubleList<Token>* returnVal = new CelestialDoubleList<Token>();
+
+	while (word != nullptr && err.errorType == ScriptError_OK)
 	{
 
-		endRemove++;
+		CelestialDoubleList<Token>* tokens = tokenizeWord(word->GetNodeObject(), lNumber, err);
+		returnVal->AddElement(tokens);
+		delete tokens;
+		word = word->GetNext();
 
 	}
 
-	tokenVal.val = tokenVal.val.substr(startRemove, tokenVal.val.length() - (endRemove+startRemove));
-	tok->SetNodeObject(tokenVal);
+	delete words;
+
+	if (err.errorType == ScriptError_OK)
+	{
+
+		extractOps(returnVal, lNumber, err);
+		tok->SetNodeObject(returnVal->GetFirstNode()->GetNodeObject());
+
+		CelestialDoubleListNode<Token>* nextNode = returnVal->GetFirstNode()->GetNext();
+		CelestialDoubleListNode<Token>* lastNode = returnVal->GetLastNode();
+
+		if (nextNode != nullptr)
+		{
+
+			lastNode->SetNext(tok->GetNext());
+
+			if (tok->GetNext() != nullptr)
+			{
+
+				tok->GetNext()->SetPrev(lastNode);
+
+			}
+
+			tok->SetNext(nextNode);
+			nextNode->SetPrev(tok);
+			returnVal->GetFirstNode()->SetNext(nullptr);
+
+		}
+	}
+
+	returnVal->Reset();
+	delete returnVal;
+
+	return increased;
+
+}
+
+bool KubLingLexer::getShortHand(char val)
+{
+
+	for (int k = 0; k < operatorSize; k++)
+	{
+
+		for (int j = 0; j < operators[k].shortHandsAmounts; j++)
+		{
+
+			if (val == operators[k].shortHands[j][0])
+			{
+
+
+				return true;
+
+			}
+		}
+	}
+
+	return false;
 
 }
 
@@ -588,13 +817,13 @@ unsigned int KubLingLexer::getShortHand(string word)
 
 		isQoutes = word[i] == '\'' ? !isQoutes : isQoutes;
 
-		if (word[i] == '(')
+		if (word[i] == '(' || word[i] == '[')
 		{
 
 			bracketLev++;
 
 		}
-		else if (word[i] == ')')
+		else if (word[i] == ')' || word[i] == ']')
 		{
 
 			if (bracketLev != 0)
@@ -605,27 +834,11 @@ unsigned int KubLingLexer::getShortHand(string word)
 			}
 		}
 
-		int sh = -1;
-
-		for (int k = 0; k < operatorSize && sh == -1; k++)
+		if (bracketLev == 0)
 		{
 
-			for (int j = 0; j < operators[k].shortHandsAmounts && sh == -1; j++)
-			{
+			shortHand = getShortHand(word[i]) ? i +1 : 0;
 
-				if (word[i] == operators[k].shortHands[j][0])
-				{
-
-					sh = j;
-
-					if (bracketLev == 0)
-					{
-
-						shortHand = i+1;
-
-					}
-				}
-			}
 		}
 	}
 
@@ -651,7 +864,7 @@ unsigned int KubLingLexer::getBracketLevels(CelestialDoubleList<Token>* tokens)
 
 			isQoutes = token.val[i] == '\'' ? !isQoutes : isQoutes;
 
-			if (token.val[i] == '(' && !isQoutes)
+			if ((token.val[i] == '(' || token.val[i] == '[') && !isQoutes)
 			{
 
 				bracketLevels++;
@@ -663,7 +876,7 @@ unsigned int KubLingLexer::getBracketLevels(CelestialDoubleList<Token>* tokens)
 
 				}
 			}
-			else if (token.val[i] == ')' && !isQoutes)
+			else if ((token.val[i] == ')' || token.val[i] == ']') && !isQoutes)
 			{
 
 				if (bracketLevels != 0)
@@ -756,9 +969,14 @@ CelestialDoubleListNode<Token>* KubLingLexer::breakOutShortHand(CelestialDoubleL
 
 	}
 
-	if (token->GetPrev() == nullptr || 
+	CelestialDoubleListNode<Token>* prevNode = token->GetPrev();
+
+	if (prevNode == nullptr ||
 		(leftOfShort == "" && token->GetNodeObject().val.length() > 1)||
-		(token->GetPrev()->GetNodeObject().type != TokenType_WORD && token->GetPrev()->GetNodeObject().type != TokenType_UNARY))//Is unary operator
+		(prevNode->GetNodeObject().type != TokenType_WORD &&
+			prevNode->GetNodeObject().type != TokenType_UNARY &&
+			prevNode->GetNodeObject().type != TokenType_BRACKET &&
+			prevNode->GetNodeObject().type != TokenType_OFFSET))//Is unary operator
 	{
 
 		if (token->GetNodeObject().val.length() == 1)
@@ -790,56 +1008,37 @@ void KubLingLexer::extractOps(CelestialDoubleList<Token>* tokens, int lNumber, C
 	}
 
 	CelestialStack<CelestialDoubleListNode<Token>*>* unaries = new CelestialStack<CelestialDoubleListNode<Token>*>(false);
+
 	CelestialStack<CelestialDoubleListNode<Token>*>* nonUnaries = new CelestialStack<CelestialDoubleListNode<Token>*>(false);
 
-	unsigned char brackets = getBracketLevels(tokens)+1;
+	CelestialStack<CelestialDoubleListNode<Token>*>* bracketOffsets = new CelestialStack<CelestialDoubleListNode<Token>*>(false);
 
-	for (unsigned int i = 0; i<brackets; i++)
+	CelestialDoubleListNode<Token>* tok = tokens->GetFirstNode();
+	unsigned int startVal = 0;
+
+	while (tok != nullptr)
 	{
 
-		CelestialDoubleListNode<Token>* tok = tokens->GetFirstNode();
-		unsigned int startVal = 0;
-
-		while (tok != nullptr)
+		if (tok->GetNodeObject().type == TokenType_WORD || tok->GetNodeObject().type == TokenType_UNARY || tok->GetNodeObject().type == TokenType_KEYWORD)
 		{
 
-			if (tok->GetNodeObject().val[tok->GetNodeObject().val.length() - 1] == ')' && tok->GetNodeObject().val[0] == '(')
-			{
-				
-				breakOutBrackets(tok, lNumber);
-				tokens->IncrementCount();
-				tokens->IncrementCount();
+			unsigned int shortHand = getShortHand(tok->GetNodeObject().val.substr(startVal));
 
-			}
-
-			if (tok->GetNodeObject().type == TokenType_WORD || tok->GetNodeObject().type == TokenType_UNARY || tok->GetNodeObject().type == TokenType_KEYWORD)
+			if (shortHand > 0)
 			{
 
-				unsigned int shortHand = getShortHand(tok->GetNodeObject().val.substr(startVal));
+				CelestialDoubleListNode<Token>* node = breakOutShortHand(tok, tokens, shortHand-1+startVal, lNumber, err);
 
-				if (shortHand > 0)
+				if (node->GetNodeObject().type == TokenType_UNARY)
 				{
 
-					CelestialDoubleListNode<Token>* node = breakOutShortHand(tok, tokens, shortHand-1+startVal, lNumber, err);
+					startVal++;
 
-					if (node->GetNodeObject().type == TokenType_UNARY)
-					{
-
-						startVal++;
-
-					}
-					else
-					{
-
-						nonUnaries->PushElement(node);
-						tok = tok->GetNext();
-						startVal = 0;
-
-					}
 				}
 				else
 				{
 
+					nonUnaries->PushElement(node);
 					tok = tok->GetNext();
 					startVal = 0;
 
@@ -853,201 +1052,310 @@ void KubLingLexer::extractOps(CelestialDoubleList<Token>* tokens, int lNumber, C
 
 			}
 		}
-
-		tok = tokens->GetFirstNode();
-
-		while (tok != nullptr)
+		else
 		{
 
-			if (tok->GetNodeObject().type == TokenType_WORD || tok->GetNodeObject().type == TokenType_UNARY)
-			{
-
-				unsigned int shortHand = getShortHand(tok->GetNodeObject().val);
-
-				if (shortHand > 0)
-				{
-
-					CelestialDoubleListNode<Token>* node = breakOutShortHand(tok, tokens, shortHand - 1 + startVal, lNumber, err);
-
-					if (node->GetNodeObject().type == TokenType_UNARY)
-					{
-
-						unaries->PushElement(node);
-
-					}
-				}
-			}
-			
 			tok = tok->GetNext();
-
-		}
-
-		while (nonUnaries->GetCount() > 0)
-		{
-
-			CelestialDoubleListNode<Token>* node = nonUnaries->PopElement();
-			Token opTok = node->GetNodeObject();
-			int sh = -1;
-
-			for (int k = 0; k < operatorSize && sh == -1; k++)
-			{
-
-				for (int j = 0; j < operators[k].shortHandsAmounts && sh == -1; j++)
-				{
-
-					if (opTok.val == operators[k].shortHands[j])
-					{
-
-						sh = j;
-						opTok.val = operators[k].keyword;
-
-						if (operators[k].shortFlipParams[j])
-						{
-
-							flipParamsAroundOp(node, operators[k].leftParams[j], operators[k].rightParams[j]);
-
-						}
-
-						CelestialDoubleListNode<Token>* rightTok = node;
-
-						for (unsigned char h = 0; h < operators[k].rightParams[j]; h++)
-						{
-
-							rightTok = rightTok->GetNext();
-
-						}
-
-						moveParamsOfOp(node, operators[k].leftParams[j]);
-						node->SetNodeObject(opTok);
-
-						while (tokens->GetFirstNode()->GetPrev() != nullptr)
-						{
-
-							tokens->SetFirst(tokens->GetFirstNode()->GetPrev());
-
-						}
-
-						while (tokens->GetLastNode()->GetNext() != nullptr)
-						{
-
-							tokens->SetLast(tokens->GetLastNode()->GetNext());
-
-						}
-					}
-				}
-			}
-		}
-
-		while (unaries->GetCount() > 0)
-		{
-
-			CelestialDoubleListNode<Token>* node = extractRights(unaries->PopElement(), tokens,0,lNumber,err);
-
-			Token leftBracket;
-			leftBracket.line = lNumber;
-			leftBracket.type = TokenType_BRACKET;
-			leftBracket.val = '(';
-
-			CelestialDoubleListNode<Token>* leftNode = new CelestialDoubleListNode<Token>(leftBracket);
-			leftNode->SetNext(node);
-			leftNode->SetPrev(node->GetPrev());
-			node->SetPrev(leftNode);
-
-			if (leftNode->GetPrev() != nullptr)
-			{
-
-				leftNode->GetPrev()->SetNext(leftNode);
-
-			}
-
-			Token opTok = node->GetNodeObject();
-			int sh = -1;
-
-			for (int k = 0; k < operatorSize && sh == -1; k++)
-			{
-
-				for (int j = 0; j < operators[k].shortHandsAmounts && sh == -1; j++)
-				{
-
-					if (opTok.val == operators[k].shortHands[j])
-					{
-
-						opTok.val = operators[k].keyword;
-						node->SetNodeObject(opTok);
-						node = node->GetNext();
-						unsigned char rights = 1;
-
-						while (node != nullptr && (
-							node->GetNodeObject().type == TokenType_WORD ||
-							node->GetNodeObject().type == TokenType_KEYWORD ||
-							node->GetNodeObject().type == TokenType_UNARY) &&
-							rights < operators[k].rightParams[j])
-						{
-
-							node = node->GetNext();
-							rights++;
-
-						}
-
-						Token rightBracket;
-						rightBracket.line = lNumber;
-						rightBracket.type = TokenType_BRACKET;
-						rightBracket.val = ')';
-
-						Token rightSep;
-						rightSep.line = lNumber;
-						rightSep.type = TokenType_SEPERATOR;
-						rightSep.val = ',';
-
-						CelestialDoubleListNode<Token>* rightNode = new CelestialDoubleListNode<Token>(rightSep);
-						CelestialDoubleListNode<Token>* rightNode2 = new CelestialDoubleListNode<Token>(rightBracket);
-						rightNode2->SetPrev(rightNode);
-						rightNode->SetNext(rightNode2);
-
-						rightNode->SetPrev(node);
-						rightNode2->SetNext(node->GetNext());
-						node->SetNext(rightNode);
-
-						if (rightNode2->GetNext() != nullptr)
-						{
-
-							rightNode2->GetNext()->SetPrev(rightNode2);
-
-						}
-
-						while (tokens->GetLastNode()->GetNext() != nullptr)
-						{
-
-							tokens->SetLast(tokens->GetLastNode()->GetNext());
-
-						}
-
-						sh = j;
-
-					}
-				}
-			}
-
-			tokens->IncrementCount();
-			tokens->IncrementCount();
-			tokens->IncrementCount();
+			startVal = 0;
 
 		}
 	}
 
+	tok = tokens->GetFirstNode();
+
+	while (tok != nullptr)
+	{
+
+		if (tok->GetNodeObject().type == TokenType_WORD || tok->GetNodeObject().type == TokenType_UNARY)
+		{
+
+			unsigned int shortHand = getShortHand(tok->GetNodeObject().val);
+
+			if (shortHand > 0)
+			{
+
+				CelestialDoubleListNode<Token>* node = breakOutShortHand(tok, tokens, shortHand - 1 + startVal, lNumber, err);
+
+				if (node->GetNodeObject().type == TokenType_UNARY)
+				{
+
+					unaries->PushElement(node);
+
+				}
+			}
+		}
+		else if (tok->GetNodeObject().type == TokenType_BRACKET || tok->GetNodeObject().type == TokenType_OFFSET)
+		{
+
+			bracketOffsets->PushElement(tok);
+
+		}
+			
+		tok = tok->GetNext();
+
+	}
+
+	while (nonUnaries->GetCount() > 0)
+	{
+
+		CelestialDoubleListNode<Token>* node = nonUnaries->PopElement();
+		Token opTok = node->GetNodeObject();
+		int sh = -1;
+
+		for (int k = 0; k < operatorSize && sh == -1; k++)
+		{
+
+			for (int j = 0; j < operators[k].shortHandsAmounts && sh == -1; j++)
+			{
+
+				if (opTok.val == operators[k].shortHands[j])
+				{
+
+					sh = j;
+					opTok.val = operators[k].keyword;
+
+					if (operators[k].shortFlipParams[j])
+					{
+
+						flipParamsAroundOp(node, operators[k].leftParams[j], operators[k].rightParams[j]);
+
+					}
+
+					CelestialDoubleListNode<Token>* rightTok = node;
+
+					for (unsigned char h = 0; h < operators[k].rightParams[j]; h++)
+					{
+
+						rightTok = rightTok->GetNext();
+
+					}
+
+					CelestialDoubleListNode<Token>* sep = rightTok;
+
+					if (sep->GetNodeObject().type == TokenType_KEYWORD)
+					{
+
+						while (sep->GetNext() != nullptr && 
+							sep->GetNodeObject().type != TokenType_SEPERATOR)
+						{
+
+							sep = sep->GetNext();
+
+						}
+					}
+
+					Token sepTok;
+					sepTok.line = lNumber;
+					sepTok.type = TokenType_SEPERATOR;
+					sepTok.val = ',';
+					CelestialDoubleListNode<Token>* tokNode = new CelestialDoubleListNode<Token>(sepTok);
+
+					tokNode->SetNext(sep->GetNext());
+					tokNode->SetPrev(sep);
+					sep->SetNext(tokNode);
+
+					if (tokNode->GetNext() != nullptr)
+					{
+
+						tokNode->GetNext()->SetPrev(tokNode);
+
+					}
+
+					moveParamsOfOp(node, operators[k].leftParams[j]);
+					node->SetNodeObject(opTok);
+
+					while (tokens->GetFirstNode()->GetPrev() != nullptr)
+					{
+
+						tokens->SetFirst(tokens->GetFirstNode()->GetPrev());
+
+					}
+
+					while (tokens->GetLastNode()->GetNext() != nullptr)
+					{
+
+						tokens->SetLast(tokens->GetLastNode()->GetNext());
+
+					}
+				}
+			}
+		}
+	}
+
+	while (unaries->GetCount() > 0)
+	{
+
+		CelestialDoubleListNode<Token>* node = extractRights(unaries->PopElement(), tokens,0,lNumber,err);
+
+		if (node->GetNext()->GetNodeObject().type == TokenType_BRACKET ||
+			node->GetNext()->GetNodeObject().type == TokenType_OFFSET)
+		{
+
+			bracketOffsets->PushElement(node->GetNext());
+
+		}
+
+		Token leftBracket;
+		leftBracket.line = lNumber;
+		leftBracket.type = TokenType_BRACKET;
+		leftBracket.val = '(';
+
+		CelestialDoubleListNode<Token>* leftNode = new CelestialDoubleListNode<Token>(leftBracket);
+		leftNode->SetNext(node);
+		leftNode->SetPrev(node->GetPrev());
+		node->SetPrev(leftNode);
+
+		if (leftNode->GetPrev() != nullptr)
+		{
+
+			leftNode->GetPrev()->SetNext(leftNode);
+
+		}
+
+		Token opTok = node->GetNodeObject();
+		int sh = -1;
+
+		for (int k = 0; k < operatorSize && sh == -1; k++)
+		{
+
+			for (int j = 0; j < operators[k].shortHandsAmounts && sh == -1; j++)
+			{
+
+				if (opTok.val == operators[k].shortHands[j])
+				{
+
+					opTok.val = operators[k].keyword;
+					node->SetNodeObject(opTok);
+					node = node->GetNext();
+					unsigned char rights = 1;
+
+					while (node != nullptr && (
+						node->GetNodeObject().type == TokenType_WORD ||
+						node->GetNodeObject().type == TokenType_KEYWORD ||
+						node->GetNodeObject().type == TokenType_UNARY) &&
+						rights < operators[k].rightParams[j])
+					{
+
+						node = node->GetNext();
+						rights++;
+
+					}
+
+					Token rightBracket;
+					rightBracket.line = lNumber;
+					rightBracket.type = TokenType_BRACKET;
+					rightBracket.val = ')';
+
+					Token rightSep;
+					rightSep.line = lNumber;
+					rightSep.type = TokenType_SEPERATOR;
+					rightSep.val = ',';
+
+					CelestialDoubleListNode<Token>* rightNode = new CelestialDoubleListNode<Token>(rightSep);
+					CelestialDoubleListNode<Token>* rightNode2 = new CelestialDoubleListNode<Token>(rightBracket);
+					rightNode2->SetPrev(rightNode);
+					rightNode->SetNext(rightNode2);
+
+					rightNode->SetPrev(node);
+					rightNode2->SetNext(node->GetNext());
+					node->SetNext(rightNode);
+
+					if (rightNode2->GetNext() != nullptr)
+					{
+
+						rightNode2->GetNext()->SetPrev(rightNode2);
+
+					}
+
+					while (tokens->GetLastNode()->GetNext() != nullptr)
+					{
+
+						tokens->SetLast(tokens->GetLastNode()->GetNext());
+
+					}
+
+					sh = j;
+
+				}
+			}
+		}
+
+		tokens->IncrementCount();
+		tokens->IncrementCount();
+		tokens->IncrementCount();
+
+	}
+
+	while (bracketOffsets->GetCount() > 0 && err.errorType == ScriptError_OK)
+	{
+
+		CelestialDoubleListNode<Token>* tokn = bracketOffsets->PopElement();
+
+		unsigned int breakOuts = breakOutBrackets(tokn, lNumber, err);
+		tokens->IncrementCountBy(breakOuts);
+
+		while (tokens->GetLastNode()->GetNext() != nullptr)
+		{
+
+			tokens->SetLast(tokens->GetLastNode()->GetNext());
+
+		}
+
+	}
+
 	delete unaries;
 	delete nonUnaries;
+	delete bracketOffsets;
 
 }
 
 CelestialDoubleList<Token>* KubLingLexer::TokenizeLine(string line, int lNumber, CompileError &err)
 {
 
+	hasOffset = false;
 	CelestialDoubleList<Token>* returnVal = new CelestialDoubleList<Token>();
 	bool isFlow = false;
 
 	if (line != "")
 	{
+
+		string newLine ="";
+		bool str = false;
+
+		//Add spaces
+		/*for (unsigned int i = 0; i < line.length(); i++)
+		{
+
+			str = line[i] == '\'' && !str;
+
+			if (!str && (getShortHand(line[i]) || line[i] == ',' || line[i] == ';'))
+			{
+
+				if (i > 0 && line[i - 1] != ' ')
+				{
+
+					newLine = newLine.append(" ");
+
+				}
+
+				newLine = newLine.append(&line[i], 1);
+
+				if (i + 1 == line.length() || line[i + 1] != ' ')
+				{
+
+					newLine = newLine.append(" ");
+
+				}
+			}
+			else
+			{
+
+				newLine = newLine.append(&line[i], 1);
+
+			}
+		}
+
+		line = newLine;*/
 
 		CelestialList<string>* words = extractWords(line);
 		CelestialListNode<string>* word = words->GetFirstNode();
@@ -1070,7 +1378,7 @@ CelestialDoubleList<Token>* KubLingLexer::TokenizeLine(string line, int lNumber,
 			extractOps(returnVal, lNumber, err);
 			CelestialDoubleListNode<Token>* tok = returnVal->GetFirstNode();
 
-			while (tok != nullptr)
+			while (tok != nullptr && err.errorType == ScriptError_OK)
 			{
 
 				if (tok->GetNodeObject().type == TokenType_WORD)
@@ -1078,8 +1386,6 @@ CelestialDoubleList<Token>* KubLingLexer::TokenizeLine(string line, int lNumber,
 
 					Token token = translateWord(tok->GetNodeObject().val, err, lNumber);
 					token.line = lNumber;
-
-					
 
 					tok->SetNodeObject(token);
 

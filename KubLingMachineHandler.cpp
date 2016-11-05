@@ -29,7 +29,7 @@ KubLingMachineHandler::KubLingMachineHandler(MessageQueue* queue,
 	for (unsigned int i = 0; i < totalMachines; i++)
 	{
 
-		machines[i] = new KubLingMachine(queue, mBuffer, maxMess, currentMess, stackMem, objectContainer);
+		machines[i] = new KubLingMachine(queue, mBuffer, maxMess, currentMess, stackMem, 524287, objectContainer);
 		readyMachines->PushElement(machines[i]);
 
 	}
@@ -44,6 +44,8 @@ bool KubLingMachineHandler::Stopped() const
 
 void KubLingMachineHandler::SetCode(unsigned long long* code, unsigned int size, HeapMemory* heap)
 {
+
+	this->heap = heap;
 
 	for (unsigned int i = 0; i < totalMachines; i++)
 	{
@@ -71,8 +73,19 @@ unsigned int KubLingMachineHandler::PrimeLabel(unsigned int start, unsigned int 
 void KubLingMachineHandler::SetStackVar(unsigned int translatedId, unsigned int var, unsigned char* data, unsigned char size)
 {
 
-	memcpy(&stackMem[var], data, size);
+	if (var < MAXSTACK)
+	{
 
+		memcpy(&stackMem[var], data, size);
+
+	}
+	else
+	{
+
+		var -= MAXSTACK;
+		memcpy(heap->GetMemory(var), data, size);
+
+	}
 }
 
 RunTimeError KubLingMachineHandler::RunCode(unsigned int translatedId)

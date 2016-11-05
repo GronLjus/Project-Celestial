@@ -155,8 +155,6 @@ namespace Logic
 			unsigned int blockSize;
 			unsigned int incrSize;
 
-			unsigned int adrOffset;
-
 			unsigned int* addressSpace;
 
 			void expandMemory();
@@ -167,7 +165,6 @@ namespace Logic
 			unsigned int SetAddress(unsigned int var, unsigned int address);
 			unsigned int GetAddress(unsigned int var) const;
 			unsigned int GetOffset() const;
-			void SetOffset(unsigned int offset);
 
 			unsigned int Allocate(unsigned int blockSize);
 			void DeAllocate(unsigned int address, unsigned int size);
