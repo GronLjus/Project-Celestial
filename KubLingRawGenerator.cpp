@@ -255,8 +255,8 @@ void KubLingRawGenerator::addLabel(KubLingCompiled* byteCode)
 
 	unsigned int* tempParams[4];
 	tempParams[0] = byteCode->GetMaxParams('n') > 0 ? new unsigned int[byteCode->GetMaxParams('n')] : nullptr;
-	tempParams[1] = byteCode->GetMaxParams('f') > 0 ? new unsigned int[byteCode->GetMaxParams('f')] : nullptr;;
-	tempParams[2] = byteCode->GetMaxParams('s') > 0 ? new unsigned int[byteCode->GetMaxParams('n')] : nullptr;;
+	tempParams[1] = byteCode->GetMaxParams('f') > 0 ? new unsigned int[byteCode->GetMaxParams('f')] : nullptr;
+	tempParams[2] = byteCode->GetMaxParams('s') > 0 ? new unsigned int[byteCode->GetMaxParams('n')] : nullptr;
 	tempParams[3] = new unsigned int[RunTimeParams_NA];
 
 	unsigned int tempMax[4];
@@ -317,7 +317,7 @@ rawCode KubLingRawGenerator::assemble(KubLingCompiled* byteCode, unsigned int cu
 	assembled.start = totalCode;
 	assembled.code = new rawCode::line[assembled.maxLines];
 
-	MemoryPool* stackMem = new MemoryPool(1024, maxStack);
+	MemoryPool* stackMem = new MemoryPool(maxStack);
 	stackMem->AddSystemMem(byteCode);
 
 	addLabel(byteCode);
@@ -481,7 +481,7 @@ KubLingRaw* KubLingRawGenerator::Assemble(KubLingCompiled** byteCodes, unsigned 
 			(lines[i].r1 << 62) >> 5 |
 			(lines[i].r2 << 62) >> 7 |
 			(lines[i].r3 << 62) >> 9 |
-			(lines[i].type << 62) >> 11 |
+			(lines[i].type << 43) >> 11 |
 			(lines[i].scale << 32) >> 32;
 		code[i] = line;
 

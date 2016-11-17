@@ -449,8 +449,12 @@ CelestialList<CelestialList<unsigned char>*>* KubLingCodeGenerator::generateCode
 				if (tempVar > 0)
 				{
 
-					varClear->PushElement(tempVar);
+					if (opCode != bytecode_NUMOFFST && opCode != bytecode_STROFFST)
+					{
 
+						varClear->PushElement(tempVar);
+
+					}
 				}
 			}
 			else if (syn.type == SyntaxType_OPERATORNA)

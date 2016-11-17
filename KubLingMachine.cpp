@@ -57,12 +57,10 @@ void KubLingMachine::sendMessage(unsigned int mess, unsigned int retVar, Message
 	if (dest != MessageSource_OBJECT)
 	{
 
-		if (returnAdr - iReg[4] >= maxStack)
+		if (returnAdr- iReg[4] > maxStack)
 		{
 
-			unsigned int var = returnAdr - iReg[4] - maxStack;
-			unsigned int offset = var != 0 ? heapMem->GetOffset() : 0;
-			lastMess->returnParam = maxStack + heapMem->GetAddress(var) + offset;
+			lastMess->returnParam -= iReg[4];
 
 		}
 
@@ -77,27 +75,7 @@ void KubLingMachine::sendMessage(unsigned int mess, unsigned int retVar, Message
 	{
 
 		unsigned int objId;
-		unsigned int var = 0;
-		unsigned int offset = 0;
-		unsigned int adr = 0;
-
-		if (returnAdr - iReg[4] >= maxStack)
-		{
-
-
-			var = returnAdr - iReg[4] - maxStack;
-			offset = var != 0 ? heapMem->GetOffset() : 0;
-			adr = heapMem->GetAddress(var);
-
-			memcpy(&objId, heapMem->GetMemory(adr + offset), 4);
-
-		}
-		else
-		{
-
-			memcpy(&objId, &stackMem[returnAdr], 4);
-
-		}
+		memcpy(&objId, getMem(returnAdr), 4);
 
 		Resources::BaseObject* obj = objectContainer->GetValue(objId);
 		obj->Update(lastMess);
@@ -125,10 +103,8 @@ char* KubLingMachine::getMem(unsigned int adr) const
 	if (adr - iReg[4] >= maxStack)
 	{
 
-		unsigned int var = adr - iReg[4] - maxStack;
-		unsigned int offset = var != 0 ? heapMem->GetOffset() : 0;
-		unsigned int adr = heapMem->GetAddress(var);
-		return heapMem->GetMemory(adr + offset);
+		adr -= maxStack + iReg[4];
+		return heapMem->GetMemory(adr);
 
 	}
 	else
@@ -137,6 +113,21 @@ char* KubLingMachine::getMem(unsigned int adr) const
 		return &stackMem[adr];
 
 	}
+}
+
+unsigned int KubLingMachine::adr(unsigned int adr, unsigned int offset)
+{
+
+	if (adr >= maxStack)
+	{
+
+		unsigned int var = adr - maxStack;
+		adr = maxStack + heapMem->GetAddress(var);
+
+	}
+
+	return adr+offset;
+
 }
 
 RunTimeError KubLingMachine::RunScript(unsigned long long* code, unsigned int &counter, unsigned int time, unsigned int sender)
@@ -157,7 +148,7 @@ RunTimeError KubLingMachine::RunScript(unsigned long long* code, unsigned int &c
 		unsigned char reg1 = (line & 0x600000000000000) >> 57;
 		unsigned char reg2 = (line & 0x180000000000000) >> 55;
 		unsigned char reg3 = (line & 0x60000000000000) >> 53;
-		unsigned char type = (line & 0x18000000000000) >> 51;
+		unsigned char type = (line & 0x1FFFFF00000000) >> 32;
 
 		unsigned int scal = (line & 0xFFFFFFFF);
 
@@ -173,19 +164,19 @@ RunTimeError KubLingMachine::RunScript(unsigned long long* code, unsigned int &c
 			if (type == 0)
 			{
 
-				memcpy(&iReg[reg1], getMem(iReg[reg2] + iReg[4]), sizeof(unsigned int));
+				memcpy(&iReg[reg1], getMem(aReg[reg2] + iReg[4]), sizeof(unsigned int));
 
 			}
 			else if (type == 1)
 			{
 
-				memcpy(&fReg[reg1], getMem(iReg[reg2] + iReg[4]), sizeof(float));
+				memcpy(&fReg[reg1], getMem(aReg[reg2] + iReg[4]), sizeof(float));
 
 			}
 			else
 			{
 
-				memcpy(&cReg[reg1], getMem(iReg[reg2] + iReg[4]), sizeof(char));
+				memcpy(&cReg[reg1], getMem(aReg[reg2] + iReg[4]), sizeof(char));
 
 			}
 			break;
@@ -224,25 +215,37 @@ RunTimeError KubLingMachine::RunScript(unsigned long long* code, unsigned int &c
 				cReg[reg1] = iReg[reg2];
 
 			}
+			else if (type == 3)
+			{
+
+				aReg[reg1] = iReg[reg2];
+
+			}
+			else if (type == 4)
+			{
+
+				iReg[reg1] = aReg[reg2];
+
+			}
 			break;
 		case Logic::opcode_STORE:
 
 			if (type == 0)
 			{
 
-				memcpy(getMem(iReg[reg2] + iReg[4]), &iReg[reg1], sizeof(unsigned int));
+				memcpy(getMem(aReg[reg2] + iReg[4]), &iReg[reg1], sizeof(unsigned int));
 
 			}
 			else if (type == 1)
 			{
 
-				memcpy(getMem(iReg[reg2] + iReg[4]), &fReg[reg1], sizeof(float));
+				memcpy(getMem(aReg[reg2] + iReg[4]), &fReg[reg1], sizeof(float));
 
 			}
 			else
 			{
 
-				memcpy(getMem(iReg[reg2] + iReg[4]), &cReg[reg1], sizeof(char));
+				memcpy(getMem(aReg[reg2] + iReg[4]), &cReg[reg1], sizeof(char));
 
 			}
 			break;
@@ -266,6 +269,12 @@ RunTimeError KubLingMachine::RunScript(unsigned long long* code, unsigned int &c
 				memcpy(&cReg[reg1], &scal, 1);
 
 			}
+			else if (type == 3)
+			{
+
+				memcpy(&aReg[reg1], &scal, sizeof(unsigned int));
+
+			}
 			else
 			{
 
@@ -273,19 +282,34 @@ RunTimeError KubLingMachine::RunScript(unsigned long long* code, unsigned int &c
 
 			}
 			break;
+		case Logic::opcode_PLACEADR:
+
+			if (type == 0)
+			{
+
+				aReg[reg3] = adr(iReg[reg1], iReg[reg2]);
+
+			}
+			else
+			{
+
+				iReg[reg3] = adr(iReg[reg1] + iReg[4], iReg[reg2]);
+
+			}
+			break;
 		case Logic::opcode_SAVE:
-			memcpy(getMem(iReg[reg1] + iReg[4]), &scal, iReg[reg2]);
+			memcpy(getMem(aReg[reg1] + iReg[4]), &scal, iReg[reg2]);
 			break;
 		case Logic::opcode_COPY:
-			dst = getMem(iReg[reg1] + iReg[4]);
-			src = getMem(iReg[reg2] + iReg[4]);
+			dst = getMem(aReg[reg1] + iReg[4]);
+			src = getMem(aReg[reg2] + iReg[4]);
 			memcpy(dst, src, iReg[reg3]);
 			break;
 		case Logic::opcode_SEND:
-			sendMessage(iReg[reg1], cReg[0] + iReg[4], MessageSource(iReg[reg2]), iReg[reg3] + iReg[4],sender);
+			sendMessage(iReg[reg1], cReg[0] + iReg[4], MessageSource(iReg[reg2]), aReg[reg3] + iReg[4],sender);
 			break;
 		case Logic::opcode_STPRM:
-			lastMess->SetParams((unsigned char*)getMem(iReg[reg1] + iReg[4]), iReg[reg2], iReg[reg3]);
+			lastMess->SetParams((unsigned char*)getMem(aReg[reg1] + iReg[4]), iReg[reg2], iReg[reg3]);
 			break;
 		case Logic::opcode_ADD:
 
@@ -301,10 +325,16 @@ RunTimeError KubLingMachine::RunScript(unsigned long long* code, unsigned int &c
 				fReg[reg3] = fReg[reg1] + fReg[reg2];
 
 			}
-			else
+			else if(type == 2)
 			{
 
 				cReg[reg3] = cReg[reg1] + cReg[reg2];
+
+			}
+			else
+			{
+
+				aReg[reg3] = aReg[reg1] + iReg[reg2];
 
 			}
 			break;
@@ -322,10 +352,16 @@ RunTimeError KubLingMachine::RunScript(unsigned long long* code, unsigned int &c
 				fReg[reg3] = fReg[reg1] - fReg[reg2];
 
 			}
-			else
+			else if(type == 2)
 			{
 
 				cReg[reg3] = cReg[reg1] - cReg[reg2];
+
+			}
+			else if (type == 3)
+			{
+
+				aReg[reg3] = aReg[reg1] - iReg[reg2];
 
 			}
 			break;
@@ -385,6 +421,10 @@ RunTimeError KubLingMachine::RunScript(unsigned long long* code, unsigned int &c
 				cReg[reg3] = cReg[reg1] % cReg[reg2];
 
 			}
+			break;
+		case Logic::opcode_CMPREBYTES:
+			cReg[reg3] = memcmp(getMem(aReg[reg1]), getMem(aReg[reg2]), iReg[reg3]);
+			cReg[reg3] = cReg[reg3] == 0 ? 255 : 0;
 			break;
 		case Logic::opcode_CMPRE:
 
@@ -477,15 +517,14 @@ RunTimeError KubLingMachine::RunScript(unsigned long long* code, unsigned int &c
 			s = std::to_string(fReg[reg1]);
 			st = s.c_str();
 			s.size();
-			memcpy(getMem(iReg[reg2] + iReg[4]), &size,4);
-			memcpy(getMem(iReg[reg2] + iReg[4] + 4), st, s.size());
+			memcpy(getMem(aReg[reg2] + iReg[4]), &size,4);
+			memcpy(getMem(aReg[reg2] + iReg[4] + 4), st, s.size());
 			break;
 		case Logic::opcode_ADR:
-			iReg[reg2] = heapMem->GetAddress(iReg[reg1]);
+			iReg[reg2] = heapMem->GetAddress(aReg[reg1]);
 			break;
 		case Logic::opcode_ALLOC:
-			heapMem->SetAddress(iReg[reg1], heapMem->Allocate(iReg[reg2]));
-			iReg[reg3] = iReg[reg1] + maxStack;
+			aReg[reg3] = heapMem->SetAddress(iReg[reg1], heapMem->Allocate(iReg[reg2])) + maxStack;
 			break;
 		case Logic::opcode_DALLOC:
 			heapMem->DeAllocate(heapMem->GetAddress(iReg[reg1]), iReg[reg2]);

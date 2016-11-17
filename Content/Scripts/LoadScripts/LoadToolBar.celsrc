@@ -50,21 +50,18 @@ loop i=0; i<nrButtons; i = i+1
 	set border buttons[i] 0.0 0.0 1.0
 	accept mouse buttons[i]
 
-	localScript = buttonScripts[i]
-
-	set leftclick buttons[i] localScript
+	set leftclick buttons[i] buttonScripts[i]
 	set mouseupdown buttons[i] button1UD
 
-	localText = buttonTexts[i]
 
-	add ui buttons[i] localText
+	add ui buttons[i] buttonTexts[i]
 	size buttonTexts[i] 50.0 20.0
 	pos buttonTexts[i] 0.0 35.0
 	snap buttonTexts[i] 0 1
 	set content buttonTexts[i] 0.0 0.0 0.0
-	set text localText buttonLabels[i]
+	set text buttonTexts[i] buttonLabels[i]
 
-	link target buttons[i] localText
+	link target buttons[i] buttonTexts[i]
 	
 	scope sve buttons[i] 0
 	scope sve buttonTexts[i] 0

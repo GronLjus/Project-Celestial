@@ -5,14 +5,17 @@ using namespace Logic;
 using namespace std;
 using namespace CrossHandlers;
 
-MemoryPool::MemoryPool(unsigned int pageSize, unsigned int maxStack)
+MemoryPool::MemoryPool(unsigned int maxStack)
 {
 
 	variables = new CelestialSlicedList<memBlock>(100);
+	offsets = new CelestialSlicedList<offsetStack>(100);
 	holeVal = 0;
 	adrLast = 0;
 	sysAdr = 0;
 	this->maxStack = maxStack;
+
+	maxOffsets = 10;
 
 }
 
@@ -189,6 +192,34 @@ unsigned int MemoryPool::AddVariable(unsigned int var, unsigned int adr, unsigne
 
 }
 
+void MemoryPool::AddOffset(unsigned int var, unsigned int offAdr, unsigned int offsize)
+{
+
+	offsetStack stack = offsets->GetValue(var);
+
+	if (offsets->GetValue(var).offsets == nullptr)
+	{
+
+		stack.offsets = new offset[maxOffsets];
+		stack.lastOffset = 0;
+		stack.offsets[0].offsetVar = 0;
+		stack.offsets[0].size = 0;
+
+	}
+
+	if (stack.lastOffset < maxStack - 1)
+	{
+
+		stack.lastOffset++;
+
+		stack.offsets[stack.lastOffset].offsetVar = offAdr;
+		stack.offsets[stack.lastOffset].size = offsize;
+
+		offsets->Add(stack, var);
+
+	}
+}
+
 unsigned int MemoryPool::GetVarLength(unsigned int var) const
 {
 
@@ -282,6 +313,34 @@ void MemoryPool::AddSystemMem(Resources::KubLingCompiled* compiled)
 
 }
 
+MemoryPool::offset MemoryPool::GetOffset(unsigned int var)
+{
+
+
+	offsetStack offStack = offsets->GetValue(var);
+
+	offset retVal;
+	retVal.size = 0;
+	
+	if (offStack.offsets != nullptr)
+	{
+
+		retVal = offStack.offsets[offStack.lastOffset];
+
+	}
+
+	if (offStack.lastOffset > 0)
+	{
+
+		offStack.lastOffset--;
+
+	}
+
+	offsets->Add(offStack, var);
+	return retVal;
+
+}
+
 unsigned int MemoryPool::GetMaxStack() const
 {
 
@@ -322,6 +381,20 @@ unsigned int MemoryPool::GetStartingAdr() const
 MemoryPool::~MemoryPool()
 {
 
+	for (unsigned int i = 0; i < offsets->GetHighest(); i++)
+	{
+
+		offsetStack off = offsets->GetValue(i);
+
+		if (off.offsets != nullptr)
+		{
+
+			delete[] off.offsets;
+
+		}
+	}
+
 	delete variables;
+	delete offsets;
 
 }

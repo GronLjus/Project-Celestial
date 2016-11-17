@@ -88,6 +88,7 @@ namespace Logic
 		opcode_TO,
 		opcode_CAST,
 		opcode_PLACE,
+		opcode_PLACEADR,
 		opcode_LOAD,
 		opcode_STORE,
 
@@ -104,6 +105,7 @@ namespace Logic
 		opcode_MOD,
 
 		opcode_CMPRE,
+		opcode_CMPREBYTES,
 		opcode_GRTR,
 		opcode_BITCMP,
 

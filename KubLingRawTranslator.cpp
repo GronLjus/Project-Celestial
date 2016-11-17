@@ -7,17 +7,27 @@ using namespace Resources;
 
 #pragma region operators
 
+const unsigned int placeAdrLines = 6;
+
 const unsigned int waitingLines = 3;
-const unsigned int sendLines = 5;
-const unsigned int addMessParLines = 4;
-const unsigned int addMessStrParLines = 5;
+const unsigned int sendLines = 4 + placeAdrLines;
+const unsigned int commonAddMessLines = 3;
+
+
+const unsigned int addMessParLinesNO = 1 + commonAddMessLines;
+const unsigned int addMessParLinesO = placeAdrLines + commonAddMessLines;
+const unsigned int addMessStrParLines = 5 + placeAdrLines;
+const unsigned int addMessStrParLinesNO = 5 ;
+
+
 const unsigned int commonArrayLines = 9;
-const unsigned int commonOffsetLines = 6;
-const unsigned int addMessTempParLines = 3 + addMessParLines;
-const unsigned int castIToSLines = 46;
-const unsigned int commonMathLines = 10;
-const unsigned int setObjectMessLines = addMessParLines + sendLines;
-const unsigned int setParamaterLines = 12;
+
+
+const unsigned int addMessTempParLines = 3 + addMessParLinesNO;
+const unsigned int castIToSLines = 45 + placeAdrLines;
+const unsigned int commonMathLines = 4 + waitingLines + placeAdrLines*3;
+const unsigned int setObjectMessLines = addMessParLinesO + sendLines;
+const unsigned int setParamaterLines = 11 + placeAdrLines;
 
 //3
 void startWaiting(unsigned int varAdr, rawCode* currentCode)
@@ -27,7 +37,7 @@ void startWaiting(unsigned int varAdr, rawCode* currentCode)
 	//Place the var in 11 so we can set it to 0
 	line.code = opcode_PLACE;
 	line.r1 = 0;
-	line.type = 0;
+	line.type = 3;
 	line.scale = varAdr;
 	currentCode->code[currentCode->codeSize] = line;
 	currentCode->codeSize++;
@@ -57,7 +67,7 @@ void finishWaiting(unsigned int varAdr, rawCode* currentCode)
 	//Place the var in i1 so we can set it to 1
 	line.code = opcode_PLACE;
 	line.r1 = 0;
-	line.type = 0;
+	line.type = 3;
 	line.scale = varAdr;
 	currentCode->code[currentCode->codeSize] = line;
 	currentCode->codeSize++;
@@ -78,6 +88,78 @@ void finishWaiting(unsigned int varAdr, rawCode* currentCode)
 	currentCode->codeSize++;
 }
 
+//6
+void placeAdr(unsigned int var, unsigned int reg, unsigned int typ, runTimeVal &rtv, rawCode* currentCode)
+{
+
+	MemoryPool::offset offset = rtv.memory->GetOffset(var);
+	rawCode::line line;
+
+	if (offset.size > 0)
+	{
+
+		//Place the adress of the offsetvar in a1
+		line.code = opcode_PLACE;
+		line.r1 = 0;
+		line.type = 3;
+		line.scale = rtv.memory->GetVarAdr(offset.offsetVar);
+		currentCode->code[currentCode->codeSize] = line;
+		currentCode->codeSize++;
+		//Load the value from adr a1 to i2
+		line.code = opcode_LOAD;
+		line.r1 = 1;
+		line.r2 = 0;
+		line.type = 0;
+		currentCode->code[currentCode->codeSize] = line;
+		currentCode->codeSize++;
+		//Place the size of the offst in i1
+		line.code = opcode_PLACE;
+		line.r1 = 0;
+		line.type = 0;
+		line.scale = offset.size;
+		currentCode->code[currentCode->codeSize] = line;
+		currentCode->codeSize++;
+		//Multiply i1 with i2 and store in i3
+		line.code = opcode_MUL;
+		line.r1 = 1;
+		line.r2 = 0;
+		line.r3 = 2;
+		line.type = 0;
+		currentCode->code[currentCode->codeSize] = line;
+		currentCode->codeSize++;
+
+	}
+	else
+	{
+
+		//Place the size of the offst in i3
+		line.code = opcode_PLACE;
+		line.r1 = 2;
+		line.type = 0;
+		line.scale = 0;
+		currentCode->code[currentCode->codeSize] = line;
+		currentCode->codeSize++;
+
+	}
+
+	//Place the adr off the var in i1
+	line.code = opcode_PLACE;
+	line.r1 = 0;
+	line.type = 0;
+	line.scale = rtv.memory->GetVarAdr(var);
+	currentCode->code[currentCode->codeSize] = line;
+	currentCode->codeSize++;
+	//Get the adr of i1 and i3 and place in reg
+	line.code = opcode_PLACEADR;
+	line.r1 = 0;
+	line.r2 = 2;
+	line.r3 = reg;
+	line.type = typ;
+	currentCode->code[currentCode->codeSize] = line;
+	currentCode->codeSize++;
+
+}
+
 //5
 void sendMessageOut(Message& mess, runTimeVal &rtv, rawCode* currentCode)
 {
@@ -87,7 +169,9 @@ void sendMessageOut(Message& mess, runTimeVal &rtv, rawCode* currentCode)
 	if (mess.returnParam > 0)
 	{
 
-		mess.returnParam = rtv.memory->GetVarAdr(mess.returnParam - 1);
+		//Place the return adr in a3
+		placeAdr(mess.returnParam - 1, 2, 0, rtv, currentCode);
+
 		retPar--;
 
 	}
@@ -107,13 +191,6 @@ void sendMessageOut(Message& mess, runTimeVal &rtv, rawCode* currentCode)
 	line.scale = mess.mess;
 	currentCode->code[currentCode->codeSize] = line;
 	currentCode->codeSize++;
-	//Place the return adr in i3
-	line.code = opcode_PLACE;
-	line.r1 = 2;
-	line.type = 0;
-	line.scale = mess.returnParam;
-	currentCode->code[currentCode->codeSize] = line;
-	currentCode->codeSize++;
 	//Place the return var in c1
 	line.code = opcode_PLACE;
 	line.r1 = 0;
@@ -121,7 +198,7 @@ void sendMessageOut(Message& mess, runTimeVal &rtv, rawCode* currentCode)
 	line.scale = retPar;
 	currentCode->code[currentCode->codeSize] = line;
 	currentCode->codeSize++;
-	//Send the message in i2 to i1 with the return adr in i3
+	//Send the message in i2 to i1 with the return adr in a3
 	line.code = opcode_SEND;
 	line.r1 = 1;
 	line.r2 = 0;
@@ -131,18 +208,11 @@ void sendMessageOut(Message& mess, runTimeVal &rtv, rawCode* currentCode)
 
 }
 
-//4
-void addMessStackParam(unsigned int var, unsigned int messOffset, unsigned int size, runTimeVal &rtv, rawCode* currentCode)
+//3
+void commonAddMessStack(unsigned int messOffset, unsigned int size, runTimeVal &rtv, rawCode* currentCode)
 {
 
 	rawCode::line line;
-	//Place the adress of the var in i1
-	line.code = opcode_PLACE;
-	line.r1 = 0;
-	line.type = 0;
-	line.scale = rtv.memory->GetVarAdr(var);
-	currentCode->code[currentCode->codeSize] = line;
-	currentCode->codeSize++;
 	//Place the size of the var in i2
 	line.code = opcode_PLACE;
 	line.r1 = 1;
@@ -157,20 +227,19 @@ void addMessStackParam(unsigned int var, unsigned int messOffset, unsigned int s
 	line.scale = messOffset;
 	currentCode->code[currentCode->codeSize] = line;
 	currentCode->codeSize++;
-	//Move data from the stack at adr i1 with size i2 to the currentmessage with offset i3
+	//Move data from the stack at adr a1 with size i2 to the currentmessage with offset i3
 	line.code = opcode_STPRM;
 	line.r1 = 0;
 	line.r2 = 2;
 	line.r3 = 1;
 	line.type = 0;
-	line.scale = rtv.memory->GetVarLength(var);
 	currentCode->code[currentCode->codeSize] = line;
 	currentCode->codeSize++;
 
 }
 
-//5
-void addMessStackStringParam(unsigned int var, unsigned int messOffset, unsigned int size, runTimeVal &rtv, rawCode* currentCode)
+//4
+void addMessStackParamNO(unsigned int var, unsigned int messOffset, unsigned int size, runTimeVal &rtv, rawCode* currentCode)
 {
 
 	rawCode::line line;
@@ -181,7 +250,27 @@ void addMessStackStringParam(unsigned int var, unsigned int messOffset, unsigned
 	line.scale = rtv.memory->GetVarAdr(var);
 	currentCode->code[currentCode->codeSize] = line;
 	currentCode->codeSize++;
-	//Load the size of the var in i2 from the stack at i1
+	commonAddMessStack(messOffset, size, rtv, currentCode);
+}
+
+//9
+void addMessStackParamO(unsigned int var, unsigned int messOffset, unsigned int size, runTimeVal &rtv, rawCode* currentCode)
+{
+
+	//Place the adress of the var in i1
+	placeAdr(var, 0, 0, rtv, currentCode);
+	commonAddMessStack(messOffset, size, rtv, currentCode);
+}
+
+//5 + placeadr
+void addMessStackStringParamO(unsigned int var, unsigned int messOffset, unsigned int size, runTimeVal &rtv, rawCode* currentCode)
+{
+
+	rawCode::line line;
+	//Place the adress of the var in a1
+	placeAdr(var, 0, 0, rtv, currentCode);
+	//Copy the value in a1 to i1
+	//Load the size of the var in i2 from the stack at a1
 	line.code = opcode_LOAD;
 	line.r1 = 1;
 	line.r2 = 0;
@@ -189,10 +278,63 @@ void addMessStackStringParam(unsigned int var, unsigned int messOffset, unsigned
 	line.scale = size;
 	currentCode->code[currentCode->codeSize] = line;
 	currentCode->codeSize++;
-	//Place the adress + 4 of the var in i1
+	//4 in i3
+	line.code = opcode_PLACE;
+	line.r1 = 2;
+	line.type = 0;
+	line.scale = 4;
+	currentCode->code[currentCode->codeSize] = line;
+	currentCode->codeSize++;
+	//Add i3 to a1 and store in a1
+	line.code = opcode_ADD;
+	line.r1 = 0;
+	line.r2 = 2;
+	line.r3 = 0;
+	line.type = 3;
+	currentCode->code[currentCode->codeSize] = line;
+	currentCode->codeSize++;
+	//Place the offset in i3
+	line.code = opcode_PLACE;
+	line.r1 = 2;
+	line.type = 0;
+	line.scale = messOffset;
+	currentCode->code[currentCode->codeSize] = line;
+	currentCode->codeSize++;
+	//Move data from the stack at adr a1 with size i2 to the currentmessage with offset i3
+	line.code = opcode_STPRM;
+	line.r1 = 0;
+	line.r2 = 2;
+	line.r3 = 1;
+	line.type = 0;
+	currentCode->code[currentCode->codeSize] = line;
+	currentCode->codeSize++;
+
+}
+
+//5
+void addMessStackStringParamNO(unsigned int var, unsigned int messOffset, unsigned int size, runTimeVal &rtv, rawCode* currentCode)
+{
+
+	rawCode::line line;
+	//Place the adress of the var in a1
 	line.code = opcode_PLACE;
 	line.r1 = 0;
+	line.type = 3;
+	line.scale = rtv.memory->GetVarAdr(var);
+	currentCode->code[currentCode->codeSize] = line;
+	currentCode->codeSize++;
+	//Load the size of the var in i2 from the stack at a1
+	line.code = opcode_LOAD;
+	line.r1 = 1;
+	line.r2 = 0;
 	line.type = 0;
+	line.scale = size;
+	currentCode->code[currentCode->codeSize] = line;
+	currentCode->codeSize++;
+	//Place the adress + 4 of the var in 11
+	line.code = opcode_PLACE;
+	line.r1 = 0;
+	line.type = 3;
 	line.scale = rtv.memory->GetVarAdr(var) + 4;
 	currentCode->code[currentCode->codeSize] = line;
 	currentCode->codeSize++;
@@ -203,7 +345,7 @@ void addMessStackStringParam(unsigned int var, unsigned int messOffset, unsigned
 	line.scale = messOffset;
 	currentCode->code[currentCode->codeSize] = line;
 	currentCode->codeSize++;
-	//Move data from the stack at adr i1 with size i2 to the currentmessage with offset i3
+	//Move data from the stack at adr a1 with size i2 to the currentmessage with offset i3
 	line.code = opcode_STPRM;
 	line.r1 = 0;
 	line.r2 = 2;
@@ -219,10 +361,10 @@ void addMessTempStack(unsigned int messOffset, unsigned int data, unsigned int m
 {
 
 	rawCode::line line;
-	//Place the adress of the tempoary var in i1
+	//Place the adress of the tempoary var in a1
 	line.code = opcode_PLACE;
 	line.r1 = 0;
-	line.type = 0;
+	line.type = 3;
 	line.scale = rtv.memory->GetVarAdr(rtv.memory->GetMaxVar());
 	currentCode->code[currentCode->codeSize] = line;
 	currentCode->codeSize++;
@@ -233,7 +375,7 @@ void addMessTempStack(unsigned int messOffset, unsigned int data, unsigned int m
 	line.scale = 4;
 	currentCode->code[currentCode->codeSize] = line;
 	currentCode->codeSize++;
-	//Save the scalar in the stack at adr i1 with size i2
+	//Save the scalar in the stack at adr a1 with size i2
 	line.code = opcode_SAVE;
 	line.r1 = 0;
 	line.r2 = 1;
@@ -241,7 +383,7 @@ void addMessTempStack(unsigned int messOffset, unsigned int data, unsigned int m
 	currentCode->code[currentCode->codeSize] = line;
 	currentCode->codeSize++;
 
-	addMessStackParam(rtv.memory->GetMaxVar(),messOffset, messLength, rtv, currentCode);
+	addMessStackParamNO(rtv.memory->GetMaxVar(),messOffset, messLength, rtv, currentCode);
 
 }
 
@@ -317,28 +459,34 @@ unsigned int getHeapVal(runTimeVal &rtv, std::string name, bool &inited)
 void commonLoad(unsigned int returnVar, runTimeVal &rtv)
 {
 
-	rtv.memory->AddVariable(returnVar, 4);
+	if (rtv.memory->GetVarAdr(returnVar) <= rtv.memory->GetMaxStack())
+	{
+
+		rtv.memory->AddVariable(returnVar, 4);
+
+	}
+}
+
+void commonOffset(unsigned int arr, unsigned int var, unsigned int memSize, runTimeVal &rtv)
+{
+
+	rtv.memory->AddOffset(arr, var, memSize);
 
 }
 
-//46
-void convertIntToString(unsigned int intVarAdr, unsigned int offset, runTimeVal &rtv, rawCode* currentCode)
+//45
+void convertIntToString(unsigned int var, unsigned int offset, runTimeVal &rtv, rawCode* currentCode)
 {
 
-	unsigned int code = 46;
+	unsigned int code = 45;
 	rawCode::line line;
-	//Place the adress of the number in i1
-	line.code = opcode_PLACE;
-	line.r1 = 0;
-	line.type = 0;
-	line.scale = intVarAdr;
-	currentCode->code[currentCode->codeSize] = line;
-	currentCode->codeSize++;
+	//Place the adress of the number in a1
+	placeAdr(var - 1, 0, 0, rtv, currentCode);
 	//5
-	//Place the adress of the temp var in i2
+	//Place the adress of the temp var in a2
 	line.code = opcode_PLACE;
 	line.r1 = 1;
-	line.type = 0;
+	line.type = 3;
 	line.scale = rtv.memory->GetVarAdr(rtv.memory->GetMaxVar());
 	currentCode->code[currentCode->codeSize] = line;
 	currentCode->codeSize++;
@@ -371,12 +519,11 @@ void convertIntToString(unsigned int intVarAdr, unsigned int offset, runTimeVal 
 	currentCode->code[currentCode->codeSize] = line;
 	currentCode->codeSize++;
 	//5
-	//Load the value on stack i1 to i1
+	//Load the value on stack a1 to i1
 	line.code = opcode_LOAD;
 	line.r1 = 0;
 	line.r2 = 0;
 	line.type = 0;
-	line.scale = intVarAdr;
 	currentCode->code[currentCode->codeSize] = line;
 	currentCode->codeSize++;
 
@@ -385,26 +532,26 @@ void convertIntToString(unsigned int intVarAdr, unsigned int offset, runTimeVal 
 	//Cast the int
 
 	//Cast each digit
-	//Place the adr of the char on the stack in i2
+	//Place the adr of the char on the stack in a2
 	line.code = opcode_PLACE;
 	line.r1 = 1;
-	line.type = 0;
-	line.scale = rtv.memory->GetVarAdr(rtv.memory->GetMaxVar());;
+	line.type = 3;
+	line.scale = rtv.memory->GetVarAdr(rtv.memory->GetMaxVar());
 	currentCode->code[currentCode->codeSize] = line;
 	currentCode->codeSize++;
-	//Load the counter in i3 from the stack at adr i2
+	//Load the counter in i3 from the stack at adr a2
 	line.code = opcode_LOAD;
 	line.r1 = 2;
 	line.r2 = 1;
 	line.type = 0;
 	currentCode->code[currentCode->codeSize] = line;
 	currentCode->codeSize++;
-	//Append the value in i3 to the value in i2
+	//Append the value in i3 to the value in a2
 	line.code = opcode_ADD;
 	line.r1 = 1;
 	line.r2 = 2;
 	line.r3 = 1;
-	line.type = 0;
+	line.type = 3;
 	currentCode->code[currentCode->codeSize] = line;
 	currentCode->codeSize++;
 	//Place the base in i3
@@ -430,7 +577,7 @@ void convertIntToString(unsigned int intVarAdr, unsigned int offset, runTimeVal 
 	line.type = 2;
 	currentCode->code[currentCode->codeSize] = line;
 	currentCode->codeSize++;
-	//Save the value in c1 to the stack at adr i2
+	//Save the value in c1 to the stack at adr a2
 	line.code = opcode_STORE;
 	line.r1 = 0;
 	line.r2 = 1;
@@ -462,14 +609,14 @@ void convertIntToString(unsigned int intVarAdr, unsigned int offset, runTimeVal 
 	line.type = 2;
 	currentCode->code[currentCode->codeSize] = line;
 	currentCode->codeSize++;
-	//Place the adr of the char on the stack in i2
+	//Place the adr of the char on the stack in a2
 	line.code = opcode_PLACE;
 	line.r1 = 1;
-	line.type = 0;
+	line.type = 3;
 	line.scale = rtv.memory->GetVarAdr(rtv.memory->GetMaxVar());
 	currentCode->code[currentCode->codeSize] = line;
 	currentCode->codeSize++;
-	//Save the counter in c3 to the stack with adr i2
+	//Save the counter in c3 to the stack with adr a2
 	line.code = opcode_STORE;
 	line.r1 = 2;
 	line.r2 = 1;
@@ -515,14 +662,14 @@ void convertIntToString(unsigned int intVarAdr, unsigned int offset, runTimeVal 
 	line.scale = 4;
 	currentCode->code[currentCode->codeSize] = line;
 	currentCode->codeSize++;
-	//Place the adr of the char on the stack in i2
+	//Place the adr of the char on the stack in a2
 	line.code = opcode_PLACE;
 	line.r1 = 1;
-	line.type = 0;
+	line.type = 3;
 	line.scale = rtv.memory->GetVarAdr(rtv.memory->GetMaxVar());
 	currentCode->code[currentCode->codeSize] = line;
 	currentCode->codeSize++;
-	//Load the counter in i3 from the stack at adr i2
+	//Load the counter in i3 from the stack at adr a2
 	line.code = opcode_LOAD;
 	line.r1 = 2;
 	line.r2 = 1;
@@ -538,27 +685,27 @@ void convertIntToString(unsigned int intVarAdr, unsigned int offset, runTimeVal 
 	line.type = 0;
 	currentCode->code[currentCode->codeSize] = line;
 	currentCode->codeSize++;
-	//Save the counter in i3 to the stack with adr i2
+	//Save the counter in i3 to the stack with adr a2
 	line.code = opcode_STORE;
 	line.r1 = 2;
 	line.r2 = 1;
 	line.type = 0;
 	currentCode->code[currentCode->codeSize] = line;
 	currentCode->codeSize++;
-	//Add i1 to i2 and store it in i2
+	//Add i1 to a2 and store it in a2
 	line.code = opcode_ADD;
 	line.r1 = 1;
 	line.r2 = 0;
 	line.r3 = 1;
-	line.type = 0;
+	line.type = 3;
 	currentCode->code[currentCode->codeSize] = line;
 	currentCode->codeSize++;
-	//Add i3 to i2 and store it in i3
+	//Add i3 to a2 and store it in a3
 	line.code = opcode_ADD;
-	line.r1 = 1;
-	line.r2 = 2;
+	line.r1 = 2;
+	line.r2 = 1;
 	line.r3 = 2;
-	line.type = 0;
+	line.type = 3;
 	currentCode->code[currentCode->codeSize] = line;
 	currentCode->codeSize++;
 	//Place 48 in c1
@@ -572,14 +719,14 @@ void convertIntToString(unsigned int intVarAdr, unsigned int offset, runTimeVal 
 	//5
 	//Reverse the sequence
 	unsigned int reverseStart = offset + currentCode->codeSize;
-	//Load the value from the stack at adr i2 and store it in c2
+	//Load the value from the stack at adr a2 and store it in c2
 	line.code = opcode_LOAD;
 	line.r1 = 1;
 	line.r2 = 1;
 	line.type = 2;
 	currentCode->code[currentCode->codeSize] = line;
 	currentCode->codeSize++;
-	//Load the value from the stack at adr i3 and store it in c3
+	//Load the value from the stack at adr a3 and store it in c3
 	line.code = opcode_LOAD;
 	line.r1 = 2;
 	line.r2 = 2;
@@ -602,7 +749,7 @@ void convertIntToString(unsigned int intVarAdr, unsigned int offset, runTimeVal 
 	line.type = 2;
 	currentCode->code[currentCode->codeSize] = line;
 	currentCode->codeSize++;
-	//Save the value in c2 to the stack at adr i3
+	//Save the value in c2 to the stack at adr a3
 	line.code = opcode_STORE;
 	line.r1 = 1;
 	line.r2 = 2;
@@ -610,7 +757,7 @@ void convertIntToString(unsigned int intVarAdr, unsigned int offset, runTimeVal 
 	currentCode->code[currentCode->codeSize] = line;
 	currentCode->codeSize++;
 	//5
-	//Save the value in c3 to the stack at adr i2
+	//Save the value in c3 to the stack at adr a2
 	line.code = opcode_STORE;
 	line.r1 = 2;
 	line.r2 = 1;
@@ -654,20 +801,20 @@ void convertIntToString(unsigned int intVarAdr, unsigned int offset, runTimeVal 
 	line.scale = 1;
 	currentCode->code[currentCode->codeSize] = line;
 	currentCode->codeSize++;
-	//Subtract i1 from i3 and store it in i3
+	//Subtract i1 from a3 and store it in a3
 	line.code = opcode_SUB;
 	line.r1 = 2;
 	line.r2 = 0;
 	line.r3 = 2;
-	line.type = 0;
+	line.type = 3;
 	currentCode->code[currentCode->codeSize] = line;
 	currentCode->codeSize++;
-	//Add i1 to i2 and store it in i2
+	//Subtract i1 from a2 and store it in a2
 	line.code = opcode_SUB;
 	line.r1 = 1;
 	line.r2 = 0;
 	line.r3 = 1;
-	line.type = 0;
+	line.type = 3;
 	currentCode->code[currentCode->codeSize] = line;
 	currentCode->codeSize++;
 	//Place the loopstart in i1
@@ -689,35 +836,28 @@ void convertIntToString(unsigned int intVarAdr, unsigned int offset, runTimeVal 
 }
 
 //10
-void performArithemitc(unsigned int varAdr, unsigned int var2Adr, unsigned int returnVar, runTimeVal &rtv, opcode code, unsigned long long type, rawCode* raw)
+void performArithemitc(unsigned int var, unsigned int var2, unsigned int returnVar, runTimeVal &rtv, opcode code, unsigned long long type, rawCode* raw)
 {
 
 	rawCode::line line;
-	//Place the adress of the var in i1
-	line.code = opcode_PLACE;
-	line.r1 = 0;
-	line.type = 0;
-	line.scale = varAdr;
-	raw->code[raw->codeSize] = line;
-	raw->codeSize++;
-	//Load the number to r2 from the adress in i1
+	//Place the adress of the var2 in a1
+	placeAdr(var2, 0, 0, rtv, raw);
+	//Place the adress of the var in a2
+	placeAdr(var, 1, 0, rtv, raw);
+	//Place the adress of the returnvar in a3
+	placeAdr(returnVar, 2, 0, rtv, raw);
+
+	//Load the number to r3 from the adress in a1
 	line.code = opcode_LOAD;
-	line.r1 = 1;
+	line.r1 = 2;
 	line.r2 = 0;
 	line.type = type;
 	raw->code[raw->codeSize] = line;
 	raw->codeSize++;
-	//Place the adress of the var2 in i1
-	line.code = opcode_PLACE;
-	line.r1 = 0;
-	line.type = 0;
-	line.scale = var2Adr;
-	raw->code[raw->codeSize] = line;
-	raw->codeSize++;
-	//Load the number to r3 from the adress in i1
+	//Load the number to r2 from the adress in a2
 	line.code = opcode_LOAD;
-	line.r1 = 2;
-	line.r2 = 0;
+	line.r1 = 1;
+	line.r2 = 1;
 	line.type = type;
 	raw->code[raw->codeSize] = line;
 	raw->codeSize++;
@@ -729,17 +869,10 @@ void performArithemitc(unsigned int varAdr, unsigned int var2Adr, unsigned int r
 	line.type = type;
 	raw->code[raw->codeSize] = line;
 	raw->codeSize++;
-	//Place the adress of the returnvar in i2
-	line.code = opcode_PLACE;
-	line.r1 = 1;
-	line.type = 0;
-	line.scale = rtv.memory->GetVarAdr(returnVar);
-	raw->code[raw->codeSize] = line;
-	raw->codeSize++;
-	//Store the number in r1 to the stack with adr i2
+	//Store the number in r1 to adr a3
 	line.code = opcode_STORE;
 	line.r1 = 0;
-	line.r2 = 1;
+	line.r2 = 2;
 	line.type = opcode_CMPRE == code || opcode_GRTR == code ? 2 : type;
 	raw->code[raw->codeSize] = line;
 	raw->codeSize++;
@@ -758,7 +891,7 @@ void setCommon(unsigned int var, unsigned int var2, unsigned int message, runTim
 	mess.mess = message;
 	mess.returnParam = var;
 
-	addMessStackParam(var2 - 1, 0, 4, rtv, currentCode);
+	addMessStackParamO(var2 - 1, 0, 4, rtv, currentCode);
 	sendMessageOut(mess, rtv, currentCode);
 
 }
@@ -771,17 +904,12 @@ void commonPar(unsigned int var, unsigned int scriptValue, unsigned int offset, 
 	rtv.byteCodes[scriptValue]->UpParam(type);
 
 	rawCode::line line;
-	//Place the adress of the var in i1
-	line.code = opcode_PLACE;
-	line.r1 = 0;
-	line.type = 0;
-	line.scale = rtv.memory->GetVarAdr(var - 1);
-	currentCode->code[currentCode->codeSize] = line;
-	currentCode->codeSize++;
-	//Place the adress of the current par in i2
+	//Place the adress of the var in a1
+	placeAdr(var - 1,0 , 0, rtv, currentCode);
+	//Place the adress of the current par in a2
 	line.code = opcode_PLACE;
 	line.r1 = 1;
-	line.type = 0;
+	line.type = 3;
 	line.scale = rtv.byteCodes[scriptValue]->GetAdr(currentPar, type);
 	currentCode->code[currentCode->codeSize] = line;
 	currentCode->codeSize++;
@@ -793,20 +921,20 @@ void commonPar(unsigned int var, unsigned int scriptValue, unsigned int offset, 
 	line.scale = 0;//PlaceHolder
 	currentCode->code[currentCode->codeSize] = line;
 	currentCode->codeSize++;
-	//Add i5 to i1 and store it in i1
+	//Add i5 to a1 and store it in a1
 	line.code = opcode_ADD;
 	line.r1 = 0;
 	line.r2 = 4;
 	line.r3 = 0;
-	line.type = 0;
+	line.type = 3;
 	currentCode->code[currentCode->codeSize] = line;
 	currentCode->codeSize++;
-	//Add i3 to i2 and store it in i2
+	//Add i3 to a2 and store it in a2
 	line.code = opcode_ADD;
 	line.r1 = 1;
 	line.r2 = 2;
 	line.r3 = 1;
-	line.type = 0;
+	line.type = 3;
 	currentCode->code[currentCode->codeSize] = line;
 	currentCode->codeSize++;
 
@@ -820,7 +948,7 @@ void commonPar(unsigned int var, unsigned int scriptValue, unsigned int offset, 
 		line.scale = 4;
 		currentCode->code[currentCode->codeSize] = line;
 		currentCode->codeSize++;
-		//Load the first 4 bytes from the stack at idr 1 to i3
+		//Load the first 4 bytes from the stack at a1 to i3
 		line.code = opcode_LOAD;
 		line.r1 = 2;
 		line.type = 0;
@@ -856,12 +984,11 @@ void commonPar(unsigned int var, unsigned int scriptValue, unsigned int offset, 
 	line.scale = 0;//PlaceHolder
 	currentCode->code[currentCode->codeSize] = line;
 	currentCode->codeSize++;
-	//Copy the value from the stack at adr i1 to the stack at adr i2
+	//Copy the value from the stack at adr a1 to the stack at adr a2
 	line.code = opcode_COPY;
 	line.r1 = 1;
 	line.r2 = 0;
 	line.type = 0;
-	line.scale = 0;//PlaceHolder
 	currentCode->code[currentCode->codeSize] = line;
 	currentCode->codeSize++;
 
@@ -887,14 +1014,14 @@ void commonArray(unsigned int var, unsigned int returnVar, unsigned int memSize,
 	rtv.memory->AddVariable(returnVar, rtv.memory->GetMaxStack() + arrayVar, 4);
 
 	rawCode::line line;
-	//Place the adress of the var in i1
+	//Place the adress of the var in a1
 	line.code = opcode_PLACE;
 	line.r1 = 0;
-	line.type = 0;
+	line.type = 3;
 	line.scale = rtv.memory->GetVarAdr(var);
 	currentCode->code[currentCode->codeSize] = line;
 	currentCode->codeSize++;
-	//Load the value from i1 and place it in i1
+	//Load the value from a1 and place it in i1
 	line.code = opcode_LOAD;
 	line.r1 = 0;
 	line.r2 = 0;
@@ -934,56 +1061,6 @@ void commonArray(unsigned int var, unsigned int returnVar, unsigned int memSize,
 
 }
 
-//6
-void commonOffset(unsigned int var, unsigned int memSize, runTimeVal &rtv, rawCode* currentCode)
-{
-
-	rawCode::line line;
-	//Place the offset var in i1
-	line.code = opcode_PLACE;
-	line.r1 = 0;
-	line.type = 0;
-	line.scale = rtv.memory->GetVarAdr(var);
-	currentCode->code[currentCode->codeSize] = line;
-	currentCode->codeSize++;
-	//Place the size in i3
-	line.code = opcode_PLACE;
-	line.r1 = 2;
-	line.type = 0;
-	line.scale = memSize;
-	currentCode->code[currentCode->codeSize] = line;
-	currentCode->codeSize++;
-	//Load from adr i1 and place in i2
-	line.code = opcode_LOAD;
-	line.r1 = 1;
-	line.r2 = 0;
-	line.type = 0;
-	currentCode->code[currentCode->codeSize] = line;
-	currentCode->codeSize++;
-	//Multiply i3 with i2 and store in i2
-	line.code = opcode_MUL;
-	line.r1 = 1;
-	line.r2 = 2;
-	line.r3 = 1;
-	line.type = 0;
-	currentCode->code[currentCode->codeSize] = line;
-	currentCode->codeSize++;
-	//Place the offset heap in i1
-	line.code = opcode_PLACE;
-	line.r1 = 0;
-	line.type = 0;
-	line.scale = rtv.memory->GetMaxStack();
-	currentCode->code[currentCode->codeSize] = line;
-	currentCode->codeSize++;
-	//Store i2 at adr i1
-	line.code = opcode_STORE;
-	line.r1 = 1;
-	line.r2 = 0;
-	line.type = 0;
-	currentCode->code[currentCode->codeSize] = line;
-	currentCode->codeSize++;
-
-}
 
 RunTimeError AcceptInputOperator(rawCode* raw, unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int offset, unsigned int byteLine, runTimeVal &rtv)
 {
@@ -995,7 +1072,7 @@ RunTimeError AcceptInputOperator(rawCode* raw, unsigned int returnVar, unsigned 
 
 	}
 
-	raw->maxLines = addMessParLines + sendLines + 1;
+	raw->maxLines = addMessParLinesNO + sendLines;
 	raw->code = new rawCode::line[raw->maxLines];
 
 	Message mess;
@@ -1004,6 +1081,7 @@ RunTimeError AcceptInputOperator(rawCode* raw, unsigned int returnVar, unsigned 
 	mess.mess = ObjectMess_LOCKINPUT;
 
 	unsigned int var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
+
 	mess.returnParam = var;
 
 	addMessTempStack(0, 1, 1, rtv, raw);
@@ -1023,7 +1101,7 @@ RunTimeError AcceptKeyboardOperator(rawCode* raw, unsigned int returnVar, unsign
 
 	}
 
-	raw->maxLines = addMessParLines + sendLines + 1;
+	raw->maxLines = addMessParLinesNO + sendLines;
 	raw->code = new rawCode::line[raw->maxLines];
 
 	Message mess;
@@ -1051,7 +1129,7 @@ RunTimeError AcceptMouseOperator(rawCode* raw, unsigned int returnVar, unsigned 
 
 	}
 
-	raw->maxLines = addMessTempParLines + sendLines + 1;
+	raw->maxLines = addMessTempParLines + sendLines;
 	raw->code = new rawCode::line[raw->maxLines];
 
 	Message mess;
@@ -1079,7 +1157,7 @@ RunTimeError Add2DOperator(rawCode* raw, unsigned int returnVar, unsigned char* 
 
 	}
 
-	raw->maxLines = addMessParLines * 2 + sendLines + 1 + 2;
+	raw->maxLines = addMessParLinesO * 2 + sendLines + 1 + 2;
 	raw->code = new rawCode::line[raw->maxLines];
 
 	Message mess;
@@ -1088,13 +1166,14 @@ RunTimeError Add2DOperator(rawCode* raw, unsigned int returnVar, unsigned char* 
 	mess.mess = GUIMess_ADDCHILD;
 	mess.returnParam = 0;
 
-	//The parent object
-	unsigned int var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
-	addMessStackParam(var - 1, 0, 4, rtv, raw);
-
 	//The child object
-	var = (params[4] | ((int)params[5] << 8) | ((int)params[6] << 16) | ((int)params[7] << 24));
-	addMessStackParam(var - 1, 4, 4, rtv, raw);
+	unsigned int var = (params[4] | ((int)params[5] << 8) | ((int)params[6] << 16) | ((int)params[7] << 24));
+	addMessStackParamO(var - 1, 4, 4, rtv, raw);
+
+	//The parent object
+	var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
+	addMessStackParamO(var - 1, 0, 4, rtv, raw);
+
 
 	sendMessageOut(mess, rtv, raw);
 
@@ -1127,7 +1206,7 @@ RunTimeError AddMeshOperator(rawCode* raw, unsigned int returnVar, unsigned char
 
 	}
 
-	raw->maxLines = addMessParLines + sendLines + 1;
+	raw->maxLines = addMessParLinesO + sendLines;
 	raw->code = new rawCode::line[raw->maxLines];
 
 	unsigned int var1 = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
@@ -1137,7 +1216,7 @@ RunTimeError AddMeshOperator(rawCode* raw, unsigned int returnVar, unsigned char
 	mess.type = MessageType_ENTITIES;
 	mess.mess = GameBoardMess_ADDMESH;
 	mess.returnParam = 0;
-	addMessStackParam(var1 - 1, 0, 4, rtv, raw);
+	addMessStackParamO(var1 - 1, 0, 4, rtv, raw);
 	sendMessageOut(mess, rtv, raw);
 
 	return RunTimeError_OK;
@@ -1154,7 +1233,7 @@ RunTimeError AddObjectOperator(rawCode* raw, unsigned int returnVar, unsigned ch
 
 	}
 
-	raw->maxLines = addMessParLines + sendLines + waitingLines + 1;
+	raw->maxLines = addMessParLinesO + sendLines + waitingLines;
 	raw->code = new rawCode::line[raw->maxLines];
 
 	unsigned int var1 = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
@@ -1164,7 +1243,7 @@ RunTimeError AddObjectOperator(rawCode* raw, unsigned int returnVar, unsigned ch
 	mess.type = MessageType_ENTITIES;
 	mess.mess = GameBoardMess_ADDOBJECT;
 	mess.returnParam = 0;
-	addMessStackParam(var1 - 1, 0, 4, rtv, raw);
+	addMessStackParamO(var1 - 1, 0, 4, rtv, raw);
 
 	sendMessageOut(mess, rtv, raw);
 	startWaiting(returnVar - 1, raw);
@@ -1176,14 +1255,14 @@ RunTimeError AddObjectOperator(rawCode* raw, unsigned int returnVar, unsigned ch
 RunTimeError AddRouteObjectOperator(rawCode* raw, unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int offset, unsigned int byteLine, runTimeVal &rtv)
 {
 
-	if (paramSize < 4)
+	if (paramSize < 16)
 	{
 
 		return RunTimeError_BADPARAMS;
 
 	}
 
-	raw->maxLines = addMessParLines * 4 + sendLines + (returnVar > 0 ? waitingLines : 0) + 1;
+	raw->maxLines = addMessParLinesO * 4 + sendLines + (returnVar > 0 ? waitingLines : 0);
 	raw->code = new rawCode::line[raw->maxLines];
 
 	Message mess;
@@ -1192,14 +1271,14 @@ RunTimeError AddRouteObjectOperator(rawCode* raw, unsigned int returnVar, unsign
 	mess.type = MessageType_ENTITIES;
 	mess.mess = GameBoardMess_ADDROUTE;
 
-	unsigned int var1 = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
-	addMessStackParam(var1 - 1, 0, 4, rtv, raw);
-	var1 = (params[4] | ((int)params[5] << 8) | ((int)params[6] << 16) | ((int)params[7] << 24));
-	addMessStackParam(var1 - 1, 4, 4, rtv, raw);
+	unsigned int var1 = (params[12] | ((int)params[13] << 8) | ((int)params[14] << 16) | ((int)params[15] << 24));
+	addMessStackParamO(var1 - 1, 12, 4, rtv, raw);
 	var1 = (params[8] | ((int)params[9] << 8) | ((int)params[10] << 16) | ((int)params[11] << 24));
-	addMessStackParam(var1 - 1, 8, 4, rtv, raw);
-	var1 = (params[12] | ((int)params[13] << 8) | ((int)params[14] << 16) | ((int)params[15] << 24));
-	addMessStackParam(var1 - 1, 12, 4, rtv, raw);
+	addMessStackParamO(var1 - 1, 8, 4, rtv, raw);
+	var1 = (params[4] | ((int)params[5] << 8) | ((int)params[6] << 16) | ((int)params[7] << 24));
+	addMessStackParamO(var1 - 1, 4, 4, rtv, raw);
+	var1 = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
+	addMessStackParamO(var1 - 1, 0, 4, rtv, raw);
 
 	if (returnVar > 0)
 	{
@@ -1216,7 +1295,14 @@ RunTimeError AddRouteObjectOperator(rawCode* raw, unsigned int returnVar, unsign
 RunTimeError AddTextLineOperator(rawCode* raw, unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int offset, unsigned int byteLine, runTimeVal &rtv)
 {
 
-	raw->maxLines = addMessStrParLines + sendLines + 1;
+	if (paramSize < 8)
+	{
+
+		return RunTimeError_BADPARAMS;
+
+	}
+
+	raw->maxLines = addMessStrParLines + sendLines;
 	raw->code = new rawCode::line[raw->maxLines];
 
 	Message mess;
@@ -1229,7 +1315,7 @@ RunTimeError AddTextLineOperator(rawCode* raw, unsigned int returnVar, unsigned 
 
 	unsigned int var2 = (params[4] | ((int)params[5] << 8) | ((int)params[6] << 16) | ((int)params[7] << 24));
 
-	addMessStackStringParam(var2 - 1, 0, 4, rtv, raw);
+	addMessStackStringParamO(var2 - 1, 0, 4, rtv, raw);
 	sendMessageOut(mess, rtv, raw);
 
 	return RunTimeError_OK;
@@ -1246,7 +1332,7 @@ RunTimeError AppendTextOperator(rawCode* raw, unsigned int returnVar, unsigned c
 
 	}
 
-	raw->maxLines = addMessStrParLines + sendLines + 1;
+	raw->maxLines = addMessStrParLines + sendLines;
 	raw->code = new rawCode::line[raw->maxLines];
 
 	Message mess;
@@ -1259,7 +1345,7 @@ RunTimeError AppendTextOperator(rawCode* raw, unsigned int returnVar, unsigned c
 
 	unsigned int var2 = (params[4] | ((int)params[5] << 8) | ((int)params[6] << 16) | ((int)params[7] << 24));
 
-	addMessStackStringParam(var2 - 1, 0, 4, rtv, raw);
+	addMessStackStringParamO(var2 - 1, 0, 4, rtv, raw);
 	sendMessageOut(mess, rtv, raw);
 
 	return RunTimeError_OK;
@@ -1278,7 +1364,7 @@ RunTimeError ArrayNumOperator(rawCode* raw, unsigned int returnVar, unsigned cha
 
 
 	unsigned int var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
-	raw->maxLines = commonArrayLines + 1;
+	raw->maxLines = commonArrayLines;
 	raw->code = new rawCode::line[raw->maxLines];
 
 	commonArray(var - 1, returnVar - 1, 4, rtv, raw);
@@ -1299,7 +1385,7 @@ RunTimeError ArrayStrOperator(rawCode* raw, unsigned int returnVar, unsigned cha
 
 
 	unsigned int var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
-	raw->maxLines = commonArrayLines + 1;
+	raw->maxLines = commonArrayLines;
 	raw->code = new rawCode::line[raw->maxLines];
 
 	commonArray(var - 1, returnVar - 1, 64, rtv, raw);
@@ -1318,31 +1404,22 @@ RunTimeError CastFloatOperator(rawCode* raw, unsigned int returnVar, unsigned ch
 
 	}
 
-	raw->maxLines = 5 + waitingLines + 1;
+	raw->maxLines = 3 + placeAdrLines*2 + waitingLines;
 	raw->code = new rawCode::line[raw->maxLines];
 
 	unsigned int var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
 
 	rawCode::line line;
-	//Place the adress of the var in i1
-	line.code = opcode_PLACE;
-	line.r1 = 0;
-	line.type = 0;
-	line.scale = rtv.memory->GetVarAdr(var - 1);
-	raw->code[raw->codeSize] = line;
-	raw->codeSize++;
-	//Load the number to i2 from the adress in i1
+	//Place the adress of the var in a1
+	placeAdr(var - 1, 0, 0, rtv, raw);
+	//Place the adress of the return var in a3
+	placeAdr(returnVar - 1, 2, 0, rtv, raw);
+
+	//Load the number to i2 from the adress in a1
 	line.code = opcode_LOAD;
 	line.r1 = 1;
 	line.r2 = 0;
 	line.type = 0;
-	raw->code[raw->codeSize] = line;
-	raw->codeSize++;
-	//Place the adress of the return var in i3
-	line.code = opcode_PLACE;
-	line.r1 = 2;
-	line.type = 0;
-	line.scale = rtv.memory->GetVarAdr(returnVar - 1);
 	raw->code[raw->codeSize] = line;
 	raw->codeSize++;
 	//Cast the number in i2 to f1
@@ -1352,7 +1429,7 @@ RunTimeError CastFloatOperator(rawCode* raw, unsigned int returnVar, unsigned ch
 	line.type = 1;
 	raw->code[raw->codeSize] = line;
 	raw->codeSize++;
-	//Store the value in f1 to the stack at adr i3
+	//Store the value in f1 to the stack at adr a3
 	line.code = opcode_STORE;
 	line.r1 = 0;
 	line.r2 = 2;
@@ -1375,7 +1452,7 @@ RunTimeError ClearBoardOperator(rawCode* raw, unsigned int returnVar, unsigned c
 
 	}
 
-	raw->maxLines = addMessParLines + waitingLines + sendLines + 1;
+	raw->maxLines = addMessParLinesO + waitingLines + sendLines;
 	raw->code = new rawCode::line[raw->maxLines];
 
 	unsigned int var1 = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
@@ -1385,7 +1462,7 @@ RunTimeError ClearBoardOperator(rawCode* raw, unsigned int returnVar, unsigned c
 	mess.type = MessageType_RESOURCES;
 	mess.mess = ResourceMess_CLEARBOARD;
 	mess.returnParam = 0;
-	addMessStackParam(var1 - 1, 0, 4, rtv, raw);
+	addMessStackParamO(var1 - 1, 0, 4, rtv, raw);
 
 	sendMessageOut(mess, rtv, raw);
 	startWaiting(returnVar - 1, raw);
@@ -1397,7 +1474,7 @@ RunTimeError ClearBoardOperator(rawCode* raw, unsigned int returnVar, unsigned c
 RunTimeError ClearTrackingOperator(rawCode* raw, unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int offset, unsigned int byteLine, runTimeVal &rtv)
 {
 
-	raw->maxLines = sendLines + 1;
+	raw->maxLines = sendLines;
 	raw->code = new rawCode::line[raw->maxLines];
 
 	Message mess;
@@ -1422,7 +1499,7 @@ RunTimeError DecrementLayerOperator(rawCode* raw, unsigned int returnVar, unsign
 
 	}
 
-	raw->maxLines = sendLines + 1;
+	raw->maxLines = sendLines;
 	raw->code = new rawCode::line[raw->maxLines];
 
 	Message mess;
@@ -1449,12 +1526,12 @@ RunTimeError DivFloatOperator(rawCode* raw, unsigned int returnVar, unsigned cha
 
 	}
 
-	raw->maxLines = commonMathLines + 1;
+	raw->maxLines = commonMathLines;
 	raw->code = new rawCode::line[raw->maxLines];
 
 	unsigned int var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
 	unsigned int var2 = (params[4] | ((int)params[5] << 8) | ((int)params[6] << 16) | ((int)params[7] << 24));
-	performArithemitc(rtv.memory->GetVarAdr(var - 1), rtv.memory->GetVarAdr(var2 - 1), returnVar - 1, rtv, opcode_DIV, 1, raw);
+	performArithemitc(var - 1, var2 - 1, returnVar - 1, rtv, opcode_DIV, 1, raw);
 
 	return RunTimeError_OK;
 
@@ -1470,13 +1547,13 @@ RunTimeError DivVarOperator(rawCode* raw, unsigned int returnVar, unsigned char*
 
 	}
 
-	raw->maxLines = commonMathLines + 1;
+	raw->maxLines = commonMathLines;
 	raw->code = new rawCode::line[raw->maxLines];
 
 	unsigned int var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
 	unsigned int var2 = (params[4] | ((int)params[5] << 8) | ((int)params[6] << 16) | ((int)params[7] << 24));
-	performArithemitc(rtv.memory->GetVarAdr(var - 1), 
-		rtv.memory->GetVarAdr(var2 - 1), 
+	performArithemitc(var - 1, 
+		var2 - 1, 
 		returnVar - 1, rtv,
 		opcode_DIV, 0, raw);
 
@@ -1500,10 +1577,12 @@ RunTimeError ExportNumOperator(rawCode* raw, unsigned int returnVar, unsigned ch
 	bool init = false;
 	unsigned int hVar = getHeapVal(rtv, name, init);
 
-	raw->maxLines = 7 + 1;
+	raw->maxLines = 5 + placeAdrLines;
 	raw->code = new rawCode::line[raw->maxLines];
 
 	rawCode::line line;
+	//Place the const adr in a1
+	placeAdr(sValue - 1, 0, 0, rtv, raw);
 	//Place 4 in i2
 	line.code = opcode_PLACE;
 	line.r1 = 1;
@@ -1518,7 +1597,6 @@ RunTimeError ExportNumOperator(rawCode* raw, unsigned int returnVar, unsigned ch
 	line.scale = hVar;
 	raw->code[raw->codeSize] = line;
 	raw->codeSize++;
-
 	//Deallocate the adr at i1 with the size i2
 	line.code = opcode_DALLOC;
 	line.r1 = 0;
@@ -1526,7 +1604,7 @@ RunTimeError ExportNumOperator(rawCode* raw, unsigned int returnVar, unsigned ch
 	raw->code[raw->codeSize] = line;
 	raw->codeSize++;
 
-	//Allocate and adress in the heap for the var in i1 with the size i2 and store in i3
+	//Allocate and adress in the heap for the var in i1 with the size i2 and store in a3
 	line.code = opcode_ALLOC;
 	line.r1 = 0;
 	line.r2 = 1;
@@ -1534,14 +1612,7 @@ RunTimeError ExportNumOperator(rawCode* raw, unsigned int returnVar, unsigned ch
 	raw->code[raw->codeSize] = line;
 	raw->codeSize++;
 
-	//Place the const adr in i1
-	line.code = opcode_PLACE;
-	line.r1 = 0;
-	line.type = 0;
-	line.scale = rtv.memory->GetVarAdr(sValue - 1);
-	raw->code[raw->codeSize] = line;
-	raw->codeSize++;
-	//Copy i2 bytes at i1 to i3
+	//Copy i2 bytes at a1 to a3
 	line.code = opcode_COPY;
 	line.r1 = 2;
 	line.r2 = 0;
@@ -1569,10 +1640,12 @@ RunTimeError ExportStrOperator(rawCode* raw, unsigned int returnVar, unsigned ch
 	bool init = false;
 	unsigned int hVar = getHeapVal(rtv, name, init);
 
-	raw->maxLines = 10 + 1;
+	raw->maxLines = 9 + placeAdrLines;
 	raw->code = new rawCode::line[raw->maxLines];
 
 	rawCode::line line;
+	//Place the stack var in a2
+	placeAdr(sValue - 1, 1, 0, rtv, raw);
 	//Place 64 in i1
 	line.code = opcode_PLACE;
 	line.r1 = 0;
@@ -1601,43 +1674,36 @@ RunTimeError ExportStrOperator(rawCode* raw, unsigned int returnVar, unsigned ch
 	raw->code[raw->codeSize] = line;
 	raw->codeSize++;
 
-	//Place the stack var in i2
-	line.code = opcode_PLACE;
-	line.r1 = 1;
-	line.type = 0;
-	line.scale = rtv.memory->GetVarAdr(sValue - 1);
-	raw->code[raw->codeSize] = line;
-	raw->codeSize++;
-	//Place 4 in i1
+	//Place 4 in c1
 	line.code = opcode_PLACE;
 	line.r1 = 0;
-	line.type = 0;
+	line.type = 2;
 	line.scale = 4;
 	raw->code[raw->codeSize] = line;
 	raw->codeSize++;
-	//Load from i2 to i2
+	//Load from i2 to c2
 	line.code = opcode_LOAD;
 	line.r1 = 1;
 	line.r2 = 1;
-	line.type = 0;
+	line.type = 2;
 	raw->code[raw->codeSize] = line;
 	raw->codeSize++;
-	//Add i1 to i2 and store in i1
+	//Add c1 to c2 and store in c1
 	line.code = opcode_ADD;
 	line.r1 = 0;
 	line.r1 = 1;
 	line.r1 = 0;
-	line.type = 0;
+	line.type = 2;
 	raw->code[raw->codeSize] = line;
 	raw->codeSize++;
-	//Place the stack var in i2
-	line.code = opcode_PLACE;
-	line.r1 = 1;
-	line.type = 0;
-	line.scale = rtv.memory->GetVarAdr(sValue - 1);
+	//Transfer c1 to i1
+	line.code = opcode_TO;
+	line.r1 = 0;
+	line.r2 = 0;
+	line.type = 2;
 	raw->code[raw->codeSize] = line;
 	raw->codeSize++;
-	//Copy i1 bytes from i2 to i3
+	//Copy i1 bytes from a2 to a3
 	line.code = opcode_COPY;
 	line.r1 = 2;
 	line.r2 = 1;
@@ -1659,13 +1725,13 @@ RunTimeError FloatEqlVarOperator(rawCode* raw, unsigned int returnVar, unsigned 
 
 	}
 
-	raw->maxLines = commonMathLines + 1;
+	raw->maxLines = commonMathLines;
 	raw->code = new rawCode::line[raw->maxLines];
 
 	unsigned int var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
 	unsigned int var2 = (params[4] | ((int)params[5] << 8) | ((int)params[6] << 16) | ((int)params[7] << 24));
-	performArithemitc(rtv.memory->GetVarAdr(var - 1), 
-		rtv.memory->GetVarAdr(var2 - 1),
+	performArithemitc(var - 1, 
+		var2 - 1,
 		returnVar - 1, rtv,
 		opcode_CMPRE, 1, raw);
 
@@ -1683,7 +1749,7 @@ RunTimeError FocusUIOperator(rawCode* raw, unsigned int returnVar, unsigned char
 
 	}
 
-	raw->maxLines = addMessParLines + sendLines + 1;
+	raw->maxLines = addMessParLinesO + sendLines;
 	raw->code = new rawCode::line[raw->maxLines];
 
 	unsigned int var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
@@ -1694,7 +1760,7 @@ RunTimeError FocusUIOperator(rawCode* raw, unsigned int returnVar, unsigned char
 	mess.type = MessageType_GUIENTITIES;
 	mess.mess = GUIMess_FOCUS;
 	mess.returnParam = 0;
-	addMessStackParam(var - 1, 0, 4, rtv, raw);
+	addMessStackParamO(var - 1, 0, 4, rtv, raw);
 	sendMessageOut(mess, rtv, raw);
 
 	return RunTimeError_OK;
@@ -1705,7 +1771,7 @@ RunTimeError FocusUIOperator(rawCode* raw, unsigned int returnVar, unsigned char
 RunTimeError GetScreenHeightOperator(rawCode* raw, unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int offset, unsigned int byteLine, runTimeVal &rtv)
 {
 
-	raw->maxLines = addMessTempParLines + waitingLines + sendLines + 1;
+	raw->maxLines = addMessTempParLines + waitingLines + sendLines;
 	raw->code = new rawCode::line[raw->maxLines];
 
 	Message mess;
@@ -1716,8 +1782,8 @@ RunTimeError GetScreenHeightOperator(rawCode* raw, unsigned int returnVar, unsig
 	mess.returnParam = 0;
 
 	addMessTempStack(0, 0, 4, rtv, raw);
-	startWaiting(returnVar - 1, raw);
 	sendMessageOut(mess, rtv, raw);
+	startWaiting(returnVar - 1, raw);
 
 	return RunTimeError_OK;
 
@@ -1726,7 +1792,7 @@ RunTimeError GetScreenHeightOperator(rawCode* raw, unsigned int returnVar, unsig
 RunTimeError GetScreenWidthOperator(rawCode* raw, unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int offset, unsigned int byteLine, runTimeVal &rtv)
 {
 
-	raw->maxLines = addMessTempParLines + waitingLines + sendLines + 1;
+	raw->maxLines = addMessTempParLines + waitingLines + sendLines;
 	raw->code = new rawCode::line[raw->maxLines];
 
 	Message mess;
@@ -1754,7 +1820,7 @@ RunTimeError GlueObjectOperator(rawCode* raw, unsigned int returnVar, unsigned c
 
 	}
 
-	raw->maxLines = addMessParLines * 5 + sendLines + 1;
+	raw->maxLines = addMessParLinesO * 5 + sendLines;
 	raw->code = new rawCode::line[raw->maxLines];
 
 	Message mess;
@@ -1763,23 +1829,25 @@ RunTimeError GlueObjectOperator(rawCode* raw, unsigned int returnVar, unsigned c
 	mess.mess = GameBoardMess_GLUEOBJECT;
 	mess.returnParam = 0;
 	
-	//The parent object
-	unsigned int var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
-	addMessStackParam(var - 1, 0, 4, rtv, raw);
 
-	//The child object
-	var = (params[4] | ((int)params[5] << 8) | ((int)params[6] << 16) | ((int)params[7] << 24));
-	addMessStackParam(var - 1, 4, 4, rtv, raw);
+	unsigned int zVar = (params[16] | ((int)params[17] << 8) | ((int)params[18] << 16) | ((int)params[19] << 24));
+	addMessStackParamO(zVar - 1, 16, 4, rtv, raw);
+
+	unsigned int yVar = (params[12] | ((int)params[13] << 8) | ((int)params[14] << 16) | ((int)params[15] << 24));
+	addMessStackParamO(yVar - 1, 12, 4, rtv, raw);
 
 	//The sub position
 	unsigned int xVar = (params[8] | ((int)params[9] << 8) | ((int)params[10] << 16) | ((int)params[11] << 24));
-	addMessStackParam(xVar - 1, 8, 4, rtv, raw);
+	addMessStackParamO(xVar - 1, 8, 4, rtv, raw);
 
-	unsigned int yVar = (params[12] | ((int)params[13] << 8) | ((int)params[14] << 16) | ((int)params[15] << 24));
-	addMessStackParam(yVar - 1, 12, 4, rtv, raw);
 
-	unsigned int zVar = (params[16] | ((int)params[17] << 8) | ((int)params[18] << 16) | ((int)params[19] << 24));
-	addMessStackParam(zVar - 1, 16, 4, rtv, raw);
+	//The child object
+	unsigned int var = (params[4] | ((int)params[5] << 8) | ((int)params[6] << 16) | ((int)params[7] << 24));
+	addMessStackParamO(var - 1, 4, 4, rtv, raw);
+
+	//The parent object
+	var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
+	addMessStackParamO(var - 1, 0, 4, rtv, raw);
 
 	sendMessageOut(mess, rtv, raw);
 
@@ -1886,7 +1954,7 @@ RunTimeError IgnoreKeyboardOperator(rawCode* raw, unsigned int returnVar, unsign
 
 	}
 
-	raw->maxLines = addMessParLines + sendLines + 1;
+	raw->maxLines = addMessTempParLines + sendLines;
 	raw->code = new rawCode::line[raw->maxLines];
 
 	Message mess;
@@ -1914,7 +1982,7 @@ RunTimeError IgnoreMouseOperator(rawCode* raw, unsigned int returnVar, unsigned 
 
 	}
 
-	raw->maxLines = addMessParLines + sendLines + 1;
+	raw->maxLines = addMessTempParLines + sendLines;
 	raw->code = new rawCode::line[raw->maxLines];
 
 	Message mess;
@@ -1942,7 +2010,7 @@ RunTimeError ImportNumOperator(rawCode* raw, unsigned int returnVar, unsigned ch
 
 	}
 
-	raw->maxLines = 5 + waitingLines + 1;
+	raw->maxLines = 5 + waitingLines + placeAdrLines;
 	raw->code = new rawCode::line[raw->maxLines];
 
 	unsigned int size = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
@@ -1952,11 +2020,28 @@ RunTimeError ImportNumOperator(rawCode* raw, unsigned int returnVar, unsigned ch
 	unsigned int hVar = getHeapVal(rtv, name, init);
 
 	rawCode::line line;
-	//Place the adr of the var in i3
+	//Place the adr of the stack var in a1
+	placeAdr(returnVar - 1, 0, 0, rtv, raw);
+	//Place the adr of the var in i1
 	line.code = opcode_PLACE;
-	line.r1 = 2;
+	line.r1 = 0;
 	line.type = 0;
-	line.scale = hVar + rtv.memory->GetMaxStack();;
+	line.scale = hVar + rtv.memory->GetMaxStack();
+	raw->code[raw->codeSize] = line;
+	raw->codeSize++;
+	//Place 0 in i2
+	line.code = opcode_PLACE;
+	line.r1 = 1;
+	line.type = 0;
+	line.scale = 0;
+	raw->code[raw->codeSize] = line;
+	raw->codeSize++;
+	//Place the heap adr at i1 vith at a3
+	line.code = opcode_PLACEADR;
+	line.r1 = 0;
+	line.r2 = 1;
+	line.r3 = 2;
+	line.type = 0;
 	raw->code[raw->codeSize] = line;
 	raw->codeSize++;
 	//Place 4 in i2
@@ -1966,14 +2051,7 @@ RunTimeError ImportNumOperator(rawCode* raw, unsigned int returnVar, unsigned ch
 	line.scale = 4;
 	raw->code[raw->codeSize] = line;
 	raw->codeSize++;
-	//Place the adr of the stack var in i1
-	line.code = opcode_PLACE;
-	line.r1 = 0;
-	line.type = 0;
-	line.scale = rtv.memory->GetVarAdr(returnVar - 1);
-	raw->code[raw->codeSize] = line;
-	raw->codeSize++;
-	//Copy i2 bytes from i3 to i1
+	//Copy i2 bytes from a3 to a1
 	line.code = opcode_COPY;
 	line.r1 = 0;
 	line.r2 = 2;
@@ -1996,7 +2074,7 @@ RunTimeError ImportStrOperator(rawCode* raw, unsigned int returnVar, unsigned ch
 
 	}
 
-	raw->maxLines = 6 + waitingLines + 1;
+	raw->maxLines = 7 + waitingLines + placeAdrLines;
 	raw->code = new rawCode::line[raw->maxLines];
 
 	rtv.memory->AddVariable(returnVar - 1, 64);
@@ -2007,11 +2085,29 @@ RunTimeError ImportStrOperator(rawCode* raw, unsigned int returnVar, unsigned ch
 	unsigned int hVar = getHeapVal(rtv, name, init);
 
 	rawCode::line line;
-	//Place the adr of the var in i3
+	//Place the adr of the stack var in 12
+	placeAdr(returnVar - 1, 1, 0, rtv, raw);
+	//Place the adr of the var in i1
 	line.code = opcode_PLACE;
-	line.r1 = 2;
+	line.r1 = 0;
 	line.type = 0;
 	line.scale = hVar + rtv.memory->GetMaxStack();
+	raw->code[raw->codeSize] = line;
+	raw->codeSize++;
+	raw->codeSize++;
+	//Place 0 in i2
+	line.code = opcode_PLACE;
+	line.r1 = 1;
+	line.type = 0;
+	line.scale = 0;
+	raw->code[raw->codeSize] = line;
+	raw->codeSize++;
+	//Place the heap adr at i1 vith at a3
+	line.code = opcode_PLACEADR;
+	line.r1 = 0;
+	line.r2 = 1;
+	line.r3 = 2;
+	line.type = 0;
 	raw->code[raw->codeSize] = line;
 	raw->codeSize++;
 	//Place 4 in i2
@@ -2021,7 +2117,7 @@ RunTimeError ImportStrOperator(rawCode* raw, unsigned int returnVar, unsigned ch
 	line.scale = 4;
 	raw->code[raw->codeSize] = line;
 	raw->codeSize++;
-	//Load the value from i3 to i1
+	//Load the value from a3 to i1
 	line.code = opcode_LOAD;
 	line.r1 = 0;
 	line.r2 = 2;
@@ -2036,13 +2132,6 @@ RunTimeError ImportStrOperator(rawCode* raw, unsigned int returnVar, unsigned ch
 	raw->code[raw->codeSize] = line;
 	raw->codeSize++;
 
-	//Place the adr of the stack var in i2
-	line.code = opcode_PLACE;
-	line.r1 = 1;
-	line.type = 0;
-	line.scale = rtv.memory->GetVarAdr(returnVar - 1);
-	raw->code[raw->codeSize] = line;
-	raw->codeSize++;
 	//Copy i1 bytes from i3 to i2
 	line.code = opcode_COPY;
 	line.r1 = 1;
@@ -2066,7 +2155,7 @@ RunTimeError IncrementLayerOperator(rawCode* raw, unsigned int returnVar, unsign
 
 	}
 
-	raw->maxLines = sendLines + 1;
+	raw->maxLines = sendLines;
 	raw->code = new rawCode::line[raw->maxLines];
 
 	Message mess;
@@ -2093,7 +2182,7 @@ RunTimeError JumpNow(rawCode* raw, unsigned int returnVar, unsigned char* params
 
 	}
 
-	raw->maxLines = 2 + 1;
+	raw->maxLines = 2;
 	raw->code = new rawCode::line[raw->maxLines];
 
 	unsigned int location = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
@@ -2130,21 +2219,22 @@ RunTimeError JumpInv(rawCode* raw, unsigned int returnVar, unsigned char* params
 
 	}
 
-	raw->maxLines = 4 + 1;
+	raw->maxLines = 3 + placeAdrLines;
 	raw->code = new rawCode::line[raw->maxLines];
 
 	unsigned int var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
 	unsigned int location = (params[4] | ((int)params[5] << 8) | ((int)params[6] << 16) | ((int)params[7] << 24));
 
 	rawCode::line line;
-	//Place the adr of the var in i1
-	line.code = opcode_PLACE;
+	//Place the adr of the var in a1
+	/*line.code = opcode_PLACE;
 	line.r1 = 0;
 	line.type = 0;
-	line.scale = rtv.memory->GetVarAdr(var-1);
+	line.scale = rtv.memory->GetVarAdr(var - 1);
 	raw->code[raw->codeSize] = line;
-	raw->codeSize++;
-	//Load value from the stack with adr i1 and store it in c1
+	raw->codeSize++;*/
+	placeAdr(var - 1, 0, 0, rtv, raw);
+	//Load value from the stack with adr a1 and store it in c1
 	line.code = opcode_LOAD;
 	line.r1 = 0;
 	line.r2 = 0;
@@ -2181,7 +2271,7 @@ RunTimeError LinkDBGOperator(rawCode* raw, unsigned int returnVar, unsigned char
 
 	}
 
-	raw->maxLines = addMessParLines + sendLines + 1;
+	raw->maxLines = addMessParLinesO + sendLines;
 	raw->code = new rawCode::line[raw->maxLines];
 
 	unsigned int var1 = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
@@ -2192,7 +2282,7 @@ RunTimeError LinkDBGOperator(rawCode* raw, unsigned int returnVar, unsigned char
 	mess.mess = EventMess_LNKDBG;
 	mess.returnParam = 0;
 
-	addMessStackParam(var1 - 1, 0, 4, rtv, raw);
+	addMessStackParamO(var1 - 1, 0, 4, rtv, raw);
 	sendMessageOut(mess, rtv, raw);
 
 	return RunTimeError_OK;
@@ -2209,7 +2299,7 @@ RunTimeError LinkTargetOperator(rawCode* raw, unsigned int returnVar, unsigned c
 
 	}
 
-	raw->maxLines = addMessParLines + sendLines + 1;
+	raw->maxLines = setObjectMessLines;
 	raw->code = new rawCode::line[raw->maxLines];
 
 	unsigned int var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
@@ -2224,7 +2314,7 @@ RunTimeError LinkTargetOperator(rawCode* raw, unsigned int returnVar, unsigned c
 RunTimeError LoadCameraOperator(rawCode* raw, unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int offset, unsigned int byteLine, runTimeVal &rtv)
 {
 
-	raw->maxLines = sendLines + waitingLines + 1;
+	raw->maxLines = sendLines + waitingLines;
 	raw->code = new rawCode::line[raw->maxLines];
 
 	Message mess;
@@ -2253,7 +2343,7 @@ RunTimeError LoadGameBoardOperator(rawCode* raw, unsigned int returnVar, unsigne
 	unsigned int var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
 	unsigned char hasMore = paramSize == 8 ? 1 : 0;
 
-	raw->maxLines = sendLines + addMessParLines * 2 + addMessTempParLines + waitingLines + 1;
+	raw->maxLines = sendLines + addMessParLinesO * 2 + addMessTempParLines + waitingLines;
 	raw->code = new rawCode::line[raw->maxLines];
 
 
@@ -2263,16 +2353,16 @@ RunTimeError LoadGameBoardOperator(rawCode* raw, unsigned int returnVar, unsigne
 	mess.type = MessageType_RESOURCES;
 	mess.mess = ResourceMess_LOADGAMEBOARD;
 
-	addMessStackParam(var - 1, 0, 4, rtv, raw);
-	addMessTempStack(4, hasMore, 1, rtv, raw);
-
 	if (paramSize == 8)
 	{
 
 		unsigned int var2 = (params[4] | ((int)params[5] << 8) | ((int)params[6] << 16) | ((int)params[7] << 24));
-		addMessStackParam(var2 - 1,5, 4, rtv, raw);
+		addMessStackParamO(var2 - 1,5, 4, rtv, raw);
 
 	}
+
+	addMessStackParamO(var - 1, 0, 4, rtv, raw);
+	addMessTempStack(4, hasMore, 1, rtv, raw);
 
 	startWaiting(returnVar - 1, raw);
 	sendMessageOut(mess, rtv, raw);
@@ -2291,8 +2381,7 @@ RunTimeError LoadImageOperator(rawCode* raw,unsigned int returnVar, unsigned cha
 
 	}
 
-
-	raw->maxLines = addMessTempParLines + addMessParLines + waitingLines + sendLines + 1;
+	raw->maxLines = addMessTempParLines + addMessParLinesO + waitingLines + sendLines;
 	raw->code = new rawCode::line[raw->maxLines];
 
 	unsigned int var1 = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
@@ -2303,10 +2392,10 @@ RunTimeError LoadImageOperator(rawCode* raw,unsigned int returnVar, unsigned cha
 	int enu = GUIObjects_IMAGE;
 	mess.returnParam = returnVar;
 	addMessTempStack(0, enu, 4, rtv, raw);
-	addMessStackStringParam(var1 - 1, 4, 4, rtv, raw);
+	addMessStackStringParamO(var1 - 1, 4, 4, rtv, raw);
 
-	startWaiting(returnVar - 1, raw);
 	sendMessageOut(mess, rtv, raw);
+	startWaiting(returnVar - 1, raw);
 
 	return RunTimeError_OK;
 
@@ -2322,7 +2411,7 @@ RunTimeError LoadLightOperator(rawCode* raw, unsigned int returnVar, unsigned ch
 
 	}
 
-	raw->maxLines = addMessParLines * 3 + waitingLines + sendLines + 1;
+	raw->maxLines = addMessParLinesO * 3 + waitingLines + sendLines;
 	raw->code = new rawCode::line[raw->maxLines];
 
 	unsigned int var1 = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
@@ -2334,12 +2423,12 @@ RunTimeError LoadLightOperator(rawCode* raw, unsigned int returnVar, unsigned ch
 	mess.type = MessageType_RESOURCES;
 	mess.mess = ResourceMess_LOADLIGHT;
 	mess.returnParam = returnVar;
-	addMessStackParam(var1 - 1, 0, 4, rtv, raw);
-	addMessStackParam(var2 - 1, 4, 4, rtv, raw);
-	addMessStackParam(var3 - 1, 8, 4, rtv, raw);
+	addMessStackParamO(var3 - 1, 8, 4, rtv, raw);
+	addMessStackParamO(var2 - 1, 4, 4, rtv, raw);
+	addMessStackParamO(var1 - 1, 0, 4, rtv, raw);
 
-	startWaiting(returnVar - 1, raw);
 	sendMessageOut(mess, rtv, raw);
+	startWaiting(returnVar - 1, raw);
 
 	return RunTimeError_OK;
 
@@ -2355,7 +2444,7 @@ RunTimeError LoadMeshOperator(rawCode* raw, unsigned int returnVar, unsigned cha
 
 	}
 
-	raw->maxLines = addMessStrParLines + sendLines + waitingLines + 1;
+	raw->maxLines = addMessStrParLines + sendLines + waitingLines;
 	raw->code = new rawCode::line[raw->maxLines];
 
 	unsigned int var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
@@ -2365,9 +2454,9 @@ RunTimeError LoadMeshOperator(rawCode* raw, unsigned int returnVar, unsigned cha
 	mess.destination = MessageSource_RESOURCES;
 	mess.type = MessageType_RESOURCES;
 	mess.mess = ResourceMess_LOADMESH;
-	addMessStackStringParam(var - 1, 0, 4, rtv, raw);
-	startWaiting(returnVar - 1, raw);
+	addMessStackStringParamO(var - 1, 0, 4, rtv, raw);
 	sendMessageOut(mess, rtv, raw);
+	startWaiting(returnVar - 1, raw);
 
 	return RunTimeError_OK;
 
@@ -2383,7 +2472,7 @@ RunTimeError LoadKeyTriggerOperator(rawCode* raw, unsigned int returnVar, unsign
 
 	}
 
-	raw->maxLines = addMessStrParLines + sendLines + 1;
+	raw->maxLines = addMessStrParLines + sendLines;
 	raw->code = new rawCode::line[raw->maxLines];
 
 	unsigned int var = (params[4] | ((int)params[5] << 8) | ((int)params[6] << 16) | ((int)params[7] << 24));
@@ -2393,7 +2482,7 @@ RunTimeError LoadKeyTriggerOperator(rawCode* raw, unsigned int returnVar, unsign
 	mess.type = MessageType_RESOURCES;
 	mess.mess = ResourceMess_LOADKEYTRIGGER;
 	mess.returnParam = 0;
-	addMessStackStringParam(var - 1, 0, 4, rtv, raw);
+	addMessStackStringParamO(var - 1, 0, 4, rtv, raw);
 	mess.SetParams(params, 0, 8);
 	sendMessageOut(mess, rtv, raw);
 	return RunTimeError_OK;
@@ -2410,7 +2499,7 @@ RunTimeError LoadKeyTriggerOperatorChar(rawCode* raw,unsigned int returnVar, uns
 
 	}
 
-	raw->maxLines = addMessStrParLines + sendLines + 1;
+	raw->maxLines = addMessStrParLines + sendLines;
 	raw->code = new rawCode::line[raw->maxLines];
 
 	unsigned int var = (params[4] | ((int)params[5] << 8) | ((int)params[6] << 16) | ((int)params[7] << 24));
@@ -2420,7 +2509,7 @@ RunTimeError LoadKeyTriggerOperatorChar(rawCode* raw,unsigned int returnVar, uns
 	mess.type = MessageType_RESOURCES;
 	mess.mess = ResourceMess_LOADCHARKEYTRIGGER;
 	mess.returnParam = 0;
-	addMessStackStringParam(var - 1, 0, 4, rtv, raw);
+	addMessStackStringParamO(var - 1, 0, 4, rtv, raw);
 	sendMessageOut(mess, rtv, raw);
 
 	return RunTimeError_OK;
@@ -2430,31 +2519,30 @@ RunTimeError LoadKeyTriggerOperatorChar(rawCode* raw,unsigned int returnVar, uns
 RunTimeError LoadObjectOperator(rawCode* raw, unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int offset, unsigned int byteLine, runTimeVal &rtv)
 {
 
-	if (paramSize < 4)
+	if (paramSize < 8)
 	{
 
 		return RunTimeError_BADPARAMS;
 
 	}
 
-	raw->maxLines = addMessParLines * 2 + waitingLines + sendLines + 1;
+	raw->maxLines = addMessParLinesO * 2 + waitingLines + sendLines;
 	raw->code = new rawCode::line[raw->maxLines];
-
-	unsigned int var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
 
 	Message mess;
 	mess.returnParam = returnVar;
 	mess.destination = MessageSource_RESOURCES;
 	mess.type = MessageType_RESOURCES;
 	mess.mess = ResourceMess_LOADOBJECT;
-	addMessStackParam(var - 1, 0, 4, rtv, raw);
 
+	unsigned int var = (params[4] | ((int)params[5] << 8) | ((int)params[6] << 16) | ((int)params[7] << 24));
+	addMessStackParamO(var - 1, 4, 4, rtv, raw);
 
-	var = (params[4] | ((int)params[5] << 8) | ((int)params[6] << 16) | ((int)params[7] << 24));
-	addMessStackParam(var - 1, 4, 4, rtv, raw);
+	var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
+	addMessStackParamO(var - 1, 0, 4, rtv, raw);
 
-	startWaiting(returnVar - 1, raw);
 	sendMessageOut(mess, rtv, raw);
+	startWaiting(returnVar - 1, raw);
 
 	return RunTimeError_OK;
 
@@ -2470,7 +2558,7 @@ RunTimeError LoadObjectCopyOperator(rawCode* raw,unsigned int returnVar, unsigne
 
 	}
 
-	raw->maxLines = sendLines + waitingLines + addMessParLines + 1;
+	raw->maxLines = sendLines + waitingLines + addMessParLinesO;
 	raw->code = new rawCode::line[raw->maxLines];
 
 	unsigned int var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
@@ -2481,9 +2569,10 @@ RunTimeError LoadObjectCopyOperator(rawCode* raw,unsigned int returnVar, unsigne
 	mess.type = MessageType_RESOURCES;
 	mess.mess = ResourceMess_LOADCOPYOBJECT;
 
-	addMessStackParam(var - 1, 0, 4, rtv, raw);
-	startWaiting(returnVar - 1, raw);
+	addMessStackParamO(var - 1, 0, 4, rtv, raw);
 	sendMessageOut(mess, rtv, raw);
+
+	startWaiting(returnVar - 1, raw);
 
 	return RunTimeError_OK;
 
@@ -2492,7 +2581,7 @@ RunTimeError LoadObjectCopyOperator(rawCode* raw,unsigned int returnVar, unsigne
 RunTimeError LoadPanelOperator(rawCode* raw, unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int offset, unsigned int byteLine, runTimeVal &rtv)
 {
 
-	raw->maxLines = addMessTempParLines * 2 + waitingLines + sendLines + 1;
+	raw->maxLines = addMessTempParLines * 2 + waitingLines + sendLines;
 	raw->code = new rawCode::line[raw->maxLines];
 
 	Message mess;
@@ -2504,8 +2593,8 @@ RunTimeError LoadPanelOperator(rawCode* raw, unsigned int returnVar, unsigned ch
 	addMessTempStack(0, enu, 4, rtv, raw);
 	addMessTempStack(4, ' ', 1, rtv, raw);
 
-	startWaiting(returnVar - 1, raw);
 	sendMessageOut(mess, rtv, raw);
+	startWaiting(returnVar - 1, raw);
 
 	return RunTimeError_OK;
 
@@ -2522,7 +2611,7 @@ RunTimeError LoadStateOperator(rawCode* raw, unsigned int returnVar, unsigned ch
 
 	}
 
-	raw->maxLines = addMessStrParLines + addMessParLines + sendLines + 1;
+	raw->maxLines = addMessStrParLines + addMessParLinesO + sendLines;
 	raw->code = new rawCode::line[raw->maxLines];
 
 	unsigned int var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
@@ -2532,11 +2621,11 @@ RunTimeError LoadStateOperator(rawCode* raw, unsigned int returnVar, unsigned ch
 	mess.destination = MessageSource_RESOURCES;
 	mess.type = MessageType_RESOURCES;
 	mess.mess = ResourceMess_LOADBOARD;
-
 	mess.returnParam = 0;
 
-	addMessStackParam(var - 1, 0, 4, rtv, raw);
-	addMessStackStringParam(var2 - 1, 4, 4, rtv, raw);
+	addMessStackStringParamO(var2 - 1, 4, 4, rtv, raw);
+	addMessStackParamO(var - 1, 0, 4, rtv, raw);
+
 	sendMessageOut(mess, rtv, raw);
 
 	return RunTimeError_OK;
@@ -2553,7 +2642,7 @@ RunTimeError LoadScriptOperator(rawCode* raw, unsigned int returnVar, unsigned c
 
 	}
 
-	raw->maxLines = addMessStrParLines + waitingLines + sendLines + 1;
+	raw->maxLines = addMessStrParLines + waitingLines + sendLines;
 	raw->code = new rawCode::line[raw->maxLines];
 
 	unsigned int var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
@@ -2564,9 +2653,10 @@ RunTimeError LoadScriptOperator(rawCode* raw, unsigned int returnVar, unsigned c
 	mess.mess = ResourceMess_LOADSCRIPT;
 	mess.returnParam = returnVar;
 	
-	addMessStackStringParam(var - 1, 0, 4, rtv, raw);
-	startWaiting(returnVar - 1, raw);
+	addMessStackStringParamO(var - 1, 0, 4, rtv, raw);
 	sendMessageOut(mess, rtv, raw);
+
+	startWaiting(returnVar - 1, raw);
 
 	return RunTimeError_OK;
 
@@ -2575,7 +2665,7 @@ RunTimeError LoadScriptOperator(rawCode* raw, unsigned int returnVar, unsigned c
 RunTimeError LoadTextBoxOperator(rawCode* raw, unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int offset, unsigned int byteLine, runTimeVal &rtv)
 {
 
-	raw->maxLines = addMessTempParLines * 2 + waitingLines + sendLines + 1;
+	raw->maxLines = addMessTempParLines * 2 + waitingLines + sendLines;
 	raw->code = new rawCode::line[raw->maxLines];
 
 	Message mess;
@@ -2604,31 +2694,30 @@ RunTimeError MoveOperator(rawCode* raw, unsigned int returnVar, unsigned char* p
 
 	}
 
-	raw->maxLines = addMessParLines * (paramSize == 16 ? 3 : 2) + sendLines + 1;
+	raw->maxLines = addMessParLinesO * (paramSize == 16 ? 3 : 2) + sendLines;
 	raw->code = new rawCode::line[raw->maxLines];
 
 	Message mess;
 	mess.destination = MessageSource_OBJECT;
 	mess.type = MessageType_OBJECT;
 	mess.mess = ObjectMess_MOVE;
-	mess.returnParam = 0;
 
 	unsigned int var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
 	mess.returnParam = var; 
-	
-	unsigned int xVar = (params[4] | ((int)params[5] << 8) | ((int)params[6] << 16) | ((int)params[7] << 24));
-	unsigned int yVar = (params[8] | ((int)params[9] << 8) | ((int)params[10] << 16) | ((int)params[11] << 24));
-
-	addMessStackParam(xVar - 1, 0, 4, rtv, raw);
-	addMessStackParam(yVar - 1, 4, 4, rtv, raw);
 
 	if (paramSize == 16)
 	{
 
 		unsigned int zVar = (params[12] | ((int)params[13] << 8) | ((int)params[14] << 16) | ((int)params[15] << 24));
-		addMessStackParam(zVar - 1, 8, 4, rtv, raw);
+		addMessStackParamO(zVar - 1, 8, 4, rtv, raw);
 
 	}
+
+	unsigned int xVar = (params[4] | ((int)params[5] << 8) | ((int)params[6] << 16) | ((int)params[7] << 24));
+	unsigned int yVar = (params[8] | ((int)params[9] << 8) | ((int)params[10] << 16) | ((int)params[11] << 24));
+
+	addMessStackParamO(yVar - 1, 4, 4, rtv, raw);
+	addMessStackParamO(xVar - 1, 0, 4, rtv, raw);
 
 	sendMessageOut(mess, rtv, raw);
 
@@ -2646,13 +2735,13 @@ RunTimeError MulFloatOperator(rawCode* raw, unsigned int returnVar, unsigned cha
 
 	}
 	
-	raw->maxLines = commonMathLines + 1;
+	raw->maxLines = commonMathLines;
 	raw->code = new rawCode::line[raw->maxLines];
 
 	unsigned int var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
 	unsigned int var2 = (params[4] | ((int)params[5] << 8) | ((int)params[6] << 16) | ((int)params[7] << 24));
-	performArithemitc(rtv.memory->GetVarAdr(var - 1),
-		rtv.memory->GetVarAdr(var2 - 1),
+	performArithemitc(var - 1,
+		var2 - 1,
 		returnVar - 1, rtv,
 		opcode_MUL, 1, raw);
 
@@ -2670,13 +2759,13 @@ RunTimeError MulVarOperator(rawCode* raw, unsigned int returnVar, unsigned char*
 
 	}
 
-	raw->maxLines = commonMathLines + 1;
+	raw->maxLines = commonMathLines;
 	raw->code = new rawCode::line[raw->maxLines];
 
 	unsigned int var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
 	unsigned int var2 = (params[4] | ((int)params[5] << 8) | ((int)params[6] << 16) | ((int)params[7] << 24));
-	performArithemitc(rtv.memory->GetVarAdr(var - 1),
-		rtv.memory->GetVarAdr(var2 - 1),
+	performArithemitc(var - 1,
+		var2 - 1,
 		returnVar - 1, rtv,
 		opcode_MUL, 0, raw);
 
@@ -2695,19 +2784,16 @@ RunTimeError NegateFloatOperator(rawCode* raw, unsigned int returnVar, unsigned 
 	}
 
 
-	raw->maxLines = 6 + waitingLines + 1;
+	raw->maxLines = 4 + waitingLines + placeAdrLines * 2;
 	raw->code = new rawCode::line[raw->maxLines];
 
 	unsigned int var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
 
 	rawCode::line line;
-	//Place the adress of the var in i1
-	line.code = opcode_PLACE;
-	line.r1 = 0;
-	line.type = 0;
-	line.scale = rtv.memory->GetVarAdr(var - 1);
-	raw->code[raw->codeSize] = line;
-	raw->codeSize++;
+	//Place the adress of the var in a1
+	placeAdr(var - 1, 0, 0, rtv, raw);
+	//Place the returnadress of the in a2
+	placeAdr(returnVar - 1, 1, 0, rtv, raw);
 	//Place -1 in f2
 	line.code = opcode_PLACE;
 	line.r1 = 1;
@@ -2715,7 +2801,7 @@ RunTimeError NegateFloatOperator(rawCode* raw, unsigned int returnVar, unsigned 
 	line.scale = -1;
 	raw->code[raw->codeSize] = line;
 	raw->codeSize++;
-	//Load the number to f3 from the adress in i1
+	//Load the number to f3 from the adress in a1
 	line.code = opcode_LOAD;
 	line.r1 = 2;
 	line.r2 = 0;
@@ -2730,17 +2816,10 @@ RunTimeError NegateFloatOperator(rawCode* raw, unsigned int returnVar, unsigned 
 	line.type = 1;
 	raw->code[raw->codeSize] = line;
 	raw->codeSize++;
-	//Place the returnadress of the in i1
-	line.code = opcode_PLACE;
-	line.r1 = 0;
-	line.type = 0;
-	line.scale = rtv.memory->GetVarAdr(returnVar - 1);
-	raw->code[raw->codeSize] = line;
-	raw->codeSize++;
-	//Store the value in f3 to the stack at adr i1
+	//Store the value in f3 to the stack at adr a2
 	line.code = opcode_STORE;
 	line.r1 = 2;
-	line.r2 = 0;
+	line.r2 = 1;
 	line.type = 1;
 	raw->code[raw->codeSize] = line;
 	raw->codeSize++;
@@ -2761,19 +2840,16 @@ RunTimeError NegateVarOperator(rawCode* raw, unsigned int returnVar, unsigned ch
 	}
 
 
-	raw->maxLines = 6 + waitingLines + 1;
+	raw->maxLines = 4 + waitingLines + placeAdrLines * 2;
 	raw->code = new rawCode::line[raw->maxLines];
 
 	unsigned int var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
 	
 	rawCode::line line;
-	//Place the adress of the var in i1
-	line.code = opcode_PLACE;
-	line.r1 = 0;
-	line.type = 0;
-	line.scale = rtv.memory->GetVarAdr(var - 1);
-	raw->code[raw->codeSize] = line;
-	raw->codeSize++;
+	//Place the adress of the var in a1
+	placeAdr(var - 1, 0, 0, rtv, raw);
+	//Place the returnadress of the in a2
+	placeAdr(returnVar - 1, 1, 0, rtv, raw);
 	//Place -1 in i2
 	line.code = opcode_PLACE;
 	line.r1 = 1;
@@ -2796,17 +2872,10 @@ RunTimeError NegateVarOperator(rawCode* raw, unsigned int returnVar, unsigned ch
 	line.type = 0;
 	raw->code[raw->codeSize] = line;
 	raw->codeSize++;
-	//Place the returnadress of the in i1
-	line.code = opcode_PLACE;
-	line.r1 = 0;
-	line.type = 0;
-	line.scale = rtv.memory->GetVarAdr(returnVar - 1);
-	raw->code[raw->codeSize] = line;
-	raw->codeSize++;
-	//Store the value in i3 to the stack at adr i1
+	//Store the value in i3 to the stack at adr i2
 	line.code = opcode_STORE;
 	line.r1 = 2;
-	line.r2 = 0;
+	line.r2 = 1;
 	line.type = 0;
 	raw->code[raw->codeSize] = line;
 	raw->codeSize++;
@@ -2826,13 +2895,13 @@ RunTimeError NumGrtFloaOperator(rawCode* raw, unsigned int returnVar, unsigned c
 
 	}
 
-	raw->maxLines = commonMathLines + 1;
+	raw->maxLines = commonMathLines;
 	raw->code = new rawCode::line[raw->maxLines];
 
 	unsigned int var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
 	unsigned int var2 = (params[4] | ((int)params[5] << 8) | ((int)params[6] << 16) | ((int)params[7] << 24));
-	performArithemitc(rtv.memory->GetVarAdr(var - 1),
-		rtv.memory->GetVarAdr(var2 - 1),
+	performArithemitc(var - 1,
+		var2 - 1,
 		returnVar - 1, rtv,
 		opcode_GRTR, 1, raw);
 
@@ -2850,13 +2919,13 @@ RunTimeError NumGrtVarOperator(rawCode* raw, unsigned int returnVar, unsigned ch
 
 	}
 
-	raw->maxLines = commonMathLines + 1;
+	raw->maxLines = commonMathLines;
 	raw->code = new rawCode::line[raw->maxLines];
 
 	unsigned int var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
 	unsigned int var2 = (params[4] | ((int)params[5] << 8) | ((int)params[6] << 16) | ((int)params[7] << 24));
-	performArithemitc(rtv.memory->GetVarAdr(var - 1),
-		rtv.memory->GetVarAdr(var2 - 1),
+	performArithemitc(var - 1,
+		var2 - 1,
 		returnVar - 1, rtv,
 		opcode_GRTR, 0, raw);
 
@@ -2874,13 +2943,13 @@ RunTimeError NumEqlVarOperator(rawCode* raw, unsigned int returnVar, unsigned ch
 
 	}
 
-	raw->maxLines = commonMathLines + 1;
+	raw->maxLines = commonMathLines;
 	raw->code = new rawCode::line[raw->maxLines];
 
 	unsigned int var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
 	unsigned int var2 = (params[4] | ((int)params[5] << 8) | ((int)params[6] << 16) | ((int)params[7] << 24));
-	performArithemitc(rtv.memory->GetVarAdr(var - 1),
-		rtv.memory->GetVarAdr(var2 - 1),
+	performArithemitc(var - 1,
+		var2 - 1,
 		returnVar - 1, rtv,
 		opcode_CMPRE, 0, raw);
 
@@ -2891,19 +2960,20 @@ RunTimeError NumEqlVarOperator(rawCode* raw, unsigned int returnVar, unsigned ch
 RunTimeError OffsetNumOperator(rawCode* raw, unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int offset, unsigned int byteLine, runTimeVal &rtv)
 {
 
-	if (paramSize < 4)
+	if (paramSize < 8)
 	{
 
 		return RunTimeError_BADPARAMS;
 
 	}
 
-	raw->maxLines = commonMathLines + 1;
+	raw->maxLines = 1;
 	raw->code = new rawCode::line[raw->maxLines];
 
 	unsigned int var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
+	unsigned int arr = (params[4] | ((int)params[5] << 8) | ((int)params[6] << 16) | ((int)params[7] << 24));
 
-	commonOffset(var - 1, 4, rtv, raw);
+	commonOffset(arr-1, var - 1, 4, rtv);
 	return RunTimeError_OK;
 
 }
@@ -2911,19 +2981,20 @@ RunTimeError OffsetNumOperator(rawCode* raw, unsigned int returnVar, unsigned ch
 RunTimeError OffsetStrOperator(rawCode* raw, unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int offset, unsigned int byteLine, runTimeVal &rtv)
 {
 
-	if (paramSize < 4)
+	if (paramSize < 8)
 	{
 
 		return RunTimeError_BADPARAMS;
 
 	}
 
-	raw->maxLines = commonMathLines + 1;
+	raw->maxLines = 1;
 	raw->code = new rawCode::line[raw->maxLines];
 
 	unsigned int var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
+	unsigned int arr = (params[4] | ((int)params[5] << 8) | ((int)params[6] << 16) | ((int)params[7] << 24));
 
-	commonOffset(var - 1, 64, rtv, raw);
+	commonOffset(arr-1,var - 1, 64, rtv);
 	return RunTimeError_OK;
 
 }
@@ -2938,7 +3009,7 @@ RunTimeError OrbitOperator(rawCode* raw, unsigned int returnVar, unsigned char* 
 
 	}
 
-	raw->maxLines = addMessParLines + sendLines + 1;
+	raw->maxLines = addMessParLinesO + sendLines;
 	raw->code = new rawCode::line[raw->maxLines];
 
 	Message mess;
@@ -2950,7 +3021,7 @@ RunTimeError OrbitOperator(rawCode* raw, unsigned int returnVar, unsigned char* 
 	mess.returnParam = var;
 
 	unsigned int fVar = (params[4] | ((int)params[5] << 8) | ((int)params[6] << 16) | ((int)params[7] << 24));
-	addMessStackParam(fVar - 1, 0, 4, rtv, raw);
+	addMessStackParamO(fVar - 1, 0, 4, rtv, raw);
 
 	sendMessageOut(mess, rtv, raw);
 
@@ -2968,7 +3039,7 @@ RunTimeError ParentOperator(rawCode* raw, unsigned int returnVar, unsigned char*
 
 	}
 
-	raw->maxLines = addMessParLines + waitingLines + sendLines + 1;
+	raw->maxLines = addMessParLinesO + waitingLines + sendLines;
 	raw->code = new rawCode::line[raw->maxLines];
 
 	unsigned int var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
@@ -2979,7 +3050,7 @@ RunTimeError ParentOperator(rawCode* raw, unsigned int returnVar, unsigned char*
 	mess.mess = GameBoardMess_GETPARENT;
 	mess.returnParam = returnVar;
 
-	addMessStackParam(var - 1, 0, 4, rtv, raw);
+	addMessStackParamO(var - 1, 0, 4, rtv, raw);
 	sendMessageOut(mess, rtv, raw);
 	startWaiting(returnVar - 1, raw);
 
@@ -2990,7 +3061,7 @@ RunTimeError ParentOperator(rawCode* raw, unsigned int returnVar, unsigned char*
 RunTimeError PauseGameOperator(rawCode* raw, unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int offset, unsigned int byteLine, runTimeVal &rtv)
 {
 
-	raw->maxLines = addMessTempParLines + sendLines + 1;
+	raw->maxLines = addMessTempParLines + sendLines;
 	raw->code = new rawCode::line[raw->maxLines];
 
 	Message mess;
@@ -3015,7 +3086,7 @@ RunTimeError PosOperator(rawCode* raw, unsigned int returnVar, unsigned char* pa
 
 	}
 
-	raw->maxLines = addMessParLines * (paramSize == 16 ? 3 : 2) + sendLines + 1;
+	raw->maxLines = addMessParLinesO * (paramSize == 16 ? 3 : 2) + sendLines;
 	raw->code = new rawCode::line[raw->maxLines];
 
 	Message mess;
@@ -3026,19 +3097,20 @@ RunTimeError PosOperator(rawCode* raw, unsigned int returnVar, unsigned char* pa
 	unsigned int var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
 	mess.returnParam = var;
 
-	unsigned int xVar = (params[4] | ((int)params[5] << 8) | ((int)params[6] << 16) | ((int)params[7] << 24));
-	unsigned int yVar = (params[8] | ((int)params[9] << 8) | ((int)params[10] << 16) | ((int)params[11] << 24));
-
-	addMessStackParam(xVar - 1, 0, 4, rtv, raw);
-	addMessStackParam(yVar - 1, 4, 4, rtv, raw);
-
 	if (paramSize == 16)
 	{
 
 		unsigned int zVar = (params[12] | ((int)params[13] << 8) | ((int)params[14] << 16) | ((int)params[15] << 24));
-		addMessStackParam(zVar - 1, 8, 4, rtv, raw);
+		addMessStackParamO(zVar - 1, 8, 4, rtv, raw);
 
 	}
+
+	unsigned int xVar = (params[4] | ((int)params[5] << 8) | ((int)params[6] << 16) | ((int)params[7] << 24));
+	unsigned int yVar = (params[8] | ((int)params[9] << 8) | ((int)params[10] << 16) | ((int)params[11] << 24));
+
+	addMessStackParamO(yVar - 1, 4, 4, rtv, raw);
+	addMessStackParamO(xVar - 1, 0, 4, rtv, raw);
+
 
 	sendMessageOut(mess, rtv, raw);
 
@@ -3056,34 +3128,29 @@ RunTimeError PostFloatOperator(rawCode* raw, unsigned int returnVar, unsigned ch
 
 	}
 
-	raw->maxLines = addMessStrParLines + sendLines + 4 + 1;
+	raw->maxLines = addMessStrParLines + sendLines + 3 + placeAdrLines;
 	raw->code = new rawCode::line[raw->maxLines];
 
 	unsigned int var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
 
 	rawCode::line line;
-	//Place the adress of the float var in i1
-	line.code = opcode_PLACE;
-	line.r1 = 0;
-	line.type = 0;
-	line.scale = rtv.memory->GetVarAdr(var - 1);
-	raw->code[raw->codeSize] = line;
-	raw->codeSize++;
-	//Load the float the adress in i1 to f1
+	//Place the adress of the float var in a1
+	placeAdr(var - 1, 0, 0, rtv, raw);
+	//Load the float the adress in a1 to f1
 	line.code = opcode_LOAD;
 	line.r1 = 0;
 	line.r2 = 0;
 	line.type = 1;
 	raw->code[raw->codeSize] = line;
 	raw->codeSize++;
-	//Place the adress of the temp var in i2
+	//Place the adress of the temp var in a2
 	line.code = opcode_PLACE;
 	line.r1 = 1;
-	line.type = 0;
+	line.type = 3;
 	line.scale = rtv.memory->GetVarAdr(rtv.memory->GetMaxVar());
 	raw->code[raw->codeSize] = line;
 	raw->codeSize++;
-	//Cast the float in f1 to a string at adr i2
+	//Cast the float in f1 to a string at adr a2
 	line.code = opcode_FTS;
 	line.r1 = 0;
 	line.r2 = 1;
@@ -3097,7 +3164,7 @@ RunTimeError PostFloatOperator(rawCode* raw, unsigned int returnVar, unsigned ch
 	mess.mess = GUIMess_POST;
 	mess.returnParam = 0;
 
-	addMessStackStringParam(rtv.memory->GetMaxVar(), 0, 4, rtv, raw);
+	addMessStackStringParamNO(rtv.memory->GetMaxVar(), 0, 4, rtv, raw);
 	sendMessageOut(mess, rtv, raw);
 
 	return RunTimeError_OK;
@@ -3114,11 +3181,11 @@ RunTimeError PostNumOperator(rawCode* raw, unsigned int returnVar, unsigned char
 
 	}
 
-	raw->maxLines = addMessStrParLines + sendLines + castIToSLines + 1;
+	raw->maxLines = addMessStrParLinesNO + sendLines + castIToSLines;
 	raw->code = new rawCode::line[raw->maxLines];
 
 	unsigned int var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
-	convertIntToString(rtv.memory->GetVarAdr(var - 1), offset, rtv, raw);
+	convertIntToString(var - 1, offset, rtv, raw);
 
 	Message mess;
 	mess.destination = MessageSource_GUIENTITIES;
@@ -3126,7 +3193,7 @@ RunTimeError PostNumOperator(rawCode* raw, unsigned int returnVar, unsigned char
 	mess.mess = GUIMess_POST;
 	mess.returnParam = 0;
 
-	addMessStackStringParam(rtv.memory->GetMaxVar(), 0, 4, rtv, raw);
+	addMessStackStringParamNO(rtv.memory->GetMaxVar(), 0, 4, rtv, raw);
 	sendMessageOut(mess, rtv, raw);
 
 	return RunTimeError_OK;
@@ -3143,7 +3210,7 @@ RunTimeError PostStrOperator(rawCode* raw, unsigned int returnVar, unsigned char
 
 	}
 
-	raw->maxLines = addMessStrParLines + sendLines + 1;
+	raw->maxLines = addMessStrParLinesNO + sendLines;
 	raw->code = new rawCode::line[raw->maxLines];
 
 	unsigned int var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
@@ -3154,7 +3221,7 @@ RunTimeError PostStrOperator(rawCode* raw, unsigned int returnVar, unsigned char
 	mess.mess = GUIMess_POST;
 	mess.returnParam = 0;
 
-	addMessStackStringParam(var - 1, 0, 4, rtv, raw);
+	addMessStackStringParamNO(var - 1, 0, 4, rtv, raw);
 	sendMessageOut(mess, rtv, raw);
 
 	return RunTimeError_OK;
@@ -3171,7 +3238,7 @@ RunTimeError PropelOperator(rawCode* raw, unsigned int returnVar, unsigned char*
 
 	}
 
-	raw->maxLines = addMessParLines * (paramSize == 16 ? 3 : 2) + sendLines + 1;
+	raw->maxLines = addMessParLinesO * (paramSize == 16 ? 3 : 2) + sendLines;
 	raw->code = new rawCode::line[raw->maxLines];
 
 	Message mess;
@@ -3183,7 +3250,7 @@ RunTimeError PropelOperator(rawCode* raw, unsigned int returnVar, unsigned char*
 	mess.returnParam = var;
 
 	unsigned int fVar = (params[4] | ((int)params[5] << 8) | ((int)params[6] << 16) | ((int)params[7] << 24));
-	addMessStackParam(fVar - 1, 0, 4, rtv, raw);
+	addMessStackParamO(fVar - 1, 0, 4, rtv, raw);
 
 	sendMessageOut(mess, rtv, raw);
 
@@ -3201,7 +3268,7 @@ RunTimeError RemoveOperator(rawCode* raw, unsigned int returnVar, unsigned char*
 
 	}
 
-	raw->maxLines = sendLines + 1;
+	raw->maxLines = sendLines;
 	raw->code = new rawCode::line[raw->maxLines];
 
 	Message mess;
@@ -3227,7 +3294,7 @@ RunTimeError ReSnapOperator(rawCode* raw, unsigned int returnVar, unsigned char*
 
 	}
 
-	raw->maxLines = addMessParLines * 2 + sendLines + 1;
+	raw->maxLines = addMessParLinesO * 2 + sendLines;
 	raw->code = new rawCode::line[raw->maxLines];
 
 	Message mess;
@@ -3235,15 +3302,14 @@ RunTimeError ReSnapOperator(rawCode* raw, unsigned int returnVar, unsigned char*
 	mess.type = MessageType_OBJECT;
 	mess.mess = ObjectMess_SETSNAP;
 
-	unsigned int s = 4;
 	unsigned int var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
 	mess.returnParam = var ;
 
 	unsigned int hV = (params[4] | ((int)params[5] << 8) | ((int)params[6] << 16) | ((int)params[7] << 24));
 	unsigned int snapEnum = (params[8] | ((int)params[9] << 8) | ((int)params[10] << 16) | ((int)params[11] << 24));
 
-	addMessStackParam(hV - 1, 0, 1, rtv, raw);
-	addMessStackParam(snapEnum - 1, 1, 1, rtv, raw);
+	addMessStackParamO(snapEnum - 1, 1, 1, rtv, raw);
+	addMessStackParamO(hV - 1, 0, 1, rtv, raw);
 
 	sendMessageOut(mess, rtv, raw);
 
@@ -3255,7 +3321,7 @@ RunTimeError ResumeGameOperator(rawCode* raw, unsigned int returnVar, unsigned c
 {
 
 
-	raw->maxLines = addMessTempParLines + sendLines + 1;
+	raw->maxLines = addMessTempParLines + sendLines;
 	raw->code = new rawCode::line[raw->maxLines];
 
 	Message mess;
@@ -3280,7 +3346,7 @@ RunTimeError RotateOperator(rawCode* raw, unsigned int returnVar, unsigned char*
 
 	}
 
-	raw->maxLines = addMessParLines * 3 + sendLines + 1;
+	raw->maxLines = addMessParLinesO * 3 + sendLines;
 	raw->code = new rawCode::line[raw->maxLines];
 
 	Message mess;
@@ -3295,9 +3361,9 @@ RunTimeError RotateOperator(rawCode* raw, unsigned int returnVar, unsigned char*
 	unsigned int yVar = (params[8] | ((int)params[9] << 8) | ((int)params[10] << 16) | ((int)params[11] << 24));
 	unsigned int zVar = (params[12] | ((int)params[13] << 8) | ((int)params[14] << 16) | ((int)params[15] << 24));
 
-	addMessStackParam(xVar - 1, 0, 4, rtv, raw);
-	addMessStackParam(yVar - 1, 4, 4, rtv, raw);
-	addMessStackParam(zVar - 1, 8, 4, rtv, raw);
+	addMessStackParamO(zVar - 1, 8, 4, rtv, raw);
+	addMessStackParamO(yVar - 1, 4, 4, rtv, raw);
+	addMessStackParamO(xVar - 1, 0, 4, rtv, raw);
 
 	sendMessageOut(mess, rtv, raw);
 
@@ -3315,7 +3381,7 @@ RunTimeError RunScriptOperator(rawCode* raw, unsigned int returnVar, unsigned ch
 
 	}
 
-	raw->maxLines = 9 + 1;
+	raw->maxLines = 9;
 	raw->code = new rawCode::line[raw->maxLines];
 
 	unsigned int codeToRun = getCode(rtv.byteCodes, rtv.compiled, getString((char*)params));
@@ -3327,14 +3393,14 @@ RunTimeError RunScriptOperator(rawCode* raw, unsigned int returnVar, unsigned ch
 	unsigned int returnAdr = offset + 6;
 
 	rawCode::line line;
-	//Place the adress the temp value in i1
+	//Place the adress of the temp value in a1
 	line.code = opcode_PLACE;
 	line.r1 = 0;
-	line.type = 0;
+	line.type = 3;
 	line.scale = rtv.memory->GetVarAdr(rtv.memory->GetMaxVar());
 	raw->code[raw->codeSize] = line;
 	raw->codeSize++;
-	//Save the value in i4 to the adr in i1
+	//Save the value in i4 to the adr in a1
 	line.code = opcode_STORE;
 	line.r1 = 3;
 	line.r2 = 0;
@@ -3345,7 +3411,7 @@ RunTimeError RunScriptOperator(rawCode* raw, unsigned int returnVar, unsigned ch
 	rtv.byteCodes[codeToRun]->AddMemOffsetPlaceHolder(offset + raw->codeSize + 1);
 	line.code = opcode_PLACE;
 	line.r1 = 4;
-	line.type = 3;
+	line.type = 4;
 	line.scale = 0;//PlaceHolder
 	raw->code[raw->codeSize] = line;
 	raw->codeSize++;
@@ -3375,18 +3441,18 @@ RunTimeError RunScriptOperator(rawCode* raw, unsigned int returnVar, unsigned ch
 	rtv.byteCodes[rtv.current]->AddMemOffsetPlaceHolder(offset + raw->codeSize + 1);
 	line.code = opcode_PLACE;
 	line.r1 = 4;
-	line.type = 3;
+	line.type = 4;
 	line.scale = 0;//PlaceHolder
 	raw->code[raw->codeSize] = line;
 	raw->codeSize++;
-	//Place the adress the temp value in i1
+	//Place the adress of the temp value in a1
 	line.code = opcode_PLACE;
 	line.r1 = 0;
-	line.type = 0;
+	line.type = 3;
 	line.scale = rtv.memory->GetVarAdr(rtv.memory->GetMaxVar());
 	raw->code[raw->codeSize] = line;
 	raw->codeSize++;
-	//Load the value saved in the stack at adr i1 to i4
+	//Load the value saved in the stack at adr a1 to i4
 	line.code = opcode_LOAD;
 	line.r1 = 3;
 	line.r2 = 0;
@@ -3408,7 +3474,7 @@ RunTimeError SaveStateOperator(rawCode* raw, unsigned int returnVar, unsigned ch
 
 	}
 
-	raw->maxLines = addMessStrParLines + addMessParLines + sendLines + 1;
+	raw->maxLines = addMessStrParLines + addMessParLinesO + sendLines;
 	raw->code = new rawCode::line[raw->maxLines];
 
 	unsigned int var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
@@ -3420,8 +3486,8 @@ RunTimeError SaveStateOperator(rawCode* raw, unsigned int returnVar, unsigned ch
 	mess.mess = ResourceMess_SAVEBOARD;
 	mess.returnParam = 0;
 
-	addMessStackParam(var - 1, 0, 4, rtv, raw);
-	addMessStackStringParam(var2 - 1, 4, 4, rtv, raw);
+	addMessStackStringParamO(var2 - 1, 4, 4, rtv, raw);
+	addMessStackParamO(var - 1, 0, 4, rtv, raw);
 	sendMessageOut(mess, rtv, raw);
 
 	return RunTimeError_OK;
@@ -3438,7 +3504,7 @@ RunTimeError ScaleOperator(rawCode* raw, unsigned int returnVar, unsigned char* 
 
 	}
 
-	raw->maxLines = addMessParLines * (paramSize == 16 ? 3 : 2) + sendLines + 1;
+	raw->maxLines = addMessParLinesO * (paramSize == 16 ? 3 : 2) + sendLines;
 	raw->code = new rawCode::line[raw->maxLines];
 
 	Message mess;
@@ -3452,16 +3518,16 @@ RunTimeError ScaleOperator(rawCode* raw, unsigned int returnVar, unsigned char* 
 	unsigned int xVar = (params[4] | ((int)params[5] << 8) | ((int)params[6] << 16) | ((int)params[7] << 24));
 	unsigned int yVar = (params[8] | ((int)params[9] << 8) | ((int)params[10] << 16) | ((int)params[11] << 24));
 
-	addMessStackParam(xVar - 1, 0, 4, rtv, raw);
-	addMessStackParam(yVar - 1, 4, 4, rtv, raw);
-
 	if (paramSize == 16)
 	{
 
 		unsigned int zVar = (params[12] | ((int)params[13] << 8) | ((int)params[14] << 16) | ((int)params[15] << 24));
-		addMessStackParam(zVar - 1, 8, 4, rtv, raw);
+		addMessStackParamO(zVar - 1, 8, 4, rtv, raw);
 
 	}
+
+	addMessStackParamO(yVar - 1, 4, 4, rtv, raw);
+	addMessStackParamO(xVar - 1, 0, 4, rtv, raw);
 
 	sendMessageOut(mess, rtv, raw);
 
@@ -3479,7 +3545,7 @@ RunTimeError ScopeSaveOperator(rawCode* raw, unsigned int returnVar, unsigned ch
 
 	}
 
-	raw->maxLines = addMessParLines + sendLines + 1;
+	raw->maxLines = addMessParLinesO + sendLines;
 	raw->code = new rawCode::line[raw->maxLines];
 
 	unsigned int var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
@@ -3491,7 +3557,7 @@ RunTimeError ScopeSaveOperator(rawCode* raw, unsigned int returnVar, unsigned ch
 	mess.mess = ObjectMess_SAVESCOPE;
 	mess.returnParam = var;
 
-	addMessStackParam(var2 - 1, 0, 4, rtv, raw);
+	addMessStackParamO(var2 - 1, 0, 4, rtv, raw);
 	sendMessageOut(mess, rtv, raw);
 
 	return RunTimeError_OK;
@@ -3535,8 +3601,8 @@ RunTimeError ShowOperator(rawCode* raw, unsigned int returnVar, unsigned char* p
 	mess.destination = MessageSource_OBJECT;
 	mess.type = MessageType_OBJECT;
 	mess.mess = ObjectMess_SHOW;
-	
 	mess.returnParam = var;
+
 	sendMessageOut(mess, rtv, raw);
 
 	return RunTimeError_OK;
@@ -3553,7 +3619,7 @@ RunTimeError SetBorderOperator(rawCode* raw, unsigned int returnVar, unsigned ch
 
 	}
 
-	raw->maxLines = addMessParLines * 4 + sendLines + 1;
+	raw->maxLines = addMessParLinesO * 4 + sendLines;
 	raw->code = new rawCode::line[raw->maxLines];
 
 	Message mess;
@@ -3562,17 +3628,18 @@ RunTimeError SetBorderOperator(rawCode* raw, unsigned int returnVar, unsigned ch
 	mess.type = MessageType_GRAPHICS;
 	mess.mess = GraphicMess_SETBORDERBRUSH;
 
-	unsigned int obj = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
-	addMessStackParam(obj - 1, 0, 4, rtv, raw);
-
-	unsigned int xVar = (params[4] | ((int)params[5] << 8) | ((int)params[6] << 16) | ((int)params[7] << 24));
-	addMessStackParam(xVar - 1, 4, 4, rtv, raw);
+	unsigned int zVar = (params[12] | ((int)params[13] << 8) | ((int)params[14] << 16) | ((int)params[15] << 24));
+	addMessStackParamO(zVar - 1, 12, 4, rtv, raw);
 
 	unsigned int yVar = (params[8] | ((int)params[9] << 8) | ((int)params[10] << 16) | ((int)params[11] << 24));
-	addMessStackParam(yVar - 1, 8, 4, rtv, raw);
+	addMessStackParamO(yVar - 1, 8, 4, rtv, raw);
 
-	unsigned int zVar = (params[12] | ((int)params[13] << 8) | ((int)params[14] << 16) | ((int)params[15] << 24));
-	addMessStackParam(zVar - 1, 12, 4, rtv, raw);
+	unsigned int xVar = (params[4] | ((int)params[5] << 8) | ((int)params[6] << 16) | ((int)params[7] << 24));
+	addMessStackParamO(xVar - 1, 4, 4, rtv, raw);
+
+	unsigned int obj = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
+	addMessStackParamO(obj - 1, 0, 4, rtv, raw);
+
 	sendMessageOut(mess, rtv, raw);
 
 	return RunTimeError_OK;
@@ -3589,7 +3656,7 @@ RunTimeError SetCameraOperator(rawCode* raw, unsigned int returnVar, unsigned ch
 
 	}
 
-	raw->maxLines = addMessParLines + sendLines + 1;
+	raw->maxLines = addMessParLinesO + sendLines;
 	raw->code = new rawCode::line[raw->maxLines];
 
 	unsigned int var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
@@ -3599,7 +3666,8 @@ RunTimeError SetCameraOperator(rawCode* raw, unsigned int returnVar, unsigned ch
 	mess.type = MessageType_ENTITIES;
 	mess.mess = GameBoardMess_SETCAM;
 	mess.returnParam = 0;
-	addMessStackParam(var - 1, 0, 4, rtv, raw);
+
+	addMessStackParamO(var - 1, 0, 4, rtv, raw);
 	sendMessageOut(mess, rtv, raw);
 
 	return RunTimeError_OK;
@@ -3619,40 +3687,50 @@ RunTimeError SetConstValOperator(rawCode* raw,unsigned int returnVar, unsigned c
 
 
 	unsigned int var = params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24);
-	rtv.memory->AddVariable(var - 1, paramSize - 4);
+
+	if (rtv.memory->GetVarAdr(var - 1) <= rtv.memory->GetMaxStack())
+	{
+
+		rtv.memory->AddVariable(var - 1, paramSize - 4);
+
+	}
 
 	unsigned int bytes = paramSize - 4;
 	unsigned int writtenBytes = 0;
 
-	raw->maxLines = ceil((float)bytes / 4.0f) * 3 + waitingLines + 1;
+	raw->maxLines = ceil((float)bytes / 4.0f) * 2 + waitingLines + placeAdrLines + 1;
 	raw->code = new rawCode::line[raw->maxLines];
 	rawCode::line line;
+	//Place the starting adress in a1
+	placeAdr(var - 1, 0, 0, rtv, raw);
+	//Place 4 in i2
+	line.code = opcode_PLACE;
+	line.r1 = 1;
+	line.type = 0;
+	line.scale = 4;
+	raw->code[raw->codeSize] = line;
+	raw->codeSize++;
 
 	while(bytes > 0)
 	{
 
 		unsigned int bytesToRead = min(bytes, 4);
-		//Place the adress of var1 + the offset in i1
-		line.code = opcode_PLACE;
-		line.r1 = 0;
-		line.type = 0;
-		line.scale = rtv.memory->GetVarAdr(var - 1) + writtenBytes;
-		raw->code[raw->codeSize] = line;
-		raw->codeSize++;
-		//Place 4 in i2
-		line.code = opcode_PLACE;
-		line.r1 = 1;
-		line.type = 0;
-		line.scale = 4;
-		raw->code[raw->codeSize] = line;
-		raw->codeSize++;
-		//Save 4 bytes to the stack adr in i1
+		//Save 4 bytes to the stack adr in a1
 		line.code = opcode_SAVE;
 		line.r1 = 0;
 		line.r2 = 1;
 		memcpy(&line.scale, &params[4 + writtenBytes], bytesToRead);
 		raw->code[raw->codeSize] = line;
 		raw->codeSize++;
+		//Add i2 to a1 and store in a1
+		line.code = opcode_ADD;
+		line.r1 = 0;
+		line.r2 = 1;
+		line.r3 = 0;
+		line.type = 3;
+		raw->code[raw->codeSize] = line;
+		raw->codeSize++;
+
 		writtenBytes += bytesToRead;
 		bytes -= bytesToRead;
 
@@ -3674,7 +3752,7 @@ RunTimeError SetContentOperator(rawCode* raw, unsigned int returnVar, unsigned c
 
 	}
 
-	raw->maxLines = addMessParLines * 4 + sendLines + 1;
+	raw->maxLines = addMessParLinesO * 4 + sendLines;
 	raw->code = new rawCode::line[raw->maxLines];
 
 	Message mess;
@@ -3683,17 +3761,18 @@ RunTimeError SetContentOperator(rawCode* raw, unsigned int returnVar, unsigned c
 	mess.mess = GraphicMess_SETCONTENTBRUSH;
 	mess.returnParam = 0;
 
-	unsigned int obj = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
-	addMessStackParam(obj - 1, 0, 4, rtv, raw);
-
-	unsigned int xVar = (params[4] | ((int)params[5] << 8) | ((int)params[6] << 16) | ((int)params[7] << 24));
-	addMessStackParam(xVar - 1, 4, 4, rtv, raw);
+	unsigned int zVar = (params[12] | ((int)params[13] << 8) | ((int)params[14] << 16) | ((int)params[15] << 24));
+	addMessStackParamO(zVar - 1, 12, 4, rtv, raw);
 
 	unsigned int yVar = (params[8] | ((int)params[9] << 8) | ((int)params[10] << 16) | ((int)params[11] << 24));
-	addMessStackParam(yVar - 1, 8, 4, rtv, raw);
+	addMessStackParamO(yVar - 1, 8, 4, rtv, raw);
 
-	unsigned int zVar = (params[12] | ((int)params[13] << 8) | ((int)params[14] << 16) | ((int)params[15] << 24));
-	addMessStackParam(zVar - 1, 12, 4, rtv, raw);
+	unsigned int xVar = (params[4] | ((int)params[5] << 8) | ((int)params[6] << 16) | ((int)params[7] << 24));
+	addMessStackParamO(xVar - 1, 4, 4, rtv, raw);
+
+	unsigned int obj = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
+	addMessStackParamO(obj - 1, 0, 4, rtv, raw);
+
 	sendMessageOut(mess, rtv, raw);
 
 	return RunTimeError_OK;
@@ -3710,7 +3789,7 @@ RunTimeError SetGameBoardOperator(rawCode* raw, unsigned int returnVar, unsigned
 
 	}
 
-	raw->maxLines = addMessParLines + sendLines + 1;
+	raw->maxLines = addMessParLinesO + sendLines;
 	raw->code = new rawCode::line[raw->maxLines];
 
 	unsigned int var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
@@ -3721,7 +3800,7 @@ RunTimeError SetGameBoardOperator(rawCode* raw, unsigned int returnVar, unsigned
 	mess.mess = GameBoardMess_SETGAMEBOARD;
 	mess.returnParam = 0;
 
-	addMessStackParam(var - 1, 0, 4, rtv, raw);
+	addMessStackParamO(var - 1, 0, 4, rtv, raw);
 	sendMessageOut(mess, rtv, raw);
 
 	return RunTimeError_OK;
@@ -3738,7 +3817,7 @@ RunTimeError SetLayerOperator(rawCode* raw, unsigned int returnVar, unsigned cha
 
 	}
 
-	raw->maxLines = addMessParLines + sendLines + 1;
+	raw->maxLines = addMessParLinesO + sendLines;
 	raw->code = new rawCode::line[raw->maxLines];
 
 	Message mess;
@@ -3750,7 +3829,7 @@ RunTimeError SetLayerOperator(rawCode* raw, unsigned int returnVar, unsigned cha
 	unsigned int layer = (params[4] | ((int)params[5] << 8) | ((int)params[6] << 16) | ((int)params[7] << 24));
 
 	mess.returnParam = var;
-	addMessStackParam(layer - 1, 0, 4, rtv, raw);
+	addMessStackParamO(layer - 1, 0, 4, rtv, raw);
 	sendMessageOut(mess, rtv, raw);
 
 	return RunTimeError_OK;
@@ -3767,7 +3846,7 @@ RunTimeError SetLeftClickOperator(rawCode* raw, unsigned int returnVar, unsigned
 
 	}
 
-	raw->maxLines = addMessParLines + sendLines + 1;
+	raw->maxLines = addMessParLinesO + sendLines;
 	raw->code = new rawCode::line[raw->maxLines];
 
 	unsigned int var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
@@ -3789,7 +3868,7 @@ RunTimeError SetLeftDragOperator(rawCode* raw, unsigned int returnVar, unsigned 
 
 	}
 
-	raw->maxLines = addMessParLines + sendLines + 1;
+	raw->maxLines = addMessParLinesO + sendLines;
 	raw->code = new rawCode::line[raw->maxLines];
 
 	unsigned int var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
@@ -3811,7 +3890,7 @@ RunTimeError SetMiddleClickOperator(rawCode* raw, unsigned int returnVar, unsign
 
 	}
 
-	raw->maxLines = setObjectMessLines + 1;
+	raw->maxLines = setObjectMessLines;
 	raw->code = new rawCode::line[raw->maxLines];
 
 	unsigned int var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
@@ -3833,7 +3912,7 @@ RunTimeError SetMiddleDragOperator(rawCode* raw, unsigned int returnVar, unsigne
 
 	}
 
-	raw->maxLines = setObjectMessLines + 1;
+	raw->maxLines = setObjectMessLines;
 	raw->code = new rawCode::line[raw->maxLines];
 
 	unsigned int var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
@@ -3855,7 +3934,7 @@ RunTimeError SetMouseCursor(rawCode* raw, unsigned int returnVar, unsigned char*
 
 	}
 
-	raw->maxLines = addMessParLines + sendLines + 1;
+	raw->maxLines = addMessParLinesO + sendLines;
 	raw->code = new rawCode::line[raw->maxLines];
 
 	unsigned int var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
@@ -3866,7 +3945,7 @@ RunTimeError SetMouseCursor(rawCode* raw, unsigned int returnVar, unsigned char*
 	mess.mess = SystemMess_SETCURSOR;
 	mess.returnParam = 0;
 
-	addMessStackParam(var - 1, 0, 4, rtv, raw);
+	addMessStackParamO(var - 1, 0, 4, rtv, raw);
 	sendMessageOut(mess, rtv, raw);
 
 	return RunTimeError_OK;
@@ -3884,7 +3963,7 @@ RunTimeError SetMouseUpDownOperator(rawCode* raw, unsigned int returnVar, unsign
 
 	}
 
-	raw->maxLines = setObjectMessLines + 1;
+	raw->maxLines = setObjectMessLines;
 	raw->code = new rawCode::line[raw->maxLines];
 
 	unsigned int var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
@@ -3905,7 +3984,7 @@ RunTimeError SetMouseWheelOperator(rawCode* raw, unsigned int returnVar, unsigne
 
 	}
 
-	raw->maxLines = setObjectMessLines + 1;
+	raw->maxLines = setObjectMessLines;
 	raw->code = new rawCode::line[raw->maxLines];
 
 	unsigned int var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
@@ -3926,7 +4005,7 @@ RunTimeError SetNodeArrivalOperator(rawCode* raw, unsigned int returnVar, unsign
 
 	}
 
-	raw->maxLines = setObjectMessLines + 1;
+	raw->maxLines = setObjectMessLines;
 	raw->code = new rawCode::line[raw->maxLines];
 
 	unsigned int var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
@@ -3948,7 +4027,7 @@ RunTimeError SetRightClickOperator(rawCode* raw, unsigned int returnVar, unsigne
 
 	}
 
-	raw->maxLines = setObjectMessLines + 1;
+	raw->maxLines = setObjectMessLines;
 	raw->code = new rawCode::line[raw->maxLines];
 
 	unsigned int var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
@@ -3970,7 +4049,7 @@ RunTimeError SetRightDragOperator(rawCode* raw, unsigned int returnVar, unsigned
 
 	}
 
-	raw->maxLines = setObjectMessLines + 1;
+	raw->maxLines = setObjectMessLines;
 	raw->code = new rawCode::line[raw->maxLines];
 
 	unsigned int var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
@@ -3992,7 +4071,7 @@ RunTimeError SetScriptParFloatOperator(rawCode* raw, unsigned int returnVar, uns
 
 	}
 
-	raw->maxLines = setParamaterLines + 1;
+	raw->maxLines = setParamaterLines;
 	raw->code = new rawCode::line[raw->maxLines];
 
 	unsigned int var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
@@ -4015,7 +4094,7 @@ RunTimeError SetScriptParNumOperator(rawCode* raw, unsigned int returnVar, unsig
 
 	}
 
-	raw->maxLines = setParamaterLines + 1;
+	raw->maxLines = setParamaterLines;
 	raw->code = new rawCode::line[raw->maxLines];
 
 	unsigned int var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
@@ -4038,7 +4117,7 @@ RunTimeError SetScriptParStrOperator(rawCode* raw, unsigned int returnVar, unsig
 
 	}
 
-	raw->maxLines = setParamaterLines + 1;
+	raw->maxLines = setParamaterLines;
 	raw->code = new rawCode::line[raw->maxLines];
 
 	unsigned int var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
@@ -4061,7 +4140,7 @@ RunTimeError SetTextOperator(rawCode* raw, unsigned int returnVar, unsigned char
 
 	}
 
-	raw->maxLines = addMessStrParLines + sendLines + 1;
+	raw->maxLines = addMessStrParLines + sendLines;
 	raw->code = new rawCode::line[raw->maxLines];
 
 	Message mess;
@@ -4074,7 +4153,7 @@ RunTimeError SetTextOperator(rawCode* raw, unsigned int returnVar, unsigned char
 
 	unsigned int var2 = (params[4] | ((int)params[5] << 8) | ((int)params[6] << 16) | ((int)params[7] << 24));
 
-	addMessStackStringParam(var2 - 1, 0, 4, rtv, raw);
+	addMessStackStringParamO(var2 - 1, 0, 4, rtv, raw);
 	sendMessageOut(mess, rtv, raw);
 
 	return RunTimeError_OK;
@@ -4092,27 +4171,17 @@ RunTimeError SetVarValOperator(rawCode* raw,unsigned int returnVar, unsigned cha
 	}
 
 	raw->start = offset;
-	raw->maxLines = 4 + waitingLines + 1;
+	raw->maxLines = 2 + waitingLines + placeAdrLines * 2;
 	raw->code = new rawCode::line[raw->maxLines];
 
 	unsigned int var1 = params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24);
 	unsigned int var2 = params[4] | ((int)params[5] << 8) | ((int)params[6] << 16) | ((int)params[7] << 24);
 
 	rawCode::line line;
-	//Place the adress of var1 in i1
-	line.code = opcode_PLACE;
-	line.r1 = 0;
-	line.type = 0;
-	line.scale = rtv.memory->GetVarAdr(var1-1);
-	raw->code[raw->codeSize] = line;
-	raw->codeSize++;
-	//Place the adress of var2 in i2
-	line.code = opcode_PLACE;
-	line.r1 = 1;
-	line.type = 0;
-	line.scale = rtv.memory->GetVarAdr(var2 - 1);
-	raw->code[raw->codeSize] = line;
-	raw->codeSize++;
+	//Place the adress of var2 in a2
+	placeAdr(var2 - 1, 1, 0, rtv, raw);
+	//Place the adress of var1 in a1
+	placeAdr(var1 - 1, 0, 0, rtv, raw);
 	//Place the size of the variable in i3
 	line.code = opcode_PLACE;
 	line.r1 = 2;
@@ -4120,7 +4189,7 @@ RunTimeError SetVarValOperator(rawCode* raw,unsigned int returnVar, unsigned cha
 	line.scale = rtv.memory->GetVarSize(var2 - 1);
 	raw->code[raw->codeSize] = line;
 	raw->codeSize++;
-	//Copy the data in stack with adr i2 to adr i1 with size i3
+	//Copy a3 bytes from a2 to a1
 	line.code = opcode_COPY;
 	line.r1 = 0;
 	line.r2 = 1;
@@ -4144,7 +4213,7 @@ RunTimeError SetUIOperator(rawCode* raw, unsigned int returnVar, unsigned char* 
 
 	}
 
-	raw->maxLines = addMessParLines + sendLines + 1;
+	raw->maxLines = addMessParLinesO + sendLines;
 	raw->code = new rawCode::line[raw->maxLines];
 
 	unsigned int var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
@@ -4155,7 +4224,7 @@ RunTimeError SetUIOperator(rawCode* raw, unsigned int returnVar, unsigned char* 
 	mess.mess = GUIMess_SETUI;
 	mess.returnParam = 0;
 
-	addMessStackParam(var - 1, 0, 4, rtv, raw);
+	addMessStackParamO(var - 1, 0, 4, rtv, raw);
 	sendMessageOut(mess, rtv, raw);
 
 	return RunTimeError_OK;
@@ -4172,7 +4241,7 @@ RunTimeError SizeOperator(rawCode* raw, unsigned int returnVar, unsigned char* p
 
 	}
 
-	raw->maxLines = addMessParLines * (paramSize == 16 ? 3 : 2) + sendLines + 1;
+	raw->maxLines = addMessParLinesO * (paramSize == 16 ? 3 : 2) + sendLines;
 	raw->code = new rawCode::line[raw->maxLines];
 
 	Message mess;
@@ -4186,16 +4255,16 @@ RunTimeError SizeOperator(rawCode* raw, unsigned int returnVar, unsigned char* p
 	unsigned int xVar = (params[4] | ((int)params[5] << 8) | ((int)params[6] << 16) | ((int)params[7] << 24));
 	unsigned int yVar = (params[8] | ((int)params[9] << 8) | ((int)params[10] << 16) | ((int)params[11] << 24));
 
-	addMessStackParam(xVar - 1, 0, 4, rtv, raw);
-	addMessStackParam(yVar - 1, 4, 4, rtv, raw);
-
 	if (paramSize == 16)
 	{
 
 		unsigned int zVar = (params[12] | ((int)params[13] << 8) | ((int)params[14] << 16) | ((int)params[15] << 24));
-		addMessStackParam(zVar - 1, 8, 4, rtv, raw);
+		addMessStackParamO(zVar - 1, 8, 4, rtv, raw);
 
 	}
+
+	addMessStackParamO(yVar - 1, 4, 4, rtv, raw);
+	addMessStackParamO(xVar - 1, 0, 4, rtv, raw);
 
 	sendMessageOut(mess, rtv, raw);
 
@@ -4213,7 +4282,7 @@ RunTimeError SpawnObjectOperator(rawCode* raw, unsigned int returnVar, unsigned 
 
 	}
 
-	raw->maxLines = addMessParLines * 2 + sendLines + 1;
+	raw->maxLines = addMessParLinesO * 2 + sendLines;
 	raw->code = new rawCode::line[raw->maxLines];
 
 	unsigned int var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
@@ -4225,8 +4294,8 @@ RunTimeError SpawnObjectOperator(rawCode* raw, unsigned int returnVar, unsigned 
 	mess.mess = GameBoardMess_SPAWN;
 	mess.returnParam = 0;
 
-	addMessStackParam(var - 1, 0, 4, rtv, raw);
-	addMessStackParam(var2 - 1, 4, 4, rtv, raw);
+	addMessStackParamO(var2 - 1, 4, 4, rtv, raw);
+	addMessStackParamO(var - 1, 0, 4, rtv, raw);
 	sendMessageOut(mess, rtv, raw);
 
 	return RunTimeError_OK;
@@ -4243,7 +4312,7 @@ RunTimeError SplitRouteOperator(rawCode* raw, unsigned int returnVar, unsigned c
 
 	}
 
-	raw->maxLines = addMessParLines * 2 + sendLines + 1;
+	raw->maxLines = addMessParLinesO * 2 + sendLines;
 	raw->code = new rawCode::line[raw->maxLines];
 
 	unsigned int var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
@@ -4256,8 +4325,8 @@ RunTimeError SplitRouteOperator(rawCode* raw, unsigned int returnVar, unsigned c
 	mess.mess = GameBoardMess_SPLITOBJECT;
 	mess.returnParam = 0;
 
-	addMessStackParam(var - 1, 0, 4, rtv, raw);
-	addMessStackParam(var2 - 1, 4, 4, rtv, raw);
+	addMessStackParamO(var2 - 1, 4, 4, rtv, raw);
+	addMessStackParamO(var - 1, 0, 4, rtv, raw);
 	sendMessageOut(mess, rtv, raw);
 
 	return RunTimeError_OK;
@@ -4274,281 +4343,36 @@ RunTimeError StrEqlVarOperator(rawCode* raw, unsigned int returnVar, unsigned ch
 
 	}
 
-	raw->maxLines = 37 + 1;
+	raw->maxLines = placeAdrLines * 3 + 3;
 	raw->code = new rawCode::line[raw->maxLines];
 
 	unsigned int var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
 	unsigned int var2 = (params[4] | ((int)params[5] << 8) | ((int)params[6] << 16) | ((int)params[7] << 24));
-	unsigned int falseCode = offset + 30;
-	unsigned int trueCode = offset+ 35;
-	unsigned int end = offset + 38;
-
+	
 	rawCode::line line;
-	//Place a counter in c3
-	line.code = opcode_PLACE;
-	line.r1 = 2;
-	line.type = 2;
-	line.scale = 0;
-	raw->code[raw->codeSize] = line;
-	raw->codeSize++;
-	//Place the adr of var in i1
-	line.code = opcode_PLACE;
-	line.r1 = 0;
-	line.type = 0;
-	line.scale = rtv.memory->GetVarAdr(var - 1);
-	raw->code[raw->codeSize] = line;
-	raw->codeSize++;
-	//Place the var2 in i2
-	line.code = opcode_PLACE;
-	line.r1 = 1;
-	line.type = 0;
-	line.scale = rtv.memory->GetVarAdr(var2 - 1);
-	raw->code[raw->codeSize] = line;
-	raw->codeSize++;
-	//Place the line of the false block in i3
-	line.code = opcode_PLACE;
-	line.r1 = 2;
-	line.type = 0;
-	line.scale = falseCode;
-	raw->code[raw->codeSize] = line;
-	raw->codeSize++;
-	//Load the size of the first string in i1 from i1
+	//Place the var2 in a2
+	placeAdr(var2 - 1, 1, 0, rtv, raw);
+	//Place the adr of var in a1
+	placeAdr(var - 1, 0, 0, rtv, raw);
+	//Place the adress of the returnvar in a3
+	placeAdr(returnVar-1, 2, 0, rtv, raw);
+	//Load the size of the first string in i3 from a1
 	line.code = opcode_LOAD;
-	line.r1 = 0;
+	line.r1 = 2;
 	line.r2 = 0;
 	line.type = 0;
 	raw->code[raw->codeSize] = line;
 	raw->codeSize++;
-	//Load the size of the first string in i2 from i2
-	line.code = opcode_LOAD;
-	line.r1 = 1;
-	line.r2 = 1;
-	line.type = 0;
-	raw->code[raw->codeSize] = line;
-	raw->codeSize++;
-	//Compare i1 to i2 and store it in c1
-	line.code = opcode_CMPRE;
+	//Compare the memory at a1 with a2 and size i3 and place it in c3
+	line.code = opcode_CMPREBYTES;
 	line.r1 = 0;
-	line.r2 = 1;
-	line.r3 = 0;
-	line.type = 0;
-	raw->code[raw->codeSize] = line;
-	raw->codeSize++;
-	//Jump to i3 if c1 == 0
-	line.code = opcode_JMPINV;
-	line.r1 = 0;
-	line.r2 = 2;
-	raw->code[raw->codeSize] = line;
-	raw->codeSize++;
-	unsigned int loopStart = offset + raw->codeSize;
-
-	//Place 4 in i3
-	line.code = opcode_PLACE;
-	line.r1 = 2;
-	line.type = 0;
-	line.scale = 4;
-	raw->code[raw->codeSize] = line;
-	raw->codeSize++;
-	//Cast the counter in c3 to i2
-	line.code = opcode_TO;
-	line.r1 = 1;
-	line.r2 = 2;
-	line.type = 0;
-	line.scale = 4;
-	raw->code[raw->codeSize] = line;
-	raw->codeSize++;
-	//Add i2 to i3 and store it in i3
-	line.code = opcode_ADD;
-	line.r1 = 2;
 	line.r2 = 1;
 	line.r3 = 2;
-	line.type = 0;
-	raw->code[raw->codeSize] = line;
 	raw->codeSize++;
-	//Place the starting adress for the first string in i1
-	line.code = opcode_PLACE;
-	line.r1 = 0;
-	line.type = 0;
-	line.scale = rtv.memory->GetVarAdr(var - 1);
-	raw->code[raw->codeSize] = line;
-	raw->codeSize++;
-	//Load the value from the stack at adr i1 and store it in i1
-	line.code = opcode_LOAD;
-	line.r1 = 0;
-	line.r2 = 0;
-	line.type = 0;
-	raw->code[raw->codeSize] = line;
-	raw->codeSize++;
-	//Compare i1 to i2 and store the value in c1
-	line.code = opcode_CMPRE;
-	line.r1 = 0;
-	line.r2 = 1;
-	line.r3 = 0;
-	line.type = 0;
-	raw->code[raw->codeSize] = line;
-	raw->codeSize++;
-	//Invert c1
-	line.code = opcode_INV;
-	line.r1 = 0;
-	line.type = 2;
-	raw->code[raw->codeSize] = line;
-	raw->codeSize++;
-	//Place the line of the trueblock in i1
-	line.code = opcode_PLACE;
-	line.r1 = 0;
-	line.type = 0;
-	line.scale = trueCode;
-	raw->code[raw->codeSize] = line;
-	raw->codeSize++;
-	//Jump to i1 if c1 == true
-	line.code = opcode_JMPINV;
-	line.r1 = 0;
-	line.r2 = 0;
-	line.scale = trueCode;
-	raw->code[raw->codeSize] = line;
-	raw->codeSize++;
-	//Place the starting adress for the first string in i1
-	line.code = opcode_PLACE;
-	line.r1 = 0;
-	line.type = 0;
-	line.scale = rtv.memory->GetVarAdr(var - 1);
-	raw->code[raw->codeSize] = line;
-	raw->codeSize++;
-	//Place the starting adress for the second string in i2
-	line.code = opcode_PLACE;
-	line.r1 = 1;
-	line.type = 0;
-	line.scale = rtv.memory->GetVarAdr(var2 - 1);
-	raw->code[raw->codeSize] = line;
-	raw->codeSize++;
-	//Add i3 to i1 and store it in i1
-	line.code = opcode_ADD;
-	line.r1 = 0;
-	line.r2 = 2;
-	line.r3 = 0;
-	line.type = 0;
-	raw->code[raw->codeSize] = line;
-	raw->codeSize++;
-	//Add i3 to i2 and store it in i2
-	line.code = opcode_ADD;
-	line.r1 = 1;
-	line.r2 = 2;
-	line.r3 = 1;
-	line.type = 0;
-	raw->code[raw->codeSize] = line;
-	raw->codeSize++;
-	//Load the character from adr i1 and store it in c1
-	line.code = opcode_LOAD;
-	line.r1 = 0;
-	line.r2 = 0;
-	line.type = 2;
-	raw->code[raw->codeSize] = line;
-	raw->codeSize++;
-	//Load the character from adr i2 and store it in c2
-	line.code = opcode_LOAD;
-	line.r1 = 1;
-	line.r2 = 1;
-	line.type = 2;
-	raw->code[raw->codeSize] = line;
-	raw->codeSize++;
-	//Compare c1 to c2 and store it in c1
-	line.code = opcode_CMPRE;
-	line.r1 = 0;
-	line.r2 = 1;
-	line.r3 = 0;
-	line.type = 2;
-	raw->code[raw->codeSize] = line;
-	raw->codeSize++;
-	//Invert c1
-	line.code = opcode_INV;
-	line.r1 = 0;
-	line.type = 2;
-	raw->code[raw->codeSize] = line;
-	raw->codeSize++;
-	//Place 1 in c2
-	line.code = opcode_PLACE;
+	//Store the number in c3 to the stack with adr a3
+	line.code = opcode_STORE;
 	line.r1 = 2;
-	line.type = 2;
-	line.scale = 1;
-	raw->code[raw->codeSize] = line;
-	raw->codeSize++;
-	//Add c2 to c3 and store it in c3
-	line.code = opcode_ADD;
-	line.r1 = 1;
 	line.r2 = 2;
-	line.r3 = 2;
-	line.type = 0;
-	raw->code[raw->codeSize] = line;
-	raw->codeSize++;
-	//Place the adr of the loopstart in i2
-	line.code = opcode_PLACE;
-	line.r1 = 1;
-	line.type = 0;
-	line.scale = loopStart;
-	raw->code[raw->codeSize] = line;
-	raw->codeSize++;
-	//Jump to i2 if c1 == 0
-	line.code = opcode_JMPINV;
-	line.r1 = 0;
-	line.r2 = 1;
-	raw->code[raw->codeSize] = line;
-	raw->codeSize++;
-	unsigned int loopEnd = offset + raw->codeSize;
-
-	//The code gets here if the strings are unequal
-	//Place the adr of the return value in i1
-	line.code = opcode_PLACE;
-	line.r1 = 0;
-	line.type = 0;
-	line.scale = rtv.memory->GetVarAdr(returnVar-1);
-	raw->code[raw->codeSize] = line;
-	raw->codeSize++;
-	//Place 255 in c1
-	line.code = opcode_PLACE;
-	line.r1 = 0;
-	line.type = 2;
-	line.scale = 255;
-	raw->code[raw->codeSize] = line;
-	raw->codeSize++;
-	//Store the value in c1 to the stack at adr i1
-	line.code = opcode_STORE;
-	line.r1 = 0;
-	line.r2 = 0;
-	line.type = 2;
-	raw->code[raw->codeSize] = line;
-	raw->codeSize++;
-	//Place the end adress in i1
-	line.code = opcode_PLACE;
-	line.r1 = 0;
-	line.type = 0;
-	line.scale = end;
-	raw->code[raw->codeSize] = line;
-	raw->codeSize++;
-	//Jump to the adr in i1
-	line.code = opcode_JMP;
-	line.r2 = 0;
-	raw->code[raw->codeSize] = line;
-	raw->codeSize++;
-
-	//The code gets here if the strings are equal
-	//Place the adr of the return value in i1
-	line.code = opcode_PLACE;
-	line.r1 = 0;
-	line.type = 0;
-	line.scale = rtv.memory->GetVarAdr(returnVar - 1);
-	raw->code[raw->codeSize] = line;
-	raw->codeSize++;
-	//Place 0 in c1
-	line.code = opcode_PLACE;
-	line.r1 = 0;
-	line.type = 2;
-	line.scale = 0;
-	raw->code[raw->codeSize] = line;
-	raw->codeSize++;
-	//Store the value in c1 to the stack at adr i1
-	line.code = opcode_STORE;
-	line.r1 = 0;
-	line.r2 = 0;
 	line.type = 2;
 	raw->code[raw->codeSize] = line;
 	raw->codeSize++;
@@ -4567,13 +4391,13 @@ RunTimeError SubFloatOperator(rawCode* raw, unsigned int returnVar, unsigned cha
 
 	}
 
-	raw->maxLines = commonMathLines + 1;
+	raw->maxLines = commonMathLines;
 	raw->code = new rawCode::line[raw->maxLines];
 
 	unsigned int var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
 	unsigned int var2 = (params[4] | ((int)params[5] << 8) | ((int)params[6] << 16) | ((int)params[7] << 24));
-	performArithemitc(rtv.memory->GetVarAdr(var - 1),
-		rtv.memory->GetVarAdr(var2 - 1),
+	performArithemitc(var - 1,
+		var2 - 1,
 		returnVar - 1, rtv,
 		opcode_SUB, 1, raw);
 
@@ -4591,13 +4415,13 @@ RunTimeError SubVarOperator(rawCode* raw, unsigned int returnVar, unsigned char*
 
 	}
 
-	raw->maxLines = commonMathLines + 1;
+	raw->maxLines = commonMathLines;
 	raw->code = new rawCode::line[raw->maxLines];
 
 	unsigned int var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
 	unsigned int var2 = (params[4] | ((int)params[5] << 8) | ((int)params[6] << 16) | ((int)params[7] << 24));
-	performArithemitc(rtv.memory->GetVarAdr(var - 1),
-		rtv.memory->GetVarAdr(var2 - 1),
+	performArithemitc(var - 1,
+		var2 - 1,
 		returnVar - 1, rtv,
 		opcode_SUB, 0, raw);
 
@@ -4608,13 +4432,20 @@ RunTimeError SubVarOperator(rawCode* raw, unsigned int returnVar, unsigned char*
 RunTimeError SumFloatOperator(rawCode* raw, unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int offset, unsigned int byteLine, runTimeVal &rtv)
 {
 
-	raw->maxLines = commonMathLines + 1;
+	if (paramSize < 8 || returnVar == 0)
+	{
+
+		return RunTimeError_BADPARAMS;
+
+	}
+
+	raw->maxLines = commonMathLines;
 	raw->code = new rawCode::line[raw->maxLines];
 
 	unsigned int var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
 	unsigned int var2 = (params[4] | ((int)params[5] << 8) | ((int)params[6] << 16) | ((int)params[7] << 24));
-	performArithemitc(rtv.memory->GetVarAdr(var - 1),
-		rtv.memory->GetVarAdr(var2 - 1),
+	performArithemitc(var - 1,
+		var2 - 1,
 		returnVar - 1, rtv, 
 		opcode_ADD, 1, raw);
 
@@ -4632,13 +4463,13 @@ RunTimeError SumVarOperator(rawCode* raw, unsigned int returnVar, unsigned char*
 
 	}
 
-	raw->maxLines = commonMathLines + 1;
+	raw->maxLines = commonMathLines;
 	raw->code = new rawCode::line[raw->maxLines];
 
 	unsigned int var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
 	unsigned int var2 = (params[4] | ((int)params[5] << 8) | ((int)params[6] << 16) | ((int)params[7] << 24));
-	performArithemitc(rtv.memory->GetVarAdr(var - 1),
-		rtv.memory->GetVarAdr(var2 - 1),
+	performArithemitc(var - 1,
+		var2 - 1,
 		returnVar - 1, rtv,
 		opcode_ADD, 0, raw);
 
@@ -4656,7 +4487,7 @@ RunTimeError TrackObjectOperator(rawCode* raw, unsigned int returnVar, unsigned 
 
 	}
 
-	raw->maxLines = addMessParLines + sendLines + 1;
+	raw->maxLines = addMessParLinesO + sendLines;
 	raw->code = new rawCode::line[raw->maxLines];
 
 	unsigned int var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
@@ -4667,7 +4498,7 @@ RunTimeError TrackObjectOperator(rawCode* raw, unsigned int returnVar, unsigned 
 	mess.mess = GameBoardMess_SETTRACKING;
 	mess.returnParam = 0;
 
-	addMessStackParam(var - 1, 0, 4, rtv, raw);
+	addMessStackParamO(var - 1, 0, 4, rtv, raw);
 	sendMessageOut(mess, rtv, raw);
 
 	return RunTimeError_OK;
@@ -4684,7 +4515,7 @@ RunTimeError TravelObjectOperator(rawCode* raw, unsigned int returnVar, unsigned
 
 	}
 
-	raw->maxLines = addMessParLines * 2 + sendLines + 1;
+	raw->maxLines = addMessParLinesO * 2 + sendLines;
 	raw->code = new rawCode::line[raw->maxLines];
 
 	unsigned int var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
@@ -4695,9 +4526,9 @@ RunTimeError TravelObjectOperator(rawCode* raw, unsigned int returnVar, unsigned
 	mess.type = MessageType_ENTITIES;
 	mess.mess = GameBoardMess_TRAVEL;
 	mess.returnParam = 0;
-	
-	addMessStackParam(var - 1, 0, 4, rtv, raw);
-	addMessStackParam(var2 - 1, 4, 4, rtv, raw);
+
+	addMessStackParamO(var2 - 1, 4, 4, rtv, raw);
+	addMessStackParamO(var - 1, 0, 4, rtv, raw);
 	sendMessageOut(mess, rtv, raw);
 
 	return RunTimeError_OK;
@@ -4714,7 +4545,7 @@ RunTimeError UnLoadOperator(rawCode* raw,unsigned int returnVar, unsigned char* 
 
 	}
 
-	raw->maxLines = addMessParLines + sendLines + 1;
+	raw->maxLines = addMessParLinesO + sendLines;
 	raw->code = new rawCode::line[raw->maxLines];
 
 	unsigned int var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
@@ -4725,7 +4556,7 @@ RunTimeError UnLoadOperator(rawCode* raw,unsigned int returnVar, unsigned char* 
 	mess.type = MessageType_RESOURCES;
 	mess.mess = ResourceMess_UNLOADOBJECT;
 
-	addMessStackParam(var - 1, 0, 4, rtv, raw);
+	addMessStackParamO(var - 1, 0, 4, rtv, raw);
 	sendMessageOut(mess, rtv, raw);
 
 	return RunTimeError_OK;
@@ -4742,21 +4573,21 @@ RunTimeError WaitForVar(rawCode* raw, unsigned int returnVar, unsigned char* par
 
 	}
 
-	raw->maxLines = 11 + 1;
+	raw->maxLines = 11;
 	raw->code = new rawCode::line[raw->maxLines];
 
 	unsigned int var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
-	unsigned int goodLine = offset + raw->maxLines-1;
+	unsigned int goodLine = offset + raw->maxLines;
 
 	rawCode::line line;
-	//Place the var in i1
+	//Place the var in a1
 	line.code = opcode_PLACE;
 	line.r1 = 0;
-	line.type = 0;
+	line.type = 3;
 	line.scale = var-1;
 	raw->code[raw->codeSize] = line;
 	raw->codeSize++;
-	//Load the var from the stack at adr i1 to c1
+	//Load the var from the stack at adr a1 to c1
 	line.code = opcode_LOAD;
 	line.r1 = 0;
 	line.r2 = 0;

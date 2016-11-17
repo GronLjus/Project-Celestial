@@ -636,14 +636,6 @@ unsigned int KubLingLexer::breakOutBrackets(CelestialDoubleListNode<Token>* tok,
 	else if (tokn.type == TokenType_OFFSET)
 	{
 
-		if (hasOffset)
-		{
-
-			err.errorType = ScriptError_TOMANYPARAM;
-			err.line = lNumber;
-
-		}
-
 		hasOffset = true;
 		if (tokn.val[tokn.val.length() - 1] == ']')
 		{

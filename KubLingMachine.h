@@ -15,6 +15,7 @@ namespace Logic
 
 			float fReg[4];
 			int iReg[5];
+			unsigned int aReg[4];
 			char cReg[4];
 
 			CrossHandlers::CelestialSlicedList<Resources::BaseObject*>* objectContainer;
@@ -35,6 +36,8 @@ namespace Logic
 			bool kill;
 
 			char* getMem(unsigned int adr) const;
+			unsigned int adr(unsigned int adr, unsigned int offset);
+
 			unsigned int maxStack;
 
 		public:

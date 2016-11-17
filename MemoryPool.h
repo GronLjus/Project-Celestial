@@ -11,6 +11,38 @@ namespace Logic
 	class MemoryPool
 	{
 
+		public:
+
+			struct offset
+			{
+				unsigned int offsetVar;
+				unsigned int size;
+
+			};
+
+			MemoryPool(unsigned int maxStack);
+
+			void AddSystemMem(Resources::KubLingCompiled* compiled);
+
+			unsigned int AddVariable(unsigned int var, unsigned int valSize);
+			unsigned int AddVariable(unsigned int var, unsigned int adr, unsigned int valSize);
+
+			void AddOffset(unsigned int var, unsigned int offAdr, unsigned int offsize);
+
+			offset GetOffset(unsigned int var);
+
+			unsigned int GetVarLength(unsigned int var) const;
+			unsigned int GetMaxVar() const;
+
+			unsigned int GetStartingAdr() const;
+			unsigned int GetMemorySize() const;
+
+			unsigned int GetVarSize(unsigned int var) const;
+			unsigned int GetVarAdr(unsigned int var) const;
+			unsigned int GetMaxStack() const;
+
+			~MemoryPool();
+
 		private:
 
 			///<summary>A struct describing a memory block</summary>
@@ -23,10 +55,22 @@ namespace Logic
 				unsigned int length = 0;
 
 			};
+			
+			struct offsetStack
+			{
+
+				offsetStack() { offsets = nullptr; }
+
+				offset* offsets;
+				unsigned int lastOffset;
+
+			};
+
 			///<summary>The last allocated address</summary>
 			unsigned int adrLast;
 			///<summary>A pointer to the list of all variables</summary>
 			CrossHandlers::CelestialSlicedList<memBlock>* variables;
+			CrossHandlers::CelestialSlicedList<offsetStack>* offsets;
 
 			///<summary>The last hole</summary>
 			unsigned char holeVal;
@@ -45,25 +89,7 @@ namespace Logic
 			unsigned int maxVar;
 			unsigned int maxStack;
 
-		public:
-			///<param val='pageSize'>[in]How big a page of memory should be</param>
-			MemoryPool(unsigned int pageSize, unsigned int maxStack);
-
-			unsigned int AddVariable(unsigned int var, unsigned int valSize);
-			unsigned int AddVariable(unsigned int var, unsigned int adr, unsigned int valSize);
-
-			unsigned int GetVarLength(unsigned int var) const;
-			unsigned int GetMaxVar() const;
-
-			void AddSystemMem(Resources::KubLingCompiled* compiled);
-			unsigned int GetStartingAdr() const;
-			unsigned int GetMemorySize() const;
-
-			unsigned int GetVarSize(unsigned int var) const;
-			unsigned int GetVarAdr(unsigned int var) const;
-			unsigned int GetMaxStack() const;
-
-			~MemoryPool();
+			unsigned int maxOffsets;
 
 	};
 }
