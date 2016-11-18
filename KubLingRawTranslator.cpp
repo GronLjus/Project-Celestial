@@ -3009,19 +3009,20 @@ RunTimeError OrbitOperator(rawCode* raw, unsigned int returnVar, unsigned char* 
 
 	}
 
-	raw->maxLines = addMessParLinesO + sendLines;
+	raw->maxLines = addMessParLinesO * 2 + sendLines;
 	raw->code = new rawCode::line[raw->maxLines];
 
 	Message mess;
 	mess.destination = MessageSource_ENTITIES;
 	mess.type = MessageType_ENTITIES;
 	mess.mess = GameBoardMess_ORBITOBJECT;
-
-	unsigned int var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
-	mess.returnParam = var;
+	mess.returnParam = 0;
 
 	unsigned int fVar = (params[4] | ((int)params[5] << 8) | ((int)params[6] << 16) | ((int)params[7] << 24));
-	addMessStackParamO(fVar - 1, 0, 4, rtv, raw);
+	addMessStackParamO(fVar - 1, 4, 4, rtv, raw);
+
+	unsigned int var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
+	addMessStackParamO(var - 1, 0, 4, rtv, raw);
 
 	sendMessageOut(mess, rtv, raw);
 
