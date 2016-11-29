@@ -17,11 +17,11 @@ const unsigned int commonAddMessLines = 3;
 const unsigned int addMessParLinesNO = 1 + commonAddMessLines;
 const unsigned int addMessParLinesO = placeAdrLines + commonAddMessLines;
 const unsigned int addMessStrParLines = 5 + placeAdrLines;
-const unsigned int addMessStrParLinesNO = 5 ;
+const unsigned int addMessStrParLinesNO = 7 ;
 
 
 const unsigned int commonArrayLines = 9;
-
+const unsigned int commonConditionalLines = 9 + placeAdrLines * 3;
 
 const unsigned int addMessTempParLines = 3 + addMessParLinesNO;
 const unsigned int castIToSLines = 45 + placeAdrLines;
@@ -311,7 +311,7 @@ void addMessStackStringParamO(unsigned int var, unsigned int messOffset, unsigne
 
 }
 
-//5
+//7
 void addMessStackStringParamNO(unsigned int var, unsigned int messOffset, unsigned int size, runTimeVal &rtv, rawCode* currentCode)
 {
 
@@ -331,7 +331,7 @@ void addMessStackStringParamNO(unsigned int var, unsigned int messOffset, unsign
 	line.scale = size;
 	currentCode->code[currentCode->codeSize] = line;
 	currentCode->codeSize++;
-	//Place the adress + 4 of the var in 11
+	//Place the adress + 4 of the var in a1
 	line.code = opcode_PLACE;
 	line.r1 = 0;
 	line.type = 3;
@@ -351,6 +351,20 @@ void addMessStackStringParamNO(unsigned int var, unsigned int messOffset, unsign
 	line.r2 = 2;
 	line.r3 = 1;
 	line.type = 0;
+	currentCode->code[currentCode->codeSize] = line;
+	currentCode->codeSize++;
+	//Add i2 to i3 and store in i3
+	line.code = opcode_ADD;
+	line.r1 = 2;
+	line.r2 = 1;
+	line.r3 = 2;
+	line.type = 0;
+	currentCode->code[currentCode->codeSize] = line;
+	currentCode->codeSize++;
+	//Add 0 to the message at offset i3
+	line.code = opcode_PRM;
+	line.r1 = 2;
+	line.scale = 0;
 	currentCode->code[currentCode->codeSize] = line;
 	currentCode->codeSize++;
 
@@ -896,6 +910,88 @@ void setCommon(unsigned int var, unsigned int var2, unsigned int message, runTim
 
 }
 
+//9
+void commonConditional(unsigned int var, unsigned int var2, unsigned int returnVal, unsigned int cmpVal, runTimeVal &rtv, rawCode* raw)
+{
+
+	//Place the adress of the var2 in a1
+	placeAdr(var2, 0, 0, rtv, raw);
+	//Place the adress of the var in a2
+	placeAdr(var, 1, 0, rtv, raw);
+	//Place the adress of the returnvar in a3
+	placeAdr(returnVal, 2, 0, rtv, raw);
+
+	rawCode::line line;
+	//Place -1 in c3
+	line.code = opcode_PLACE;
+	line.r1 = 1;
+	line.type = 2;
+	line.scale = -1;
+	raw->code[raw->codeSize] = line;
+	raw->codeSize++;
+	//Load a1 in c1
+	line.code = opcode_LOAD;
+	line.r1 = 0;
+	line.r2 = 0;
+	line.type = 2;
+	raw->code[raw->codeSize] = line;
+	raw->codeSize++;
+	//Compare c1 to c3 and store in c1
+	line.code = opcode_CMPRE;
+	line.r1 = 0;
+	line.r2 = 2;
+	line.r3 = 0;
+	line.type = 2;
+	raw->code[raw->codeSize] = line;
+	raw->codeSize++;
+	//Load a2 in c2
+	line.code = opcode_LOAD;
+	line.r1 = 1;
+	line.r2 = 1;
+	line.type = 2;
+	raw->code[raw->codeSize] = line;
+	raw->codeSize++;
+	//Compare c2 to c3 and store in c2
+	line.code = opcode_CMPRE;
+	line.r1 = 1;
+	line.r2 = 2;
+	line.r3 = 1;
+	line.type = 2;
+	raw->code[raw->codeSize] = line;
+	raw->codeSize++;
+	//Add c1 to c2 and store in c3
+	line.code = opcode_ADD;
+	line.r1 = 0;
+	line.r2 = 1;
+	line.r3 = 2;
+	line.type = 2;
+	raw->code[raw->codeSize] = line;
+	raw->codeSize++;
+	//Place the compare-value in c2
+	line.code = opcode_PLACE;
+	line.r1 = 1;
+	line.type = 2;
+	line.scale = cmpVal;
+	raw->code[raw->codeSize] = line;
+	raw->codeSize++;
+	//Compare c2 to c3 and store in c1
+	line.code = opcode_GRTR;
+	line.r1 = 1;
+	line.r2 = 2;
+	line.r3 = 0;
+	line.type = 2;
+	raw->code[raw->codeSize] = line;
+	raw->codeSize++;
+	//Store c1 at adr a3
+	line.code = opcode_STORE;
+	line.r1 = 0;
+	line.r2 = 2;
+	line.type = 2;
+	raw->code[raw->codeSize] = line;
+	raw->codeSize++;
+
+}
+
 //9 for 'n' and 'f' 12 for 's' 
 void commonPar(unsigned int var, unsigned int scriptValue, unsigned int offset, unsigned char type, runTimeVal &rtv, rawCode* currentCode)
 {
@@ -1317,6 +1413,28 @@ RunTimeError AddTextLineOperator(rawCode* raw, unsigned int returnVar, unsigned 
 
 	addMessStackStringParamO(var2 - 1, 0, 4, rtv, raw);
 	sendMessageOut(mess, rtv, raw);
+
+	return RunTimeError_OK;
+
+}
+
+RunTimeError AndOperator(rawCode* raw, unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int offset, unsigned int byteLine, runTimeVal &rtv)
+{
+
+	if (paramSize < 8)
+	{
+
+		return RunTimeError_BADPARAMS;
+
+	}
+
+	raw->maxLines = commonConditionalLines;
+	raw->code = new rawCode::line[raw->maxLines];
+
+	unsigned int var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
+	unsigned int var2 = (params[4] | ((int)params[5] << 8) | ((int)params[6] << 16) | ((int)params[7] << 24));
+
+	commonConditional(var - 1, var2 - 1, returnVar - 1, -1, rtv, raw);
 
 	return RunTimeError_OK;
 
@@ -2900,8 +3018,8 @@ RunTimeError NumGrtFloaOperator(rawCode* raw, unsigned int returnVar, unsigned c
 
 	unsigned int var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
 	unsigned int var2 = (params[4] | ((int)params[5] << 8) | ((int)params[6] << 16) | ((int)params[7] << 24));
-	performArithemitc(var - 1,
-		var2 - 1,
+	performArithemitc(var2 - 1,
+		var - 1,
 		returnVar - 1, rtv,
 		opcode_GRTR, 1, raw);
 
@@ -2995,6 +3113,28 @@ RunTimeError OffsetStrOperator(rawCode* raw, unsigned int returnVar, unsigned ch
 	unsigned int arr = (params[4] | ((int)params[5] << 8) | ((int)params[6] << 16) | ((int)params[7] << 24));
 
 	commonOffset(arr-1,var - 1, 64, rtv);
+	return RunTimeError_OK;
+
+}
+
+RunTimeError OrOperator(rawCode* raw, unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int offset, unsigned int byteLine, runTimeVal &rtv)
+{
+
+	if (paramSize < 8)
+	{
+
+		return RunTimeError_BADPARAMS;
+
+	}
+
+	raw->maxLines = commonConditionalLines;
+	raw->code = new rawCode::line[raw->maxLines];
+
+	unsigned int var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
+	unsigned int var2 = (params[4] | ((int)params[5] << 8) | ((int)params[6] << 16) | ((int)params[7] << 24));
+
+	commonConditional(var - 1, var2 - 1, returnVar - 1, 0, rtv, raw);
+
 	return RunTimeError_OK;
 
 }
@@ -4868,6 +5008,9 @@ KubLingRawTranslator::KubLingRawTranslator()
 
 	translator[bytecode_PSEGME] = PauseGameOperator;
 	translator[bytecode_RSMGME] = ResumeGameOperator;
+
+	translator[bytecode_AND] = AndOperator;
+	translator[bytecode_OR] = OrOperator;
 
 	translator[bytecode_NUMARR] = ArrayNumOperator;
 	translator[bytecode_STRARR] = ArrayStrOperator;

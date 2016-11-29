@@ -147,6 +147,27 @@ namespace CrossHandlers
 				memcpy(&params[offset], newParams, length);
 
 			}
+			void SetParam(const unsigned int par, unsigned int offset)
+			{
+				if (offset + 4 >= numParams)
+				{
+
+					numParams += 128;
+					unsigned char* newPar = new unsigned char[numParams];
+					for (unsigned int i = 0; i < 128; i++)
+					{
+						newPar[numParams - 1 - i] = 0;
+					}
+
+					memcpy(newPar, params, numParams - 128);
+					delete[] params;
+					params = newPar;
+
+				}
+
+				memcpy(&params[offset], &par, 4);
+
+			}
 			~Message(){ 
 				delete[] params;
 				params = nullptr;

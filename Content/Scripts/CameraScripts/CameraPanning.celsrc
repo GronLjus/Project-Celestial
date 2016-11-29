@@ -18,11 +18,31 @@ else
 {
 
 	moveByX = lastX-?f0
-	moveByZ = ?f2-lastZ
+	moveByZ = lastZ-?f2
 
-	move cam moveByX 0.0 moveByZ
+	xCool = 0
+	zCool = 0
 
-	lastX = ?f0 + moveByX
-	lastZ = ?f2 + moveByZ
+	if moveByX > 0.1 | moveByX < -0.1
+	{
+	
+		xCool = 1
 
+	}
+
+	if moveByZ > 0.1 | moveByZ < -0.1
+	{
+		
+		zCool = 1
+
+	}
+
+	if xCool + zCool > 0
+	{
+	
+		move cam moveByX 0.0 moveByZ
+		lastX = ?f0 + moveByX
+		lastZ = ?f2 + moveByZ
+
+	}
 }

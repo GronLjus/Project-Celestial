@@ -182,7 +182,10 @@ int KubLingParser::addChildrenTooTree(CelestialListNode<Token>* &tokenNode, Comp
 					if (err.errorType == ScriptError_OK)
 					{
 
-						orderTree(newNode->GetLeafs()->GetLastNode()->GetNodeObject(), err);
+						CelestialTreeNode<Token>* node = newNode->GetLeafs()->GetLastNode()->GetNodeObject();
+						node = orderTree(node, err);
+						node->SetParent(nullptr);
+						newNode->GetLeafs()->GetLastNode()->SetNodeObject(node);
 						pruneBrackets(newNode->GetLeafs()->GetLastNode()->GetNodeObject());
 
 					}
@@ -221,7 +224,10 @@ int KubLingParser::addChildrenTooTree(CelestialListNode<Token>* &tokenNode, Comp
 				if (err.errorType == ScriptError_OK)
 				{
 
-					orderTree(newNode->GetLeafs()->GetLastNode()->GetNodeObject(), err);
+					CelestialTreeNode<Token>* node = newNode->GetLeafs()->GetLastNode()->GetNodeObject();
+					node = orderTree(node, err);
+					node->SetParent(nullptr);
+					newNode->GetLeafs()->GetLastNode()->SetNodeObject(node);
 					pruneBrackets(newNode->GetLeafs()->GetLastNode()->GetNodeObject());
 
 				}
@@ -389,7 +395,6 @@ CelestialTreeNode<Token>* KubLingParser::orderTree(CelestialTreeNode<Token>* tre
 		if (tok.type == TokenType_KEYWORD && rootKeyWord != -1)
 		{
 
-
 			if (keywords[rootKeyWord].priority > 0 && branch->GetNodeObject()->GetLeafs() != nullptr)
 			{
 
@@ -517,7 +522,8 @@ CelestialList<CelestialTree<Token>*>* KubLingParser::ParseTokens(CelestialList<T
 				if (err.errorType == ScriptError_OK)
 				{
 
-					orderTree(genNode, err);
+					genNode = orderTree(genNode, err);
+					genNode->SetParent(nullptr);
 					pruneBrackets(genNode);
 
 				}

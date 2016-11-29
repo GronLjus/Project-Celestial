@@ -311,6 +311,9 @@ RunTimeError KubLingMachine::RunScript(unsigned long long* code, unsigned int &c
 		case Logic::opcode_STPRM:
 			lastMess->SetParams((unsigned char*)getMem(aReg[reg1] + iReg[4]), iReg[reg2], iReg[reg3]);
 			break;
+		case Logic::opcode_PRM:
+			lastMess->SetParam(scal, iReg[reg1]);
+			break;
 		case Logic::opcode_ADD:
 
 			if (type == 0)
@@ -516,7 +519,7 @@ RunTimeError KubLingMachine::RunScript(unsigned long long* code, unsigned int &c
 		case Logic::opcode_FTS:
 			s = std::to_string(fReg[reg1]);
 			st = s.c_str();
-			s.size();
+			size = s.size();
 			memcpy(getMem(aReg[reg2] + iReg[4]), &size,4);
 			memcpy(getMem(aReg[reg2] + iReg[4] + 4), st, s.size());
 			break;

@@ -110,13 +110,13 @@ rawCode KubLingRawGenerator::createInitHeader(heapVar initData)
 	headerBlock.code = new rawCode::line[headerBlock.maxLines];
 
 	rawCode::line line;
-	//Place the heap var on i1
+	//Place the heap var on a1
 	line.code = opcode_PLACE;
 	line.r1 = 0;
-	line.type = 0;
+	line.type = 3;
 	line.scale = initData.var;
 	headerBlock.code[0] = line;
-	//Get the address of the var on i1 to i2
+	//Get the address of the var on a1 to i2
 	line.code = opcode_ADR;
 	line.r1 = 0;
 	line.r2 = 1;
