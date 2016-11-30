@@ -2,6 +2,7 @@
 #include "SerializableObject.h"
 #include "BaseObject.h"
 #include "Dictionary.h"
+#include "KeyCodes.h"
 
 namespace Resources
 {
@@ -26,13 +27,15 @@ namespace Resources
 
 			unsigned int GetTravelNodeScript() const;
 
+			unsigned int GetKeyScript(Input::CelestialKeyCategories cat, unsigned char code) const;
+
 			bool TranslateScripts(CrossHandlers::Dictionary* dict);
 
 			//Serializable Interface
 			virtual char* Serialize(unsigned int &size);
 			virtual char* Unserialize(char* data);
 
-			virtual ~ScriptableObject(){}
+			virtual ~ScriptableObject();
 
 		private:
 
@@ -51,5 +54,20 @@ namespace Resources
 
 			unsigned int travelArrivedNodeScript;
 
+
+			struct trigger
+			{
+
+				Input::CelestialKeyCategories cat;
+				unsigned char code;
+				unsigned int script;
+
+			};
+
+			void addTrigger(trigger trigg);
+
+			trigger* triggers;
+			unsigned int currentTriggers;
+			unsigned int maxTriggers;
 	};
 }

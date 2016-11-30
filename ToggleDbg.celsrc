@@ -1,0 +1,22 @@
+$
+{
+
+	debugLayout = import 'debugLayer'
+	hidden = 0
+
+}
+
+if hidden
+{
+	
+	show debugLayout
+	hidden = 1
+
+}
+else
+{
+
+	hide debugLayout
+	hidden = 0
+
+}

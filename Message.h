@@ -23,9 +23,6 @@ namespace CrossHandlers
 		EventMess_NA };
 	enum GUIMess{
 		GUIMess_SETUI, GUIMess_ADDCHILD,
-		GUIMess_CLICKOBJECT, GUIMess_MOVEMOUSE, 
-		GUIMess_STARTDRAGGING, GUIMess_DRAGOBJECT, GUIMess_STOPDRAGGING, 
-		GUIMess_WHEELOBJECT, GUIMess_MOUSEDOWN, GUIMess_MOUSEUP,
 		GUIMess_POST, GUIMess_APPEND, GUIMess_CLEAR, GUIMess_ERASE, GUIMess_FOCUS, 
 		GUIMess_HANDLECHAR, GUIMess_HANDLEKEY, GUIMess_NA };
 	enum GraphicMess{ GraphicMess_GETSCREEN, 
@@ -35,11 +32,13 @@ namespace CrossHandlers
 		GraphicMess_RESETIMAGE, GraphicMess_NA
 	};
 
-	enum GameBoardMess{ GameBoardMess_SETBOARDOBJECT, GameBoardMess_SETCAM, GameBoardMess_SETGAMEBOARD,GameBoardMess_SETTRACKING,
+	enum GameBoardMess{ GameBoardMess_SETBOARDOBJECT, GameBoardMess_SETCAM, 
+		GameBoardMess_SETGAMEBOARD,GameBoardMess_SETTRACKING, GameBoardMess_SETUI,
 		GameBoardMess_ADDOBJECT, GameBoardMess_ADDMESH,  
 		GameBoardMess_CLICKOBJECT, GameBoardMess_WHEELOBJECT, 
 		GameBoardMess_STARTDRAGGING, GameBoardMess_DRAGOBJECT, GameBoardMess_STOPDRAGGING,
-		GameBoardMess_MOUSEMOVE, GameBoardMess_CLEARTRACK,
+		GameBoardMess_MOUSEMOVE, GameBoardMess_MOUSEUD,
+		GameBoardMess_CLEARTRACK,
 		GameBoardMess_HOOKTRACK, GameBoardMess_UNHOOKTRACK,
 		GameBoardMess_ORBITOBJECT, 
 		GameBoardMess_ADDROUTE, GameBoardMess_SPAWN, GameBoardMess_TRAVEL,
@@ -60,7 +59,7 @@ namespace CrossHandlers
 		ObjectMess_SETHVRSCRPT, ObjectMess_SETENTRSCRPT, ObjectMess_SETEXTSCRPT, 
 		ObjectMess_SETLCSCRPT, ObjectMess_SETRCSCRPT, ObjectMess_SETMCSCRPT,
 		ObjectMess_SETLDSCRPT, ObjectMess_SETRDSCRPT, ObjectMess_SETMDSCRPT,
-		ObjectMess_SETWHLSCRPT, ObjectMess_SETUPDWNSCRPT,
+		ObjectMess_SETWHLSCRPT, ObjectMess_SETUPDWNSCRPT, ObjectMess_ADDKEYSCRPT,
 		ObjectMess_SETTRVLNDESCRPT,
 		ObjectMess_SETSCRPTTRGT,
 		ObjectMess_SETSNAP, ObjectMess_SETTEXT, ObjectMess_APPENDTEXT, ObjectMess_APPENDTEXTLINE,

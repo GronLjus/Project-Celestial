@@ -120,7 +120,7 @@ bool InputHandler::checkDrag(unsigned int time)
 
 
 				dragging = keyCode(i);
-				sendMessage(GUIMess_STARTDRAGGING, time, dragging);
+				sendMessage(GameBoardMess_STARTDRAGGING, time, dragging);
 
 				for (unsigned char k = 0; k < keyCodeNA; k++)
 				{
@@ -144,14 +144,14 @@ bool InputHandler::checkDrag(unsigned int time)
 		if (keyStates[dragging].state)
 		{
 
-			sendMessage(GUIMess_STOPDRAGGING, time, dragging);
+			sendMessage(GameBoardMess_STOPDRAGGING, time, dragging);
 			dragging = keyCodeNA;
 
 		}
 		else
 		{
 
-			sendMessage(GUIMess_DRAGOBJECT, time, dragging);
+			sendMessage(GameBoardMess_DRAGOBJECT, time, dragging);
 
 		}
 	}
@@ -166,7 +166,7 @@ void InputHandler::checkMouseWheel(unsigned int time)
 	if (mouseWheel != 0)
 	{
 
-		sendMessage(GUIMess_WHEELOBJECT, time, mouseWheel);
+		sendMessage(GameBoardMess_WHEELOBJECT, time, mouseWheel);
 		mouseWheel = 0;
 
 	}
@@ -176,15 +176,13 @@ void InputHandler::sendMessage(unsigned int mess, unsigned int time, short delta
 {
 
 	unsigned char tempBuff[]{
-		mouse.x >> 0, mouse.x >> 8, mouse.x >> 16, mouse.x >> 24,
-		mouse.y >> 0, mouse.y >> 8, mouse.y >> 16, mouse.y >> 24,
 		delta >> 0, delta >> 8
 	};
 
-	messageBuffer[this->currentMessage].SetParams(tempBuff, 0, 14);
+	messageBuffer[this->currentMessage].SetParams(tempBuff, 0, 2);
 	messageBuffer[this->currentMessage].timeSent = time;
-	messageBuffer[this->currentMessage].destination = MessageSource_GUIENTITIES;
-	messageBuffer[this->currentMessage].type = MessageType_GUIENTITIES;
+	messageBuffer[this->currentMessage].destination = MessageSource_ENTITIES;
+	messageBuffer[this->currentMessage].type = MessageType_ENTITIES;
 	messageBuffer[this->currentMessage].mess = mess;
 	messageBuffer[this->currentMessage].read = false;
 	outQueue->PushMessage(&messageBuffer[this->currentMessage]);
@@ -196,15 +194,32 @@ void InputHandler::sendMessage(unsigned int mess, unsigned int time, keyCode key
 {
 
 	unsigned char tempBuff[]{
-		mouse.x >> 0, mouse.x >> 8, mouse.x >> 16, mouse.x >> 24,
-		mouse.y >> 0, mouse.y >> 8, mouse.y >> 16, mouse.y >> 24,
 		key
 	};
 
 	messageBuffer[this->currentMessage].SetParams(tempBuff, 0, 12);
 	messageBuffer[this->currentMessage].timeSent = time;
-	messageBuffer[this->currentMessage].destination = MessageSource_GUIENTITIES;
-	messageBuffer[this->currentMessage].type = MessageType_GUIENTITIES;
+	messageBuffer[this->currentMessage].destination = MessageSource_ENTITIES;
+	messageBuffer[this->currentMessage].type = MessageType_ENTITIES;
+	messageBuffer[this->currentMessage].mess = mess;
+	messageBuffer[this->currentMessage].read = false;
+	outQueue->PushMessage(&messageBuffer[this->currentMessage]);
+	this->currentMessage = (this->currentMessage + 1) % outMessages;
+
+}
+
+void InputHandler::sendMessage(unsigned int mess, unsigned int time, keyCode key, bool up)
+{
+
+	unsigned char tempBuff[]{
+		key,
+		up ? 1 : 0
+	};
+
+	messageBuffer[this->currentMessage].SetParams(tempBuff, 0, 2);
+	messageBuffer[this->currentMessage].timeSent = time;
+	messageBuffer[this->currentMessage].destination = MessageSource_ENTITIES;
+	messageBuffer[this->currentMessage].type = MessageType_ENTITIES;
 	messageBuffer[this->currentMessage].mess = mess;
 	messageBuffer[this->currentMessage].read = false;
 	outQueue->PushMessage(&messageBuffer[this->currentMessage]);
@@ -222,8 +237,8 @@ void InputHandler::sendMessage(unsigned int mess, unsigned int time)
 
 	messageBuffer[this->currentMessage].SetParams(tempBuff, 0, 8);
 	messageBuffer[this->currentMessage].timeSent = time;
-	messageBuffer[this->currentMessage].destination = MessageSource_GUIENTITIES;
-	messageBuffer[this->currentMessage].type = MessageType_GUIENTITIES;
+	messageBuffer[this->currentMessage].destination = MessageSource_ENTITIES;
+	messageBuffer[this->currentMessage].type = MessageType_ENTITIES;
 	messageBuffer[this->currentMessage].mess = mess;
 	messageBuffer[this->currentMessage].read = false;
 	outQueue->PushMessage(&messageBuffer[this->currentMessage]);
@@ -247,7 +262,7 @@ void InputHandler::handleMouse(unsigned int time)
 		if (checkMouseClick(time, keyCode(i)))
 		{
 
-			sendMessage(GUIMess_CLICKOBJECT, time, keyCode(i));
+			sendMessage(GameBoardMess_CLICKOBJECT, time, keyCode(i));
 
 		}
 	}
@@ -274,13 +289,13 @@ void InputHandler::Update(unsigned int time)
 
 			mouse.x = currentMessage->params[0] | ((int)currentMessage->params[1] << 8);
 			mouse.y = currentMessage->params[2] | ((int)currentMessage->params[3] << 8);
-			sendMessage(GUIMess_MOVEMOUSE, time);
+			sendMessage(GameBoardMess_MOUSEMOVE, time);
 
 		}
 		else if (currentMessage->mess == InputMess_MOUSEWHEEL)
 		{
 
-			sendMessage(GUIMess_WHEELOBJECT, time, param10);
+			sendMessage(GameBoardMess_WHEELOBJECT, time, param10);
 
 		}
 		else if ((currentMessage->mess == InputMess_MOUSEUP && !keyStates[param1].state) || (currentMessage->mess == InputMess_MOUSEDWN && keyStates[param1].state))
@@ -292,7 +307,7 @@ void InputHandler::Update(unsigned int time)
 			keyStates[param1].lastTime = keyStates[param1].thisTime;
 			keyStates[param1].thisTime = time;
 
-			sendMessage(keyStates[param1].state ? GUIMess_MOUSEUP : GUIMess_MOUSEDOWN, time, keyCode(param1));
+			sendMessage(GameBoardMess_MOUSEUD, time, keyCode(param1), keyStates[param1].state);
 
 		}
 		else if (currentMessage->mess == InputMess_KEYDWN || currentMessage->mess == InputMess_KEYUP)

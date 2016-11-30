@@ -75,6 +75,63 @@ void GameBoardHandler::triggerNodeScript(unsigned int script, unsigned int obj, 
 
 }
 
+void  GameBoardHandler::handleInput(CrossHandlers::Message* currentMessage, unsigned int time)
+{
+
+	if (currentMessage->mess == GameBoardMess_CLICKOBJECT)
+	{
+
+		mH->Click(currentMessage->params[0], time, trackedObject);
+
+	}
+	else if (currentMessage->mess == GameBoardMess_WHEELOBJECT)
+	{
+
+		short wheelDelta = currentMessage->params[0] | ((int)currentMessage->params[1] << 8);
+		mH->Wheel(time, wheelDelta, trackedObject);
+
+	}
+	else if (currentMessage->mess == GameBoardMess_STARTDRAGGING)
+	{
+
+		mH->StartDrag(currentMessage->params[0], time, trackedObject);
+
+	}
+	else if (currentMessage->mess == GameBoardMess_DRAGOBJECT)
+	{
+
+		mH->Drag(time);
+
+	}
+	else if (currentMessage->mess == GameBoardMess_STOPDRAGGING)
+	{
+
+		mH->StopDrag(time);
+
+	}
+	else if (currentMessage->mess == GameBoardMess_MOUSEUD)
+	{
+
+		mH->UpDown(currentMessage->params[0], currentMessage->params[1] == 1 ,time);
+
+	}
+	else if (currentMessage->mess == GameBoardMess_MOUSEMOVE)
+	{
+
+		unsigned int mouseX = currentMessage->params[0] | ((int)currentMessage->params[1] << 8) | ((int)currentMessage->params[2] << 16) | ((int)currentMessage->params[3] << 24);
+		unsigned int mouseY = currentMessage->params[4] | ((int)currentMessage->params[5] << 8) | ((int)currentMessage->params[6] << 16) | ((int)currentMessage->params[7] << 24);
+
+		mH->MoveMouse(vectorUI2(mouseX, mouseY), time);
+
+		if (trackedObject != nullptr)
+		{
+
+			mH->SetWorldMouse(handleTracked(time));
+
+		}
+	}
+}
+
 void GameBoardHandler::UpdateMessages(unsigned int time)
 {
 
@@ -124,40 +181,16 @@ void GameBoardHandler::UpdateMessages(unsigned int time)
 			parent->AddSubObject(child, pos);
 
 		}
-		else if (currentMessage->mess == GameBoardMess_CLICKOBJECT && 
-			localGameBoard != nullptr && localGameBoard->GetCam() != nullptr)
+		else if (currentMessage->mess == GameBoardMess_CLICKOBJECT ||
+			currentMessage->mess == GameBoardMess_WHEELOBJECT ||
+			currentMessage->mess == GameBoardMess_STARTDRAGGING ||
+			currentMessage->mess == GameBoardMess_DRAGOBJECT ||
+			currentMessage->mess == GameBoardMess_STOPDRAGGING ||
+			currentMessage->mess == GameBoardMess_MOUSEMOVE ||
+			currentMessage->mess == GameBoardMess_MOUSEUD)
 		{
 
-			mH->Click(currentMessage->params[0], time, trackedObject);
-
-		}
-		else if (currentMessage->mess == GameBoardMess_WHEELOBJECT &&
-			localGameBoard != nullptr && localGameBoard->GetCam() != nullptr)
-		{
-
-			short wheelDelta = currentMessage->params[0] | ((int)currentMessage->params[1] << 8);
-			mH->Wheel(time, wheelDelta, trackedObject);
-
-		}
-		else if (currentMessage->mess == GameBoardMess_STARTDRAGGING &&
-			localGameBoard != nullptr && localGameBoard->GetCam() != nullptr)
-		{
-
-			mH->StartDrag(currentMessage->params[0], time, trackedObject);
-
-		}
-		else if (currentMessage->mess == GameBoardMess_DRAGOBJECT &&
-			localGameBoard != nullptr && localGameBoard->GetCam() != nullptr)
-		{
-
-			mH->Drag(time);
-
-		}
-		else if (currentMessage->mess == GameBoardMess_STOPDRAGGING &&
-			localGameBoard != nullptr && localGameBoard->GetCam() != nullptr)
-		{
-			
-			mH->StopDrag(time);
+			handleInput(currentMessage, time);
 
 		}
 		else if (currentMessage->mess == GameBoardMess_ORBITOBJECT &&
@@ -227,22 +260,6 @@ void GameBoardHandler::UpdateMessages(unsigned int time)
 
 			}
 		}
-		else if (currentMessage->mess == GameBoardMess_MOUSEMOVE &&
-			localGameBoard != nullptr && localGameBoard->GetCam() != nullptr)
-		{
-
-			unsigned int mouseX = currentMessage->params[0] | ((int)currentMessage->params[1] << 8) | ((int)currentMessage->params[2] << 16) | ((int)currentMessage->params[3] << 24);
-			unsigned int mouseY = currentMessage->params[4] | ((int)currentMessage->params[5] << 8) | ((int)currentMessage->params[6] << 16) | ((int)currentMessage->params[7] << 24);
-
-			mH->MoveMouse(vectorUI2(mouseX, mouseY));
-
-			if (trackedObject != nullptr)
-			{
-
-				mH->SetWorldMouse(handleTracked(time));
-
-			}
-		}
 		else if (currentMessage->mess == GameBoardMess_SETCAM && localGameBoard != nullptr)
 		{
 
@@ -256,6 +273,13 @@ void GameBoardHandler::UpdateMessages(unsigned int time)
 			messageBuffer[this->currentMessage].SetParams(currentMessage->params, 0, 4);
 			outQueue->PushMessage(&messageBuffer[this->currentMessage]);
 			this->currentMessage = (this->currentMessage + 1) % outMessages;
+
+		}
+		else if (currentMessage->mess == GameBoardMess_SETUI)
+		{
+
+			GUILayout* layout = (GUILayout*)gameObjects->GetValue(param1);
+			mH->SetLayout(layout);
 
 		}
 		else if (currentMessage->mess == GameBoardMess_SETGAMEBOARD)
@@ -686,6 +710,8 @@ Vector3 GameBoardHandler::handleTracked(unsigned int time)
 
 void GameBoardHandler::Update(unsigned int time)
 {
+
+	mH->Update(time);
 
 	UpdateMessages(time);
 

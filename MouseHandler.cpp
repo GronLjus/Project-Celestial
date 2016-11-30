@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "MouseHandler.h"
+#include "InputHandler.h"
 
 using namespace Entities;
 using namespace CrossHandlers;
@@ -9,7 +10,11 @@ using namespace CelestialMath;
 MouseHandler::MouseHandler()
 {
 
+	dragScript = 0;
+	board = nullptr;
 	hoverObject = nullptr;
+	lastTarget = nullptr;
+	gameObject = nullptr;
 	screenMouse = vectorUI2(0, 0);
 	worldMouse = Vector3(0.0f, 0.0f, 0.0f);
 
@@ -29,21 +34,6 @@ void MouseHandler::Init(CelestialSlicedList<BaseObject*>* gameObjects,
 	this->currentMessage = currentMessage;
 	outMessages = maxMess;
 
-}
-
-void MouseHandler::MoveMouse(vectorUI2 newMouse)
-{
-
-	if (newMouse.x != screenMouse.x ||
-		newMouse.y != screenMouse.y)
-	{
-
-		screenMouse = newMouse; 
-		Vector3 direction = getMouseWorldLine(screenMouse);
-		board->GetBoardPosition(board->GetCam()->GetPosition(), direction, worldMouse);
-		vectorUI2 cells(floor(worldMouse.x), floor(worldMouse.z));
-
-	}
 }
 
 void MouseHandler::runScript(unsigned int script, unsigned int time)
@@ -149,37 +139,249 @@ ScriptableObject* MouseHandler::getMouseObject(Vector3 direction) const
 
 }
 
-unsigned int MouseHandler::getClickScript(char button, Resources::ScriptableObject* obj) const
+unsigned int MouseHandler::getClickScript(char button, ScriptableObject* obj) const
 {
 
-	return button == 0 ? obj->GetLeftClickScript() :
+	return obj == nullptr ? 0 :
+		button == 0 ? obj->GetLeftClickScript() :
 		button == 1 ? obj->GetMiddleClickScript() :
 		obj->GetRightClickScript();
 
 }
 
-unsigned int MouseHandler::getDragScript(char button, Resources::ScriptableObject* obj) const
+unsigned int MouseHandler::getWheelScript(ScriptableObject* obj) const
 {
 
-	return button == 0 ? obj->GetLeftDragScript() :
+	return obj == nullptr ? 0 : obj->GetWheelScript();
+
+}
+
+unsigned int MouseHandler::getDragScript(char button, ScriptableObject* obj) const
+{
+
+	return obj == nullptr ? 0 : 
+		button == 0 ? obj->GetLeftDragScript() :
 		button == 1 ? obj->GetMiddleDragScript() :
 		obj->GetRightDragScript();
 
 }
 
-void MouseHandler::Click(char button, unsigned int time, PositionableObject* trackedObject)
+ScreenTarget* MouseHandler::getScreenTarget(vectorUI2 mouse, GUILayout* base)
 {
 
-	ScriptableObject* clickOb = trackedObject;
+	ScreenTarget* firstTarget = nullptr;
 
-	if (trackedObject == nullptr)
+	if (base != nullptr)
 	{
 
-		clickOb = hoverObject;
+		unsigned char topLayer = 0;
+
+		for (unsigned int i = 0; i < base->GetChildren() && firstTarget == nullptr; i++)
+		{
+
+			GUIObject* object = base->GetChild(i);
+
+			if (object != nullptr)
+			{
+
+				ScreenTarget* target = object->GetScreenTarget();
+
+				if (target != nullptr)
+				{
+
+					float l = target->GetPosition().x;
+					float r = target->GetPosition().x + target->GetScale().x;
+					float t = target->GetPosition().y;
+					float b = target->GetPosition().y + target->GetScale().y;
+
+					if ((l <= mouse.x && r >= mouse.x &&
+						t <= mouse.y && b >= mouse.y) &&
+						target->GetLayer() > topLayer)
+					{
+
+						topLayer = target->GetLayer();
+						firstTarget = target;
+
+					}
+				}
+
+				if (firstTarget != nullptr && object->GetType() == GUIObjects_LAYOUT)
+				{
+
+					firstTarget = getScreenTarget(mouse, (GUILayout*)object);
+
+				}
+			}
+		}
+	}
+
+	if (firstTarget != nullptr && !firstTarget->IsVisible())
+	{
+
+		firstTarget = nullptr;
 
 	}
 
-	if (clickOb == nullptr)
+	if (firstTarget == nullptr
+		&& base != nullptr &&
+		base->GetScreenTarget() != nullptr &&
+		!base->GetScreenTarget()->IsLocked())
+	{
+
+		return base->GetScreenTarget();
+
+	}
+
+	return firstTarget;
+
+}
+
+void MouseHandler::setCursor(Logic::CursorCode code, unsigned int time)
+{
+
+	unsigned char cd = code;
+	mBuffer[this->currentMessage].timeSent = time;
+	mBuffer[this->currentMessage].destination = MessageSource_SYSTEM;
+	mBuffer[this->currentMessage].type = MessageType_SYSTEM;
+	mBuffer[this->currentMessage].mess = SystemMess_SETCURSOR;
+	mBuffer[this->currentMessage].read = false;
+	mBuffer[this->currentMessage].SetParams(&cd, 0, 8);
+	outQueue->PushMessage(&mBuffer[this->currentMessage]);
+	this->currentMessage = (this->currentMessage + 1) % outMessages;
+
+}
+
+void MouseHandler::MoveMouse(vectorUI2 newMouse, unsigned int time)
+{
+
+	bool skip = false;
+
+	if (dragScript == 0 && screenLayout != nullptr)
+	{
+
+		ScreenTarget* gui = getScreenTarget(newMouse, screenLayout);
+		skip = gui != nullptr;
+
+		if (gui == nullptr || gui->GetLeftClickScript() == 0)
+		{
+
+			setCursor(Logic::CursorCode_POINT, time);
+
+		}
+
+		if (gui != lastTarget && lastTarget != nullptr && lastTarget->IsHovering())
+		{
+
+			lastTarget->SetHovering(false);
+
+
+			if (lastTarget->GetExitScript() != 0)
+			{
+
+				unsigned int script = lastTarget->GetExitScript() - 1;
+				sendCommonScriptParams(script, lastTarget->GetTargetId(), time);
+				runScript(script, time);
+
+			}
+		}
+
+		if (gui != nullptr)
+		{
+
+			if (!gui->IsHovering() && gui->GetEnterScript() != 0)
+			{
+
+				unsigned int script = gui->GetEnterScript() - 1;
+				sendCommonScriptParams(script, gui->GetTargetId(), time);
+				runScript(script, time);
+
+			}
+
+			gui->SetHovering(true);
+
+			if (gui->GetHoverScript() != 0)
+			{
+
+				unsigned int hoverScript = gui->GetHoverScript() - 1;
+				sendCommonScriptParams(hoverScript, gui->GetTargetId(), time);
+				runScript(hoverScript, time);
+
+			}
+
+			if (gui->GetLeftClickScript() != 0)
+			{
+
+				setCursor(Logic::CursorCode_HAND, time);
+
+			}
+		}
+
+		hoverObject = gui;
+		lastTarget = gui;
+
+	}
+
+	if (!skip && (newMouse.x != screenMouse.x ||
+		newMouse.y != screenMouse.y))
+	{
+
+		hoverObject = nullptr;
+		screenMouse = newMouse; 
+
+		if (board != nullptr && board->GetCam() != nullptr)
+		{
+
+			Vector3 direction = getMouseWorldLine(screenMouse);
+			board->GetBoardPosition(board->GetCam()->GetPosition(), direction, worldMouse);
+
+		}
+	}
+}
+
+void MouseHandler::UpDown(char button, bool up, unsigned int time)
+{
+
+	if (lastTarget != nullptr && lastTarget->GetUpdownScript() > 0)
+	{
+
+		unsigned int script = lastTarget->GetUpdownScript() - 1;
+
+		if ((lastTarget->GetLeftClickScript() != 0 &&
+			button == Input::InputHandler::keyCodeMouseL)
+			|| (lastTarget->GetMiddleClickScript() != 0 &&
+				button == Input::InputHandler::keyCodeMouseM)
+			|| (lastTarget->GetRightClickScript() != 0 &&
+				button == Input::InputHandler::keyCodeMouseR))
+		{
+
+			sendCommonScriptParams(script, lastTarget->GetTargetId(), time);
+			addScriptParamNum(script, up ? 1 : 0, time);
+			runScript(script, time);
+
+		}
+	}
+}
+
+void MouseHandler::Click(char button, unsigned int time, PositionableObject* trackedObject)
+{
+
+	ScriptableObject* clickOb = hoverObject;
+
+	if (getClickScript(button, clickOb) == 0)
+	{
+
+		clickOb = trackedObject;
+
+	}
+
+	if (getClickScript(button, clickOb) == 0)
+	{
+
+		clickOb = gameObject;
+
+	}
+
+	if (getClickScript(button, clickOb) == 0)
 	{
 
 		clickOb = board;
@@ -188,56 +390,49 @@ void MouseHandler::Click(char button, unsigned int time, PositionableObject* tra
 
 	unsigned int script = getClickScript(button, clickOb);
 
-	if (script == 0 && clickOb != board)
-	{
-
-		script = getClickScript(button, board);
-
-	}
-
 	if (script != 0)
 	{
 
 		script--;
-		sendCommonScriptParams(script, clickOb->GetId(), time);
+		sendCommonScriptParams(script, clickOb->GetTargetId(), time);
 		runScript(script, time);
 
 	}
 }
 
-void MouseHandler::Wheel(unsigned int time, short delta, Resources::PositionableObject* trackedObject)
+void MouseHandler::Wheel(unsigned int time, short delta, PositionableObject* trackedObject)
 {
 
-	ScriptableObject* wheelObj = trackedObject;
+	ScriptableObject* wheelObj = hoverObject;
 
-	if (trackedObject == nullptr)
+	if (getWheelScript(wheelObj) == 0)
 	{
 
-		wheelObj = hoverObject;
+		wheelObj = trackedObject;
 
 	}
 
-	if (wheelObj == nullptr)
+	if (getWheelScript(wheelObj) == 0)
+	{
+
+		wheelObj = gameObject;
+
+	}
+
+	if (getWheelScript(wheelObj) == 0)
 	{
 
 		wheelObj = board;
 
 	}
 
-	unsigned int script = wheelObj->GetWheelScript();
-
-	if (script == 0 && wheelObj != board)
-	{
-
-		script = board->GetWheelScript();
-
-	}
+	unsigned int script = getWheelScript(wheelObj);
 
 	if (script != 0)
 	{
 
 		script--;
-		sendCommonScriptParams(script, wheelObj->GetId(), time);
+		sendCommonScriptParams(script, wheelObj->GetTargetId(), time);
 		addScriptParamNum(script, delta, time);
 		runScript(script, time);
 
@@ -247,16 +442,24 @@ void MouseHandler::Wheel(unsigned int time, short delta, Resources::Positionable
 void MouseHandler::StartDrag(char button, unsigned int time, Resources::PositionableObject* trackedObject)
 {
 
-	ScriptableObject* dragObj = trackedObject;
+	ScriptableObject* dragObj = hoverObject;
 
-	if (dragObj == nullptr)
+
+	if (getDragScript(button, dragObj) == 0)
 	{
 
-		dragObj = hoverObject;
+		dragObj = trackedObject;
 
 	}
 
-	if (dragObj == nullptr)
+	if (getDragScript(button, dragObj) == 0)
+	{
+
+		dragObj = gameObject;
+
+	}
+
+	if (getDragScript(button, dragObj) == 0)
 	{
 
 		dragObj = board;
@@ -265,18 +468,11 @@ void MouseHandler::StartDrag(char button, unsigned int time, Resources::Position
 
 	unsigned int script = getDragScript(button, dragObj);
 
-	if (script == 0 && dragObj != board)
-	{
-
-		script = getDragScript(button, board);
-
-	}
-
 	if (script != 0)
 	{
 
 		dragScript = script;
-		dragId = dragObj->GetId();
+		dragId = dragObj->GetTargetId();
 		script--;
 		sendCommonScriptParams(script, dragId, time);
 		addScriptParamNum(script, 0, time);
@@ -333,10 +529,21 @@ void MouseHandler::SetBoard(Resources::GameBoard* board)
 
 }
 
+void MouseHandler::SetLayout(Resources::GUILayout* layout)
+{
+
+	this->screenLayout = layout;
+
+}
+
 void MouseHandler::Update(unsigned int time)
 {
 
-	Vector3 direction = getMouseWorldLine(screenMouse);
-	ScriptableObject* obj = getMouseObject(direction);
+	if (board != nullptr && board->GetCam() != nullptr)
+	{
+	
+		Vector3 direction = getMouseWorldLine(screenMouse);
+		gameObject = getMouseObject(direction);
 
+	}
 }

@@ -65,7 +65,8 @@ namespace Input
 			void checkMouseWheel(unsigned int time);
 
 			void sendMessage(unsigned int mess, unsigned int time, short delta);
-			void sendMessage(unsigned int mess, unsigned int time,keyCode key);
+			void sendMessage(unsigned int mess, unsigned int time, keyCode key);
+			void sendMessage(unsigned int mess, unsigned int time, keyCode key, bool up);
 			void sendMessage(unsigned int mess, unsigned int time);
 			keyCode dragging;
 			unsigned short clickTime;

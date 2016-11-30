@@ -477,6 +477,7 @@
     <None Include="Testball.fbx" />
     <None Include="testBin.celbin" />
     <None Include="TestScript.celsrc" />
+    <None Include="ToggleDbg.celsrc" />
   </ItemGroup>
   <ItemGroup>
     <None Include="plane.obj" />

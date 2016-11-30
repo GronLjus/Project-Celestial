@@ -307,6 +307,9 @@
     <Filter Include="Source Files\Logic\CelScript\Compiler\BackEnd">
       <UniqueIdentifier>{8eb9dc67-b6e4-448f-b328-49f44fccd33c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resource Files\Content\Scripts\KeyScripts">
+      <UniqueIdentifier>{81c87bfa-9ad3-4069-afb3-dd0764695f75}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MeshObject.h">
@@ -1264,6 +1267,9 @@
     </None>
     <None Include="Content\Scripts\PreLoad.celsrc">
       <Filter>Resource Files\Content\Scripts</Filter>
+    </None>
+    <None Include="ToggleDbg.celsrc">
+      <Filter>Resource Files\Content\Scripts\KeyScripts</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

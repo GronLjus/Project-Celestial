@@ -50,6 +50,8 @@ namespace Entities
 			Resources::PositionableObject* snapMouse(unsigned int amounts, unsigned int* collidedObjects, Resources::PositionableObject* lastObj, CelestialMath::Vector3 &worldMouse);
 			CelestialMath::Vector3 handleTracked(unsigned int time);
 
+			void handleInput(CrossHandlers::Message* currentMessage, unsigned int time);
+
 			MouseHandler* mH;
 
 

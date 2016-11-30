@@ -1,7 +1,6 @@
 #include "stdafx.h"
 #include "GUITextBox.h"
 #include "CelestialMath.h"
-#include "KeyCodes.h"
 
 using namespace Input;
 using namespace std;

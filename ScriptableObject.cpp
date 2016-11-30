@@ -20,7 +20,11 @@ ScriptableObject::ScriptableObject() : SerializableObject(), BaseObject()
 	upDownScript = 0;
 
 	travelArrivedNodeScript = 0;
-	serial = 36;
+	serial = 40;
+
+	currentTriggers = 0;
+	maxTriggers = 0;
+	triggers = nullptr;
 
 }
 
@@ -171,6 +175,29 @@ bool ScriptableObject::TranslateScripts(CrossHandlers::Dictionary* dict)
 
 	}
 
+	if (currentTriggers > 0)
+	{
+
+		for (unsigned int i = 0; i < currentTriggers; i++)
+		{
+
+			unsigned int newScript = dict->GetTranslation(triggers[i].script);
+
+			if (newScript == 0)
+			{
+
+				return false;
+
+			}
+
+			trigger trg = triggers[i];
+			trg.script = newScript;
+			triggers[i] = trg;
+
+		}
+
+	}
+
 	return true;
 
 }
@@ -189,6 +216,29 @@ char* ScriptableObject::Unserialize(char* data)
 	memcpy(&wheelScript, &data[24], 4);
 	memcpy(&upDownScript, &data[28], 4);
 	memcpy(&travelArrivedNodeScript, &data[32], 4);
+
+	memcpy(&currentTriggers, &data[36], 4);
+
+	maxTriggers = currentTriggers;
+
+	if (maxTriggers > 0)
+	{
+
+		triggers = new trigger[maxTriggers];
+		unsigned int offset = 40;
+
+		for (unsigned int i = 0; i < currentTriggers; i++)
+		{
+
+			memcpy((&triggers[i].cat), &data[offset], 1);
+			offset++;
+			memcpy((&triggers[i].code), &data[offset], 1);
+			offset++;
+			memcpy((&triggers[i].script), &data[offset], 4);
+			offset+=4;
+
+		}
+	}
 	return nullptr;
 
 }
@@ -196,7 +246,8 @@ char* ScriptableObject::Unserialize(char* data)
 char* ScriptableObject::Serialize(unsigned int &size)
 {
 
-	size = serial + 1;
+	size = serial + currentTriggers * 6 + 1;
+
 	char* byteVal = new char[size];
 
 	byteVal[0] = SerializableType_SCRIPTABLE;
@@ -213,6 +264,23 @@ char* ScriptableObject::Serialize(unsigned int &size)
 	memcpy(&byteVal[29], &upDownScript, sizeof(unsigned int));
 	memcpy(&byteVal[33], &travelArrivedNodeScript, sizeof(unsigned int));
 
+	memcpy(&byteVal[37], &currentTriggers, sizeof(unsigned int));
+
+	unsigned int offset = 38;
+
+	for (unsigned int i = 0; i < currentTriggers; i++)
+	{
+
+		memcpy(&byteVal[offset], &(triggers[i].cat), 1);
+		offset++;
+		memcpy(&byteVal[offset], &(triggers[i].code), 1);
+		offset++;
+		memcpy(&byteVal[offset], &(triggers[i].script), sizeof(unsigned int));
+		offset += 4;
+
+
+	}
+
 	return byteVal;
 
 }
@@ -224,6 +292,7 @@ void ScriptableObject::Update(Message* mess)
 	{
 
 		unsigned int param1 = mess->params[0] | ((int)mess->params[1] << 8) | ((int)mess->params[2] << 16) | ((int)mess->params[3] << 24);
+		trigger trg;
 
 		switch (mess->mess)
 		{
@@ -254,8 +323,60 @@ void ScriptableObject::Update(Message* mess)
 		case ObjectMess_SETTRVLNDESCRPT:
 			travelArrivedNodeScript = param1 + 1;
 			break;
+		case ObjectMess_ADDKEYSCRPT:
+			trg.cat = Input::CelestialKeyCategories(mess->params[4]);
+			trg.code = mess->params[5];
+			trg.script = param1;
+			addTrigger(trg);
+			break;
 		}
 	}
+}
+
+void ScriptableObject::addTrigger(trigger trigg)
+{
+
+	if (currentTriggers == maxTriggers)
+	{
+
+		maxTriggers += 5;
+
+		trigger* newTriggers = new trigger[maxTriggers];
+
+		if (triggers != nullptr)
+		{
+
+			memcpy(newTriggers, triggers, currentTriggers * 6);
+			delete[] triggers;
+
+		}
+
+		triggers = newTriggers;
+
+	}
+
+	triggers[currentTriggers] = trigg;
+	currentTriggers++;
+
+}
+
+unsigned int ScriptableObject::GetKeyScript(Input::CelestialKeyCategories cat, unsigned char code) const
+{
+
+	for (unsigned int i = 0; i < currentTriggers; i++)
+	{
+
+		if (triggers[i].cat == cat &&
+			triggers[i].code == code)
+		{
+
+			return triggers[i].script;
+
+		}
+	}
+
+	return 0;
+
 }
 
 unsigned int ScriptableObject::GetWheelScript() const
@@ -319,4 +440,15 @@ unsigned int ScriptableObject::GetTravelNodeScript() const
 
 	return travelArrivedNodeScript;
 
+}
+
+ScriptableObject::~ScriptableObject()
+{
+
+	if (triggers != nullptr)
+	{
+
+		delete[] triggers;
+
+	}
 }
