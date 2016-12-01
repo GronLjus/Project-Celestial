@@ -27,6 +27,7 @@ namespace Entities
 			CelestialMath::Vector3 getMouseWorldLine(CelestialMath::vectorUI2 mouse) const;
 			Resources::ScriptableObject* getMouseObject(CelestialMath::Vector3 direction) const;
 
+			unsigned int getKeyScript(Input::CelestialKeyCategories, unsigned key, Resources::ScriptableObject* obj) const;
 			unsigned int getClickScript(char button, Resources::ScriptableObject* obj) const;
 			unsigned int getWheelScript(Resources::ScriptableObject* obj) const;
 			unsigned int getDragScript(char button, Resources::ScriptableObject* obj) const;
@@ -58,6 +59,7 @@ namespace Entities
 
 			CelestialMath::Vector3 GetWorldMouse() const;
 
+			void HandleKey(Input::CelestialKeyCategories, unsigned char key, bool up, unsigned int time, Resources::PositionableObject* trackedObject);
 			void StartDrag(char button, unsigned int time, Resources::PositionableObject* trackedObject);
 			void Drag(unsigned int time);
 			void StopDrag(unsigned int time);

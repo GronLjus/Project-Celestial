@@ -1388,6 +1388,35 @@ RunTimeError AddRouteObjectOperator(rawCode* raw, unsigned int returnVar, unsign
 
 }
 
+RunTimeError AddTriggerOperator(rawCode* raw, unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int offset, unsigned int byteLine, runTimeVal &rtv)
+{
+
+	if (paramSize < 12)
+	{
+
+		return RunTimeError_BADPARAMS;
+
+	}
+
+	raw->maxLines = addMessParLinesO*2 + sendLines;
+	raw->code = new rawCode::line[raw->maxLines];
+
+	unsigned int var1 = (params[8] | ((int)params[9] << 8) | ((int)params[10] << 16) | ((int)params[11] << 24));
+	addMessStackParamO(var1 - 1, 4, 4, rtv, raw);
+	var1 = (params[4] | ((int)params[5] << 8) | ((int)params[6] << 16) | ((int)params[7] << 24));
+	addMessStackParamO(var1 - 1, 0, 4, rtv, raw);
+	var1 = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
+	Message mess;
+	mess.returnParam = var1;
+	mess.destination = MessageSource_OBJECT;
+	mess.type = MessageType_OBJECT;
+	mess.mess = ObjectMess_ADDKEYSCRPT;
+	sendMessageOut(mess, rtv, raw);
+
+	return RunTimeError_OK;
+
+}
+
 RunTimeError AddTextLineOperator(rawCode* raw, unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int offset, unsigned int byteLine, runTimeVal &rtv)
 {
 
@@ -4884,6 +4913,7 @@ KubLingRawTranslator::KubLingRawTranslator()
 	translator[bytecode_ADDOBJECT] = AddObjectOperator;
 	translator[bytecode_ADDMESH] = AddMeshOperator;
 	translator[bytecode_ADDRTOBJ] = AddRouteObjectOperator;
+	translator[bytecode_ADDTRGGR] = AddTriggerOperator;
 
 	translator[bytecode_RMVE] = RemoveOperator;
 

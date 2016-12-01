@@ -35,6 +35,9 @@ buttonLabels[3] = 'Save'
 buttonLabels[4] = 'Pause'
 
 
+gameBoard = import 'board'
+add keytrigger gameBoard buttonScripts[4] 57
+
 button1UD = load script 'Content\Scripts\ToolBarScripts\Button1UpDown'
 
 loop i=0; i<nrButtons; i = i+1

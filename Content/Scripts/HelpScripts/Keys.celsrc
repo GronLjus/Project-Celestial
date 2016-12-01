@@ -1,0 +1,97 @@
+keyCode_TLD = 0
+keyCode_1 = 1
+keyCode_2 = 2
+keyCode_3 = 3
+keyCode_4 = 4
+keyCode_5 = 5
+keyCode_6 = 6
+keyCode_7 = 7
+keyCode_8 = 8
+keyCode_9 = 9
+keyCode_0 = 10
+keyCode_PLS = 11
+keyCode_ACT = 12
+keyCode_BCK = 13
+
+keyCode_TAB = 14
+keyCode_Q = 15
+keyCode_W = 16
+keyCode_E = 17
+keyCode_R = 18
+keyCode_T = 19
+keyCode_Y = 20
+keyCode_U = 21
+keyCode_I = 22
+keyCode_O = 23
+keyCode_P = 24
+keyCode_Å = 25
+keyCode_DRS = 26
+keyCode_ENTR = 27
+
+keyCode_A = 28
+keyCode_S = 29
+keyCode_D = 30
+keyCode_F = 31
+keyCode_G = 32
+keyCode_H = 33 
+keyCode_J = 34
+keyCode_K = 35
+keyCode_L = 36
+keyCode_Ö = 37
+keyCode_Ä = 38
+keyCode_APSTR = 39
+
+keyCode_ANGL = 40
+keyCode_Z = 41
+keyCode_X = 42
+keyCode_C = 43
+keyCode_V = 44
+keyCode_B = 45
+keyCode_N = 46
+keyCode_M = 47
+keyCode_CMA = 48
+keyCode_DOT = 49
+keyCode_MNS = 50
+keyCode_SPC = 51
+
+CelestialModKeyCodes_CPS = 52
+CelestialModKeyCodes_SHFT = 53
+CelestialModKeyCodes_CTRL = 54
+CelestialModKeyCodes_ALT = 55
+CelestialModKeyCodes_ALTGR = 56
+
+CelestialSpecKeyCodes_ESC = 57
+CelestialSpecKeyCodes_F1 = 58
+CelestialSpecKeyCodes_F2 = 59
+CelestialSpecKeyCodes_F3 = 60
+CelestialSpecKeyCodes_F4 = 61
+
+CelestialSpecKeyCodes_F5 = 62
+CelestialSpecKeyCodes_F6 = 63
+CelestialSpecKeyCodes_F7 = 64
+CelestialSpecKeyCodes_F8 = 65
+
+CelestialSpecKeyCodes_F9 = 66
+CelestialSpecKeyCodes_F10 = 67
+CelestialSpecKeyCodes_F11 = 68
+CelestialSpecKeyCodes_F12 = 69
+
+CelestialSpecKeyCodes_PRNTSCRN = 70
+CelestialSpecKeyCodes_SCRLLCK = 71
+CelestialSpecKeyCodes_BRK = 72
+
+CelestialSpecKeyCodes_INS = 73
+CelestialSpecKeyCodes_HME = 74
+CelestialSpecKeyCodes_PGUP = 75
+CelestialSpecKeyCodes_DEL = 76
+CelestialSpecKeyCodes_END = 77
+CelestialSpecKeyCodes_PGDWN = 78
+
+CelestialSpecKeyCodes_UP = 79
+
+CelestialSpecKeyCodes_WNDS = 80
+CelestialSpecKeyCodes_MNU = 81
+CelestialSpecKeyCodes_LFT = 82
+CelestialSpecKeyCodes_DWN = 83
+CelestialSpecKeyCodes_RGHT = 84
+CelestialSpecKeyCodes_NA = 85

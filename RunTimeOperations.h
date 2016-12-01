@@ -14,7 +14,7 @@ namespace Logic
 		bytecode_UNLOAD,
 
 		bytecode_ADDOBJECT, bytecode_ADDMESH,
-		bytecode_ADDRTOBJ,
+		bytecode_ADDRTOBJ, bytecode_ADDTRGGR,
 
 		bytecode_RMVE,
 		bytecode_SETGMEBRD, bytecode_SETCMRA,

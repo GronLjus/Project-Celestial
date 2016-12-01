@@ -336,6 +336,7 @@
     <ClCompile Include="Celestial2DDrawer.cpp" />
     <ClCompile Include="CelMesh.cpp" />
     <ClCompile Include="HeapMemContainer.cpp" />
+    <ClCompile Include="KeyCodes.cpp" />
     <ClCompile Include="KubLingAnalyzer.cpp" />
     <ClCompile Include="KubLingBinLoader.cpp" />
     <ClCompile Include="KubLingCodeGenerator.cpp" />
@@ -451,6 +452,8 @@
     <None Include="Content\Scripts\CameraScripts\CameraPanning.celsrc" />
     <None Include="Content\Scripts\CameraScripts\CameraRotation.celsrc" />
     <None Include="Content\Scripts\CameraScripts\CameraZoom.celsrc" />
+    <None Include="Content\Scripts\HelpScripts\Keys.celsrc" />
+    <None Include="Content\Scripts\KeyScripts\ToggleDbg.celsrc" />
     <None Include="Content\Scripts\LoadScripts\LoadGameBoard.celsrc" />
     <None Include="Content\Scripts\LoadScripts\LoadScripts.celsrc" />
     <None Include="Content\Scripts\LoadScripts\LoadToolBar.celsrc" />
@@ -477,7 +480,6 @@
     <None Include="Testball.fbx" />
     <None Include="testBin.celbin" />
     <None Include="TestScript.celsrc" />
-    <None Include="ToggleDbg.celsrc" />
   </ItemGroup>
   <ItemGroup>
     <None Include="plane.obj" />

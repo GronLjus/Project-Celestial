@@ -310,6 +310,9 @@
     <Filter Include="Resource Files\Content\Scripts\KeyScripts">
       <UniqueIdentifier>{81c87bfa-9ad3-4069-afb3-dd0764695f75}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resource Files\Content\Scripts\HelpScripts">
+      <UniqueIdentifier>{f669cc3d-50d6-4fdf-b4db-e939e0d543e1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MeshObject.h">
@@ -1115,6 +1118,9 @@
     <ClCompile Include="KubLingMachineHandler.cpp">
       <Filter>Source Files\Logic\CelScript\CelScriptRuntime</Filter>
     </ClCompile>
+    <ClCompile Include="KeyCodes.cpp">
+      <Filter>Source Files\Input</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico">
@@ -1268,7 +1274,10 @@
     <None Include="Content\Scripts\PreLoad.celsrc">
       <Filter>Resource Files\Content\Scripts</Filter>
     </None>
-    <None Include="ToggleDbg.celsrc">
+    <None Include="Content\Scripts\HelpScripts\Keys.celsrc">
+      <Filter>Resource Files\Content\Scripts\HelpScripts</Filter>
+    </None>
+    <None Include="Content\Scripts\KeyScripts\ToggleDbg.celsrc">
       <Filter>Resource Files\Content\Scripts\KeyScripts</Filter>
     </None>
   </ItemGroup>

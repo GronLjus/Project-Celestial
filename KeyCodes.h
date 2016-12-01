@@ -114,4 +114,9 @@ namespace Input
 		CelestialSpecKeyCodes_NA
 
 	};
+
+	unsigned int ConvertCode(CelestialKeyCategories cat, unsigned char key);
+
+	CelestialKeyCategories GetCat(unsigned int code);
+	unsigned char GetCode(unsigned int code, CelestialKeyCategories cat);
 }

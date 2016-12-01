@@ -3,6 +3,7 @@
 #include "GUILayout.h"
 #include "ResourceObject.h"
 #include "CelestialSlicedList.h"
+#include "KeyCodes.h"
 
 namespace Entities
 {
@@ -18,12 +19,22 @@ namespace Entities
 
 	private:
 
+		struct key {
+
+			key() {}
+			key(Input::CelestialKeyCategories cat, unsigned char key) : cat(cat), keyVal(key){}
+			Input::CelestialKeyCategories cat;
+			unsigned char keyVal;
+
+		};
+
+		CrossHandlers::CelestialStack<key>* pressedKeys;
+
 		Resources::GUILayout* screenLayout;
 		Resources::ScreenTarget* lastTarget;
 
 		CrossHandlers::CelestialSlicedList<Resources::BaseObject*>* gameObjects;
 		Resources::GUIObject* focusedObject;
-		Message keyMessage;
 		Resources::ScreenTarget* dragTarget;
 
 		void setCommonScriptParameters(unsigned int script, unsigned int time, unsigned int targetId, CelestialMath::vectorUI2 mouse);

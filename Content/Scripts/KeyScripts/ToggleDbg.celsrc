@@ -1,0 +1,28 @@
+$
+{
+
+	debugLayout = import 'debugLayer'
+	hidden = 0
+
+}
+
+if ?2 : 0
+{
+
+	if hidden : 1
+	{
+	
+		show debugLayout
+		focus debugLayout
+		hidden = 0
+
+	}
+	else
+	{
+
+		hide debugLayout
+		focus 0
+		hidden = 1
+
+	}
+}

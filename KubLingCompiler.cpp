@@ -309,7 +309,7 @@ KubLingCompiler::KubLingCompiler()
 	};
 
 	operators[OperatorTypes_ADD].keyword = "add";
-	operators[OperatorTypes_ADD].enumAmount = 6;
+	operators[OperatorTypes_ADD].enumAmount = 7;
 	operators[OperatorTypes_ADD].enums = new std::string[operators[OperatorTypes_ADD].enumAmount]; 
 	operators[OperatorTypes_ADD].enums[0] = "object"; 
 	operators[OperatorTypes_ADD].enums[1] = "ui"; 
@@ -317,46 +317,51 @@ KubLingCompiler::KubLingCompiler()
 	operators[OperatorTypes_ADD].enums[3] = "text";
 	operators[OperatorTypes_ADD].enums[4] = "line";
 	operators[OperatorTypes_ADD].enums[5] = "routegoal";
+	operators[OperatorTypes_ADD].enums[6] = "keytrigger";
 	operators[OperatorTypes_ADD].byteCodes = new unsigned char[operators[OperatorTypes_ADD].enumAmount]{bytecode_ADDOBJECT,bytecode_2DADDCHLD,bytecode_ADDMESH, bytecode_ADDTXT, bytecode_ADDLNE,
-		bytecode_ADDRTOBJ };
-	operators[OperatorTypes_ADD].params = new unsigned char[operators[OperatorTypes_ADD].enumAmount]{1, 2, 1, 2, 2, 4};
-	operators[OperatorTypes_ADD].minParams = new unsigned char[operators[OperatorTypes_ADD].enumAmount]{1, 2, 1, 2, 2, 4};
+		bytecode_ADDRTOBJ, bytecode_ADDTRGGR };
+	operators[OperatorTypes_ADD].params = new unsigned char[operators[OperatorTypes_ADD].enumAmount]{1, 2, 1, 2, 2, 4, 3};
+	operators[OperatorTypes_ADD].minParams = new unsigned char[operators[OperatorTypes_ADD].enumAmount]{1, 2, 1, 2, 2, 4, 3};
 	operators[OperatorTypes_ADD].paramsyntax = new VarType*[operators[OperatorTypes_ADD].enumAmount]{
 		new VarType[operators[OperatorTypes_ADD].params[0]]{VarType_NUMBER}, 
 			new VarType[operators[OperatorTypes_ADD].params[1]]{VarType_NUMBER, VarType_NUMBER}, 
 			new VarType[operators[OperatorTypes_ADD].params[2]]{VarType_NUMBER},
 			new VarType[operators[OperatorTypes_ADD].params[3]]{VarType_NUMBER, VarType_STRING},
 			new VarType[operators[OperatorTypes_ADD].params[4]]{VarType_NUMBER, VarType_STRING},
-			new VarType[operators[OperatorTypes_ADD].params[5]]{ VarType_FLOAT, VarType_FLOAT, VarType_FLOAT, VarType_NUMBER } };
+			new VarType[operators[OperatorTypes_ADD].params[5]]{ VarType_FLOAT, VarType_FLOAT, VarType_FLOAT, VarType_NUMBER },
+			new VarType[operators[OperatorTypes_ADD].params[6]]{ VarType_NUMBER, VarType_NUMBER, VarType_NUMBER } };
 	operators[OperatorTypes_ADD].paramTypes = new ParamType*[operators[OperatorTypes_ADD].enumAmount]{
 		new ParamType[operators[OperatorTypes_ADD].params[0]]{ParamType_NA}, 
 			new ParamType[operators[OperatorTypes_ADD].params[1]]{ParamType_NA, ParamType_NA}, 
 			new ParamType[operators[OperatorTypes_ADD].params[2]]{ParamType_NA},
 			new ParamType[operators[OperatorTypes_ADD].params[3]]{ParamType_NA, ParamType_NA},
 			new ParamType[operators[OperatorTypes_ADD].params[4]]{ParamType_NA, ParamType_NA},
-			new ParamType[operators[OperatorTypes_ADD].params[5]]{ ParamType_NA, ParamType_NA, ParamType_NA, ParamType_NA } };
+			new ParamType[operators[OperatorTypes_ADD].params[5]]{ ParamType_NA, ParamType_NA, ParamType_NA, ParamType_NA },
+			new ParamType[operators[OperatorTypes_ADD].params[6]]{ ParamType_NA, ParamType_NA, ParamType_NA } };
 	operators[OperatorTypes_ADD].optionalPar = new bool*[operators[OperatorTypes_ADD].enumAmount]{
 		new bool[operators[OperatorTypes_ADD].params[0]]{ false,},
 		new bool[operators[OperatorTypes_ADD].params[1]]{ false, false },
 		new bool[operators[OperatorTypes_ADD].params[2]]{ false},
 		new bool[operators[OperatorTypes_ADD].params[3]]{ false, false },
 		new bool[operators[OperatorTypes_ADD].params[4]]{ false, false },
-		new bool[operators[OperatorTypes_ADD].params[5]]{ false, false, false, false }
+		new bool[operators[OperatorTypes_ADD].params[5]]{ false, false, false, false },
+		new bool[operators[OperatorTypes_ADD].params[6]]{ false, false, false }
 	};
-	operators[OperatorTypes_ADD].readParam = new unsigned char[operators[OperatorTypes_ADD].enumAmount]{0,0,0,0,0,0};
+	operators[OperatorTypes_ADD].readParam = new unsigned char[operators[OperatorTypes_ADD].enumAmount]{0,0,0,0,0,0,0};
 	operators[OperatorTypes_ADD].priority = 0;
-	operators[OperatorTypes_ADD].returns = new VarType[operators[OperatorTypes_ADD].enumAmount]{VarType_NA, VarType_NUMBER, VarType_NA, VarType_NA, VarType_NA,VarType_NUMBER };
-	operators[OperatorTypes_ADD].returnType = new ParamType[operators[OperatorTypes_ADD].enumAmount]{ParamType_NA, ParamType_VAR, ParamType_NA, ParamType_NA, ParamType_NA,ParamType_VAR };
-	operators[OperatorTypes_ADD].writeParam = new unsigned char[operators[OperatorTypes_ADD].enumAmount]{0,0,0,0,0,0};
+	operators[OperatorTypes_ADD].returns = new VarType[operators[OperatorTypes_ADD].enumAmount]{VarType_NA, VarType_NUMBER, VarType_NA, VarType_NA, VarType_NA,VarType_NUMBER,VarType_NA };
+	operators[OperatorTypes_ADD].returnType = new ParamType[operators[OperatorTypes_ADD].enumAmount]{ParamType_NA, ParamType_VAR, ParamType_NA, ParamType_NA, ParamType_NA,ParamType_VAR,ParamType_NA };
+	operators[OperatorTypes_ADD].writeParam = new unsigned char[operators[OperatorTypes_ADD].enumAmount]{0,0,0,0,0,0,0};
 	operators[OperatorTypes_ADD].shortHandsAmounts = 0;
-	operators[OperatorTypes_ADD].amountParOperators = new unsigned char[operators[OperatorTypes_ADD].enumAmount]{0, 0, 0,0,0,0};
+	operators[OperatorTypes_ADD].amountParOperators = new unsigned char[operators[OperatorTypes_ADD].enumAmount]{0, 0, 0,0,0,0,0};
 	operators[OperatorTypes_ADD].parRepeatsMin = new unsigned char*[operators[OperatorTypes_ADD].enumAmount]{
 		new unsigned char[operators[OperatorTypes_ADD].params[0]]{0},
 			new unsigned char[operators[OperatorTypes_ADD].params[1]]{0, 0},
 			new unsigned char[operators[OperatorTypes_ADD].params[2]]{0},
 			new unsigned char[operators[OperatorTypes_ADD].params[3]]{0, 0},
 			new unsigned char[operators[OperatorTypes_ADD].params[4]]{0, 0},
-			new unsigned char[operators[OperatorTypes_ADD].params[5]]{ 0, 0, 0, 0 }
+			new unsigned char[operators[OperatorTypes_ADD].params[5]]{ 0, 0, 0, 0 },
+			new unsigned char[operators[OperatorTypes_ADD].params[6]]{ 0, 0, 0 }
 	};
 	operators[OperatorTypes_ADD].parRepeatsMax = new unsigned char*[operators[OperatorTypes_ADD].enumAmount]{
 		new unsigned char[operators[OperatorTypes_ADD].params[0]]{0},
@@ -364,7 +369,8 @@ KubLingCompiler::KubLingCompiler()
 			new unsigned char[operators[OperatorTypes_ADD].params[2]]{0},
 			new unsigned char[operators[OperatorTypes_ADD].params[3]]{0, 0},
 			new unsigned char[operators[OperatorTypes_ADD].params[4]]{0, 0},
-			new unsigned char[operators[OperatorTypes_ADD].params[5]]{ 0, 0, 0, 0 }
+			new unsigned char[operators[OperatorTypes_ADD].params[5]]{ 0, 0, 0, 0 },
+			new unsigned char[operators[OperatorTypes_ADD].params[6]]{ 0, 0, 0 }
 	};
 	operators[OperatorTypes_ADD].parOperatorAppend = new bool*[operators[OperatorTypes_ADD].enumAmount]{
 		new bool[operators[OperatorTypes_ADD].params[0]]{false},
@@ -372,7 +378,8 @@ KubLingCompiler::KubLingCompiler()
 			new bool[operators[OperatorTypes_ADD].params[2]]{false},
 			new bool[operators[OperatorTypes_ADD].params[3]]{false, false},
 			new bool[operators[OperatorTypes_ADD].params[4]]{false, false},
-			new bool[operators[OperatorTypes_ADD].params[5]]{ false, false, false, false }
+			new bool[operators[OperatorTypes_ADD].params[5]]{ false, false, false, false },
+			new bool[operators[OperatorTypes_ADD].params[6]]{ false, false, false }
 	};
 
 	operators[OperatorTypes_POST].keyword = "post";

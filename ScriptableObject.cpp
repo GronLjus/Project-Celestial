@@ -292,7 +292,9 @@ void ScriptableObject::Update(Message* mess)
 	{
 
 		unsigned int param1 = mess->params[0] | ((int)mess->params[1] << 8) | ((int)mess->params[2] << 16) | ((int)mess->params[3] << 24);
+		unsigned int param2 = mess->params[4] | ((int)mess->params[5] << 8) | ((int)mess->params[6] << 16) | ((int)mess->params[7] << 24);
 		trigger trg;
+		
 
 		switch (mess->mess)
 		{
@@ -324,9 +326,9 @@ void ScriptableObject::Update(Message* mess)
 			travelArrivedNodeScript = param1 + 1;
 			break;
 		case ObjectMess_ADDKEYSCRPT:
-			trg.cat = Input::CelestialKeyCategories(mess->params[4]);
-			trg.code = mess->params[5];
-			trg.script = param1;
+			trg.cat = Input::GetCat(param2);
+			trg.code = Input::GetCode(param2, trg.cat);
+			trg.script = param1 + 1;
 			addTrigger(trg);
 			break;
 		}

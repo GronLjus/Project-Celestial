@@ -96,31 +96,27 @@ void GUITextBox::Update(Message* mess)
 				setLastUpdated(mess->timeSent);
 				lastTime = mess->timeSent;
 
-				for (unsigned char i = 0; i < keys; i += 2)
+				if (mess->params[0] == CelestialKeyCategories_SPEC)
 				{
 
-					if (mess->params[i + 1] == CelestialKeyCategories_SPEC)
+					if (mess->params[1] == CelestialSpecKeyCodes_RGHT)
 					{
+						textContainer->MoveCaret(0, 1);
+					}
 
-						if (mess->params[i + 2] == CelestialSpecKeyCodes_RGHT)
-						{
-							textContainer->MoveCaret(0, 1);
-						}
+					if (mess->params[1] == CelestialSpecKeyCodes_LFT)
+					{
+						textContainer->MoveCaret(0, -1);
+					}
 
-						if (mess->params[i + 2] == CelestialSpecKeyCodes_LFT)
-						{
-							textContainer->MoveCaret(0, -1);
-						}
+					if (mess->params[1] == CelestialSpecKeyCodes_UP)
+					{
+						textContainer->MoveCaret(-1, 0);
+					}
 
-						if (mess->params[i + 2] == CelestialSpecKeyCodes_UP)
-						{
-							textContainer->MoveCaret(-1, 0);
-						}
-
-						if (mess->params[i + 2] == CelestialSpecKeyCodes_DWN)
-						{
-							textContainer->MoveCaret(1, 0);
-						}
+					if (mess->params[1] == CelestialSpecKeyCodes_DWN)
+					{
+						textContainer->MoveCaret(1, 0);
 					}
 
 				}

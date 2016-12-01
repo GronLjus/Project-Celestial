@@ -115,6 +115,12 @@ void  GameBoardHandler::handleInput(CrossHandlers::Message* currentMessage, unsi
 		mH->UpDown(currentMessage->params[0], currentMessage->params[1] == 1 ,time);
 
 	}
+	else if (currentMessage->mess == GameBoardMess_HANDLEKEY)
+	{
+
+		mH->HandleKey(Input::CelestialKeyCategories(currentMessage->params[0]), currentMessage->params[1], currentMessage->params[2] == 1 , time, trackedObject);
+
+	}
 	else if (currentMessage->mess == GameBoardMess_MOUSEMOVE)
 	{
 
@@ -187,7 +193,8 @@ void GameBoardHandler::UpdateMessages(unsigned int time)
 			currentMessage->mess == GameBoardMess_DRAGOBJECT ||
 			currentMessage->mess == GameBoardMess_STOPDRAGGING ||
 			currentMessage->mess == GameBoardMess_MOUSEMOVE ||
-			currentMessage->mess == GameBoardMess_MOUSEUD)
+			currentMessage->mess == GameBoardMess_MOUSEUD ||
+			currentMessage->mess == GameBoardMess_HANDLEKEY)
 		{
 
 			handleInput(currentMessage, time);

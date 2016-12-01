@@ -13,12 +13,12 @@ GUIEntityHandler::GUIEntityHandler() : IHandleMessages(20,MessageSource_GUIENTIT
 
 	filter = MessageType_GUIENTITIES;
 	focusedObject = nullptr;
-	keyMessage.type = MessageType_OBJECT;
-	keyMessage.mess = ObjectMess_HANDLEKEY;
 
 	dragTarget = nullptr;
 	lastTarget = nullptr;
 	screenLayout = nullptr;
+
+	pressedKeys = new CelestialStack<key>(false);
 	
 }
 
@@ -169,13 +169,8 @@ void GUIEntityHandler::triggerScript(unsigned int script, unsigned int time, uns
 
 }
 
-
 void GUIEntityHandler::Update(unsigned int time)
 {
-
-	keyMessage.params[0] = 0;
-	keyMessage.read = true;
-	keyMessage.timeSent = time;
 
 	Message* currentMessage = inQueue->PopMessage();
 
@@ -271,10 +266,19 @@ void GUIEntityHandler::Update(unsigned int time)
 
 			}
 
-			focusedObject = (GUIObject*)gameObjects->GetValue(param1);
+			if (param1 > 0)
+			{
 
-			focusedObject->SetFocus(true);
+				focusedObject = (GUIObject*)gameObjects->GetValue(param1);
+				focusedObject->SetFocus(true);
 
+			}
+			else
+			{
+
+				focusedObject = nullptr;
+
+			}
 		}
 		else if (currentMessage->mess == GUIMess_HANDLECHAR && focusedObject != nullptr)
 		{
@@ -285,15 +289,60 @@ void GUIEntityHandler::Update(unsigned int time)
 			focusedObject->Update(currentMessage);
 
 		}
-		else if (currentMessage->mess == GUIMess_HANDLEKEY && focusedObject != nullptr)
+		else if (currentMessage->mess == GUIMess_HANDLEKEY)
 		{
 
-			keyMessage.read = false;
-			keyMessage.params[keyMessage.params[0] * 2 + 1] = currentMessage->params[0];
-			keyMessage.params[keyMessage.params[0] * 2 + 2] = currentMessage->params[1];
-			keyMessage.params[0] += 1;
+			if (focusedObject == nullptr || 
+				currentMessage->params[0] == Input::CelestialKeyCategories_SPEC)
+			{
 
+				messageBuffer[this->currentMessage].timeSent = time;
+				messageBuffer[this->currentMessage].destination = MessageSource_ENTITIES;
+				messageBuffer[this->currentMessage].type = MessageType_ENTITIES;
+				messageBuffer[this->currentMessage].mess = GameBoardMess_HANDLEKEY;
+				messageBuffer[this->currentMessage].SetParams(currentMessage->params, 0, 4);
+				messageBuffer[this->currentMessage].read = false;
+				outQueue->PushMessage(&messageBuffer[this->currentMessage]);
+				this->currentMessage = (this->currentMessage + 1) % outMessages;
 
+			}
+
+			if (currentMessage->params[2] == 1)
+			{
+
+				key ky = key(Input::CelestialKeyCategories(currentMessage->params[0]), currentMessage->params[1]);
+				pressedKeys->PushElement(ky);
+
+			}
+			else
+			{
+
+				bool stop = false;
+
+				while (!stop && pressedKeys->GetCount() > 0)
+				{
+
+					key ky = pressedKeys->PeekElement();
+
+					if (ky.cat == currentMessage->params[0] &&
+						ky.keyVal == currentMessage->params[1])
+					{
+
+						pressedKeys->Remove();
+						stop = true;
+
+					}
+					else
+					{
+
+						pressedKeys->PopElement();
+
+					}
+				}
+
+				pressedKeys->Rewind();
+
+			}
 		}
 
 		currentMessage->read = currentMessage->destination != MessageSource_GUIENTITIES;
@@ -301,18 +350,27 @@ void GUIEntityHandler::Update(unsigned int time)
 
 	}
 
-	if (!keyMessage.read)
+	Message keyMessage;
+	keyMessage.type = MessageType_OBJECT;
+	keyMessage.mess = ObjectMess_HANDLEKEY;
+
+	while (pressedKeys->GetCount() > 0)
 	{
 
-		focusedObject->Update(&keyMessage);
+		key ky = pressedKeys->PopElement();
+
+		keyMessage.params[0] = ky.cat;
+		keyMessage.params[1] = ky.keyVal;
 
 	}
 
-	int dbg = 0;
+	pressedKeys->Rewind();
+
 }
 
 GUIEntityHandler::~GUIEntityHandler()
 {
 
+	delete pressedKeys;
 
 }

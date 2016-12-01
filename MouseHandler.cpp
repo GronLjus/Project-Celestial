@@ -139,6 +139,20 @@ ScriptableObject* MouseHandler::getMouseObject(Vector3 direction) const
 
 }
 
+unsigned int MouseHandler::getKeyScript(Input::CelestialKeyCategories cat, unsigned key, Resources::ScriptableObject* obj) const
+{
+
+	if (obj == nullptr)
+	{
+
+		return 0;
+
+	}
+
+	return obj->GetKeyScript(cat, key);
+
+}
+
 unsigned int MouseHandler::getClickScript(char button, ScriptableObject* obj) const
 {
 
@@ -249,6 +263,33 @@ void MouseHandler::setCursor(Logic::CursorCode code, unsigned int time)
 	outQueue->PushMessage(&mBuffer[this->currentMessage]);
 	this->currentMessage = (this->currentMessage + 1) % outMessages;
 
+}
+
+void MouseHandler::HandleKey(Input::CelestialKeyCategories cat, unsigned char key, bool up, unsigned int time, PositionableObject* trackedObject)
+{
+
+	ScriptableObject* clickObj = trackedObject;
+
+	if (getKeyScript(cat, key, clickObj) == 0)
+	{
+
+		clickObj = board;
+
+	}
+
+	unsigned int script = getKeyScript(cat, key, clickObj);
+
+	if (script != 0)
+	{
+
+		script--;
+
+		addScriptParamNum(script, clickObj->GetTargetId(), time);
+		addScriptParamNum(script, Input::ConvertCode(cat, key), time);
+		addScriptParamNum(script, up ? 1 : 0, time);
+		runScript(script, time);
+
+	}
 }
 
 void MouseHandler::MoveMouse(vectorUI2 newMouse, unsigned int time)

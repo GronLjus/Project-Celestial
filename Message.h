@@ -38,6 +38,7 @@ namespace CrossHandlers
 		GameBoardMess_CLICKOBJECT, GameBoardMess_WHEELOBJECT, 
 		GameBoardMess_STARTDRAGGING, GameBoardMess_DRAGOBJECT, GameBoardMess_STOPDRAGGING,
 		GameBoardMess_MOUSEMOVE, GameBoardMess_MOUSEUD,
+		GameBoardMess_HANDLEKEY,
 		GameBoardMess_CLEARTRACK,
 		GameBoardMess_HOOKTRACK, GameBoardMess_UNHOOKTRACK,
 		GameBoardMess_ORBITOBJECT, 

@@ -28,21 +28,21 @@ InputHandler::InputHandler() : IHandleMessages(300,MessageSource_INPUT)
 	for (unsigned char i = 0; i < CelestialCharKeyCodes_NA; i++)
 	{
 
-		keyStatus[CelestialKeyCategories_CHAR][i] = false;
+		keyStatus[CelestialKeyCategories_CHAR][i] = true;
 
 	}
 
 	for (unsigned char i = 0; i < CelestialModKeyCodes_NA; i++)
 	{
 
-		keyStatus[CelestialKeyCategories_MOD][i] = false;
+		keyStatus[CelestialKeyCategories_MOD][i] = true;
 
 	}
 
 	for (unsigned char i = 0; i < CelestialSpecKeyCodes_NA; i++)
 	{
 
-		keyStatus[CelestialKeyCategories_SPEC][i] = false;
+		keyStatus[CelestialKeyCategories_SPEC][i] = true;
 
 	}
 }
@@ -60,13 +60,16 @@ void InputHandler::handleKeys(unsigned int time)
 	while (pressedKeys->GetCount() > 0)
 	{
 
-		key pressedKey = pressedKeys->PeekElement();
+		key pressedKey = pressedKeys->PopElement();
 
-		if (keyStatus[pressedKey.cat][pressedKey.keyVal])
+		if (keyStatus[pressedKey.cat][pressedKey.keyVal] != pressedKey.up)
 		{
+
+			keyStatus[pressedKey.cat][pressedKey.keyVal] = pressedKey.up;
 
 			messageBuffer[this->currentMessage].params[0] = pressedKey.cat;
 			messageBuffer[this->currentMessage].params[1] = pressedKey.keyVal;
+			messageBuffer[this->currentMessage].params[2] = pressedKey.up ?  1 : 0;
 			messageBuffer[this->currentMessage].timeSent = time;
 			messageBuffer[this->currentMessage].destination = MessageSource_GUIENTITIES;
 			messageBuffer[this->currentMessage].type = MessageType_GUIENTITIES;
@@ -74,19 +77,9 @@ void InputHandler::handleKeys(unsigned int time)
 			messageBuffer[this->currentMessage].read = false;
 			outQueue->PushMessage(&messageBuffer[this->currentMessage]);
 			this->currentMessage = (this->currentMessage + 1) % outMessages;
-			pressedKeys->PopElement();
-
-		}
-		else
-		{
-			
-			pressedKeys->Remove();
 
 		}
 	}
-
-	pressedKeys->Rewind();
-
 }
 
 bool InputHandler::checkMouseClick(unsigned int time, keyCode ks) const
@@ -313,20 +306,8 @@ void InputHandler::Update(unsigned int time)
 		else if (currentMessage->mess == InputMess_KEYDWN || currentMessage->mess == InputMess_KEYUP)
 		{
 
-			keyStatus[currentMessage->params[0]][currentMessage->params[1]] = currentMessage->mess == InputMess_KEYDWN;
+			pressedKeys->PushElement(key(CelestialKeyCategories(currentMessage->params[0]), currentMessage->params[1], currentMessage->mess == InputMess_KEYUP));
 
-			if (currentMessage->mess == InputMess_KEYDWN)
-			{
-
-				pressedKeys->PushElement(key(CelestialKeyCategories(currentMessage->params[0]), currentMessage->params[1]));
-
-			}
-			else
-			{
-
-				int dbg = 0;
-
-			}
 		}
 		else if (currentMessage->mess == InputMess_CHAR)
 		{

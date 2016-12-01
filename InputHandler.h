@@ -45,9 +45,10 @@ namespace Input
 			struct key{
 
 				key(){}
-				key(CelestialKeyCategories cat, unsigned char key) : cat(cat), keyVal(key){}
+				key(CelestialKeyCategories cat, unsigned char key, bool up) : cat(cat), keyVal(key), up(up){}
 				CelestialKeyCategories cat;
 				unsigned char keyVal;
+				bool up;
 
 			};
 
