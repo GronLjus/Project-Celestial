@@ -52,6 +52,7 @@ void KubLingMachine::sendMessage(unsigned int mess, unsigned int retVar, Message
 		dest == MessageSource_INPUT ? MessageType_INPUT :
 		dest == MessageSource_OBJECT ? MessageType_OBJECT :
 		dest == MessageSource_RESOURCES ? MessageType_RESOURCES :
+		dest == MessageSource_TASKS ? MessageType_TASKING :
 		MessageType_SYSTEM;
 
 	if (dest != MessageSource_OBJECT)
@@ -464,10 +465,16 @@ RunTimeError KubLingMachine::RunScript(unsigned long long* code, unsigned int &c
 				cReg[reg3] = fReg[reg1] > fReg[reg2] ? 255 : 0;
 
 			}
-			else
+			else if(type == 2)
 			{
 
 				cReg[reg3] = cReg[reg1] > cReg[reg2] ? 255 : 0;
+
+			}
+			else
+			{
+
+				cReg[reg3] = aReg[reg1] > aReg[reg2] ? 255 : 0;
 
 			}
 			break;
@@ -500,6 +507,16 @@ RunTimeError KubLingMachine::RunScript(unsigned long long* code, unsigned int &c
 				cReg[reg1] = ~cReg[reg1];
 
 			}
+			break;
+		case Logic::opcode_JMPIF:
+
+			if (cReg[reg1] != 0)
+			{
+
+				counter = iReg[reg2] - 1;
+
+			}
+
 			break;
 		case Logic::opcode_JMPINV:
 

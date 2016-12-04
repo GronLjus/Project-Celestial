@@ -42,6 +42,7 @@ namespace Logic
 	enum OperatorTypes{
 		OperatorTypes_ADD, OperatorTypes_REMOVE, 
 		OperatorTypes_LOAD, OperatorTypes_UNLOAD, OperatorTypes_SAVE,
+		OperatorTypes_ADDTASKPARAM,
 		OperatorTypes_SET, OperatorTypes_POST,
 		OperatorTypes_SUM, OperatorTypes_SUB, OperatorTypes_MUL, OperatorTypes_DIV, 
 		OperatorTypes_CAST,

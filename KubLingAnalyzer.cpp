@@ -820,9 +820,13 @@ KubLingAnalyzer::operatorParams KubLingAnalyzer::expandTree(CompileError &err, u
 		if (err.errorType == ScriptError_OK)
 		{
 		
-			ops.opVar = 0;
-			ops = getOperatorVariation(err, line, op, ops);
+			if (!ops.hasEnum)
+			{
 
+				ops.opVar = 0;
+				ops = getOperatorVariation(err, line, op, ops);
+
+			}
 		}
 	}
 

@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "KubLingRawTranslator.h"
 #include "GUIObject.h"
+#include "TaskObject.h"
 
 using namespace Logic;
 using namespace Resources;
@@ -16,7 +17,7 @@ const unsigned int commonAddMessLines = 3;
 
 const unsigned int addMessParLinesNO = 1 + commonAddMessLines;
 const unsigned int addMessParLinesO = placeAdrLines + commonAddMessLines;
-const unsigned int addMessStrParLines = 5 + placeAdrLines;
+const unsigned int addMessStrParLines = 7 + placeAdrLines;
 const unsigned int addMessStrParLinesNO = 7 ;
 
 
@@ -24,7 +25,7 @@ const unsigned int commonArrayLines = 9;
 const unsigned int commonConditionalLines = 9 + placeAdrLines * 3;
 
 const unsigned int addMessTempParLines = 3 + addMessParLinesNO;
-const unsigned int castIToSLines = 45 + placeAdrLines;
+const unsigned int castIToSLines = 34 + placeAdrLines*2;
 const unsigned int commonMathLines = 4 + waitingLines + placeAdrLines*3;
 const unsigned int setObjectMessLines = addMessParLinesO + sendLines;
 const unsigned int setParamaterLines = 11 + placeAdrLines;
@@ -262,7 +263,7 @@ void addMessStackParamO(unsigned int var, unsigned int messOffset, unsigned int 
 	commonAddMessStack(messOffset, size, rtv, currentCode);
 }
 
-//5 + placeadr
+//7 + placeadr
 void addMessStackStringParamO(unsigned int var, unsigned int messOffset, unsigned int size, runTimeVal &rtv, rawCode* currentCode)
 {
 
@@ -306,6 +307,20 @@ void addMessStackStringParamO(unsigned int var, unsigned int messOffset, unsigne
 	line.r2 = 2;
 	line.r3 = 1;
 	line.type = 0;
+	currentCode->code[currentCode->codeSize] = line;
+	currentCode->codeSize++;
+	//Add i2 to i3 and store in i3
+	line.code = opcode_ADD;
+	line.r1 = 2;
+	line.r2 = 1;
+	line.r3 = 2;
+	line.type = 0;
+	currentCode->code[currentCode->codeSize] = line;
+	currentCode->codeSize++;
+	//Add 0 to the message at offset i3
+	line.code = opcode_PRM;
+	line.r1 = 2;
+	line.scale = 0;
 	currentCode->code[currentCode->codeSize] = line;
 	currentCode->codeSize++;
 
@@ -445,7 +460,9 @@ unsigned int getHeapVal(runTimeVal &rtv, std::string name, bool &inited)
 	for (unsigned int i = 0; i < rtv.heap->GetHighest() && retVal == 0; i++)
 	{
 
-		if (rtv.heap->GetValue(i).name == name)
+		std::string localName = rtv.heap->GetValue(i).name;
+
+		if (localName == name)
 		{
 
 			retVal = i + 1;
@@ -470,13 +487,13 @@ unsigned int getHeapVal(runTimeVal &rtv, std::string name, bool &inited)
 
 }
 
-void commonLoad(unsigned int returnVar, runTimeVal &rtv)
+void commonLoad(unsigned int returnVar, runTimeVal &rtv, unsigned char op)
 {
 
 	if (rtv.memory->GetVarAdr(returnVar) <= rtv.memory->GetMaxStack())
 	{
 
-		rtv.memory->AddVariable(returnVar, 4);
+		rtv.memory->AddVariable(returnVar, op == Logic::bytecode_CASTTSTR ? 64 : 4);
 
 	}
 }
@@ -488,51 +505,75 @@ void commonOffset(unsigned int arr, unsigned int var, unsigned int memSize, runT
 
 }
 
-//45
-void convertIntToString(unsigned int var, unsigned int offset, runTimeVal &rtv, rawCode* currentCode)
+//26
+void convertIntToString(unsigned int var, unsigned int target, unsigned int offset, runTimeVal &rtv, rawCode* currentCode)
 {
 
-	unsigned int code = 45;
+
+	//The source in a1, the current target in a2 and the first target in a3
+
+	unsigned int code = 34;
 	rawCode::line line;
 	//Place the adress of the number in a1
-	placeAdr(var - 1, 0, 0, rtv, currentCode);
-	//5
-	//Place the adress of the temp var in a2
-	line.code = opcode_PLACE;
-	line.r1 = 1;
-	line.type = 3;
-	line.scale = rtv.memory->GetVarAdr(rtv.memory->GetMaxVar());
+	placeAdr(var, 0, 0, rtv, currentCode);
+	//Place the adress of the target var in a3
+	placeAdr(target, 2, 0, rtv, currentCode);
+
+	//Move a3 to i1
+	line.code = opcode_TO;
+	line.r1 = 0;
+	line.r2 = 2;
+	line.type = 4;
 	currentCode->code[currentCode->codeSize] = line;
 	currentCode->codeSize++;
-	//Place a counter in c3
+	//Move i1 to a2
+	line.code = opcode_TO;
+	line.r1 = 1;
+	line.r2 = 0;
+	line.type = 3;
+	currentCode->code[currentCode->codeSize] = line;
+	currentCode->codeSize++;
+
+	//Place 0 in c3
 	line.code = opcode_PLACE;
-	line.r1 = 2;
+	line.r1 = 0;
 	line.type = 2;
 	line.scale = 0;
 	currentCode->code[currentCode->codeSize] = line;
 	currentCode->codeSize++;
-	//Place an counter increment in c2
+	//Place 4 in i2
 	line.code = opcode_PLACE;
 	line.r1 = 1;
-	line.type = 2;
+	line.type = 0;
 	line.scale = 4;
 	currentCode->code[currentCode->codeSize] = line;
 	currentCode->codeSize++;
-	//Save the counter in c3 to the stack with adr i2
-	line.code = opcode_STORE;
-	line.r1 = 2;
-	line.r2 = 1;
-	line.type = 2;
-	currentCode->code[currentCode->codeSize] = line;
-	currentCode->codeSize++;
-	//Place the increment in c2
-	line.code = opcode_PLACE;
+	//Add i2 to a2 and store in a2
+	line.code = opcode_ADD;
 	line.r1 = 1;
-	line.type = 2;
-	line.scale = 1;
+	line.r2 = 1;
+	line.r3 = 1;
+	line.type = 3;
 	currentCode->code[currentCode->codeSize] = line;
 	currentCode->codeSize++;
-	//5
+
+	//48 in c1 and 1 in i2, the number of digits in c3
+
+	//Place the base in i3
+	line.code = opcode_PLACE;
+	line.r1 = 2;
+	line.type = 0;
+	line.scale = 10;
+	currentCode->code[currentCode->codeSize] = line;
+	currentCode->codeSize++;
+
+	//Place 48 in c1
+	line.code = opcode_PLACE;
+	line.r1 = 0;
+	line.type = 2;
+	line.scale = 48;
+	currentCode->code[currentCode->codeSize] = line;
+	currentCode->codeSize++;
 	//Load the value on stack a1 to i1
 	line.code = opcode_LOAD;
 	line.r1 = 0;
@@ -545,64 +586,51 @@ void convertIntToString(unsigned int var, unsigned int offset, runTimeVal &rtv, 
 
 	//Cast the int
 
-	//Cast each digit
-	//Place the adr of the char on the stack in a2
-	line.code = opcode_PLACE;
-	line.r1 = 1;
-	line.type = 3;
-	line.scale = rtv.memory->GetVarAdr(rtv.memory->GetMaxVar());
-	currentCode->code[currentCode->codeSize] = line;
-	currentCode->codeSize++;
-	//Load the counter in i3 from the stack at adr a2
-	line.code = opcode_LOAD;
-	line.r1 = 2;
-	line.r2 = 1;
-	line.type = 0;
-	currentCode->code[currentCode->codeSize] = line;
-	currentCode->codeSize++;
-	//Append the value in i3 to the value in a2
-	line.code = opcode_ADD;
-	line.r1 = 1;
-	line.r2 = 2;
-	line.r3 = 1;
-	line.type = 3;
-	currentCode->code[currentCode->codeSize] = line;
-	currentCode->codeSize++;
-	//Place the base in i3
-	line.code = opcode_PLACE;
-	line.r1 = 2;
-	line.type = 0;
-	line.scale = 10;
-	currentCode->code[currentCode->codeSize] = line;
-	currentCode->codeSize++;
-	//5
-	//Set the remainder of i1 / i3 in i3
+	//Cast each digit --12--
+	//Set the remainder of i1 / i3 in i2
 	line.code = opcode_MOD;
 	line.r1 = 0;
 	line.r2 = 2;
-	line.r3 = 2;
+	line.r3 = 1;
 	line.type = 0;
 	currentCode->code[currentCode->codeSize] = line;
 	currentCode->codeSize++;
-	//Cast the value in i3 to c1
+	//Cast the value in i2 to c2
 	line.code = opcode_CAST;
-	line.r1 = 0;
-	line.r2 = 2;
-	line.type = 2;
-	currentCode->code[currentCode->codeSize] = line;
-	currentCode->codeSize++;
-	//Save the value in c1 to the stack at adr a2
-	line.code = opcode_STORE;
-	line.r1 = 0;
+	line.r1 = 1;
 	line.r2 = 1;
 	line.type = 2;
 	currentCode->code[currentCode->codeSize] = line;
 	currentCode->codeSize++;
-	//Place the base in i3
+	//Add c1 to c2 and store in c2
+	line.code = opcode_ADD;
+	line.r1 = 0;
+	line.r2 = 1;
+	line.r2 = 1;
+	line.type = 2;
+	currentCode->code[currentCode->codeSize] = line;
+	currentCode->codeSize++;
+	//Save the value in c2 to the stack at adr a2
+	line.code = opcode_STORE;
+	line.r1 = 1;
+	line.r2 = 1;
+	line.type = 2;
+	currentCode->code[currentCode->codeSize] = line;
+	currentCode->codeSize++;
+	//Place 1 in i2
 	line.code = opcode_PLACE;
-	line.r1 = 2;
+	line.r1 = 1;
 	line.type = 0;
-	line.scale = 10;
+	line.scale = 1;
+	currentCode->code[currentCode->codeSize] = line;
+	currentCode->codeSize++;
+
+	//Add i2 to a2 and store in a2
+	line.code = opcode_ADD;
+	line.r1 = 1;
+	line.r2 = 1;
+	line.r3 = 1;
+	line.type = 3;
 	currentCode->code[currentCode->codeSize] = line;
 	currentCode->codeSize++;
 	//Set the fraction of i1 / i3 in i1
@@ -613,9 +641,14 @@ void convertIntToString(unsigned int var, unsigned int offset, runTimeVal &rtv, 
 	line.type = 0;
 	currentCode->code[currentCode->codeSize] = line;
 	currentCode->codeSize++;
-
-	//5
-	//Increment the counter in c3 with the value in c2
+	//Place 1 in c2
+	line.code = opcode_PLACE;
+	line.r1 = 1;
+	line.type = 2;
+	line.scale = 1;
+	currentCode->code[currentCode->codeSize] = line;
+	currentCode->codeSize++;
+	//Add c2 to c3 and store in c3
 	line.code = opcode_ADD;
 	line.r1 = 2;
 	line.r2 = 1;
@@ -623,52 +656,47 @@ void convertIntToString(unsigned int var, unsigned int offset, runTimeVal &rtv, 
 	line.type = 2;
 	currentCode->code[currentCode->codeSize] = line;
 	currentCode->codeSize++;
-	//Place the adr of the char on the stack in a2
-	line.code = opcode_PLACE;
+	//Move i1 to c2
+	line.code = opcode_TO;
 	line.r1 = 1;
-	line.type = 3;
-	line.scale = rtv.memory->GetVarAdr(rtv.memory->GetMaxVar());
-	currentCode->code[currentCode->codeSize] = line;
-	currentCode->codeSize++;
-	//Save the counter in c3 to the stack with adr a2
-	line.code = opcode_STORE;
-	line.r1 = 2;
-	line.r2 = 1;
+	line.r2 = 0;
 	line.type = 2;
 	currentCode->code[currentCode->codeSize] = line;
 	currentCode->codeSize++;
 
-	//Place 0 in i3
+	//Place the start of the digit loop in i2
 	line.code = opcode_PLACE;
-	line.r1 = 2;
-	line.type = 0;
-	line.scale = 0;
-	currentCode->code[currentCode->codeSize] = line;
-	currentCode->codeSize++;
-
-	//Compare the value in i1 with i3 and store in c1
-	line.code = opcode_CMPRE;
-	line.r1 = 0;
-	line.r2 = 2;
-	line.r3 = 0;
-	line.type = 0;
-	currentCode->code[currentCode->codeSize] = line;
-	currentCode->codeSize++;
-	//5
-	//Place the start of the digit loop in i3
-	line.code = opcode_PLACE;
-	line.r1 = 2;
+	line.r1 = 1;
 	line.type = 0;
 	line.scale = castStart;
 	currentCode->code[currentCode->codeSize] = line;
 	currentCode->codeSize++;
-	//Jump back to i3 if c1 != 0
-	line.code = opcode_JMPINV;
-	line.r1 = 0;
-	line.r2 = 2;
+	//Jump back to i2 if c2 != 0
+	line.code = opcode_JMPIF;
+	line.r1 = 1;
+	line.r2 = 1;
 	currentCode->code[currentCode->codeSize] = line;
 	currentCode->codeSize++;
 
+
+	//Start saving the new string --2--
+	//Cast c3 to i1
+	line.code = opcode_TO;
+	line.r1 = 0;
+	line.r2 = 2;
+	line.type = 0;
+	currentCode->code[currentCode->codeSize] = line;
+	currentCode->codeSize++;
+	//Store i1 at a3
+	line.code = opcode_STORE;
+	line.r1 = 0;
+	line.r2 = 2;
+	line.type = 0;
+	currentCode->code[currentCode->codeSize] = line;
+	currentCode->codeSize++;
+
+
+	//Reverse the sequence --13--
 	//Place 4 in i1
 	line.code = opcode_PLACE;
 	line.r1 = 0;
@@ -676,176 +704,100 @@ void convertIntToString(unsigned int var, unsigned int offset, runTimeVal &rtv, 
 	line.scale = 4;
 	currentCode->code[currentCode->codeSize] = line;
 	currentCode->codeSize++;
-	//Place the adr of the char on the stack in a2
-	line.code = opcode_PLACE;
-	line.r1 = 1;
-	line.type = 3;
-	line.scale = rtv.memory->GetVarAdr(rtv.memory->GetMaxVar());
-	currentCode->code[currentCode->codeSize] = line;
-	currentCode->codeSize++;
-	//Load the counter in i3 from the stack at adr a2
-	line.code = opcode_LOAD;
-	line.r1 = 2;
-	line.r2 = 1;
-	line.type = 0;
-	currentCode->code[currentCode->codeSize] = line;
-	currentCode->codeSize++;
-	//5
-	//Subtract i1 from i3 and store it in i3
-	line.code = opcode_SUB;
-	line.r1 = 2;
-	line.r2 = 0;
-	line.r3 = 2;
-	line.type = 0;
-	currentCode->code[currentCode->codeSize] = line;
-	currentCode->codeSize++;
-	//Save the counter in i3 to the stack with adr a2
-	line.code = opcode_STORE;
-	line.r1 = 2;
-	line.r2 = 1;
-	line.type = 0;
-	currentCode->code[currentCode->codeSize] = line;
-	currentCode->codeSize++;
-	//Add i1 to a2 and store it in a2
-	line.code = opcode_ADD;
-	line.r1 = 1;
-	line.r2 = 0;
-	line.r3 = 1;
-	line.type = 3;
-	currentCode->code[currentCode->codeSize] = line;
-	currentCode->codeSize++;
-	//Add i3 to a2 and store it in a3
-	line.code = opcode_ADD;
-	line.r1 = 2;
-	line.r2 = 1;
-	line.r3 = 2;
-	line.type = 3;
-	currentCode->code[currentCode->codeSize] = line;
-	currentCode->codeSize++;
-	//Place 48 in c1
-	line.code = opcode_PLACE;
-	line.r1 = 0;
-	line.type = 2;
-	line.scale = 48;
-	currentCode->code[currentCode->codeSize] = line;
-	currentCode->codeSize++;
-	
-	//5
-	//Reverse the sequence
-	unsigned int reverseStart = offset + currentCode->codeSize;
-	//Load the value from the stack at adr a2 and store it in c2
-	line.code = opcode_LOAD;
-	line.r1 = 1;
-	line.r2 = 1;
-	line.type = 2;
-	currentCode->code[currentCode->codeSize] = line;
-	currentCode->codeSize++;
-	//Load the value from the stack at adr a3 and store it in c3
-	line.code = opcode_LOAD;
-	line.r1 = 2;
-	line.r2 = 2;
-	line.type = 2;
-	currentCode->code[currentCode->codeSize] = line;
-	currentCode->codeSize++;
-	//Add c1 to c2 and store it in c2
-	line.code = opcode_ADD;
-	line.r1 = 1;
-	line.r2 = 0;
-	line.r3 = 1;
-	line.type = 2;
-	currentCode->code[currentCode->codeSize] = line;
-	currentCode->codeSize++;
-	//Add c1 to c3 and store it in c3
+	//Add i1 to a3 and store in a3
 	line.code = opcode_ADD;
 	line.r1 = 2;
 	line.r2 = 0;
 	line.r3 = 2;
-	line.type = 2;
-	currentCode->code[currentCode->codeSize] = line;
-	currentCode->codeSize++;
-	//Save the value in c2 to the stack at adr a3
-	line.code = opcode_STORE;
-	line.r1 = 1;
-	line.r2 = 2;
-	line.type = 2;
-	currentCode->code[currentCode->codeSize] = line;
-	currentCode->codeSize++;
-	//5
-	//Save the value in c3 to the stack at adr a2
-	line.code = opcode_STORE;
-	line.r1 = 2;
-	line.r2 = 1;
-	line.type = 2;
-	currentCode->code[currentCode->codeSize] = line;
-	currentCode->codeSize++;
-	//Compare i2 to i3 and store the result in c2
-	line.code = opcode_CMPRE;
-	line.r1 = 1;
-	line.r2 = 2;
-	line.r3 = 1;
-	line.type = 0;
-	currentCode->code[currentCode->codeSize] = line;
-	currentCode->codeSize++;
-	//Invert the value in c2
-	line.code = opcode_INV;
-	line.r1 = 1;
-	line.type = 2;
-	currentCode->code[currentCode->codeSize] = line;
-	currentCode->codeSize++;
-	//Place The endadr in i1
-	line.code = opcode_PLACE;
-	line.r1 = 0;
-	line.type = 0;
-	line.scale = offset + code+1;
-	currentCode->code[currentCode->codeSize] = line;
-	currentCode->codeSize++;
-	//Jump to the end of the loop if c2 == 0
-	line.code = opcode_JMPINV;
-	line.r1 = 1;
-	line.r2 = 0;
-	line.type = 2;
+	line.type = 3;
 	currentCode->code[currentCode->codeSize] = line;
 	currentCode->codeSize++;
 
-	//5
-	//Place 1 in i1
+
+	//Place 1 in i2
 	line.code = opcode_PLACE;
-	line.r1 = 0;
+	line.r1 = 1;
 	line.type = 0;
 	line.scale = 1;
 	currentCode->code[currentCode->codeSize] = line;
 	currentCode->codeSize++;
-	//Subtract i1 from a3 and store it in a3
-	line.code = opcode_SUB;
-	line.r1 = 2;
-	line.r2 = 0;
-	line.r3 = 2;
-	line.type = 3;
-	currentCode->code[currentCode->codeSize] = line;
-	currentCode->codeSize++;
-	//Subtract i1 from a2 and store it in a2
+	//Subtract i2 from a2 and store in a2
 	line.code = opcode_SUB;
 	line.r1 = 1;
-	line.r2 = 0;
+	line.r2 = 1;
 	line.r3 = 1;
 	line.type = 3;
 	currentCode->code[currentCode->codeSize] = line;
 	currentCode->codeSize++;
-	//Place the loopstart in i1
+
+	unsigned int reverseStart = offset + currentCode->codeSize + 1;
+	//Place The reversestart in i3
 	line.code = opcode_PLACE;
-	line.r1 = 0;
+	line.r1 = 2;
 	line.type = 0;
-	line.scale = reverseStart;
+	line.scale = reverseStart ;
 	currentCode->code[currentCode->codeSize] = line;
 	currentCode->codeSize++;
-	//Jump to the start of the loop
-	line.code = opcode_JMP;
+	//Load the value from the stack at adr a2 and store it in c1
+	line.code = opcode_LOAD;
+	line.r1 = 0;
+	line.r2 = 1;
+	line.type = 2;
+	currentCode->code[currentCode->codeSize] = line;
+	currentCode->codeSize++;
+	//Load the value from the stack at adr a3 and store it in c2
+	line.code = opcode_LOAD;
 	line.r1 = 1;
-	line.r2 = 0;
+	line.r2 = 2;
+	line.type = 2;
+	currentCode->code[currentCode->codeSize] = line;
+	currentCode->codeSize++;
+	//Save the value in c1 to the stack at adr a3
+	line.code = opcode_STORE;
+	line.r1 = 0;
+	line.r2 = 2;
+	line.type = 2;
+	currentCode->code[currentCode->codeSize] = line;
+	currentCode->codeSize++;
+	//Save the value in c2 to the stack at adr a2
+	line.code = opcode_STORE;
+	line.r1 = 1;
+	line.r2 = 1;
 	line.type = 2;
 	currentCode->code[currentCode->codeSize] = line;
 	currentCode->codeSize++;
 
+	//Add i2 to a3 and store in a3
+	line.code = opcode_ADD;
+	line.r1 = 2;
+	line.r2 = 1;
+	line.r3 = 2;
+	line.type = 3;
+	currentCode->code[currentCode->codeSize] = line;
+	currentCode->codeSize++;
+	//Subtract i2 from a2 and store in a2
+	line.code = opcode_SUB;
+	line.r1 = 1;
+	line.r2 = 1;
+	line.r3 = 1;
+	line.type = 3;
+	currentCode->code[currentCode->codeSize] = line;
+	currentCode->codeSize++;
+	//Compare a3 to a2 and store the result in c3
+	line.code = opcode_GRTR;
+	line.r1 = 2;
+	line.r2 = 1;
+	line.r3 = 2;
+	line.type = 3;
+	currentCode->code[currentCode->codeSize] = line;
+	currentCode->codeSize++;
+	//Jump to the start of the loop if c3 == 0
+	line.code = opcode_JMPINV;
+	line.r1 = 2;
+	line.r2 = 2;
+	line.type = 2;
+	currentCode->code[currentCode->codeSize] = line;
+	currentCode->codeSize++;
 
 }
 
@@ -1388,6 +1340,87 @@ RunTimeError AddRouteObjectOperator(rawCode* raw, unsigned int returnVar, unsign
 
 }
 
+RunTimeError AddTaskParamFloatOperator(rawCode* raw, unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int offset, unsigned int byteLine, runTimeVal &rtv)
+{
+
+	if (paramSize < 4)
+	{
+
+		return RunTimeError_BADPARAMS;
+
+	}
+
+	raw->maxLines = addMessParLinesO + addMessTempParLines + sendLines;
+	raw->code = new rawCode::line[raw->maxLines];
+
+	addMessTempStack( 0, 1, 4, rtv, raw);
+	unsigned int var1 = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
+	addMessStackParamO(var1 - 1, 4, 4, rtv, raw);
+	Message mess;
+	mess.returnParam = 0;
+	mess.destination = MessageSource_RESOURCES;
+	mess.type = MessageType_RESOURCES;
+	mess.mess = ResourceMess_ADDTASKPAR;
+	sendMessageOut(mess, rtv, raw);
+
+	return RunTimeError_OK;
+
+}
+
+RunTimeError AddTaskParamNumOperator(rawCode* raw, unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int offset, unsigned int byteLine, runTimeVal &rtv)
+{
+
+	if (paramSize < 4)
+	{
+
+		return RunTimeError_BADPARAMS;
+
+	}
+
+	raw->maxLines = addMessParLinesO + addMessTempParLines + sendLines;
+	raw->code = new rawCode::line[raw->maxLines];
+
+	addMessTempStack(0, 0, 4, rtv, raw);
+	unsigned int var1 = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
+	addMessStackParamO(var1 - 1, 4, 4, rtv, raw);
+	Message mess;
+	mess.returnParam = 0;
+	mess.destination = MessageSource_RESOURCES;
+	mess.type = MessageType_RESOURCES;
+	mess.mess = ResourceMess_ADDTASKPAR;
+	sendMessageOut(mess, rtv, raw);
+
+	return RunTimeError_OK;
+
+}
+
+RunTimeError AddTaskParamStrOperator(rawCode* raw, unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int offset, unsigned int byteLine, runTimeVal &rtv)
+{
+
+	if (paramSize < 4)
+	{
+
+		return RunTimeError_BADPARAMS;
+
+	}
+
+	raw->maxLines = addMessStrParLines + addMessTempParLines + sendLines;
+	raw->code = new rawCode::line[raw->maxLines];
+
+	addMessTempStack(0, 2, 4, rtv, raw);
+	unsigned int var1 = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
+	addMessStackStringParamO(var1 - 1, 4, 4, rtv, raw);
+	Message mess;
+	mess.returnParam = 0;
+	mess.destination = MessageSource_RESOURCES;
+	mess.type = MessageType_RESOURCES;
+	mess.mess = ResourceMess_ADDTASKPAR;
+	sendMessageOut(mess, rtv, raw);
+
+	return RunTimeError_OK;
+
+}
+
 RunTimeError AddTriggerOperator(rawCode* raw, unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int offset, unsigned int byteLine, runTimeVal &rtv)
 {
 
@@ -1585,6 +1618,28 @@ RunTimeError CastFloatOperator(rawCode* raw, unsigned int returnVar, unsigned ch
 	raw->codeSize++;
 
 	finishWaiting(returnVar - 1, raw);
+	return RunTimeError_OK;
+
+}
+
+RunTimeError CastNumToStringOperator(rawCode* raw, unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int offset, unsigned int byteLine, runTimeVal &rtv)
+{
+
+	if (paramSize < 4)
+	{
+
+		return RunTimeError_BADPARAMS;
+
+	}
+
+	raw->maxLines = castIToSLines + waitingLines;
+	raw->code = new rawCode::line[raw->maxLines];
+
+	unsigned int var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
+	convertIntToString(var - 1, returnVar - 1, offset, rtv, raw);
+
+	finishWaiting(returnVar - 1, raw);
+
 	return RunTimeError_OK;
 
 }
@@ -2609,60 +2664,6 @@ RunTimeError LoadMeshOperator(rawCode* raw, unsigned int returnVar, unsigned cha
 
 }
 
-RunTimeError LoadKeyTriggerOperator(rawCode* raw, unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int offset, unsigned int byteLine, runTimeVal &rtv)
-{
-
-	if (paramSize < 8)
-	{
-
-		return RunTimeError_BADPARAMS;
-
-	}
-
-	raw->maxLines = addMessStrParLines + sendLines;
-	raw->code = new rawCode::line[raw->maxLines];
-
-	unsigned int var = (params[4] | ((int)params[5] << 8) | ((int)params[6] << 16) | ((int)params[7] << 24));
-
-	Message mess;
-	mess.destination = MessageSource_RESOURCES;
-	mess.type = MessageType_RESOURCES;
-	mess.mess = ResourceMess_LOADKEYTRIGGER;
-	mess.returnParam = 0;
-	addMessStackStringParamO(var - 1, 0, 4, rtv, raw);
-	mess.SetParams(params, 0, 8);
-	sendMessageOut(mess, rtv, raw);
-	return RunTimeError_OK;
-
-}
-
-RunTimeError LoadKeyTriggerOperatorChar(rawCode* raw,unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int offset, unsigned int byteLine, runTimeVal &rtv)
-{
-
-	if (paramSize < 8)
-	{
-
-		return RunTimeError_BADPARAMS;
-
-	}
-
-	raw->maxLines = addMessStrParLines + sendLines;
-	raw->code = new rawCode::line[raw->maxLines];
-
-	unsigned int var = (params[4] | ((int)params[5] << 8) | ((int)params[6] << 16) | ((int)params[7] << 24));
-
-	Message mess;
-	mess.destination = MessageSource_RESOURCES;
-	mess.type = MessageType_RESOURCES;
-	mess.mess = ResourceMess_LOADCHARKEYTRIGGER;
-	mess.returnParam = 0;
-	addMessStackStringParamO(var - 1, 0, 4, rtv, raw);
-	sendMessageOut(mess, rtv, raw);
-
-	return RunTimeError_OK;
-
-}
-
 RunTimeError LoadObjectOperator(rawCode* raw, unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int offset, unsigned int byteLine, runTimeVal &rtv)
 {
 
@@ -2801,6 +2802,36 @@ RunTimeError LoadScriptOperator(rawCode* raw, unsigned int returnVar, unsigned c
 	mess.returnParam = returnVar;
 	
 	addMessStackStringParamO(var - 1, 0, 4, rtv, raw);
+	sendMessageOut(mess, rtv, raw);
+
+	startWaiting(returnVar - 1, raw);
+
+	return RunTimeError_OK;
+
+}
+
+RunTimeError LoadTaskOperator(rawCode* raw, unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int offset, unsigned int byteLine, runTimeVal &rtv)
+{
+
+	if (paramSize < 4)
+	{
+
+		return RunTimeError_BADPARAMS;
+
+	}
+
+	raw->maxLines = sendLines + waitingLines + addMessParLinesO;
+	raw->code = new rawCode::line[raw->maxLines];
+
+	unsigned int var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
+
+	Message mess;
+	mess.returnParam = returnVar;
+	mess.destination = MessageSource_RESOURCES;
+	mess.type = MessageType_RESOURCES;
+	mess.mess = ResourceMess_LOADTASK;
+
+	addMessStackParamO(var - 1, 0, 4, rtv, raw);
 	sendMessageOut(mess, rtv, raw);
 
 	startWaiting(returnVar - 1, raw);
@@ -3355,7 +3386,7 @@ RunTimeError PostNumOperator(rawCode* raw, unsigned int returnVar, unsigned char
 	raw->code = new rawCode::line[raw->maxLines];
 
 	unsigned int var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
-	convertIntToString(var - 1, offset, rtv, raw);
+	convertIntToString(var - 1, rtv.memory->GetMaxVar(), offset, rtv, raw);
 
 	Message mess;
 	mess.destination = MessageSource_GUIENTITIES;
@@ -3428,6 +3459,72 @@ RunTimeError PropelOperator(rawCode* raw, unsigned int returnVar, unsigned char*
 
 }
 
+RunTimeError QueueClockTaskOperator(rawCode* raw, unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int offset, unsigned int byteLine, runTimeVal &rtv)
+{
+
+	if (paramSize < 8)
+	{
+
+		return RunTimeError_BADPARAMS;
+
+	}
+
+	raw->maxLines = addMessParLinesO * 2 + addMessTempParLines + sendLines;
+	raw->code = new rawCode::line[raw->maxLines];
+
+	Message mess;
+	mess.destination = MessageSource_TASKS;
+	mess.type = MessageType_TASKING;
+	mess.mess = TaskMess_ADDTASK;
+	mess.returnParam = 0;
+
+	unsigned int fTime = (params[4] | ((int)params[5] << 8) | ((int)params[6] << 16) | ((int)params[7] << 24));
+	addMessStackParamO(fTime - 1, 8, 4, rtv, raw);
+
+	addMessTempStack(4, Resources::TaskClass_CLOCK, 4, rtv, raw);
+
+	unsigned int task = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
+	addMessStackParamO(task - 1, 0, 4, rtv, raw);
+
+	sendMessageOut(mess, rtv, raw);
+
+	return RunTimeError_OK;
+
+}
+
+RunTimeError QueueSystemTaskOperator(rawCode* raw, unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int offset, unsigned int byteLine, runTimeVal &rtv)
+{
+
+	if (paramSize < 8)
+	{
+
+		return RunTimeError_BADPARAMS;
+
+	}
+
+	raw->maxLines = addMessParLinesO * 2 + addMessTempParLines + sendLines;
+	raw->code = new rawCode::line[raw->maxLines];
+
+	Message mess;
+	mess.destination = MessageSource_TASKS;
+	mess.type = MessageType_TASKING;
+	mess.mess = TaskMess_ADDTASK;
+	mess.returnParam = 0;
+
+	unsigned int fTime = (params[4] | ((int)params[5] << 8) | ((int)params[6] << 16) | ((int)params[7] << 24));
+	addMessStackParamO(fTime - 1, 8, 4, rtv, raw);
+
+	addMessTempStack(4, Resources::TaskClass_SYSTEM, 4, rtv, raw);
+
+	unsigned int task = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
+	addMessStackParamO(task - 1, 0, 4, rtv, raw);
+
+	sendMessageOut(mess, rtv, raw);
+
+	return RunTimeError_OK;
+
+}
+
 RunTimeError RemoveOperator(rawCode* raw, unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int offset, unsigned int byteLine, runTimeVal &rtv)
 {
 
@@ -3450,6 +3547,34 @@ RunTimeError RemoveOperator(rawCode* raw, unsigned int returnVar, unsigned char*
 	mess.returnParam = var;
 
 	sendMessageOut(mess, rtv, raw);
+	return RunTimeError_OK;
+
+}
+
+RunTimeError RemoveTaskOperator(rawCode* raw, unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int offset, unsigned int byteLine, runTimeVal &rtv)
+{
+
+	if (paramSize < 4)
+	{
+
+		return RunTimeError_BADPARAMS;
+
+	}
+
+	raw->maxLines = addMessParLinesO + sendLines;
+	raw->code = new rawCode::line[raw->maxLines];
+
+	Message mess;
+	mess.destination = MessageSource_TASKS;
+	mess.type = MessageType_TASKING;
+	mess.mess = TaskMess_REMOVETASK;
+	mess.returnParam = 0;
+
+	unsigned int task = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
+	addMessStackParamO(task - 1, 0, 4, rtv, raw);
+
+	sendMessageOut(mess, rtv, raw);
+
 	return RunTimeError_OK;
 
 }
@@ -4907,6 +5032,7 @@ KubLingRawTranslator::KubLingRawTranslator()
 	translator[bytecode_LOADCAM] = LoadCameraOperator;
 	translator[bytecode_LOADOBJCT] = LoadObjectOperator;
 	translator[bytecode_LOADCPY] = LoadObjectCopyOperator;
+	translator[bytecode_LOADTSK] = LoadTaskOperator;
 
 	translator[bytecode_UNLOAD] = UnLoadOperator;
 
@@ -4984,6 +5110,7 @@ KubLingRawTranslator::KubLingRawTranslator()
 	translator[bytecode_DIVVAR] = DivVarOperator;
 
 	translator[bytecode_CASTFLOAT] = CastFloatOperator;
+	translator[bytecode_CASTTSTR] = CastNumToStringOperator;
 
 	translator[bytecode_NUMEQUAL2CONST] = NumEqlConst2Operator;
 	translator[bytecode_NUMEQUALFLOAT] = FloatEqlVarOperator;
@@ -5042,6 +5169,14 @@ KubLingRawTranslator::KubLingRawTranslator()
 	translator[bytecode_AND] = AndOperator;
 	translator[bytecode_OR] = OrOperator;
 
+	translator[bytecode_ADDTSKPARNUM] = AddTaskParamNumOperator;
+	translator[bytecode_ADDTSKPARFLT] = AddTaskParamFloatOperator;
+	translator[bytecode_ADDTSKPARSTR] = AddTaskParamStrOperator;
+
+	translator[bytecode_QSTSK] = QueueSystemTaskOperator;
+	translator[bytecode_QCTSK] = QueueClockTaskOperator;
+	translator[bytecode_RMTSK] = RemoveTaskOperator;
+
 	translator[bytecode_NUMARR] = ArrayNumOperator;
 	translator[bytecode_STRARR] = ArrayStrOperator;
 	translator[bytecode_NUMOFFST] = OffsetNumOperator;
@@ -5090,7 +5225,7 @@ rawCode KubLingRawTranslator::Translate(unsigned char* bytes,
 	if (retVal > 0)
 	{
 
-		commonLoad(retVal - 1, rtv);
+		commonLoad(retVal - 1, rtv, bytes[4]);
 
 	}
 

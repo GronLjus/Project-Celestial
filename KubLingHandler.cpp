@@ -13,8 +13,6 @@ KubLingHandler::KubLingHandler() : IHandleMessages(200,MessageSource_CELSCRIPT)
 
 	filter = CrossHandlers::MessageType_SCRIPT;
 
-	translatedLabels = new CelestialSlicedList<unsigned int>(32);
-	translatedLabels->Add(9999999);
 	this->objectContainer = nullptr;
 	runTime = nullptr;
 
@@ -38,12 +36,6 @@ bool KubLingHandler::AllStopped() const
 void KubLingHandler::initScript(KubLingLabel* label)
 {
 
-	if (label->GetTranslation() == 0)
-	{
-
-		label->SetTranslation(translatedLabels->Add(0));
-
-	}
 }
 
 unsigned int KubLingHandler::getLatestTranslation(unsigned int label)
@@ -52,14 +44,14 @@ unsigned int KubLingHandler::getLatestTranslation(unsigned int label)
 	KubLingLabel* lab = (KubLingLabel*)objectContainer->GetValue(label);
 	initScript(lab);
 
-	if (translatedLabels->GetValue(lab->GetTranslation()) == 0)
+	if (lab->GetTranslation() == 0)
 	{
 
-		translatedLabels->Add(runTime->PrimeLabel(lab->GetStart(), lab->GetMemoffset()), lab->GetTranslation());
+		lab->SetTranslation(runTime->PrimeLabel(lab->GetStart(), lab->GetMemoffset()));
 
 	}
 
-	return translatedLabels->GetValue(lab->GetTranslation());
+	return lab->GetTranslation();
 
 }
 
@@ -81,7 +73,7 @@ void KubLingHandler::Update(unsigned int time)
 			runTime->RunCode(transl);
 			KubLingLabel* lab = (KubLingLabel*)objectContainer->GetValue(param1);
 			lab->Reset();
-			translatedLabels->Add(0, lab->GetTranslation());
+			lab->SetTranslation(0);
 
 		}
 		else if (currentMessage->mess == ScriptMess_RESUME)
@@ -148,7 +140,12 @@ void KubLingHandler::Update(unsigned int time)
 			HeapMemContainer* heap = (HeapMemContainer*)objectContainer->GetValue(param2);
 			runTime->SetCode(code->GetCode(), code->GetLength(), heap->GetHeap());
 			
+			for (unsigned int i = 0; i < SystemMem_NA; i++)
+			{
 
+				heap->GetHeap()->SetAddress(SystemVars[i].var, heap->GetHeap()->Allocate(4));
+
+			}
 		}
 
 		currentMessage->read = true; 
@@ -168,6 +165,13 @@ void KubLingHandler::Update(unsigned int time)
 
 }
 
+void KubLingHandler::SetSystemVar(SystemMem var, unsigned char* data, unsigned char size)
+{
+
+	runTime->SetHeapVar(SystemVars[var].var, data, size);
+
+}
+
 void KubLingHandler::Kill()
 {
 	
@@ -177,8 +181,6 @@ void KubLingHandler::Kill()
 
 KubLingHandler::~KubLingHandler()
 {
-
-	delete translatedLabels;
 
 	if (runTime != nullptr)
 	{

@@ -14,6 +14,7 @@ using namespace Input;
 using namespace Resources;
 using namespace CrossHandlers;
 using namespace CelestialMath;
+using namespace Tasking;
 using namespace std;
 
 //Global variables for use in the threads
@@ -40,6 +41,7 @@ Overlord::Overlord(void)
 	iH = new InputHandler();
 	klH = new KubLingHandler();
 	guiH = new GUIEntityHandler();
+	tH = new TaskHandler();
 
 	messageHandlers = new IHandleMessages*[MessageSource_NA];
 	messageHandlers[MessageSource_RESOURCES] = rH;
@@ -48,6 +50,7 @@ Overlord::Overlord(void)
 	messageHandlers[MessageSource_CELSCRIPT] = klH;
 	messageHandlers[MessageSource_GRAPHICS] = gH;
 	messageHandlers[MessageSource_INPUT] = iH;
+	messageHandlers[MessageSource_TASKS] = tH;
 	messageHandlers[MessageSource_MASTER] = nullptr;
 	messageHandlers[MessageSource_OBJECT] = nullptr;
 
@@ -84,6 +87,7 @@ HRESULT Overlord::Init(HWND hwnd)
 	dS.useSkybox = true;
 
 	HRESULT res = gH->PreInit(hwnd, gQ, dS, rH->GetObjectContainer());
+	tH->Init(rH->GetObjectContainer());
 
 	if (res != S_OK)
 	{
@@ -348,12 +352,26 @@ void Overlord::updateMessages(MessageSource handler)
 	}
 }
 
+void Overlord::updateSystemVars(unsigned int time)
+{
+
+	unsigned char var[4];
+	memcpy(var, &time, 4);
+	klH->SetSystemVar(SystemMem_TIME, var, 4);
+
+	memcpy(var, &lFPS, 4);
+	klH->SetSystemVar(SystemMem_FPS1, var, 4);
+
+	memcpy(var, &gFPS, 4);
+	klH->SetSystemVar(SystemMem_FPS2, var, 4);
+
+}
+
 void Overlord::Update(unsigned int time)
 {
 
-	unsigned int time2 = clock();
-	lTime += (time2 - lTimeLast);
-	lTimeLast = time2;
+	lTime += (time - lTimeLast);
+	lTimeLast = time;
 
 	if (lTime >= 1000)
 	{
@@ -366,22 +384,20 @@ void Overlord::Update(unsigned int time)
 
 	lFPS2++;
 
-
-	/*std::stringstream out;
-	out << gFPS;
-	dbgPnl->SetText(0, "DFPS: " + out.str());
-	out.str("");
-	out << lFPS;
-	dbgPnl->SetText(1, "LFPS: " + out.str());*/
-
 	if(gH->GetIsInited())
 	{
+
+		updateSystemVars(time);
+
 		unsigned int start = clock();
 		iH->Update(time);
 		updateMessages(MessageSource_INPUT);
 		unsigned int start1 = clock();
 		gBH->UpdateMessages(time);
 		updateMessages(MessageSource_ENTITIES);
+		tH->UpdateMessages(time);
+		tH->Update(time);
+		updateMessages(MessageSource_TASKS);
 
 		klH->Update(time);
 		updateMessages(MessageSource_CELSCRIPT);
@@ -419,6 +435,7 @@ Overlord::~Overlord()
 	delete klH;
 	delete guiH;
 	delete rH;
+	delete tH;
 
 	if (killdbg)
 	{

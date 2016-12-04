@@ -26,6 +26,8 @@ KubLingMachineHandler::KubLingMachineHandler(MessageQueue* queue,
 	runningMachinesSecondary = new CelestialStack<machineContainer>(false);
 	primedCode = new CelestialStack<unsigned int>(false);
 
+	waitingLabels->Add(waitingLabel());
+
 	for (unsigned int i = 0; i < totalMachines; i++)
 	{
 
@@ -88,6 +90,13 @@ void KubLingMachineHandler::SetStackVar(unsigned int translatedId, unsigned int 
 	}
 }
 
+void KubLingMachineHandler::SetHeapVar(unsigned int var, unsigned char* data, unsigned char size)
+{
+
+	memcpy(heap->GetMemory(heap->GetAddress(var)), data, size);
+
+}
+
 RunTimeError KubLingMachineHandler::RunCode(unsigned int translatedId)
 {
 
@@ -99,77 +108,89 @@ RunTimeError KubLingMachineHandler::RunCode(unsigned int translatedId)
 void KubLingMachineHandler::Update(unsigned int time)
 {
 
-	while (primedCode->GetCount() > 0 && readyMachines->GetCount() > 0)
+	bool abort = false;
+
+	while ((primedCode->GetCount() > 0 || runningMachines->GetCount() > 0)
+		&& !abort)
 	{
 
-		unsigned int labelToRun = primedCode->PopElement();
-		KubLingMachine* machine = readyMachines->PopElement();
-		waitingLabel wL = waitingLabels->GetValue(labelToRun);
-
-
-		machineContainer container;
-		container.status = machineStatus_PRIMED;
-		container.localLabel = labelToRun;
-		container.counter = wL.start;
-		container.machine = machine;
-		container.sleep = 0;
-		container.lastTime = time;
-		runningMachines->PushElement(container);
-
-	}
-
-	unsigned int runnings = runningMachines->GetCount();
-
-	for (unsigned int i = 0; i < runnings; i++)
-	{
-
-		machineContainer container = runningMachines->PopElement();
-		waitingLabel wL = waitingLabels->GetValue(container.localLabel);
-		KubLingMachine* machine = container.machine;
-
-		if (container.status == machineStatus_PRIMED)
+		while (primedCode->GetCount() > 0 && readyMachines->GetCount() > 0)
 		{
 
-			machine->SetRegister(3, 0);
-			machine->SetRegister(4, wL.memOffst);
+			unsigned int labelToRun = primedCode->PopElement();
+			KubLingMachine* machine = readyMachines->PopElement();
+			waitingLabel wL = waitingLabels->GetValue(labelToRun);
+
+
+			machineContainer container;
+			container.status = machineStatus_PRIMED;
+			container.localLabel = labelToRun;
+			container.counter = wL.start;
+			container.machine = machine;
+			container.sleep = 0;
+			container.lastTime = time;
+			runningMachines->PushElement(container);
 
 		}
 
-		RunTimeError rte = RunTimeError_OK;
+		unsigned int runnings = runningMachines->GetCount();
 
-		if (container.sleep == 0)
+		for (unsigned int i = 0; i < runnings; i++)
 		{
 
-			rte = container.machine->RunScript(code, container.counter, time, container.localLabel);
+			machineContainer container = runningMachines->PopElement();
+			waitingLabel wL = waitingLabels->GetValue(container.localLabel);
+			KubLingMachine* machine = container.machine;
 
+			if (container.status == machineStatus_PRIMED)
+			{
+
+				machine->SetRegister(3, 0);
+				machine->SetRegister(4, wL.memOffst);
+
+			}
+
+			RunTimeError rte = RunTimeError_OK;
+
+			if (container.sleep == 0)
+			{
+
+				rte = container.machine->RunScript(code, container.counter, time, container.localLabel);
+
+			}
+			else
+			{
+
+				rte = RunTimeError_HALT;
+				container.status = machineStatus_SLEEPING;
+				container.sleep = max(0, container.sleep - (time - container.lastTime));
+
+			}
+
+			container.lastTime = time;
+
+			if (rte == RunTimeError_WAITINGFORWAR || rte == RunTimeError_MSGFULL || rte == RunTimeError_HALT)
+			{
+
+				container.status = machineStatus_RUNNING;
+				runningMachinesSecondary->PushElement(container);
+
+			}
+			else
+			{
+
+				readyMachines->PushElement(container.machine);
+
+				waitingLabels->Add(wL, container.localLabel);
+				waitingLabels->Remove(container.localLabel);
+
+			}
 		}
-		else
-		{
 
-			rte = RunTimeError_HALT;
-			container.status = machineStatus_SLEEPING;
-			container.sleep = max(0, container.sleep - (time - container.lastTime));
+		abort = runningMachines->GetCount() == 0 
+			&& readyMachines->GetCount() == 0 
+			&& primedCode->GetCount() != 0;
 
-		}
-
-		container.lastTime = time;
-
-		if (rte == RunTimeError_WAITINGFORWAR || rte == RunTimeError_MSGFULL || rte == RunTimeError_HALT)
-		{
-
-			container.status = machineStatus_RUNNING;
-			runningMachinesSecondary->PushElement(container);
-
-		}
-		else
-		{
-
-			readyMachines->PushElement(container.machine);
-
-			waitingLabels->Add(wL, container.localLabel);
-			waitingLabels->Remove(container.localLabel);
-
-		}
 	}
 
 	CelestialStack<machineContainer>*temp = runningMachines;

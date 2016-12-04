@@ -16,6 +16,8 @@ endTile = load mesh 'Content\EndTile.clmsh'
 run 'Content\Scripts\LoadScripts\LoadToolBar'
 run 'Content\Scripts\LoadScripts\LoadScripts'
 
+run 'Content\Scripts\LoadScripts\LoadDebug'
+
 export 'endTile' endTile
 export 'planeMesh' load mesh 'Content\Plane1.clmsh'
 set camera cam

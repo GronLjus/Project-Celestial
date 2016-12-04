@@ -20,7 +20,8 @@ namespace Resources
 		SerializableType_GUIIMAGE,
 
 		SerializableType_RESOURCEDICTIONARY,
-		SerializableType_ROUTE
+		SerializableType_ROUTE,
+		SerializableType_TASK
 
 	};
 

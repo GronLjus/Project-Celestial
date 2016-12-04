@@ -4,13 +4,14 @@
 namespace CrossHandlers
 {
 
-	enum MessageSource{ MessageSource_RESOURCES, MessageSource_ENTITIES, MessageSource_GUIENTITIES, MessageSource_CELSCRIPT, MessageSource_GRAPHICS, MessageSource_INPUT, MessageSource_SYSTEM, MessageSource_MASTER, MessageSource_OBJECT, MessageSource_NA };
-	enum MessageType{ MessageType_INPUT, MessageType_SCRIPT, MessageType_RESOURCES, MessageType_ENTITIES, MessageType_GUIENTITIES, MessageType_GRAPHICS, MessageType_EVENT, MessageType_SYSTEM, MessageType_OBJECT, MessageType_NA };
+	enum MessageSource{ MessageSource_RESOURCES, MessageSource_ENTITIES, MessageSource_GUIENTITIES, MessageSource_CELSCRIPT, MessageSource_GRAPHICS, MessageSource_INPUT, MessageSource_SYSTEM, MessageSource_MASTER, MessageSource_OBJECT, MessageSource_TASKS, MessageSource_NA };
+	enum MessageType{ MessageType_INPUT, MessageType_SCRIPT, MessageType_RESOURCES, MessageType_ENTITIES, MessageType_GUIENTITIES, MessageType_GRAPHICS, MessageType_EVENT, MessageType_SYSTEM, MessageType_OBJECT, MessageType_TASKING, MessageType_NA };
 
 	enum InputMess{ InputMess_MOUSEMOVE,InputMess_MOUSEDWN, InputMess_MOUSEUP, InputMess_MOUSEWHEEL, InputMess_KEYDWN, InputMess_KEYUP, InputMess_CHAR, InputMess_NA };
 	enum ScriptMess{ ScriptMess_RUN, ScriptMess_SETCODE, ScriptMess_ADDPARNUM, ScriptMess_ADDPARASTR, ScriptMess_ADDPARFLOAT, ScriptMess_RESUME, ScriptMess_CATCHUP, ScriptMess_NA };
 	enum ResourceMess{
 		ResourceMess_LOADCAMERA, ResourceMess_LOADOBJECT,
+		ResourceMess_ADDTASKPAR,ResourceMess_LOADTASK,
 		ResourceMess_LOADCOPYOBJECT, ResourceMess_LOADCOPYOBJECTAT,
 		ResourceMess_LOADGAMEBOARD, ResourceMess_LOADMESH, ResourceMess_LOADLIGHT, ResourceMess_LOADCHARKEYTRIGGER, ResourceMess_LOADKEYTRIGGER, ResourceMess_LOADSCRIPT,
 		ResourceMess_LOADGUI, ResourceMess_UNLOADOBJECT,
@@ -72,6 +73,7 @@ namespace CrossHandlers
 		ObjectMess_NA
 	};
 
+	enum TaskMess{ TaskMess_ADDTASK, TaskMess_REMOVETASK, TaskMess_NA};
 	struct Message
 	{
 

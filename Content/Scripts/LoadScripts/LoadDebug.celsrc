@@ -1,0 +1,30 @@
+
+debugLayout = import 'debugLayer'
+
+
+fps = load textbox
+fps2 = load textbox
+debugUpdate = load script 'Content\Scripts\TaskScripts\DebugUpdater'
+
+size fps 30.0 20.0
+pos fps 5.0 5.0
+set content fps 0.8 0.8 0.8
+set border fps 0.0 1.0 0.0
+
+snap fps 0 3
+
+
+size fps2 30.0 20.0
+pos fps2 5.0 35.0
+set content fps2 0.8 0.8 0.8
+set border fps2 0.0 1.0 0.0
+
+snap fps2 0 3
+
+
+add ui debugLayout fps2
+add ui debugLayout fps
+
+debugTask = load task debugUpdate fps fps2
+
+add systemtask debugTask 1000

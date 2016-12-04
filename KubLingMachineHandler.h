@@ -68,6 +68,8 @@ namespace Logic
 		unsigned int PrimeLabel(unsigned int start, unsigned int memOffset);
 
 		void SetStackVar(unsigned int translatedId, unsigned int var, unsigned char* data, unsigned char size);
+		void SetHeapVar(unsigned int var, unsigned char* data, unsigned char size);
+
 		RunTimeError RunCode(unsigned int translatedId);
 
 		bool Stopped() const;

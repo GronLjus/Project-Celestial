@@ -259,7 +259,7 @@ void MouseHandler::setCursor(Logic::CursorCode code, unsigned int time)
 	mBuffer[this->currentMessage].type = MessageType_SYSTEM;
 	mBuffer[this->currentMessage].mess = SystemMess_SETCURSOR;
 	mBuffer[this->currentMessage].read = false;
-	mBuffer[this->currentMessage].SetParams(&cd, 0, 8);
+	mBuffer[this->currentMessage].SetParams(&cd, 0, 1);
 	outQueue->PushMessage(&mBuffer[this->currentMessage]);
 	this->currentMessage = (this->currentMessage + 1) % outMessages;
 

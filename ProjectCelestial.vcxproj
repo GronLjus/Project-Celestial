@@ -175,6 +175,7 @@
     <ClInclude Include="CelestialTreeNode.h" />
     <ClInclude Include="CelMesh.h" />
     <ClInclude Include="HeapMemContainer.h" />
+    <ClInclude Include="ITaskManager.h" />
     <ClInclude Include="KubLingAnalyzer.h" />
     <ClInclude Include="KubLingBinLoader.h" />
     <ClInclude Include="KubLingCodeGenerator.h" />
@@ -305,6 +306,9 @@
     <ClInclude Include="ResourceObject.h" />
     <ClInclude Include="ShaderContainer.h" />
     <ClInclude Include="SkyboxParticle.h" />
+    <ClInclude Include="SystemTaskHandler.h" />
+    <ClInclude Include="TaskHandler.h" />
+    <ClInclude Include="TaskObject.h" />
     <ClInclude Include="TextContainer.h" />
     <ClInclude Include="TextureHandler.h" />
     <ClInclude Include="TextureResourceObject.h" />
@@ -336,6 +340,7 @@
     <ClCompile Include="Celestial2DDrawer.cpp" />
     <ClCompile Include="CelMesh.cpp" />
     <ClCompile Include="HeapMemContainer.cpp" />
+    <ClCompile Include="ITaskManager.cpp" />
     <ClCompile Include="KeyCodes.cpp" />
     <ClCompile Include="KubLingAnalyzer.cpp" />
     <ClCompile Include="KubLingBinLoader.cpp" />
@@ -416,6 +421,9 @@
     <ClCompile Include="ResourceObject.cpp" />
     <ClCompile Include="ShaderContainer.cpp" />
     <ClCompile Include="SkyboxParticle.cpp" />
+    <ClCompile Include="SystemTaskHandler.cpp" />
+    <ClCompile Include="TaskHandler.cpp" />
+    <ClCompile Include="TaskObject.cpp" />
     <ClCompile Include="TextContainer.cpp" />
     <ClCompile Include="TextureHandler.cpp" />
     <ClCompile Include="TextureResourceObject.cpp" />
@@ -454,12 +462,14 @@
     <None Include="Content\Scripts\CameraScripts\CameraZoom.celsrc" />
     <None Include="Content\Scripts\HelpScripts\Keys.celsrc" />
     <None Include="Content\Scripts\KeyScripts\ToggleDbg.celsrc" />
+    <None Include="Content\Scripts\LoadScripts\LoadDebug.celsrc" />
     <None Include="Content\Scripts\LoadScripts\LoadGameBoard.celsrc" />
     <None Include="Content\Scripts\LoadScripts\LoadScripts.celsrc" />
     <None Include="Content\Scripts\LoadScripts\LoadToolBar.celsrc" />
     <None Include="Content\Scripts\ObjectScripts\NodeArrive.celsrc" />
     <None Include="Content\Scripts\PreLoad.celsrc" />
     <None Include="Content\Scripts\Root.celsrc" />
+    <None Include="Content\Scripts\TaskScripts\DebugUpdater.celsrc" />
     <None Include="Content\Scripts\ToolBarScripts\Button1Click.celsrc" />
     <None Include="Content\Scripts\ToolBarScripts\Button1UpDown.celsrc" />
     <None Include="Content\Scripts\ToolBarScripts\Button2Click.celsrc" />

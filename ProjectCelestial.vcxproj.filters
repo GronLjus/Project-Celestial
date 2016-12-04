@@ -313,6 +313,27 @@
     <Filter Include="Resource Files\Content\Scripts\HelpScripts">
       <UniqueIdentifier>{f669cc3d-50d6-4fdf-b4db-e939e0d543e1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Resources\Objects\TaskObjects">
+      <UniqueIdentifier>{59edecf8-99af-46b5-8f6a-ddf2137c3841}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Resources\Objects\TaskObjects">
+      <UniqueIdentifier>{9543d67b-8e46-41f7-af3d-968cd4c57574}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Tasking">
+      <UniqueIdentifier>{acb19407-ca12-4dae-be3c-a0d511f18774}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Tasking">
+      <UniqueIdentifier>{be9d4f82-7fe9-4ce7-9b6d-cc3f4ce50571}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Tasking\SubHandlers">
+      <UniqueIdentifier>{fdd2c6a5-3238-44a5-ac0b-9080a7068b4e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Tasking\SubHandlers">
+      <UniqueIdentifier>{9df3e8f1-fd4e-4923-9f1b-697f4486c28d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Content\Scripts\TaskScripts">
+      <UniqueIdentifier>{493bc72b-bba6-41d7-85e8-40afa855c562}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MeshObject.h">
@@ -795,14 +816,26 @@
     <ClInclude Include="HeapMemContainer.h">
       <Filter>Header Files\Resources\Objects\KubLing</Filter>
     </ClInclude>
-    <ClInclude Include="KubLingHandler.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="KubLingMachineHandler.h">
       <Filter>Header Files\Logic\CelScript\RunTime</Filter>
     </ClInclude>
     <ClInclude Include="Project Celestial.h">
       <Filter>Header Files\Logic\CelScript</Filter>
+    </ClInclude>
+    <ClInclude Include="TaskObject.h">
+      <Filter>Header Files\Resources\Objects\TaskObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="KubLingHandler.h">
+      <Filter>Header Files\Logic\CelScript</Filter>
+    </ClInclude>
+    <ClInclude Include="ITaskManager.h">
+      <Filter>Header Files\Tasking\SubHandlers</Filter>
+    </ClInclude>
+    <ClInclude Include="SystemTaskHandler.h">
+      <Filter>Header Files\Tasking\SubHandlers</Filter>
+    </ClInclude>
+    <ClInclude Include="TaskHandler.h">
+      <Filter>Header Files\Tasking</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1121,6 +1154,18 @@
     <ClCompile Include="KeyCodes.cpp">
       <Filter>Source Files\Input</Filter>
     </ClCompile>
+    <ClCompile Include="TaskObject.cpp">
+      <Filter>Source Files\Resources\Objects\TaskObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="ITaskManager.cpp">
+      <Filter>Source Files\Tasking\SubHandlers</Filter>
+    </ClCompile>
+    <ClCompile Include="SystemTaskHandler.cpp">
+      <Filter>Source Files\Tasking\SubHandlers</Filter>
+    </ClCompile>
+    <ClCompile Include="TaskHandler.cpp">
+      <Filter>Source Files\Tasking</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico">
@@ -1279,6 +1324,12 @@
     </None>
     <None Include="Content\Scripts\KeyScripts\ToggleDbg.celsrc">
       <Filter>Resource Files\Content\Scripts\KeyScripts</Filter>
+    </None>
+    <None Include="Content\Scripts\TaskScripts\DebugUpdater.celsrc">
+      <Filter>Resource Files\Content\Scripts\TaskScripts</Filter>
+    </None>
+    <None Include="Content\Scripts\LoadScripts\LoadDebug.celsrc">
+      <Filter>Resource Files\Content\Scripts\LoadScripts</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

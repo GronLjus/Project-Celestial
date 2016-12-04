@@ -17,6 +17,7 @@ namespace Logic
 			void Init(CrossHandlers::CelestialSlicedList<Resources::BaseObject*>* objectContainer);
 			///<summary>Updates the handler</summary>
 			void Update(unsigned int time);
+			void SetSystemVar(SystemMem var, unsigned char* data, unsigned char size);
 			void Kill();
 			bool AllStopped() const;
 			~KubLingHandler();
@@ -24,7 +25,6 @@ namespace Logic
 		private:
 
 			CrossHandlers::CelestialSlicedList<Resources::BaseObject*>* objectContainer;
-			CelestialSlicedList<unsigned int>* translatedLabels;
 
 			void initScript(Resources::KubLingLabel* label);
 			unsigned int getLatestTranslation(unsigned int label);

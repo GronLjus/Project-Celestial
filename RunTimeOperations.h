@@ -9,7 +9,7 @@ namespace Logic
 		bytecode_LOADLIGHT, bytecode_LOADMESH, bytecode_LOADSCRIPT,
 		bytecode_LOADTXTBX, bytecode_LOADPANEL, bytecode_LOADIMAGE,
 		bytecode_LOADGMBRD, bytecode_LOADCAM, bytecode_LOADOBJCT,
-		bytecode_LOADCPY,
+		bytecode_LOADCPY, bytecode_LOADTSK,
 
 		bytecode_UNLOAD,
 
@@ -46,7 +46,8 @@ namespace Logic
 		bytecode_SUB2CONST, bytecode_SUBFLOAT, bytecode_SUBVAR,
 		bytecode_MUL2CONST, bytecode_MULFLOAT, bytecode_MULVAR,
 		bytecode_DIV2CONST, bytecode_DIVFLOAT, bytecode_DIVVAR,
-		bytecode_CASTFLOAT,
+
+		bytecode_CASTFLOAT, bytecode_CASTTSTR,
 
 		bytecode_NUMEQUAL2CONST, bytecode_NUMEQUALFLOAT, bytecode_NUMEQUALVAR,
 		bytecode_STREQUAL2CONST, bytecode_STREQUALVAR,
@@ -74,6 +75,10 @@ namespace Logic
 		bytecode_CLRBRD,
 		bytecode_PSEGME, bytecode_RSMGME,
 		bytecode_AND, bytecode_OR,
+
+		bytecode_ADDTSKPARNUM, bytecode_ADDTSKPARFLT, bytecode_ADDTSKPARSTR,
+		bytecode_QSTSK, bytecode_QCTSK, bytecode_RMTSK,
+
 		bytecode_NUMARR, bytecode_STRARR,bytecode_NUMOFFST, bytecode_STROFFST,
 
 		bytecode_JMPINVVAR,bytecode_JMPNOW, bytecode_WTFRVR,
@@ -121,6 +126,7 @@ namespace Logic
 		
 		opcode_INV,
 		opcode_JMP,
+		opcode_JMPIF,
 		opcode_JMPINV
 
 	};
@@ -133,6 +139,18 @@ namespace Logic
 		RunTimeError_HALT, RunTimeError_NA
 	};
 
+	struct SystemVar
+	{
+		SystemVar(std::string name, unsigned int var) : name(name), var(var) {}
+		std::string name;
+		unsigned int var;
+
+	};
+
+	const SystemVar SystemVars[]{ SystemVar("£null", 0),SystemVar("£clock", 1), SystemVar("£time", 2), SystemVar("£fps1", 3), SystemVar("£fps2", 4) };
+
+	enum SystemMem{ SystemMem_CLOCK = 1, SystemMem_TIME, SystemMem_FPS1, SystemMem_FPS2, SystemMem_NA
+	};
 
 	enum RunTimeParams
 	{

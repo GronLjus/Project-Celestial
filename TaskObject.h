@@ -1,0 +1,59 @@
+#pragma once
+#include "BaseObject.h"
+#include "SerializableObject.h"
+#include "CelestialStack.h"
+
+namespace Resources
+{
+
+	enum TaskClass
+	{
+		TaskClass_CLOCK,
+		TaskClass_SYSTEM,
+		TaskClass_NA
+
+	};
+
+	class TaskObject : public BaseObject, public SerializableObject
+	{
+
+		public:
+			TaskObject(unsigned int script,
+				CrossHandlers::CelestialStack<int>* iParams,
+				CrossHandlers::CelestialStack<float>* fParams,
+				CrossHandlers::CelestialStack<std::string>* sParams);
+
+			virtual char* Serialize(unsigned int &size);
+			virtual char* Unserialize(char* data);
+
+			CrossHandlers::CelestialStack<int>* GetIParams() const;
+			CrossHandlers::CelestialStack<float>* GetFParams() const;
+			CrossHandlers::CelestialStack<std::string>* GetSParams() const;
+
+			unsigned int GetScript() const;
+			TaskClass GetType() const;
+
+			void Queue(TaskClass type, unsigned int fireTime);
+			bool Time(unsigned int time);
+			void Kill();
+			bool ShouldKill() const;
+
+			virtual void Update(CrossHandlers::Message* mess);
+
+			virtual ~TaskObject();
+
+		private:
+			unsigned int script;
+			CrossHandlers::CelestialStack<int>* iParams;
+			CrossHandlers::CelestialStack<float>* fParams;
+			CrossHandlers::CelestialStack<std::string>* sParams;
+
+			unsigned int fireTime;
+			unsigned int lastFired;
+
+			TaskClass type;
+
+			bool kill;
+
+	};
+}

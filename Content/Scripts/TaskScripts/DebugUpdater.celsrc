@@ -1,0 +1,8 @@
+
+fpsNum = import '£fps1'
+fpsVal = cast str fpsNum
+
+fpsVal2 = cast str import '£fps2'
+
+set text ?1 fpsVal
+set text ?2 fpsVal2

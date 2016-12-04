@@ -6,6 +6,7 @@
 #include "InputHandler.h"
 #include "PlayerHandler.h"
 #include "GUIEntityHandler.h"
+#include "TaskHandler.h"
 #include "Camera.h"
 #include <condition_variable>
 
@@ -35,6 +36,8 @@ namespace Logic
 
 		private:
 
+			void updateSystemVars(unsigned int time);
+
 			void updateMessages(MessageSource handler);
 			CrossHandlers::MessageQueue* inQueue;
 			CrossHandlers::MessageQueue* outQueue;
@@ -46,6 +49,7 @@ namespace Logic
 			///<summary>The style to use for graphics</summary>
 			Graphics::DrawingStyle dS;
 
+			Tasking::TaskHandler* tH;
 			///<summary>The pointer to the GraphicHandler being used by this overlord</summary>
 			Graphics::GraphicHandler* gH;
 			///<summary>The pointer to the resourceHandler being used by this</summary>

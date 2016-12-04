@@ -4,6 +4,7 @@
 #include "GameRouteObject.h"
 #include "GameTravelObject.h"
 #include "HeapMemContainer.h"
+#include "TaskObject.h"
 
 using namespace Resources;
 using namespace CrossHandlers;
@@ -22,6 +23,10 @@ ResourceHandler::ResourceHandler(unsigned int bufferFlips) : IHandleMessages(200
 	currentDic = new ResourceDictionary();
 
 	this->rawCode = 0;
+
+	task.iParams = new CelestialStack<int>(false);
+	task.fParams = new CelestialStack<float>(false);
+	task.sParams = new CelestialStack<std::string>(false);
 
 }
 
@@ -424,6 +429,53 @@ void ResourceHandler::handleMess(Message* currentMessage, unsigned int time)
 		unloadObject(param1, time);
 
 	}
+	else if (currentMessage->mess == ResourceMess_ADDTASKPAR)
+	{
+
+		int type = 0;
+		memcpy(&type, &(currentMessage->params[0]), sizeof(unsigned int));
+
+		if (type == 0)
+		{
+
+			int i = 0;
+			memcpy(&i, &(currentMessage->params[4]), sizeof(int));
+			task.iParams->PushElement(i);
+
+		}
+		else if (type == 1)
+		{
+
+			float f = 0.0f;
+			memcpy(&f, &(currentMessage->params[4]), sizeof(int));
+			task.fParams->PushElement(f);
+
+		}
+		else
+		{
+
+			int i = 0;
+			memcpy(&i, &(currentMessage->params[4]), sizeof(int));
+			std::string s = std::string((char*)(&currentMessage->params[8]), i);
+
+		}
+
+	}
+	else if (currentMessage->mess == ResourceMess_LOADTASK)
+	{
+
+		int script = 0;
+		memcpy(&script, &(currentMessage->params[0]), sizeof(int));
+		TaskObject* obj = new TaskObject(script, task.iParams, task.fParams, task.sParams);
+		obj->SetId(gameObjects->Add(obj));
+
+		outId = obj->GetId();
+
+		task.iParams = new CelestialStack<int>(false);
+		task.fParams = new CelestialStack<float>(false);
+		task.sParams = new CelestialStack<std::string>(false);
+		
+	}
 
 	if (currentMessage->source == MessageSource_CELSCRIPT && outId > 0 && currentMessage->returnParam > 0)
 	{
@@ -796,6 +848,10 @@ bool ResourceHandler::translateMesh(GameObject* object, Dictionary* translation)
 
 ResourceHandler::~ResourceHandler()
 {
+
+	delete task.fParams;
+	delete task.iParams;
+	delete task.sParams;
 
 	delete loader;
 	gameObjects->KillList();

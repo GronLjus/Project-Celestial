@@ -46,5 +46,15 @@ namespace Resources
 
 		unsigned int rawCode;
 
+		struct tempTask
+		{
+			CrossHandlers::CelestialStack<int>* iParams;
+			CrossHandlers::CelestialStack<float>* fParams;
+			CrossHandlers::CelestialStack<std::string>* sParams;
+
+		};
+
+		tempTask task;
+
 	};
 }

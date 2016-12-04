@@ -400,7 +400,20 @@ KubLingRaw* KubLingRawGenerator::Assemble(KubLingCompiled** byteCodes, unsigned 
 	this->compiled = compiled;
 
 	rawCode* raws = new rawCode[compiled];
+
+	//Set up the system variables
 	CelestialSlicedList<heapVar>* heap = new CelestialSlicedList<heapVar>(32);
+
+	for (unsigned int i = 0; i < SystemMem_NA; i++)
+	{
+
+		heapVar var;
+		var.var = SystemVars[i].var;
+		var.name = SystemVars[i].name;
+
+		heap->Add(var);
+
+	}
 
 	//Generate code
 	for (unsigned int i = 0; i < compiled;i++)
