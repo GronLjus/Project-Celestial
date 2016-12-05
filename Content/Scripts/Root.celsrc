@@ -9,6 +9,7 @@ gameBoardLoad = load script 'Content\Scripts\LoadScripts\LoadGameBoard'
 toolbarLoad = load script 'Content\Scripts\LoadScripts\LoadToolBar'
 scriptLoad = load script 'Content\Scripts\LoadScripts\LoadScripts'
 
+
 cam = load camera
 export 'cmra' cam
 run 'Content\Scripts\LoadScripts\LoadGameBoard'
