@@ -16,6 +16,8 @@ namespace Tasking
 
 		private:
 			CrossHandlers::CelestialStack<Resources::TaskObject*>* taskList;
+
+			bool timeObject(Resources::TaskObject* object, unsigned int time);
 			unsigned int lastTime;
 
 

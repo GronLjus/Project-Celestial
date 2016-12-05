@@ -837,6 +837,9 @@
     <ClInclude Include="TaskHandler.h">
       <Filter>Header Files\Tasking</Filter>
     </ClInclude>
+    <ClInclude Include="ClockTaskHandler.h">
+      <Filter>Header Files\Tasking\SubHandlers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Camera.cpp">
@@ -1166,6 +1169,9 @@
     <ClCompile Include="TaskHandler.cpp">
       <Filter>Source Files\Tasking</Filter>
     </ClCompile>
+    <ClCompile Include="ClockTaskHandler.cpp">
+      <Filter>Source Files\Tasking\SubHandlers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico">
@@ -1332,6 +1338,9 @@
       <Filter>Resource Files\Content\Scripts\LoadScripts</Filter>
     </None>
     <None Include="Content\Scripts\TaskScripts\ClockUpdater.celsrc">
+      <Filter>Resource Files\Content\Scripts\TaskScripts</Filter>
+    </None>
+    <None Include="Content\Scripts\TaskScripts\ClockTest.celsrc">
       <Filter>Resource Files\Content\Scripts\TaskScripts</Filter>
     </None>
   </ItemGroup>

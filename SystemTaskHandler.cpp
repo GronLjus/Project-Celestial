@@ -27,10 +27,30 @@ void SystemTaskHandler::RemoveTask(TaskObject* object)
 
 }
 
+bool SystemTaskHandler::timeObject(TaskObject* object, unsigned int time)
+{
+
+	bool retVal = false;
+	unsigned int lastFired = object->GetTime() + time;
+
+	if (lastFired >= object->GetFireTime())
+	{
+
+		lastFired = 0;
+		retVal = true;
+
+	}
+
+	object->SetTime(lastFired);
+	return retVal;
+
+}
+
 void SystemTaskHandler::Update(unsigned int time)
 {
 
 	unsigned int diff = time - lastTime;
+	lastTime = time;
 
 	while (taskList->GetCount() > 0)
 	{
@@ -50,7 +70,7 @@ void SystemTaskHandler::Update(unsigned int time)
 
 		}
 
-		if (task->Time(diff))
+		if (timeObject(task, diff))
 		{
 
 			trigger(task, time);
