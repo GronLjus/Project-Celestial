@@ -187,24 +187,20 @@ void TaskObject::Queue(TaskClass type, unsigned int fireTime)
 
 }
 
-unsigned int TaskObject::GetTime() const
+bool TaskObject::Time(unsigned int time)
 {
 
-	return lastFired;
+	lastFired += time;
 
-}
+	if (lastFired >= fireTime)
+	{
 
-unsigned int TaskObject::GetFireTime() const
-{
+		lastFired = 0;
+		return true;
 
-	return fireTime;
+	}
 
-}
-
-void TaskObject::SetTime(unsigned int time)
-{
-
-	lastFired = time;
+	return false;
 
 }
 

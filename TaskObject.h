@@ -30,13 +30,11 @@ namespace Resources
 			CrossHandlers::CelestialStack<float>* GetFParams() const;
 			CrossHandlers::CelestialStack<std::string>* GetSParams() const;
 
-			unsigned int GetTime() const;
-			unsigned int GetFireTime() const;
 			unsigned int GetScript() const;
 			TaskClass GetType() const;
 
 			void Queue(TaskClass type, unsigned int fireTime);
-			void SetTime(unsigned int time);
+			bool Time(unsigned int time);
 			void Kill();
 			bool ShouldKill() const;
 

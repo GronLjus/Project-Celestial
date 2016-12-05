@@ -1,7 +1,6 @@
 #include "stdafx.h"
 #include "TaskHandler.h"
 #include "SystemTaskHandler.h"
-#include "ClockTaskHandler.h"
 
 using namespace Resources;
 using namespace Tasking;
@@ -10,7 +9,7 @@ using namespace CrossHandlers;
 TaskHandler::TaskHandler() : IHandleMessages(200, MessageSource_TASKS)
 {
 
-	subManager[TaskClass_CLOCK] = nullptr;// new ClockTaskHandler();
+	subManager[TaskClass_CLOCK] = nullptr;
 	subManager[TaskClass_SYSTEM] = new SystemTaskHandler();
 
 	filter = MessageType_TASKING;
