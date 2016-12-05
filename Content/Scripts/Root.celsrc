@@ -9,6 +9,9 @@ gameBoardLoad = load script 'Content\Scripts\LoadScripts\LoadGameBoard'
 toolbarLoad = load script 'Content\Scripts\LoadScripts\LoadToolBar'
 scriptLoad = load script 'Content\Scripts\LoadScripts\LoadScripts'
 
+clockTestScript = load script 'Content\Scripts\TaskScripts\ClockTest'
+clTest = load task clockTestScript
+add clocktask clTest 60
 
 cam = load camera
 export 'cmra' cam

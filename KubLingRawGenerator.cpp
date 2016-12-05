@@ -454,6 +454,7 @@ KubLingRaw* KubLingRawGenerator::Assemble(KubLingCompiled** byteCodes, unsigned 
 			if (stop)
 			{
 
+				mOffset = byteCodes[k]->GetMemOffset();
 				rawLabels[i].SetMemOffset(mOffset);
 				unsigned int ph = byteCodes[k]->GetStackPHLine();
 
@@ -477,9 +478,6 @@ KubLingRaw* KubLingRawGenerator::Assemble(KubLingCompiled** byteCodes, unsigned 
 					ph = byteCodes[k]->GetMemOffsetPHLine();
 
 				}
-
-				mOffset = byteCodes[k]->GetMemOffset();
-
 			}
 		}
 	}

@@ -10,7 +10,7 @@ using namespace CrossHandlers;
 TaskHandler::TaskHandler() : IHandleMessages(200, MessageSource_TASKS)
 {
 
-	subManager[TaskClass_CLOCK] = nullptr;// new ClockTaskHandler();
+	subManager[TaskClass_CLOCK] = new ClockTaskHandler();
 	subManager[TaskClass_SYSTEM] = new SystemTaskHandler();
 
 	filter = MessageType_TASKING;
@@ -54,20 +54,13 @@ void TaskHandler::Update(unsigned int time)
 
 		clock+= sumTime/timeWarp;
 		clock %= maxClock;
-		sumTime -= timeWarp;
+		sumTime %= timeWarp;
 
 	}
 
-	for (unsigned int i = 0; i < TaskClass_NA; i++)
-	{
+	subManager[TaskClass_SYSTEM]->Update(time);
+	subManager[TaskClass_CLOCK]->Update(clock);
 
-		if (subManager[i] != nullptr)
-		{
-
-			subManager[i]->Update(time);
-
-		}
-	}
 }
 
 void TaskHandler::UpdateMessages(unsigned int time)

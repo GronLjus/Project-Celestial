@@ -3438,7 +3438,7 @@ RunTimeError PostStrOperator(rawCode* raw, unsigned int returnVar, unsigned char
 
 	}
 
-	raw->maxLines = addMessStrParLinesNO + sendLines;
+	raw->maxLines = addMessStrParLines + sendLines;
 	raw->code = new rawCode::line[raw->maxLines];
 
 	unsigned int var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
@@ -3449,7 +3449,7 @@ RunTimeError PostStrOperator(rawCode* raw, unsigned int returnVar, unsigned char
 	mess.mess = GUIMess_POST;
 	mess.returnParam = 0;
 
-	addMessStackStringParamNO(var - 1, 0, 4, rtv, raw);
+	addMessStackStringParamO(var - 1, 0, 4, rtv, raw);
 	sendMessageOut(mess, rtv, raw);
 
 	return RunTimeError_OK;
