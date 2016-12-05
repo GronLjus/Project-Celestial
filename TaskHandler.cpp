@@ -14,6 +14,11 @@ TaskHandler::TaskHandler() : IHandleMessages(200, MessageSource_TASKS)
 
 	filter = MessageType_TASKING;
 
+	clock = 0;
+	lastTime = 0;
+	sumTime = 0;
+	timeWarp = 1000;
+
 }
 
 void TaskHandler::Init(CelestialSlicedList<BaseObject*>* gameObjects)
@@ -38,6 +43,19 @@ void TaskHandler::Init(CelestialSlicedList<BaseObject*>* gameObjects)
 
 void TaskHandler::Update(unsigned int time)
 {
+
+	unsigned int diff = time - lastTime;
+	lastTime = time;
+	sumTime += diff;
+
+	if (sumTime > timeWarp)
+	{
+
+		clock+= sumTime/timeWarp;
+		clock %= maxClock;
+		sumTime -= timeWarp;
+
+	}
 
 	for (unsigned int i = 0; i < TaskClass_NA; i++)
 	{
@@ -83,6 +101,13 @@ void TaskHandler::UpdateMessages(unsigned int time)
 		currentMessage = inQueue->PopMessage();
 
 	}
+}
+
+unsigned int TaskHandler::GetClock() const
+{
+
+	return clock;
+
 }
 
 TaskHandler::~TaskHandler()

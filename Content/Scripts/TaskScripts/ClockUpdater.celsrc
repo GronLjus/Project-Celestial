@@ -1,0 +1,16 @@
+
+clock = import '£clock'
+
+hours = cast str clock / 3600
+clock = clock % 3600
+
+minutes = cast str clock / 60
+clock = clock % 60
+
+seconds = cast str clock % 60
+
+time = hours + 'h ' 
+time = time + minutes + 'm ' 
+time = time + seconds + 's'
+
+set text ?1 time

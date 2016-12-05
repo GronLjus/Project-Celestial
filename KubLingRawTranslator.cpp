@@ -493,7 +493,10 @@ void commonLoad(unsigned int returnVar, runTimeVal &rtv, unsigned char op)
 	if (rtv.memory->GetVarAdr(returnVar) <= rtv.memory->GetMaxStack())
 	{
 
-		rtv.memory->AddVariable(returnVar, op == Logic::bytecode_CASTTSTR ? 64 : 4);
+		rtv.memory->AddVariable(returnVar, 
+			op == Logic::bytecode_CASTTSTR ||
+			op == Logic::bytecode_SUMSTR ? 64 : 
+			4);
 
 	}
 }
@@ -2862,6 +2865,30 @@ RunTimeError LoadTextBoxOperator(rawCode* raw, unsigned int returnVar, unsigned 
 
 }
 
+RunTimeError ModulusVarOperator(rawCode* raw, unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int offset, unsigned int byteLine, runTimeVal &rtv)
+{
+
+	if (paramSize < 8 || returnVar == 0)
+	{
+
+		return RunTimeError_BADPARAMS;
+
+	}
+
+	raw->maxLines = commonMathLines;
+	raw->code = new rawCode::line[raw->maxLines];
+
+	unsigned int var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
+	unsigned int var2 = (params[4] | ((int)params[5] << 8) | ((int)params[6] << 16) | ((int)params[7] << 24));
+	performArithemitc(var - 1,
+		var2 - 1,
+		returnVar - 1, rtv,
+		opcode_MOD, 0, raw);
+
+	return RunTimeError_OK;
+
+}
+
 RunTimeError MoveOperator(rawCode* raw, unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int offset, unsigned int byteLine, runTimeVal &rtv)
 {
 
@@ -4724,6 +4751,124 @@ RunTimeError SubVarOperator(rawCode* raw, unsigned int returnVar, unsigned char*
 
 }
 
+RunTimeError SumStringOperator(rawCode* raw, unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int offset, unsigned int byteLine, runTimeVal &rtv)
+{
+
+	if (paramSize < 8 || returnVar == 0)
+	{
+
+		return RunTimeError_BADPARAMS;
+
+	}
+
+	raw->maxLines = 11 + placeAdrLines * 3 + waitingLines;
+	raw->code = new rawCode::line[raw->maxLines];
+
+	unsigned int var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
+	unsigned int var2 = (params[4] | ((int)params[5] << 8) | ((int)params[6] << 16) | ((int)params[7] << 24));
+
+	//Place the adr of var2 in a2
+	placeAdr(var2 - 1, 1, 0, rtv, raw);
+	//Place the adr of var1 in a1
+	placeAdr(var - 1, 0, 0, rtv, raw);
+	//Place the adr of returnvar in a3
+	placeAdr(returnVar - 1, 2, 0, rtv, raw);
+
+
+	rawCode::line line;
+	//Load the size of the first string in i1
+	line.code = opcode_LOAD;
+	line.r1 = 0;
+	line.r2 = 0;
+	line.type = 0;
+	raw->code[raw->codeSize] = line;
+	raw->codeSize++;
+	//Load the size of the second string in i2
+	line.code = opcode_LOAD;
+	line.r1 = 1;
+	line.r2 = 1;
+	line.type = 0;
+	raw->code[raw->codeSize] = line;
+	raw->codeSize++;
+
+
+	//Add i2 to i1 and store in i3
+	line.code = opcode_ADD;
+	line.r1 = 0;
+	line.r2 = 1;
+	line.r3 = 2;
+	line.type = 0;
+	raw->code[raw->codeSize] = line;
+	raw->codeSize++;
+	//store i3 in a3
+	line.code = opcode_STORE;
+	line.r1 = 2;
+	line.r2 = 2;
+	line.type = 0;
+	raw->code[raw->codeSize] = line;
+	raw->codeSize++;
+
+	//Place 4 in i3
+	line.code = opcode_PLACE;
+	line.r1 = 2;
+	line.type = 0;
+	line.scale = 4;
+	raw->code[raw->codeSize] = line;
+	raw->codeSize++;
+	//Add i3 to a3 and store in a3
+	line.code = opcode_ADD;
+	line.r1 = 2;
+	line.r2 = 2;
+	line.r3 = 2;
+	line.type = 3;
+	raw->code[raw->codeSize] = line;
+	raw->codeSize++;
+	//Add i3 to a2 and store in a2
+	line.code = opcode_ADD;
+	line.r1 = 1;
+	line.r2 = 2;
+	line.r3 = 1;
+	line.type = 3;
+	raw->code[raw->codeSize] = line;
+	raw->codeSize++;
+	//Add i3 to a1 and store in a1
+	line.code = opcode_ADD;
+	line.r1 = 0;
+	line.r2 = 2;
+	line.r3 = 0;
+	line.type = 3;
+	raw->code[raw->codeSize] = line;
+	raw->codeSize++;
+
+	//Copy the value from a1 to a3 with size i1
+	line.code = opcode_COPY;
+	line.r1 = 2;
+	line.r2 = 0;
+	line.r3 = 0;
+	raw->code[raw->codeSize] = line;
+	raw->codeSize++;
+	//Add i1 to a3 and store in a3
+	line.code = opcode_ADD;
+	line.r1 = 2;
+	line.r2 = 0;
+	line.r3 = 2;
+	line.type = 3;
+	raw->code[raw->codeSize] = line;
+	raw->codeSize++;
+	//Copy the value from a2 to a3 with size i2
+	line.code = opcode_COPY;
+	line.r1 = 2;
+	line.r2 = 1;
+	line.r3 = 1;
+	raw->code[raw->codeSize] = line;
+	raw->codeSize++;
+
+
+	finishWaiting(returnVar - 1, raw);
+	return RunTimeError_OK;
+
+}
+
 RunTimeError SumFloatOperator(rawCode* raw, unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int offset, unsigned int byteLine, runTimeVal &rtv)
 {
 
@@ -4743,6 +4888,7 @@ RunTimeError SumFloatOperator(rawCode* raw, unsigned int returnVar, unsigned cha
 		var2 - 1,
 		returnVar - 1, rtv, 
 		opcode_ADD, 1, raw);
+
 
 	return RunTimeError_OK;
 
@@ -5096,6 +5242,7 @@ KubLingRawTranslator::KubLingRawTranslator()
 	translator[bytecode_SUM2CONST] = SumConst2Operator;
 	translator[bytecode_SUMFLOAT] = SumFloatOperator;
 	translator[bytecode_SUMVAR] = SumVarOperator;
+	translator[bytecode_SUMSTR] = SumStringOperator;
 
 	translator[bytecode_SUB2CONST] = SubConst2Operator;
 	translator[bytecode_SUBFLOAT] = SubFloatOperator;
@@ -5108,6 +5255,7 @@ KubLingRawTranslator::KubLingRawTranslator()
 	translator[bytecode_DIV2CONST] = DivConst2Operator;
 	translator[bytecode_DIVFLOAT] = DivFloatOperator;
 	translator[bytecode_DIVVAR] = DivVarOperator;
+	translator[bytecode_MODVAR] = ModulusVarOperator;
 
 	translator[bytecode_CASTFLOAT] = CastFloatOperator;
 	translator[bytecode_CASTTSTR] = CastNumToStringOperator;

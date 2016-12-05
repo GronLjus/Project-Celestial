@@ -1331,6 +1331,9 @@
     <None Include="Content\Scripts\LoadScripts\LoadDebug.celsrc">
       <Filter>Resource Files\Content\Scripts\LoadScripts</Filter>
     </None>
+    <None Include="Content\Scripts\TaskScripts\ClockUpdater.celsrc">
+      <Filter>Resource Files\Content\Scripts\TaskScripts</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Project Celestial.rc">

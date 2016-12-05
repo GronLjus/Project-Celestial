@@ -42,10 +42,11 @@ namespace Logic
 		bytecode_INCRMNTLYR, bytecode_DCRMNLYR, bytecode_STLYR,
 
 		bytecode_NEGATECONST, bytecode_NEGATEVAR, bytecode_NEGATEFLOAT,
-		bytecode_SUM2CONST, bytecode_SUMFLOAT, bytecode_SUMVAR,
+		bytecode_SUM2CONST, bytecode_SUMFLOAT, bytecode_SUMVAR, bytecode_SUMSTR,
 		bytecode_SUB2CONST, bytecode_SUBFLOAT, bytecode_SUBVAR,
 		bytecode_MUL2CONST, bytecode_MULFLOAT, bytecode_MULVAR,
 		bytecode_DIV2CONST, bytecode_DIVFLOAT, bytecode_DIVVAR,
+		bytecode_MODVAR,
 
 		bytecode_CASTFLOAT, bytecode_CASTTSTR,
 

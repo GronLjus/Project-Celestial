@@ -826,7 +826,7 @@ unsigned int KubLingLexer::getShortHand(string word)
 			}
 		}
 
-		if (bracketLev == 0)
+		if (bracketLev == 0 && !isQoutes)
 		{
 
 			shortHand = getShortHand(word[i]) ? i +1 : 0;

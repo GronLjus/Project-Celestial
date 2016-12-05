@@ -28,6 +28,11 @@ buttonScripts[2] = load script 'Content\Scripts\ToolBarScripts\Button3Click'
 buttonScripts[3] = load script 'Content\Scripts\ToolBarScripts\Button4Click'
 buttonScripts[4] = load script 'Content\Scripts\ToolBarScripts\PauseButtonClick'
 
+timeScript = load script 'Content\Scripts\TaskScripts\ClockUpdater'
+button1UD = load script 'Content\Scripts\ToolBarScripts\Button1UpDown'
+
+timeBox = load textbox
+
 buttonLabels[0] = 'Button1'
 buttonLabels[1] = 'Button2'
 buttonLabels[2] = 'Load'
@@ -38,7 +43,14 @@ buttonLabels[4] = 'Pause'
 gameBoard = import 'board'
 add keytrigger gameBoard buttonScripts[4] 57
 
-button1UD = load script 'Content\Scripts\ToolBarScripts\Button1UpDown'
+
+add ui screenLayout timeBox
+size timeBox 80.0 20.0
+pos timeBox 5.0 5.0
+set content timeBox 0.8 0.8 0.8
+set border timeBox 0.0 1.0 0.0
+
+timeUpdate = load task timeScript timeBox
 
 loop i=0; i<nrButtons; i = i+1
 {
@@ -70,6 +82,8 @@ loop i=0; i<nrButtons; i = i+1
 	scope sve buttonTexts[i] 0
 
 }
+
+add systemtask timeUpdate 200
 
 scope sve button1UD 0
 

@@ -469,6 +469,7 @@
     <None Include="Content\Scripts\ObjectScripts\NodeArrive.celsrc" />
     <None Include="Content\Scripts\PreLoad.celsrc" />
     <None Include="Content\Scripts\Root.celsrc" />
+    <None Include="Content\Scripts\TaskScripts\ClockUpdater.celsrc" />
     <None Include="Content\Scripts\TaskScripts\DebugUpdater.celsrc" />
     <None Include="Content\Scripts\ToolBarScripts\Button1Click.celsrc" />
     <None Include="Content\Scripts\ToolBarScripts\Button1UpDown.celsrc" />

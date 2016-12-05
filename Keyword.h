@@ -45,6 +45,7 @@ namespace Logic
 		OperatorTypes_ADDTASKPARAM,
 		OperatorTypes_SET, OperatorTypes_POST,
 		OperatorTypes_SUM, OperatorTypes_SUB, OperatorTypes_MUL, OperatorTypes_DIV, 
+		OperatorTypes_MOD,
 		OperatorTypes_CAST,
 		OperatorTypes_EQUAL, OperatorTypes_GREATER, 
 		OperatorTypes_PARENT, OperatorTypes_SNAP,

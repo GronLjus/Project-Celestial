@@ -355,7 +355,11 @@ void Overlord::updateMessages(MessageSource handler)
 void Overlord::updateSystemVars(unsigned int time)
 {
 
+	unsigned int cl = tH->GetClock();
 	unsigned char var[4];
+	memcpy(var, &cl, 4);
+	klH->SetSystemVar(SystemMem_CLOCK, var, 4);
+
 	memcpy(var, &time, 4);
 	klH->SetSystemVar(SystemMem_TIME, var, 4);
 

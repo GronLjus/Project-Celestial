@@ -2206,51 +2206,55 @@ void KubLingCompiler::setupArithmeticOps()
 {
 
 	operators[OperatorTypes_SUM].keyword = "sum";
-	operators[OperatorTypes_SUM].enumAmount = 6;
-	operators[OperatorTypes_SUM].enums = new std::string[operators[OperatorTypes_SUM].enumAmount]; operators[OperatorTypes_SUM].enums[0] = ""; operators[OperatorTypes_SUM].enums[1] = ""; operators[OperatorTypes_SUM].enums[2] = ""; operators[OperatorTypes_SUM].enums[3] = ""; operators[OperatorTypes_SUM].enums[4] = ""; operators[OperatorTypes_SUM].enums[5] = "";
-	operators[OperatorTypes_SUM].byteCodes = new unsigned char[operators[OperatorTypes_SUM].enumAmount]{bytecode_SUM2CONST, bytecode_SUM2CONST, bytecode_SUMVAR, bytecode_SUMFLOAT, bytecode_SUMFLOAT, bytecode_SUMFLOAT};
-	operators[OperatorTypes_SUM].params = new unsigned char[operators[OperatorTypes_SUM].enumAmount]{2, 2, 2, 2, 2, 2};
-	operators[OperatorTypes_SUM].minParams = new unsigned char[operators[OperatorTypes_SUM].enumAmount]{2, 2, 2, 2, 2, 2};
+	operators[OperatorTypes_SUM].enumAmount = 7;
+	operators[OperatorTypes_SUM].enums = new std::string[operators[OperatorTypes_SUM].enumAmount]; operators[OperatorTypes_SUM].enums[0] = ""; operators[OperatorTypes_SUM].enums[1] = ""; operators[OperatorTypes_SUM].enums[2] = ""; operators[OperatorTypes_SUM].enums[3] = ""; operators[OperatorTypes_SUM].enums[4] = ""; operators[OperatorTypes_SUM].enums[5] = ""; operators[OperatorTypes_SUM].enums[6] = "";
+	operators[OperatorTypes_SUM].byteCodes = new unsigned char[operators[OperatorTypes_SUM].enumAmount]{bytecode_SUM2CONST, bytecode_SUM2CONST, bytecode_SUMVAR, bytecode_SUMFLOAT, bytecode_SUMFLOAT, bytecode_SUMFLOAT, bytecode_SUMSTR};
+	operators[OperatorTypes_SUM].params = new unsigned char[operators[OperatorTypes_SUM].enumAmount]{2, 2, 2, 2, 2, 2, 2};
+	operators[OperatorTypes_SUM].minParams = new unsigned char[operators[OperatorTypes_SUM].enumAmount]{2, 2, 2, 2, 2, 2, 2};
 	operators[OperatorTypes_SUM].paramsyntax = new VarType*[operators[OperatorTypes_SUM].enumAmount]{
 		new VarType[operators[OperatorTypes_SUM].params[0]]{VarType_NUMBER, VarType_NUMBER},
 			new VarType[operators[OperatorTypes_SUM].params[1]]{VarType_FLOAT, VarType_FLOAT},
 			new VarType[operators[OperatorTypes_SUM].params[2]]{VarType_NUMBER, VarType_NUMBER},
 			new VarType[operators[OperatorTypes_SUM].params[3]]{VarType_FLOAT, VarType_FLOAT},
 			new VarType[operators[OperatorTypes_SUM].params[4]]{VarType_NUMBER, VarType_FLOAT},
-			new VarType[operators[OperatorTypes_SUM].params[5]]{VarType_FLOAT, VarType_NUMBER}};
+			new VarType[operators[OperatorTypes_SUM].params[5]]{VarType_FLOAT, VarType_NUMBER},
+			new VarType[operators[OperatorTypes_SUM].params[6]]{ VarType_STRING, VarType_STRING } };
 	operators[OperatorTypes_SUM].paramTypes = new ParamType*[operators[OperatorTypes_SUM].enumAmount]{
 		new ParamType[operators[OperatorTypes_SUM].params[0]]{ParamType_CONST, ParamType_CONST},
 			new ParamType[operators[OperatorTypes_SUM].params[1]]{ParamType_CONST, ParamType_CONST},
 			new ParamType[operators[OperatorTypes_SUM].params[2]]{ParamType_NA, ParamType_NA},
 			new ParamType[operators[OperatorTypes_SUM].params[3]]{ParamType_NA, ParamType_NA},
 			new ParamType[operators[OperatorTypes_SUM].params[4]]{ParamType_NA, ParamType_NA},
-			new ParamType[operators[OperatorTypes_SUM].params[5]]{ParamType_NA, ParamType_NA}};
+			new ParamType[operators[OperatorTypes_SUM].params[5]]{ParamType_NA, ParamType_NA},
+			new ParamType[operators[OperatorTypes_SUM].params[6]]{ ParamType_NA, ParamType_NA } };
 	operators[OperatorTypes_SUM].optionalPar = new bool*[operators[OperatorTypes_SUM].enumAmount]{
 		new bool[operators[OperatorTypes_SUM].params[0]]{ false, false },
 			new bool[operators[OperatorTypes_SUM].params[1]]{ false, false },
 			new bool[operators[OperatorTypes_SUM].params[2]]{ false, false },
 			new bool[operators[OperatorTypes_SUM].params[3]]{ false, false },
 			new bool[operators[OperatorTypes_SUM].params[4]]{ false, false },
-			new bool[operators[OperatorTypes_SUM].params[4]]{ false, false }
+			new bool[operators[OperatorTypes_SUM].params[5]]{ false, false },
+			new bool[operators[OperatorTypes_SUM].params[6]]{ false, false }
 	};
-	operators[OperatorTypes_SUM].readParam = new unsigned char[operators[OperatorTypes_SUM].enumAmount]{0, 0, 0, 0, 0, 0};
-	operators[OperatorTypes_SUM].returns = new VarType[operators[OperatorTypes_SUM].enumAmount]{VarType_NUMBER, VarType_FLOAT, VarType_NUMBER, VarType_FLOAT, VarType_FLOAT, VarType_FLOAT};
-	operators[OperatorTypes_SUM].returnType = new ParamType[operators[OperatorTypes_SUM].enumAmount]{ParamType_CONST, ParamType_CONST, ParamType_VAR, ParamType_VAR, ParamType_VAR, ParamType_VAR};
-	operators[OperatorTypes_SUM].writeParam = new unsigned char[operators[OperatorTypes_SUM].enumAmount]{0, 0, 0, 0, 0, 0};
+	operators[OperatorTypes_SUM].readParam = new unsigned char[operators[OperatorTypes_SUM].enumAmount]{0, 0, 0, 0, 0, 0, 0};
+	operators[OperatorTypes_SUM].returns = new VarType[operators[OperatorTypes_SUM].enumAmount]{VarType_NUMBER, VarType_FLOAT, VarType_NUMBER, VarType_FLOAT, VarType_FLOAT, VarType_FLOAT, VarType_STRING };
+	operators[OperatorTypes_SUM].returnType = new ParamType[operators[OperatorTypes_SUM].enumAmount]{ParamType_CONST, ParamType_CONST, ParamType_VAR, ParamType_VAR, ParamType_VAR, ParamType_VAR, ParamType_VAR };
+	operators[OperatorTypes_SUM].writeParam = new unsigned char[operators[OperatorTypes_SUM].enumAmount]{0, 0, 0, 0, 0, 0, 0};
 	operators[OperatorTypes_SUM].priority = 3;
 	operators[OperatorTypes_SUM].shortHandsAmounts = 1;
 	operators[OperatorTypes_SUM].shortHands = new std::string[operators[OperatorTypes_SUM].shortHandsAmounts]; operators[OperatorTypes_SUM].shortHands[0] = "+";
 	operators[OperatorTypes_SUM].rightParams = new unsigned char[operators[OperatorTypes_SUM].shortHandsAmounts]{1};
 	operators[OperatorTypes_SUM].leftParams = new unsigned char[operators[OperatorTypes_SUM].shortHandsAmounts]{1};
 	operators[OperatorTypes_SUM].shortFlipParams = new bool[operators[OperatorTypes_SUM].shortHandsAmounts]{false};
-	operators[OperatorTypes_SUM].amountParOperators = new unsigned char[operators[OperatorTypes_SUM].enumAmount]{0, 0, 0, 0, 1, 1};
+	operators[OperatorTypes_SUM].amountParOperators = new unsigned char[operators[OperatorTypes_SUM].enumAmount]{0, 0, 0, 0, 1, 1, 0};
 	operators[OperatorTypes_SUM].parRepeatsMin = new unsigned char*[operators[OperatorTypes_SUM].enumAmount]{
 		new unsigned char[operators[OperatorTypes_SUM].params[0]]{0, 0},
 			new unsigned char[operators[OperatorTypes_SUM].params[1]]{0, 0},
 			new unsigned char[operators[OperatorTypes_SUM].params[2]]{0, 0},
 			new unsigned char[operators[OperatorTypes_SUM].params[3]]{0, 0},
 			new unsigned char[operators[OperatorTypes_SUM].params[4]]{0, 0},
-			new unsigned char[operators[OperatorTypes_SUM].params[5]]{0, 0}
+			new unsigned char[operators[OperatorTypes_SUM].params[5]]{0, 0},
+			new unsigned char[operators[OperatorTypes_SUM].params[6]]{ 0, 0 }
 	};
 	operators[OperatorTypes_SUM].parRepeatsMax = new unsigned char*[operators[OperatorTypes_SUM].enumAmount]{
 		new unsigned char[operators[OperatorTypes_SUM].params[0]]{0, 0},
@@ -2258,7 +2262,8 @@ void KubLingCompiler::setupArithmeticOps()
 			new unsigned char[operators[OperatorTypes_SUM].params[2]]{0, 0},
 			new unsigned char[operators[OperatorTypes_SUM].params[3]]{0, 0},
 			new unsigned char[operators[OperatorTypes_SUM].params[4]]{0, 0},
-			new unsigned char[operators[OperatorTypes_SUM].params[5]]{0, 0}
+			new unsigned char[operators[OperatorTypes_SUM].params[5]]{0, 0},
+			new unsigned char[operators[OperatorTypes_SUM].params[6]]{ 0, 0 }
 	};
 	operators[OperatorTypes_SUM].parOperators = new OperatorTypes*[operators[OperatorTypes_SUM].enumAmount]{
 		nullptr,
@@ -2266,7 +2271,8 @@ void KubLingCompiler::setupArithmeticOps()
 			nullptr,
 			nullptr,
 			new OperatorTypes[operators[OperatorTypes_SUM].amountParOperators[4]]{OperatorTypes_CAST},
-			new OperatorTypes[operators[OperatorTypes_SUM].amountParOperators[5]]{OperatorTypes_CAST}
+			new OperatorTypes[operators[OperatorTypes_SUM].amountParOperators[5]]{OperatorTypes_CAST},
+		nullptr
 	};
 	operators[OperatorTypes_SUM].parOperator = new unsigned char*[operators[OperatorTypes_SUM].enumAmount]{
 		nullptr,
@@ -2274,7 +2280,8 @@ void KubLingCompiler::setupArithmeticOps()
 			nullptr,
 			nullptr,
 			new unsigned char[operators[OperatorTypes_SUM].params[4]]{1, 0},
-			new unsigned char[operators[OperatorTypes_SUM].params[5]]{0, 1}
+			new unsigned char[operators[OperatorTypes_SUM].params[5]]{0, 1},
+			nullptr
 	};
 	operators[OperatorTypes_SUM].parOperatorAppend = new bool*[operators[OperatorTypes_SUM].enumAmount]{
 		new bool[operators[OperatorTypes_SUM].params[0]]{false, false},
@@ -2282,7 +2289,8 @@ void KubLingCompiler::setupArithmeticOps()
 			new bool[operators[OperatorTypes_SUM].params[2]]{false, false},
 			new bool[operators[OperatorTypes_SUM].params[3]]{false, false},
 			new bool[operators[OperatorTypes_SUM].params[4]]{false, false},
-			new bool[operators[OperatorTypes_SUM].params[5]]{false, false}
+			new bool[operators[OperatorTypes_SUM].params[5]]{false, false},
+			new bool[operators[OperatorTypes_SUM].params[6]]{ false, false }
 	};
 
 	operators[OperatorTypes_SUB].keyword = "sub";
@@ -2560,6 +2568,40 @@ void KubLingCompiler::setupArithmeticOps()
 			new bool[operators[OperatorTypes_DIV].params[3]]{false, false},
 			new bool[operators[OperatorTypes_DIV].params[4]]{false, false},
 			new bool[operators[OperatorTypes_DIV].params[5]]{false, false}
+	};
+
+	operators[OperatorTypes_MOD].keyword = "mod";
+	operators[OperatorTypes_MOD].enumAmount = 1;
+	operators[OperatorTypes_MOD].enums = new std::string[operators[OperatorTypes_MOD].enumAmount]; operators[OperatorTypes_MOD].enums[0] = ""; 
+	operators[OperatorTypes_MOD].byteCodes = new unsigned char[operators[OperatorTypes_MOD].enumAmount]{ bytecode_MODVAR };
+	operators[OperatorTypes_MOD].params = new unsigned char[operators[OperatorTypes_MOD].enumAmount]{ 2 };
+	operators[OperatorTypes_MOD].minParams = new unsigned char[operators[OperatorTypes_MOD].enumAmount]{ 2};
+	operators[OperatorTypes_MOD].paramsyntax = new VarType*[operators[OperatorTypes_MOD].enumAmount]{
+		new VarType[operators[OperatorTypes_MOD].params[0]]{ VarType_NUMBER, VarType_NUMBER } };
+	operators[OperatorTypes_MOD].paramTypes = new ParamType*[operators[OperatorTypes_MOD].enumAmount]{
+		new ParamType[operators[OperatorTypes_MOD].params[0]]{ ParamType_NA, ParamType_NA } };
+	operators[OperatorTypes_MOD].optionalPar = new bool*[operators[OperatorTypes_MOD].enumAmount]{
+		new bool[operators[OperatorTypes_MOD].params[0]]{ false, false }
+	};
+	operators[OperatorTypes_MOD].readParam = new unsigned char[operators[OperatorTypes_MOD].enumAmount]{ 0};
+	operators[OperatorTypes_MOD].returns = new VarType[operators[OperatorTypes_MOD].enumAmount]{ VarType_NUMBER};
+	operators[OperatorTypes_MOD].returnType = new ParamType[operators[OperatorTypes_MOD].enumAmount]{ ParamType_VAR};
+	operators[OperatorTypes_MOD].writeParam = new unsigned char[operators[OperatorTypes_MOD].enumAmount]{ 0 };
+	operators[OperatorTypes_MOD].priority = 4;
+	operators[OperatorTypes_MOD].shortHandsAmounts = 1;
+	operators[OperatorTypes_MOD].shortHands = new std::string[operators[OperatorTypes_MOD].shortHandsAmounts]; operators[OperatorTypes_MOD].shortHands[0] = "%";
+	operators[OperatorTypes_MOD].rightParams = new unsigned char[operators[OperatorTypes_MOD].shortHandsAmounts]{ 1 };
+	operators[OperatorTypes_MOD].leftParams = new unsigned char[operators[OperatorTypes_MOD].shortHandsAmounts]{ 1 };
+	operators[OperatorTypes_MOD].shortFlipParams = new bool[operators[OperatorTypes_MOD].shortHandsAmounts]{ false };
+	operators[OperatorTypes_MOD].amountParOperators = new unsigned char[operators[OperatorTypes_MOD].enumAmount]{ 0 };
+	operators[OperatorTypes_MOD].parRepeatsMin = new unsigned char*[operators[OperatorTypes_MOD].enumAmount]{
+		new unsigned char[operators[OperatorTypes_MOD].params[0]]{ 0, 0 }
+	};
+	operators[OperatorTypes_MOD].parRepeatsMax = new unsigned char*[operators[OperatorTypes_MOD].enumAmount]{
+		new unsigned char[operators[OperatorTypes_MOD].params[0]]{ 0, 0 }
+	};
+	operators[OperatorTypes_MOD].parOperatorAppend = new bool*[operators[OperatorTypes_MOD].enumAmount]{
+		new bool[operators[OperatorTypes_MOD].params[0]]{ false, false }
 	};
 }
 
