@@ -22,6 +22,8 @@ namespace Tasking
 			unsigned int lastTime;
 			unsigned int sumTime;
 
+			bool paused;
+
 		public:
 			TaskHandler(unsigned int maxClock);
 			void Init(CrossHandlers::CelestialSlicedList<Resources::BaseObject*>* gameObjects);

@@ -3293,9 +3293,9 @@ RunTimeError PauseGameOperator(rawCode* raw, unsigned int returnVar, unsigned ch
 	raw->code = new rawCode::line[raw->maxLines];
 
 	Message mess;
-	mess.destination = MessageSource_SYSTEM;
-	mess.type = MessageType_SYSTEM;
-	mess.mess = SystemMess_PAUSE;
+	mess.destination = MessageSource_TASKS;
+	mess.type = MessageType_TASKING;
+	mess.mess = TaskMess_PAUSECLOCK;
 	mess.returnParam = 0;
 	addMessTempStack(0, 1, 1, rtv, raw);
 	sendMessageOut(mess, rtv, raw);
@@ -3647,9 +3647,9 @@ RunTimeError ResumeGameOperator(rawCode* raw, unsigned int returnVar, unsigned c
 	raw->code = new rawCode::line[raw->maxLines];
 
 	Message mess;
-	mess.destination = MessageSource_SYSTEM;
-	mess.type = MessageType_SYSTEM;
-	mess.mess = SystemMess_PAUSE;
+	mess.destination = MessageSource_TASKS;
+	mess.type = MessageType_TASKING;
+	mess.mess = TaskMess_PAUSECLOCK;
 	mess.returnParam = 0;
 	addMessTempStack(0, 0, 1, rtv, raw);
 	sendMessageOut(mess, rtv, raw);

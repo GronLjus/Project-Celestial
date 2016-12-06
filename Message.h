@@ -74,7 +74,7 @@ namespace CrossHandlers
 	};
 
 	enum TaskMess{ TaskMess_ADDTASK, TaskMess_REMOVETASK,
-		TaskMess_SETTIME, TaskMess_NA};
+		TaskMess_SETTIME, TaskMess_PAUSECLOCK, TaskMess_NA};
 	struct Message
 	{
 
