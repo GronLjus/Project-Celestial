@@ -13,7 +13,9 @@ namespace Tasking
 			ITaskManager* subManager[Resources::TaskClass_NA];
 			CrossHandlers::CelestialSlicedList<Resources::BaseObject*>* gameObjects;
 
-			const unsigned int maxClock = 86400;
+			unsigned int diff;
+
+			unsigned int maxClock;
 			unsigned int clock;
 			unsigned int timeWarp;
 
@@ -21,13 +23,15 @@ namespace Tasking
 			unsigned int sumTime;
 
 		public:
-			TaskHandler();
+			TaskHandler(unsigned int maxClock);
 			void Init(CrossHandlers::CelestialSlicedList<Resources::BaseObject*>* gameObjects);
 
 			void Update(unsigned int time);
 			void UpdateMessages(unsigned int time);
 
 			unsigned int GetClock() const;
+
+			float GetClockDiff() const;
 
 			~TaskHandler();
 

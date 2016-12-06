@@ -13,7 +13,7 @@ namespace Resources
 	{
 
 	public: 
-		ResourceHandler(unsigned int bufferFlips);
+		ResourceHandler(unsigned int bufferFlips, unsigned int maxClock);
 		///<summary>Initializes The handler and its underobjects</summary>
 		///<param name='card'>[in]The device to load from</param>
 		void Init(Graphics::CardHandler* &card, TextContainer* outText, CelestialMath::vectorUI2 screen,unsigned int , unsigned int gameBoardGridSize, unsigned int maxInstances);
@@ -24,6 +24,8 @@ namespace Resources
 		~ResourceHandler();
 
 	private:
+		unsigned int maxClock;
+
 		void saveGameBoard(std::string path, unsigned int gameBoard);
 		unsigned int loadGameBoard(std::string path, unsigned int gameBoard, unsigned int time);
 		GameObject* loadGameObject(char* data, unsigned int &readBytes, CrossHandlers::Dictionary* translatedDictionary, GameBoard* board, unsigned int time);

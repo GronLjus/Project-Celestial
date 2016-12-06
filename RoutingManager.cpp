@@ -6,9 +6,13 @@ using namespace CrossHandlers;
 using namespace Resources;
 using namespace CelestialMath;
 
-RoutingManager::RoutingManager()
+RoutingManager::RoutingManager(unsigned int maxClock)
 {
 
+	this->maxClock = maxClock;
+	modClock = 0;
+	lastClock = 0;
+		 
 	gameObjects = nullptr;
 	roads = new CelestialSlicedList<Route*>(32, nullptr);
 	routeNodes = new CelestialSlicedList<RouteNodeObject*>(32, nullptr);
@@ -332,7 +336,7 @@ void RoutingManager::handleNearNode(GameTravelObject* obj, RouteNodeObject* curr
 	}
 }
 
-float RoutingManager::travelObject(GameTravelObject* obj, RouteNodeObject* currentNode, RouteNodeObject* goalNode, Vector3 dir, float distance, unsigned int time)
+float RoutingManager::travelObject(GameTravelObject* obj, RouteNodeObject* currentNode, RouteNodeObject* goalNode, Vector3 dir, float distance, float timeDiff)
 {
 
 	bool slowDown = obj->GetStatus() == TravelStatus_TRAVELING &&
@@ -341,8 +345,7 @@ float RoutingManager::travelObject(GameTravelObject* obj, RouteNodeObject* curre
 	float offset = offsetDist + obj->GetQueueLength() / 2;
 	distance -= !slowDown ? 0 : offset;
 	float fact = distance;
-	float timeFact = (float)(time - obj->GetLastTime()) / 1000.0f;
-	float spd = obj->GetSpeed() * timeFact;
+	float spd = obj->GetSpeed() * timeDiff;
 
 	//Object has a long way to go
 	if (distance >= spd)
@@ -358,7 +361,7 @@ float RoutingManager::travelObject(GameTravelObject* obj, RouteNodeObject* curre
 
 }
 
-void RoutingManager::handleTravel(GameTravelObject* obj, RouteNodeObject* currentNode, RouteNodeObject* goalNode, Vector3 dir, float distance, unsigned int time)
+void RoutingManager::handleTravel(GameTravelObject* obj, RouteNodeObject* currentNode, RouteNodeObject* goalNode, Vector3 dir, float distance, float timeDiff, unsigned int time)
 {
 
 	if (obj->GetStatus() == TravelStatus_QUEUEING)//The object is in a queue
@@ -382,7 +385,7 @@ void RoutingManager::handleTravel(GameTravelObject* obj, RouteNodeObject* curren
 		if (lastQ > CELESTIAL_EPSILON)
 		{
 
-			lastQ -= travelObject(obj, currentNode, goalNode, dir, lastQ, time);
+			lastQ -= travelObject(obj, currentNode, goalNode, dir, lastQ, timeDiff);
 			obj->SetLastQueue(lastQ);
 
 		}
@@ -390,7 +393,7 @@ void RoutingManager::handleTravel(GameTravelObject* obj, RouteNodeObject* curren
 	else
 	{
 
-		travelObject(obj, currentNode, goalNode, dir, distance, time);
+		travelObject(obj, currentNode, goalNode, dir, distance, timeDiff);
 
 	}
 
@@ -524,7 +527,7 @@ void RoutingManager::handleQueing(GameTravelObject* obj, unsigned int localId, R
 	}
 }
 
-bool RoutingManager::updateObject(GameTravelObject* obj, unsigned int time, unsigned int &scriptPlace)
+bool RoutingManager::updateObject(GameTravelObject* obj, unsigned int time, unsigned int &scriptPlace, float timeDiff)
 {
 
 	bool killNode = false;
@@ -577,7 +580,7 @@ bool RoutingManager::updateObject(GameTravelObject* obj, unsigned int time, unsi
 			if (distance > CELESTIAL_EPSILON)//The object has not arrived 
 			{
 
-				handleTravel(obj, nodeObject, goalObject, dir, distance, time);
+				handleTravel(obj, nodeObject, goalObject, dir, distance, timeDiff, time);
 
 			}
 			else//The object has arrived at a node
@@ -603,8 +606,17 @@ bool RoutingManager::updateObject(GameTravelObject* obj, unsigned int time, unsi
 
 }
 
-unsigned int* RoutingManager::Update(unsigned int time, unsigned int &scripts)
+unsigned int* RoutingManager::Update(unsigned int time, unsigned int &scripts, float timeDiff)
 {
+
+	if (lastClock > time)
+	{
+
+		modClock += maxClock;
+
+	}
+
+	time += modClock;
 
 	unsigned int scriptPlace = 0;
 	CelestialListNode<GameTravelObject*>* lastNode = nullptr;
@@ -614,7 +626,7 @@ unsigned int* RoutingManager::Update(unsigned int time, unsigned int &scripts)
 	{
 
 		GameTravelObject* obj = node->GetNodeObject();
-		bool killNode = updateObject(obj, time, scriptPlace);
+		bool killNode = updateObject(obj, time, scriptPlace, timeDiff);
 		
 
 		if (!killNode)
@@ -1284,6 +1296,8 @@ void RoutingManager::resetNodes()
 
 void RoutingManager::Travel(GameTravelObject* object, unsigned int goal, unsigned int time)
 {
+
+	time += modClock;
 
 	object->SetFinalGoalNode(goal);
 	object->SetStatus(TravelStatus_PRIMED);

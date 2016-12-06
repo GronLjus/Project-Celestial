@@ -3,11 +3,13 @@
 #include "SystemTaskHandler.h"
 #include "ClockTaskHandler.h"
 
+#include "GameBoard.h"
+
 using namespace Resources;
 using namespace Tasking;
 using namespace CrossHandlers;
 
-TaskHandler::TaskHandler() : IHandleMessages(200, MessageSource_TASKS)
+TaskHandler::TaskHandler(unsigned int maxClock) : IHandleMessages(200, MessageSource_TASKS)
 {
 
 	subManager[TaskClass_CLOCK] = new ClockTaskHandler();
@@ -15,6 +17,7 @@ TaskHandler::TaskHandler() : IHandleMessages(200, MessageSource_TASKS)
 
 	filter = MessageType_TASKING;
 
+	this->maxClock = maxClock;
 	clock = 0;
 	lastTime = 0;
 	sumTime = 0;
@@ -45,7 +48,7 @@ void TaskHandler::Init(CelestialSlicedList<BaseObject*>* gameObjects)
 void TaskHandler::Update(unsigned int time)
 {
 
-	unsigned int diff = time - lastTime;
+	diff = time - lastTime;
 	lastTime = time;
 	sumTime += diff;
 
@@ -91,10 +94,31 @@ void TaskHandler::UpdateMessages(unsigned int time)
 			//subManager[type]->RemoveTask(taskObj);
 
 		}
+		else if (currentMessage->mess == TaskMess_SETTIME)
+		{
+
+			clock = task % maxClock;
+
+			if (type != 0)
+			{
+
+				GameBoard* taskObj = (GameBoard*)gameObjects->GetValue(type);
+				taskObj->RefreshTravelingObjects(clock);
+
+			}
+		}
+
 
 		currentMessage = inQueue->PopMessage();
 
 	}
+}
+
+float TaskHandler::GetClockDiff() const
+{
+
+	return (float)diff / 1000.0f;
+
 }
 
 unsigned int TaskHandler::GetClock() const

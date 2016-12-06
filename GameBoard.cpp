@@ -5,7 +5,7 @@ using namespace Resources;
 using namespace Entities;
 using namespace CrossHandlers;
 
-GameBoard::GameBoard(unsigned int cells, CelMesh* gridObject, unsigned char maxFlips, unsigned int maxInstances) : ScriptableObject()
+GameBoard::GameBoard(unsigned int cells, CelMesh* gridObject, unsigned char maxFlips, unsigned int maxInstances, unsigned int maxClock) : ScriptableObject()
 {
 
 	this->cells = cells;
@@ -18,7 +18,7 @@ GameBoard::GameBoard(unsigned int cells, CelMesh* gridObject, unsigned char maxF
 	boardObject = nullptr;
 	boardNormal = Vector3(0.0f, 1.0f, 0.0f);
 	travelObjectsAmounts = 0;
-	routing = new RoutingManager();
+	routing = new RoutingManager(maxClock);
 
 }
 

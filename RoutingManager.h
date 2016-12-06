@@ -14,12 +14,12 @@ namespace Entities
 	{
 
 		public:
-			RoutingManager();
+			RoutingManager(unsigned int maxClock);
 			void Init(CrossHandlers::CelestialSlicedList<Resources::BaseObject*>* gameObjects);
 			void AddNode(CelestialMath::Vector3 position, float width, unsigned int id);
 			unsigned int AddNode(CelestialMath::Vector3 position, unsigned int* objects, unsigned int amounts);
 			void HandleNode(unsigned int nodeId, unsigned int* objects, unsigned int amounts);
-			unsigned int* Update(unsigned int time, unsigned int &scripts);
+			unsigned int* Update(unsigned int time, unsigned int &scripts, float timeDiff);
 			RouteNodeObject* GetNode(unsigned int id) const;
 			void Travel(Resources::GameTravelObject* object, unsigned int goal, unsigned int time);
 			void Spawn(Resources::GameTravelObject* object, unsigned int cell);
@@ -35,6 +35,10 @@ namespace Entities
 		private:
 			enum objNode{ objNode_ON, objNode_ABOVE, objNode_BELOW, objNode_NA};
 
+			unsigned int maxClock;
+			unsigned int lastClock;
+			unsigned int modClock;
+
 			CrossHandlers::CelestialSlicedList<Resources::BaseObject*>* gameObjects;
 			CrossHandlers::CelestialList<Resources::GameTravelObject*>* travelObjects;
 			CrossHandlers::CelestialSlicedList<RouteNodeObject*>* routeNodes;
@@ -42,13 +46,13 @@ namespace Entities
 
 			RouteNodeObject* getPreExistantNode(CelestialMath::Vector3 position, unsigned int* objects, unsigned int amounts) const;
 
-			float travelObject(Resources::GameTravelObject* obj, RouteNodeObject* currentNode, RouteNodeObject* goalNode, CelestialMath::Vector3 dir, float distSqr, unsigned int time);
+			float travelObject(Resources::GameTravelObject* obj, RouteNodeObject* currentNode, RouteNodeObject* goalNode, CelestialMath::Vector3 dir, float distSqr, float timeDiff);
 			
 			void handleNearNode(Resources::GameTravelObject* obj, RouteNodeObject* currentNode, RouteNodeObject* goalNode, unsigned int time);
 			bool handleNodeArrival(Resources::GameTravelObject* obj, RouteNodeObject* currentNode, RouteNodeObject* goalNode);
 			void handlePrimedObject(Resources::GameTravelObject* obj);
 			void handleQueing(Resources::GameTravelObject* obj, unsigned int localId, Route* route, float distSqr, unsigned int time);
-			void handleTravel(Resources::GameTravelObject* obj, RouteNodeObject* currentNode, RouteNodeObject* goalNode, CelestialMath::Vector3 dir, float distSqr, unsigned int time);
+			void handleTravel(Resources::GameTravelObject* obj, RouteNodeObject* currentNode, RouteNodeObject* goalNode, CelestialMath::Vector3 dir, float distSqr, float timeDiff, unsigned int time);
 
 			void handleObjectNode(RouteNodeObject* preExist, unsigned int* objects, unsigned int amounts);
 
@@ -58,7 +62,7 @@ namespace Entities
 			void handleSplit(RouteNodeObject* intersect, RouteNodeObject* lower, RouteNodeObject* upper);
 			objNode shouldIntersect(RouteNodeObject* intersect, RouteNodeObject* from, RouteNodeObject* to, Resources::GameTravelObject* obj);
 
-			bool updateObject(Resources::GameTravelObject* obj, unsigned int time, unsigned int &scriptPlace);
+			bool updateObject(Resources::GameTravelObject* obj, unsigned int time, unsigned int &scriptPlace, float timeDiff);
 
 			void resetNodes();
 

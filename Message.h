@@ -73,7 +73,8 @@ namespace CrossHandlers
 		ObjectMess_NA
 	};
 
-	enum TaskMess{ TaskMess_ADDTASK, TaskMess_REMOVETASK, TaskMess_NA};
+	enum TaskMess{ TaskMess_ADDTASK, TaskMess_REMOVETASK,
+		TaskMess_SETTIME, TaskMess_NA};
 	struct Message
 	{
 

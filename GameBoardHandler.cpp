@@ -138,7 +138,7 @@ void  GameBoardHandler::handleInput(CrossHandlers::Message* currentMessage, unsi
 	}
 }
 
-void GameBoardHandler::UpdateMessages(unsigned int time)
+void GameBoardHandler::UpdateMessages(unsigned int time, unsigned int clock)
 {
 
 	Message* currentMessage = inQueue->PopMessage();
@@ -364,7 +364,7 @@ void GameBoardHandler::UpdateMessages(unsigned int time)
 			if (param2 > 0)
 			{
 
-				routing->Travel((GameTravelObject*)gameObjects->GetValue(param1), param2-1, time);
+				routing->Travel((GameTravelObject*)gameObjects->GetValue(param1), param2-1, clock);
 
 			}
 		}
@@ -715,12 +715,12 @@ Vector3 GameBoardHandler::handleTracked(unsigned int time)
 
 }
 
-void GameBoardHandler::Update(unsigned int time)
+void GameBoardHandler::Update(unsigned int time, unsigned int clock, float timeDiff)
 {
 
 	mH->Update(time);
 
-	UpdateMessages(time);
+	UpdateMessages(time, clock);
 
 	if (localGameBoard != nullptr)
 	{
@@ -737,7 +737,7 @@ void GameBoardHandler::Update(unsigned int time)
 
 		lastTime = time;
 		unsigned int scripts = 0;
-		unsigned int* scriptsToRun = routing->Update(time, scripts);
+		unsigned int* scriptsToRun = routing->Update(clock, scripts, timeDiff);
 
 		for (unsigned int i = 0; i < scripts; i++)
 		{

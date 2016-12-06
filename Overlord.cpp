@@ -32,16 +32,17 @@ unsigned int lTimeLast = 0;
 Overlord::Overlord(void)
 {
 
+	unsigned int maxClock = 86400;
 	unsigned int flip = 2;
 	die = false;
 	okToDraw = false;
 	gBH = new GameBoardHandler();
 	gH = new GraphicHandler(flip);
-	rH = new ResourceHandler(flip);
+	rH = new ResourceHandler(flip, maxClock);
 	iH = new InputHandler();
 	klH = new KubLingHandler();
 	guiH = new GUIEntityHandler();
-	tH = new TaskHandler();
+	tH = new TaskHandler(maxClock);
 
 	messageHandlers = new IHandleMessages*[MessageSource_NA];
 	messageHandlers[MessageSource_RESOURCES] = rH;
@@ -397,7 +398,7 @@ void Overlord::Update(unsigned int time)
 		iH->Update(time);
 		updateMessages(MessageSource_INPUT);
 		unsigned int start1 = clock();
-		gBH->UpdateMessages(time);
+		gBH->UpdateMessages(time, tH->GetClock());
 		updateMessages(MessageSource_ENTITIES);
 		tH->UpdateMessages(time);
 		tH->Update(time);
@@ -409,7 +410,7 @@ void Overlord::Update(unsigned int time)
 		rH->Update(time);
 		updateMessages(MessageSource_RESOURCES);
 		unsigned int start4 = clock();
-		gBH->Update(time);
+		gBH->Update(time, tH->GetClock(), tH->GetClockDiff());
 		updateMessages(MessageSource_ENTITIES);
 		unsigned int start5 = clock();
 		guiH->Update(time);

@@ -10,8 +10,10 @@ using namespace Resources;
 using namespace CrossHandlers;
 using namespace CelestialMath;
 
-ResourceHandler::ResourceHandler(unsigned int bufferFlips) : IHandleMessages(200, MessageSource_RESOURCES)
+ResourceHandler::ResourceHandler(unsigned int bufferFlips, unsigned int maxClock) : IHandleMessages(200, MessageSource_RESOURCES)
 {
+
+	this->maxClock = maxClock;
 
 	loader = new ResourceLoader();
 	gameObjects = new CelestialSlicedList<BaseObject*>(32, nullptr);
@@ -142,7 +144,7 @@ void ResourceHandler::handleMess(Message* currentMessage, unsigned int time)
 	{
 
 		unsigned int param1 = currentMessage->params[0] | ((int)currentMessage->params[1] << 8) | ((int)currentMessage->params[2] << 16) | ((int)currentMessage->params[3] << 24);
-		GameBoard* bo = new GameBoard(param1, gameBoardGridMesh, bufferFlips, maxInstances);
+		GameBoard* bo = new GameBoard(param1, gameBoardGridMesh, bufferFlips, maxInstances, maxClock);
 		bo->SetId(gameObjects->Add(bo));
 		outId = bo->GetId();
 
@@ -729,18 +731,20 @@ unsigned int ResourceHandler::loadGameBoard(std::string path, unsigned int gameB
 
 	}
 
-	localBoard->RefreshTravelingObjects(time);
 	delete translatedDict;
 	delete saveDic;
 
 	delete[] data;
 	unsigned int passedTime = clock() - startTime;
 
-	memcpy(messageBuffer[this->currentMessage].params, &passedTime, sizeof(passedTime));
-	messageBuffer[this->currentMessage].timeSent = clock();
-	messageBuffer[this->currentMessage].destination = MessageSource_SYSTEM;
-	messageBuffer[this->currentMessage].type = MessageType_SYSTEM;
-	messageBuffer[this->currentMessage].mess = SystemMess_SKIP;
+	unsigned char tempBuff[]{ startTime >> 0, startTime >> 8, startTime >> 16, startTime >> 24,
+		localBoard->GetId() >> 0, localBoard->GetId() >> 8, localBoard->GetId() >> 16, localBoard->GetId() >> 24
+	};
+	messageBuffer[this->currentMessage].SetParams(tempBuff, 0, 8);
+	messageBuffer[this->currentMessage].timeSent = time;
+	messageBuffer[this->currentMessage].destination = MessageSource_TASKS;
+	messageBuffer[this->currentMessage].type = MessageType_TASKING;
+	messageBuffer[this->currentMessage].mess = TaskMess_SETTIME;
 	messageBuffer[this->currentMessage].read = false;
 	outQueue->PushMessage(&messageBuffer[this->currentMessage]);
 	this->currentMessage = (this->currentMessage + 1) % outMessages;
