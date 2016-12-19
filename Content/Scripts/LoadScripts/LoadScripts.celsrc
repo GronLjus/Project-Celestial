@@ -1,2 +1,1 @@
 export 'nodeArr' load script 'Content\Scripts\ObjectScripts\NodeArrive'
-export 'ghostClick' load script  'Content\Scripts\ToolBarScripts\RunwayGhostClick'

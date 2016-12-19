@@ -1,7 +1,6 @@
 $
 {
 
-	endTile = import 'endTile'
 	hcktrck = 0
 	hckX = 0.0
 	hckY = 0.0
@@ -23,27 +22,17 @@ if hcktrck : 0
 else
 {
 
-	endObj = load object endTile 0
-	endObj2 = load object endTile 0
-	size endObj 0.8 0.2 0.8
-	size endObj2 0.8 0.2 0.8
 	obj = load copyobject ?0
 
 	show cursor
 
-	scale obj 0.0 0.0 -1.8
-	glue obj endObj 0.0 0.0 1.0
-	glue obj endObj2 0.0 0.0 -1.0
-
 	add obj
-	add endObj
-	add endObj2
 
 	clear tracking
 	hcktrck = 0
 	
-	r1 = add routegoal hckX hckY hckZ 1
-	r2 = add routegoal ?f0 ?f1 ?f2 1
+	r1 = add routegoal hckX hckY hckZ 3
+	r2 = add routegoal ?f0 ?f1 ?f2 3
 
 	split r1 1.0
 	split r2 1.0

@@ -27,6 +27,9 @@ PositionableObject::PositionableObject(Vector3 position, Vector3 scale) : Script
 	childId = 0;
 	serial = 40;
 
+	absOffset = Vector3(0, 0, 0);
+	absScale = scale;
+
 }
 
 char* PositionableObject::Unserialize(char* data)
@@ -186,6 +189,38 @@ Vector3 PositionableObject::getPlane(Vector3 point)
 
 }
 
+Vector3 PositionableObject::GetObjectCenterLine(Vector3 startPoint, Vector3 endPoint, float offSetFromEdge)
+{
+
+	if (offSetFromEdge > (scale.x / 2))
+	{
+
+		return GetObjectCenterLine(startPoint, startPoint - endPoint);
+
+	}
+
+	Vector3 newPoint = GetObjectCenterLine(startPoint);
+
+	Vector3 plane = getPlane(endPoint);
+	float normPlane = sqrt(VectorDot(plane));
+
+	if (abs(normPlane) <= CELESTIAL_EPSILON)
+	{
+
+		normPlane = 1;
+		plane.x = -1;
+
+	}
+
+	plane /= -normPlane;
+
+	float newScal = (scale.x / 2) - offSetFromEdge;
+	Vector3 toEdge = plane * newScal;
+
+	return newPoint + toEdge;
+
+}
+
 Vector3 PositionableObject::GetObjectCenterLine(Vector3 startPoint, Vector3 direction)
 {
 
@@ -197,7 +232,7 @@ Vector3 PositionableObject::GetObjectCenterLine(Vector3 startPoint, Vector3 dire
 	if (abs(vn) <= CELESTIAL_EPSILON)
 	{
 
-		return startPoint;
+		return capLine(startPoint);
 
 	}
 
@@ -231,15 +266,23 @@ Vector3 PositionableObject::GetObjectCenterLine(Vector3 point3)
 Vector3 PositionableObject::capLine(Vector3 point)
 {
 
+	Vector3 scl = subObjectAmount > 0 ? absScale : scale;
+
 	Vector3 centerLine = point - (position + absOffset);
 	float distSqr = VectorDot(centerLine, centerLine);
 
-	if (distSqr > (absScale.z / 2)*(absScale.z / 2))
+	if (distSqr > (scl.z / 2)*(scl.z / 2))
 	{
 
+		float dist = (scl.z / 2);
+		dist -= 0.5f;
+		dist = floor(dist);
+		dist += 0.5f;
+
+		Vector3 halfDist = (direction * dist);
 		return VectorDot(centerLine, direction) > 0 ?
-			(position + absOffset) + (direction * (absScale.z / 2)) :
-			(position + absOffset) - (direction * (absScale.z / 2));
+			(position + absOffset) + halfDist :
+			(position + absOffset) - halfDist;
 
 	}
 

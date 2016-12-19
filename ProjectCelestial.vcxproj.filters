@@ -1286,13 +1286,7 @@
     <None Include="Content\Scripts\LoadScripts\LoadGameBoard.celsrc">
       <Filter>Resource Files\Content\Scripts\LoadScripts</Filter>
     </None>
-    <None Include="Content\Scripts\ToolBarScripts\Button1Click.celsrc">
-      <Filter>Resource Files\Content\Scripts\ToolBarScripts</Filter>
-    </None>
     <None Include="Content\Scripts\ToolBarScripts\Button1UpDown.celsrc">
-      <Filter>Resource Files\Content\Scripts\ToolBarScripts</Filter>
-    </None>
-    <None Include="Content\Scripts\ToolBarScripts\Button2Click.celsrc">
       <Filter>Resource Files\Content\Scripts\ToolBarScripts</Filter>
     </None>
     <None Include="Content\EndTile.clmsh">
@@ -1310,13 +1304,7 @@
     <None Include="Content\Scripts\LoadScripts\LoadScripts.celsrc">
       <Filter>Resource Files\Content\Scripts\LoadScripts</Filter>
     </None>
-    <None Include="Content\Scripts\ToolBarScripts\Button3Click.celsrc">
-      <Filter>Resource Files\Content\Scripts\ToolBarScripts</Filter>
-    </None>
     <None Include="saves\save1.clsv" />
-    <None Include="Content\Scripts\ToolBarScripts\Button4Click.celsrc">
-      <Filter>Resource Files\Content\Scripts\ToolBarScripts</Filter>
-    </None>
     <None Include="saves\save2.clsv" />
     <None Include="saves\save3.clsv" />
     <None Include="Content\Scripts\ToolBarScripts\PauseButtonClick.celsrc">
@@ -1343,6 +1331,24 @@
     <None Include="Content\Scripts\TaskScripts\ClockTest.celsrc">
       <Filter>Resource Files\Content\Scripts\TaskScripts</Filter>
     </None>
+    <None Include="Content\Scripts\ToolBarScripts\TaxiWayClick.celsrc">
+      <Filter>Resource Files\Content\Scripts\ToolBarScripts</Filter>
+    </None>
+    <None Include="Content\Scripts\ToolBarScripts\LoadClick.celsrc">
+      <Filter>Resource Files\Content\Scripts\ToolBarScripts</Filter>
+    </None>
+    <None Include="Content\Scripts\ToolBarScripts\SaveClick.celsrc">
+      <Filter>Resource Files\Content\Scripts\ToolBarScripts</Filter>
+    </None>
+    <None Include="Content\Scripts\ToolBarScripts\SpawnClick.celsrc">
+      <Filter>Resource Files\Content\Scripts\ToolBarScripts</Filter>
+    </None>
+    <None Include="Content\Scripts\ToolBarScripts\RunWayClick.celsrc">
+      <Filter>Resource Files\Content\Scripts\ToolBarScripts</Filter>
+    </None>
+    <None Include="Content\Scripts\ToolBarScripts\RunWayGhostClick.celsrc">
+      <Filter>Resource Files\Content\Scripts\ToolBarScripts</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Project Celestial.rc">
@@ -1355,7 +1361,7 @@
     </Object>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="Content\Scripts\ToolBarScripts\RunwayGhostClick.celsrc">
+    <Text Include="Content\Scripts\ToolBarScripts\TaxiWayGhostClick.celsrc">
       <Filter>Resource Files\Content\Scripts\ToolBarScripts</Filter>
     </Text>
   </ItemGroup>

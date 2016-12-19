@@ -20,6 +20,7 @@ namespace Resources
 			void SetObjectParent(PositionableObject* parent, unsigned int childId, CelestialMath::Vector3 relativePosition);
 			void Move(float distance);
 
+			CelestialMath::Vector3 GetObjectCenterLine(CelestialMath::Vector3 startPoint, CelestialMath::Vector3 endPoint, float offSetFromEdge);
 			CelestialMath::Vector3 GetObjectCenterLine(CelestialMath::Vector3 startPoint, CelestialMath::Vector3 direction);
 			CelestialMath::Vector3 GetObjectCenterLine(CelestialMath::Vector3 startPoint);
 

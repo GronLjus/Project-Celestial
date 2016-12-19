@@ -531,9 +531,7 @@ PositionableObject* GameBoardHandler::snapMouse(unsigned int amounts, unsigned i
 	{
 
 		PositionableObject* obj = (PositionableObject*)gameObjects->GetValue(collidedObjects[i]);
-		Vector3 newPos = lastObj == nullptr ?
-			obj->GetObjectCenterLine(worldMouse) :
-			obj->GetObjectCenterLine(worldMouse, lastObj->GetDirection());
+		Vector3 newPos = obj->GetObjectCenterLine(worldMouse, worldMouse, trackedObject->GetScale().x / 2);
 
 		worldMouse.x = newPos.x;
 		worldMouse.y = newPos.y;
@@ -637,8 +635,9 @@ Vector3 GameBoardHandler::handleTracked(unsigned int time)
 					{
 					
 						PositionableObject* obj = (PositionableObject*)gameObjects->GetValue(collidedObjects[i]);
+						float widthDiff = trackedObject->GetScale().x - obj->GetScale().x;
 
-						Vector3 newPos = obj->GetObjectCenterLine(worldMouse, distVect1);
+						Vector3 newPos = obj->GetObjectCenterLine(worldMouse, hookPos, trackedObject->GetScale().x / 2);
 						Vector3 distVect = newPos - hookPos;
 						float dist = VectorDot(distVect, distVect);
 
@@ -724,7 +723,6 @@ void GameBoardHandler::Update(unsigned int time, unsigned int clock, float timeD
 
 	if (localGameBoard != nullptr)
 	{
-
 
 		localGameBoard->FillInstanceBuffer(trackedObject);
 

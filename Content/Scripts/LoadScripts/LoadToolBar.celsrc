@@ -22,10 +22,10 @@ buttonTexts = array num nrButtons
 buttonLabels = array string nrButtons
 buttonScripts = array num nrButtons
 
-buttonScripts[0] = load script 'Content\Scripts\ToolBarScripts\Button1Click'
-buttonScripts[1] = load script 'Content\Scripts\ToolBarScripts\Button2Click'
-buttonScripts[2] = load script 'Content\Scripts\ToolBarScripts\Button3Click'
-buttonScripts[3] = load script 'Content\Scripts\ToolBarScripts\Button4Click'
+buttonScripts[0] = load script 'Content\Scripts\ToolBarScripts\SpawnClick'
+buttonScripts[1] = load script 'Content\Scripts\ToolBarScripts\TaxiWayClick'
+buttonScripts[2] = load script 'Content\Scripts\ToolBarScripts\RunWayClick'
+buttonScripts[3] = load script 'Content\Scripts\ToolBarScripts\SaveClick'
 buttonScripts[4] = load script 'Content\Scripts\ToolBarScripts\PauseButtonClick'
 
 timeScript = load script 'Content\Scripts\TaskScripts\ClockUpdater'
@@ -33,9 +33,9 @@ button1UD = load script 'Content\Scripts\ToolBarScripts\Button1UpDown'
 
 timeBox = load textbox
 
-buttonLabels[0] = 'Button1'
-buttonLabels[1] = 'Button2'
-buttonLabels[2] = 'Load'
+buttonLabels[0] = 'Spawn'
+buttonLabels[1] = 'Taxiway'
+buttonLabels[2] = 'Runway'
 buttonLabels[3] = 'Save'
 buttonLabels[4] = 'Pause'
 
