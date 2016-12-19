@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "TextContainer.h"
 
 using namespace std;

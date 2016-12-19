@@ -266,7 +266,7 @@ void ResourceHandler::handleMess(Message* currentMessage, unsigned int time)
 		{
 
 			KubLingRaw* raw = (KubLingRaw*)gameObjects->GetValue(rawCode);
-			KubLingLabel label = raw->GetLabel(stringParam);
+			KubLingLabelObj label = raw->GetLabelObj(stringParam);
 			KubLingLabel* point = new KubLingLabel(label);
 
 			point->SetId(gameObjects->Add(point));

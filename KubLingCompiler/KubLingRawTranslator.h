@@ -1,6 +1,6 @@
 #pragma once
 #include "KubLingCompiled.h"
-#include "KubLingRaw.h"
+#include "KubLingRawObj.h"
 #include "CelestialStack.h"
 #include "MemoryPool.h"
 

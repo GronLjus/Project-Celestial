@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "KubLingCompiled.h"
 
 using namespace Resources;

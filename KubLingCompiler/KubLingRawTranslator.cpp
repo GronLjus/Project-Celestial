@@ -1,7 +1,8 @@
-#include "stdafx.h"
 #include "KubLingRawTranslator.h"
-#include "GUIObject.h"
-#include "TaskObject.h"
+#include "Message.h"
+#include "GUIEnums.h"
+#include "TaskEnums.h"
+#include <cmath>
 
 using namespace Logic;
 using namespace Resources;
@@ -4036,7 +4037,7 @@ RunTimeError SetConstValOperator(rawCode* raw,unsigned int returnVar, unsigned c
 	while(bytes > 0)
 	{
 
-		unsigned int bytesToRead = min(bytes, 4);
+		unsigned int bytesToRead = fmin(bytes, 4);
 		//Save 4 bytes to the stack adr in a1
 		line.code = opcode_SAVE;
 		line.r1 = 0;

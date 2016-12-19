@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "KubLingLexer.h"
 #include "CelestialDoubleList.h"
 

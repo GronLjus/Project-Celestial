@@ -1,13 +1,12 @@
 #pragma once
-#include "BaseObject.h"
 #include "RunTimeOperations.h"
 #include "CelestialStack.h"
+#include <string>
 
 namespace Resources
 {
 
-	///<summary>The class contains the bytecode of the script</summary>
-	class KubLingCompiled : public BaseObject
+	class KubLingCompiled
 	{
 	public:
 
@@ -83,7 +82,6 @@ namespace Resources
 			int maxCodeSize;
 			///<summary>The scripts offset</summary>
 			int offset;
-			virtual void Update(CrossHandlers::Message* mess){}
 			unsigned int* systemParams;
 			unsigned int* paramAdrDic;
 			unsigned int* stringParamAdrDic;

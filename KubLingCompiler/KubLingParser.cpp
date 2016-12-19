@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "KubLingParser.h"
 
 using namespace Logic;

@@ -9,7 +9,7 @@ namespace Logic
 
 		private:
 
-			Resources::KubLingLabel* labels;
+			Resources::KubLingLabelObj* labels;
 			unsigned int totalLabels;
 			unsigned int maxLabels;
 
@@ -48,7 +48,7 @@ namespace Logic
 		public:
 			KubLingRawGenerator(unsigned int maxStack);
 
-			Resources::KubLingRaw* Assemble(
+			Resources::KubLingRawObj* Assemble(
 				Resources::KubLingCompiled** byteCodes,
 				unsigned int compiled);
 

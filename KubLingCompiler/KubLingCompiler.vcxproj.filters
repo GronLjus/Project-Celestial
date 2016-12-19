@@ -1,0 +1,135 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Header Files\Compiler">
+      <UniqueIdentifier>{5f763c29-9fbe-4ecb-b544-65696cc8573c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Compiler\FrontEnd">
+      <UniqueIdentifier>{5c8a77ef-263d-4820-a138-4e4f8c60da2b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Compiler\MiddleEnd">
+      <UniqueIdentifier>{4a0ce2c6-ecf5-4182-9d35-0ca3cacdbb5f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Compiler\BackEnd">
+      <UniqueIdentifier>{63239337-5ff2-4c6b-9d2b-cdb7f70c8f52}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\KeyWords">
+      <UniqueIdentifier>{2fb803e0-1417-4fba-be83-54b4a1485394}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Objects">
+      <UniqueIdentifier>{07c3ed1f-2ea3-4b5d-b58e-3bccb50c7cde}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Compiler">
+      <UniqueIdentifier>{ff6b6fb4-a17d-4a03-bdb9-f223f642a1ab}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Compiler\FrontEnd">
+      <UniqueIdentifier>{4740cf49-33f1-44a1-87f1-6fd03257d4ad}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Compiler\MiddleEnd">
+      <UniqueIdentifier>{d85919bd-525d-4764-aa89-991db9d1d750}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Compiler\BackEnd">
+      <UniqueIdentifier>{b2b66a09-2fbe-4032-8e66-40c9ea1f9950}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Objects">
+      <UniqueIdentifier>{452fe4e9-abbb-42c3-98f3-466633ee4942}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="ReadMe.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="KubLingRawGenerator.h">
+      <Filter>Header Files\Compiler\BackEnd</Filter>
+    </ClInclude>
+    <ClInclude Include="KubLingRawTranslator.h">
+      <Filter>Header Files\Compiler\BackEnd</Filter>
+    </ClInclude>
+    <ClInclude Include="MemoryPool.h">
+      <Filter>Header Files\Compiler\BackEnd</Filter>
+    </ClInclude>
+    <ClInclude Include="KubLingAnalyzer.h">
+      <Filter>Header Files\Compiler\FrontEnd</Filter>
+    </ClInclude>
+    <ClInclude Include="KubLingLexer.h">
+      <Filter>Header Files\Compiler\FrontEnd</Filter>
+    </ClInclude>
+    <ClInclude Include="KubLingParser.h">
+      <Filter>Header Files\Compiler\FrontEnd</Filter>
+    </ClInclude>
+    <ClInclude Include="KubLingCodeGenerator.h">
+      <Filter>Header Files\Compiler\MiddleEnd</Filter>
+    </ClInclude>
+    <ClInclude Include="KubLingCompiler.h">
+      <Filter>Header Files\Compiler\MiddleEnd</Filter>
+    </ClInclude>
+    <ClInclude Include="Keyword.h">
+      <Filter>Header Files\KeyWords</Filter>
+    </ClInclude>
+    <ClInclude Include="RunTimeOperations.h">
+      <Filter>Header Files\KeyWords</Filter>
+    </ClInclude>
+    <ClInclude Include="KubLingCompiled.h">
+      <Filter>Header Files\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="KubLingLabelObj.h">
+      <Filter>Header Files\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="KubLingRawObj.h">
+      <Filter>Header Files\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="KubLingSource.h">
+      <Filter>Header Files\Objects</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="KubLingRawGenerator.cpp">
+      <Filter>Source Files\Compiler\BackEnd</Filter>
+    </ClCompile>
+    <ClCompile Include="KubLingRawTranslator.cpp">
+      <Filter>Source Files\Compiler\BackEnd</Filter>
+    </ClCompile>
+    <ClCompile Include="MemoryPool.cpp">
+      <Filter>Source Files\Compiler\BackEnd</Filter>
+    </ClCompile>
+    <ClCompile Include="KubLingAnalyzer.cpp">
+      <Filter>Source Files\Compiler\FrontEnd</Filter>
+    </ClCompile>
+    <ClCompile Include="KubLingLexer.cpp">
+      <Filter>Source Files\Compiler\FrontEnd</Filter>
+    </ClCompile>
+    <ClCompile Include="KubLingParser.cpp">
+      <Filter>Source Files\Compiler\FrontEnd</Filter>
+    </ClCompile>
+    <ClCompile Include="KubLingCodeGenerator.cpp">
+      <Filter>Source Files\Compiler\MiddleEnd</Filter>
+    </ClCompile>
+    <ClCompile Include="KubLingCompiler.cpp">
+      <Filter>Source Files\Compiler\MiddleEnd</Filter>
+    </ClCompile>
+    <ClCompile Include="KubLingCompiled.cpp">
+      <Filter>Source Files\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="KubLingLabelObj.cpp">
+      <Filter>Source Files\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="KubLingRawObj.cpp">
+      <Filter>Source Files\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="KubLingSource.cpp">
+      <Filter>Source Files\Objects</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

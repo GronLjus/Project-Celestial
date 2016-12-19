@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
@@ -22,6 +22,7 @@
     <ProjectGuid>{73A00D04-2F56-4EE9-8F39-41AA90C75B6E}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>ProjectCelestial</RootNamespace>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -34,20 +35,20 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v120</PlatformToolset>
+    <PlatformToolset>v140</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v120</PlatformToolset>
+    <PlatformToolset>v140</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v120</PlatformToolset>
+    <PlatformToolset>v140</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -98,6 +99,7 @@
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <MultiProcessorCompilation>false</MultiProcessorCompilation>
       <ShowIncludes>false</ShowIncludes>
+      <AdditionalIncludeDirectories>.\KubLingCompiler;.\CommonLib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -169,32 +171,17 @@
     <ClInclude Include="BufferPoints.h" />
     <ClInclude Include="CameraFrame.h" />
     <ClInclude Include="CameraObject.h" />
-    <ClInclude Include="CelestialDoubleList.h" />
-    <ClInclude Include="CelestialDoubleListNode.h" />
     <ClInclude Include="CelestialMath.h" />
     <ClInclude Include="CelestialMatrix.h" />
-    <ClInclude Include="CelestialSlicedList.h" />
-    <ClInclude Include="CelestialStack.h" />
-    <ClInclude Include="CelestialTree.h" />
-    <ClInclude Include="CelestialTreeNode.h" />
     <ClInclude Include="CelMesh.h" />
     <ClInclude Include="ClockTaskHandler.h" />
     <ClInclude Include="HeapMemContainer.h" />
     <ClInclude Include="ITaskManager.h" />
-    <ClInclude Include="KubLingAnalyzer.h" />
     <ClInclude Include="KubLingBinLoader.h" />
-    <ClInclude Include="KubLingCodeGenerator.h" />
-    <ClInclude Include="KubLingCompiled.h" />
-    <ClInclude Include="KubLingCompiler.h" />
     <ClInclude Include="KubLingLabel.h" />
-    <ClInclude Include="KubLingLexer.h" />
-    <ClInclude Include="KubLingParser.h" />
     <ClInclude Include="KubLingRaw.h" />
-    <ClInclude Include="KubLingRawGenerator.h" />
-    <ClInclude Include="KubLingRawTranslator.h" />
     <ClInclude Include="KubLingRuntime.h" />
     <ClInclude Include="KubLingMachineHandler.h" />
-    <ClInclude Include="KubLingSource.h" />
     <ClInclude Include="CLMSHFileLoader.h" />
     <ClInclude Include="CLSVLoader.h" />
     <ClInclude Include="ColourLoader.h" />
@@ -230,7 +217,6 @@
     <ClInclude Include="ImageResourceObject.h" />
     <ClInclude Include="KeyCodes.h" />
     <ClInclude Include="KeyTranslation.h" />
-    <ClInclude Include="Keyword.h" />
     <ClInclude Include="Frustum.h" />
     <ClInclude Include="GraphicCodes.h" />
     <ClInclude Include="GraphicHandler.h" />
@@ -272,7 +258,6 @@
     <ClInclude Include="KubLingMachine.h" />
     <ClInclude Include="LogicHeader.h" />
     <ClInclude Include="CelestialMathHeader.h" />
-    <ClInclude Include="MemoryPool.h" />
     <ClInclude Include="MessageQueue.h" />
     <ClInclude Include="MouseHandler.h" />
     <ClInclude Include="ObjectTree.h" />
@@ -283,7 +268,6 @@
     <ClInclude Include="Route.h" />
     <ClInclude Include="RouteNodeObject.h" />
     <ClInclude Include="RoutingManager.h" />
-    <ClInclude Include="RunTimeOperations.h" />
     <ClInclude Include="SaveObject.h" />
     <ClInclude Include="ScreenTarget.h" />
     <ClInclude Include="ScriptableObject.h" />
@@ -293,10 +277,7 @@
     <ClInclude Include="DrawScene.h" />
     <ClInclude Include="LogicScene.h" />
     <ClInclude Include="ResourceContainer.h" />
-    <ClInclude Include="CelestialList.h" />
-    <ClInclude Include="CelestialListNode.h" />
     <ClInclude Include="MeshObject.h" />
-    <ClInclude Include="Message.h" />
     <ClInclude Include="MTLFileLoader.h" />
     <ClInclude Include="OBJFileLoader.h" />
     <ClInclude Include="Overlord.h" />
@@ -314,7 +295,6 @@
     <ClInclude Include="SystemTaskHandler.h" />
     <ClInclude Include="TaskHandler.h" />
     <ClInclude Include="TaskObject.h" />
-    <ClInclude Include="TextContainer.h" />
     <ClInclude Include="TextureHandler.h" />
     <ClInclude Include="TextureResourceObject.h" />
     <ClInclude Include="stdafx.h" />
@@ -348,19 +328,10 @@
     <ClCompile Include="HeapMemContainer.cpp" />
     <ClCompile Include="ITaskManager.cpp" />
     <ClCompile Include="KeyCodes.cpp" />
-    <ClCompile Include="KubLingAnalyzer.cpp" />
     <ClCompile Include="KubLingBinLoader.cpp" />
-    <ClCompile Include="KubLingCodeGenerator.cpp" />
-    <ClCompile Include="KubLingCompiled.cpp" />
-    <ClCompile Include="KubLingCompiler.cpp" />
     <ClCompile Include="KubLingLabel.cpp" />
-    <ClCompile Include="KubLingLexer.cpp" />
-    <ClCompile Include="KubLingParser.cpp" />
     <ClCompile Include="KubLingRaw.cpp" />
-    <ClCompile Include="KubLingRawGenerator.cpp" />
-    <ClCompile Include="KubLingRawTranslator.cpp" />
     <ClCompile Include="KubLingMachineHandler.cpp" />
-    <ClCompile Include="KubLingSource.cpp" />
     <ClCompile Include="KubLingSourceLoader.cpp" />
     <ClCompile Include="CLMSHFileLoader.cpp" />
     <ClCompile Include="CLSVLoader.cpp" />
@@ -396,7 +367,6 @@
     <ClCompile Include="ImageResourceObject.cpp" />
     <ClCompile Include="InputHandler.cpp" />
     <ClCompile Include="KubLingMachine.cpp" />
-    <ClCompile Include="MemoryPool.cpp" />
     <ClCompile Include="MessageQueue.cpp" />
     <ClCompile Include="MouseHandler.cpp" />
     <ClCompile Include="ObjectTree.cpp" />
@@ -430,7 +400,6 @@
     <ClCompile Include="SystemTaskHandler.cpp" />
     <ClCompile Include="TaskHandler.cpp" />
     <ClCompile Include="TaskObject.cpp" />
-    <ClCompile Include="TextContainer.cpp" />
     <ClCompile Include="TextureHandler.cpp" />
     <ClCompile Include="TextureResourceObject.cpp" />
     <ClCompile Include="stdafx.cpp" />
@@ -579,6 +548,14 @@
     <Object Include="Tile.obj">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </Object>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="CommonLib\CommonLib.vcxproj">
+      <Project>{a93b6822-66cc-4588-88b4-eeecab21b29b}</Project>
+    </ProjectReference>
+    <ProjectReference Include="KubLingCompiler\KubLingCompiler.vcxproj">
+      <Project>{eef1598a-6870-49f1-a5be-d4b7c2e179bf}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

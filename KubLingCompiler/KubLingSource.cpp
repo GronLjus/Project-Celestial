@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "KubLingSource.h"
 using namespace Resources;
 
@@ -51,20 +50,6 @@ int KubLingSource::GetLines()
 {
 
 	return totalLines;
-
-}
-
-int KubLingSource::GetId() const
-{
-
-	return id;
-
-}
-
-void KubLingSource::SetId(int id)
-{
-
-	this->id = id;
 
 }
 

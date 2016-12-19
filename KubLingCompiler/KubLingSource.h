@@ -1,12 +1,11 @@
 #pragma once
 #include <string>
-#include "IContainable.h"
 
 namespace Resources
 {
 
 	///<summary>The class contains the source code of a celscript</summary>
-	class KubLingSource : public IContainable
+	class KubLingSource
 	{
 
 	private:
@@ -15,8 +14,6 @@ namespace Resources
 			int totalLines;
 			///<summary>The array of lines</summary>
 			std::string** lines;
-			///<summary>The Id of the source</summary>
-			int id;
 			std::string name;
 
 		public:
@@ -32,9 +29,6 @@ namespace Resources
 			///<summary>Get the total amount of lines</summary>
 			///<returns>The total amount of lines in the source</returns>
 			int GetLines();
-
-			virtual int GetId() const;
-			virtual void SetId(int id);
 			~KubLingSource();
 
 	};

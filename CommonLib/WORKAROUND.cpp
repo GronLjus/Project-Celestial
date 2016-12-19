@@ -1,0 +1,10 @@
+//NEEDED TO BUILD LIB-FILE
+#include "Message.h"
+#include "CelestialDoubleList.h"
+#include "CelestialDoubleListNode.h"
+#include "CelestialList.h"
+#include "CelestialListNode.h"
+#include "CelestialSlicedList.h"
+#include "CelestialStack.h"
+#include "CelestialTree.h"
+#include "CelestialTreeNode.h"

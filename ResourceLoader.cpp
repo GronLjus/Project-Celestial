@@ -597,7 +597,10 @@ KubLingRaw* ResourceLoader::CompileFolder(std::string path)
 	}
 
 	delete[] files;
-	KubLingRaw* raw = rawGen->Assemble(code, size);
+	KubLingRawObj* rw = rawGen->Assemble(code, size);
+
+	KubLingRaw* raw = new KubLingRaw(rw);
+	delete rw;
 
 	for (unsigned int i = 0; i < size; i++)
 	{

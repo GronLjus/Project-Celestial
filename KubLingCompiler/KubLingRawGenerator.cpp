@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "KubLingRawGenerator.h"
 
 using namespace Logic;
@@ -21,7 +20,7 @@ void KubLingRawGenerator::expandLabels()
 {
 
 	maxLabels += 10;
-	KubLingLabel* newLabels = new KubLingLabel[maxLabels];
+	KubLingLabelObj* newLabels = new KubLingLabelObj[maxLabels];
 
 	if (labels != nullptr)
 	{
@@ -29,7 +28,7 @@ void KubLingRawGenerator::expandLabels()
 		for (unsigned int i = 0; i < totalLabels; i++)
 		{
 
-			newLabels[i] = KubLingLabel(labels[i]);
+			newLabels[i] = KubLingLabelObj(labels[i]);
 
 		}
 
@@ -293,7 +292,7 @@ void KubLingRawGenerator::addLabel(KubLingCompiled* byteCode)
 
 	}
 
-	labels[totalLabels] = KubLingLabel(byteCode->GetName(), totalCode, tempParams, tempMax);
+	labels[totalLabels] = KubLingLabelObj(byteCode->GetName(), totalCode, tempParams, tempMax);
 	totalLabels++;
 
 }
@@ -389,7 +388,7 @@ rawCode KubLingRawGenerator::assemble(KubLingCompiled* byteCode, unsigned int cu
 
 }
 
-KubLingRaw* KubLingRawGenerator::Assemble(KubLingCompiled** byteCodes, unsigned int compiled)
+KubLingRawObj* KubLingRawGenerator::Assemble(KubLingCompiled** byteCodes, unsigned int compiled)
 {
 
 	totalOffset = 0;
@@ -436,13 +435,13 @@ KubLingRaw* KubLingRawGenerator::Assemble(KubLingCompiled** byteCodes, unsigned 
 
 	}
 
-	KubLingLabel* rawLabels = new KubLingLabel[totalLabels];
+	KubLingLabelObj* rawLabels = new KubLingLabelObj[totalLabels];
 	unsigned int mOffset = 0;
 
 	for (unsigned int i = 0; i < totalLabels; i++)
 	{
 
-		rawLabels[i] = KubLingLabel(labels[i]);
+		rawLabels[i] = KubLingLabelObj(labels[i]);
 		rawLabels[i].Reset();
 		bool stop = false;
 
@@ -498,7 +497,7 @@ KubLingRaw* KubLingRawGenerator::Assemble(KubLingCompiled** byteCodes, unsigned 
 
 	}
 
-	KubLingRaw* retVal = new KubLingRaw(code, totalCode, rawLabels, totalLabels, heap->GetHighest(), totalOffset);
+	KubLingRawObj* retVal = new KubLingRawObj(code, totalCode, rawLabels, totalLabels, heap->GetHighest(), totalOffset);
 
 	delete[] lines;
 	delete[] raws;

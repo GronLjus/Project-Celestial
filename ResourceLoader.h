@@ -13,6 +13,7 @@
 #include "TextContainer.h"
 #include "CLSVLoader.h"
 #include "KubLingRawGenerator.h"
+#include "KubLingRaw.h"
 
 namespace Resources
 {

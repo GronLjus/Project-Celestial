@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "KubLingAnalyzer.h"
 
 using namespace Logic;

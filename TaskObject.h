@@ -2,17 +2,10 @@
 #include "BaseObject.h"
 #include "SerializableObject.h"
 #include "CelestialStack.h"
+#include "TaskEnums.h"
 
 namespace Resources
 {
-
-	enum TaskClass
-	{
-		TaskClass_CLOCK,
-		TaskClass_SYSTEM,
-		TaskClass_NA
-
-	};
 
 	class TaskObject : public BaseObject, public SerializableObject
 	{

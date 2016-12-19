@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "KubLingCodeGenerator.h"
 
 using namespace CrossHandlers;
