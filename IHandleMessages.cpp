@@ -7,19 +7,9 @@ IHandleMessages::IHandleMessages(unsigned int outMessages, MessageSource ms)
 
 	outQueue = new MessageQueue();
 	inQueue = new MessageQueue();
+	mBuffer = new MessageBuffer(outMessages, outQueue, ms);
 	filter = MessageType_NA;
 
-	currentMessage = 0;
-	this->outMessages = outMessages;
-	messageBuffer = new Message[outMessages];
-
-	for (int i = 0; i < outMessages; i++)
-	{
-
-		messageBuffer[i].source = ms;
-		messageBuffer[i].read = true;
-
-	}
 }
 
 MessageQueue* IHandleMessages::GetMessages()
@@ -46,6 +36,6 @@ IHandleMessages::~IHandleMessages()
 
 	delete inQueue;
 	delete outQueue;
-	delete[] messageBuffer;
+	delete mBuffer;
 
 }

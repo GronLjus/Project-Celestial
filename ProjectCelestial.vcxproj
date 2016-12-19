@@ -258,6 +258,7 @@
     <ClInclude Include="KubLingMachine.h" />
     <ClInclude Include="LogicHeader.h" />
     <ClInclude Include="CelestialMathHeader.h" />
+    <ClInclude Include="MessageBuffer.h" />
     <ClInclude Include="MessageQueue.h" />
     <ClInclude Include="MouseHandler.h" />
     <ClInclude Include="ObjectTree.h" />
@@ -367,6 +368,7 @@
     <ClCompile Include="ImageResourceObject.cpp" />
     <ClCompile Include="InputHandler.cpp" />
     <ClCompile Include="KubLingMachine.cpp" />
+    <ClCompile Include="MessageBuffer.cpp" />
     <ClCompile Include="MessageQueue.cpp" />
     <ClCompile Include="MouseHandler.cpp" />
     <ClCompile Include="ObjectTree.cpp" />

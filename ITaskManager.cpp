@@ -5,13 +5,10 @@ using namespace Tasking;
 using namespace CrossHandlers;
 using namespace Resources;
 
-void ITaskManager::Init(MessageQueue* queue, Message* mBuffer, unsigned int maxMess, unsigned int &currentMess) 
+void ITaskManager::Init(MessageBuffer* mBuffer) 
 {
 
-	this->queue = queue;
 	this->mBuffer = mBuffer;
-	this->maxMess = maxMess;
-	this->currentMess = currentMess;
 
 }
 
@@ -23,15 +20,16 @@ void ITaskManager::addParam(unsigned int script, int value, unsigned int time)
 	};
 	memcpy(&(tempBuff[4]), &(value), 4);
 
-	mBuffer[this->currentMess].timeSent = time;
-	mBuffer[this->currentMess].destination = MessageSource_CELSCRIPT;
-	mBuffer[this->currentMess].type = MessageType_SCRIPT;
-	mBuffer[this->currentMess].mess = ScriptMess_ADDPARNUM;
-	mBuffer[this->currentMess].read = false;
-	mBuffer[this->currentMess].SetParams(tempBuff, 0, 8);
-	queue->PushMessage(&mBuffer[this->currentMess]);
-	this->currentMess = (this->currentMess + 1) % maxMess;
+	Message* msg = mBuffer->GetCurrentMess();
 
+	msg->timeSent = time;
+	msg->destination = MessageSource_CELSCRIPT;
+	msg->type = MessageType_SCRIPT;
+	msg->mess = ScriptMess_ADDPARNUM;
+	msg->read = false;
+	msg->SetParams(tempBuff, 0, 8);
+
+	mBuffer->PushMessageOut();
 
 }
 
@@ -43,16 +41,16 @@ void ITaskManager::addParam(unsigned int script, float value, unsigned int time)
 	};
 	memcpy(&(tempBuff[4]), &(value), 4);
 
-	mBuffer[this->currentMess].timeSent = time;
-	mBuffer[this->currentMess].destination = MessageSource_CELSCRIPT;
-	mBuffer[this->currentMess].type = MessageType_SCRIPT;
-	mBuffer[this->currentMess].mess = ScriptMess_ADDPARFLOAT;
-	mBuffer[this->currentMess].read = false;
-	mBuffer[this->currentMess].SetParams(tempBuff, 0, 8);
-	queue->PushMessage(&mBuffer[this->currentMess]);
-	this->currentMess = (this->currentMess + 1) % maxMess;
+	Message* msg = mBuffer->GetCurrentMess();
 
+	msg->timeSent = time;
+	msg->destination = MessageSource_CELSCRIPT;
+	msg->type = MessageType_SCRIPT;
+	msg->mess = ScriptMess_ADDPARFLOAT;
+	msg->read = false;
+	msg->SetParams(tempBuff, 0, 8);
 
+	mBuffer->PushMessageOut();
 
 }
 
@@ -62,16 +60,17 @@ void ITaskManager::addParam(unsigned int script, std::string value, unsigned int
 	unsigned char tempBuff[]{ script >> 0, script >> 8, script >> 16, script >> 24
 	};
 
-	mBuffer[this->currentMess].timeSent = time;
-	mBuffer[this->currentMess].destination = MessageSource_CELSCRIPT;
-	mBuffer[this->currentMess].type = MessageType_SCRIPT;
-	mBuffer[this->currentMess].mess = ScriptMess_ADDPARASTR;
-	mBuffer[this->currentMess].read = false;
-	mBuffer[this->currentMess].SetParams(tempBuff, 0, 4);
-	mBuffer[this->currentMess].SetParams((unsigned char*)value.c_str(), 4, 4);
-	queue->PushMessage(&mBuffer[this->currentMess]);
-	this->currentMess = (this->currentMess + 1) % maxMess;
+	Message* msg = mBuffer->GetCurrentMess();
 
+	msg->timeSent = time;
+	msg->destination = MessageSource_CELSCRIPT;
+	msg->type = MessageType_SCRIPT;
+	msg->mess = ScriptMess_ADDPARASTR;
+	msg->read = false;
+	msg->SetParams(tempBuff, 0, 4);
+	msg->SetParams((unsigned char*)value.c_str(), 4, 4);
+
+	mBuffer->PushMessageOut();
 
 }
 
@@ -79,14 +78,17 @@ void ITaskManager::runScript(unsigned int script, unsigned int time)
 {
 
 	unsigned char tempBuff[]{ script >> 0, script >> 8, script >> 16, script >> 24 };
-	mBuffer[this->currentMess].timeSent = time;
-	mBuffer[this->currentMess].destination = MessageSource_CELSCRIPT;
-	mBuffer[this->currentMess].type = MessageType_SCRIPT;
-	mBuffer[this->currentMess].mess = ScriptMess_RUN;
-	mBuffer[this->currentMess].read = false;
-	mBuffer[this->currentMess].SetParams(tempBuff, 0, 4);
-	queue->PushMessage(&mBuffer[this->currentMess]);
-	this->currentMess = (this->currentMess + 1) % maxMess;
+
+	Message* msg = mBuffer->GetCurrentMess();
+
+	msg->timeSent = time;
+	msg->destination = MessageSource_CELSCRIPT;
+	msg->type = MessageType_SCRIPT;
+	msg->mess = ScriptMess_RUN;
+	msg->read = false;
+	msg->SetParams(tempBuff, 0, 4);
+
+	mBuffer->PushMessageOut();
 
 }
 

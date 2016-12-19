@@ -192,13 +192,15 @@ void ResourceHandler::handleMess(Message* currentMessage, unsigned int time)
 		memcpy(&tempBuff[28], &oldRotation.y, 4);
 		memcpy(&tempBuff[32], &oldRotation.z, 4);
 
-		messageBuffer[this->currentMessage].timeSent = time;
-		messageBuffer[this->currentMessage].destination = MessageSource_OBJECT;
-		messageBuffer[this->currentMessage].type = MessageType_OBJECT;
-		messageBuffer[this->currentMessage].mess = ObjectMess_COPY;
-		messageBuffer[this->currentMessage].SetParams(tempBuff, 0, 36);
-		messageBuffer[this->currentMessage].read = false;
-		obj->Update(&messageBuffer[this->currentMessage]);
+		Message* msg = mBuffer->GetCurrentMess();
+
+		msg->timeSent = time;
+		msg->destination = MessageSource_OBJECT;
+		msg->type = MessageType_OBJECT;
+		msg->mess = ObjectMess_COPY;
+		msg->SetParams(tempBuff, 0, 36);
+		msg->read = false;
+		obj->Update(msg);
 
 		for (unsigned int i = 0; i < oldObj->GetSubobjects(); i++)
 		{
@@ -212,18 +214,20 @@ void ResourceHandler::handleMess(Message* currentMessage, unsigned int time)
 				GameObject* newSub = (GameObject*)gameObjects->GetValue(subOut);
 				obj->AddSubObject(newSub, sub->GetRelativePosition());
 
-				messageBuffer[this->currentMessage].timeSent = time;
-				messageBuffer[this->currentMessage].destination = MessageSource_ENTITIES;
-				messageBuffer[this->currentMessage].type = MessageType_ENTITIES;
-				messageBuffer[this->currentMessage].mess = GameBoardMess_ADDOBJECT;
+				msg = mBuffer->GetCurrentMess();
+
+				msg->timeSent = time;
+				msg->destination = MessageSource_ENTITIES;
+				msg->type = MessageType_ENTITIES;
+				msg->mess = GameBoardMess_ADDOBJECT;
 				tempBuff[0] = subOut >> 0;
 				tempBuff[1] = subOut >> 8;
 				tempBuff[2] = subOut >> 16;
 				tempBuff[3] = subOut >> 24;
-				messageBuffer[this->currentMessage].SetParams(tempBuff, 0, 4);
-				messageBuffer[this->currentMessage].read = false;
-				outQueue->PushMessage(&messageBuffer[this->currentMessage]);
-				this->currentMessage = (this->currentMessage + 1) % outMessages;
+				msg->SetParams(tempBuff, 0, 4);
+				msg->read = false;
+
+				mBuffer->PushMessageOut();
 
 			}
 		}
@@ -242,18 +246,20 @@ void ResourceHandler::handleMess(Message* currentMessage, unsigned int time)
 
 		}
 		
-		messageBuffer[this->currentMessage].timeSent = time;
-		messageBuffer[this->currentMessage].destination = MessageSource_ENTITIES;
-		messageBuffer[this->currentMessage].type = MessageType_ENTITIES;
-		messageBuffer[this->currentMessage].mess = GameBoardMess_ADDOBJECT;
+		msg = mBuffer->GetCurrentMess();
+
+		msg->timeSent = time;
+		msg->destination = MessageSource_ENTITIES;
+		msg->type = MessageType_ENTITIES;
+		msg->mess = GameBoardMess_ADDOBJECT;
 		tempBuff[0] = outId >> 0;
 		tempBuff[1] = outId >> 8;
 		tempBuff[2] = outId >> 16;
 		tempBuff[3] = outId >> 24;
-		messageBuffer[this->currentMessage].SetParams(tempBuff, 0, 4);
-		messageBuffer[this->currentMessage].read = false;
-		outQueue->PushMessage(&messageBuffer[this->currentMessage]);
-		this->currentMessage = (this->currentMessage + 1) % outMessages;
+		msg->SetParams(tempBuff, 0, 4);
+		msg->read = false;
+
+		mBuffer->PushMessageOut();
 
 	}
 	else if (currentMessage->mess == ResourceMess_LOADSCRIPT)
@@ -331,15 +337,17 @@ void ResourceHandler::handleMess(Message* currentMessage, unsigned int time)
 			currentDic->AddResource(bo->GetId(), stringParam);
 			outId = bo->GetId();
 
-			messageBuffer[this->currentMessage].timeSent = time;
-			messageBuffer[this->currentMessage].destination = MessageSource_ENTITIES;
-			messageBuffer[this->currentMessage].type = MessageType_ENTITIES;
-			messageBuffer[this->currentMessage].mess = GameBoardMess_ADDMESH;
+			Message* msg = mBuffer->GetCurrentMess();
+
+			msg->timeSent = time;
+			msg->destination = MessageSource_ENTITIES;
+			msg->type = MessageType_ENTITIES;
+			msg->mess = GameBoardMess_ADDMESH;
 			unsigned char tempBuff[]{ outId >> 0, outId >> 8, outId >> 16, outId >> 24 };
-			messageBuffer[this->currentMessage].SetParams(tempBuff, 0, 4);
-			messageBuffer[this->currentMessage].read = false;
-			outQueue->PushMessage(&messageBuffer[this->currentMessage]);
-			this->currentMessage = (this->currentMessage + 1) % outMessages;
+			msg->SetParams(tempBuff, 0, 4);
+			msg->read = false;
+
+			mBuffer->PushMessageOut();
 
 		}
 	}
@@ -482,19 +490,21 @@ void ResourceHandler::handleMess(Message* currentMessage, unsigned int time)
 	if (currentMessage->source == MessageSource_CELSCRIPT && outId > 0 && currentMessage->returnParam > 0)
 	{
 
-		messageBuffer[this->currentMessage].timeSent = time;
-		messageBuffer[this->currentMessage].destination = MessageSource_CELSCRIPT;
-		messageBuffer[this->currentMessage].type = MessageType_SCRIPT;
-		messageBuffer[this->currentMessage].mess = ScriptMess_RESUME;
+		Message* msg = mBuffer->GetCurrentMess();
+
+		msg->timeSent = time;
+		msg->destination = MessageSource_CELSCRIPT;
+		msg->type = MessageType_SCRIPT;
+		msg->mess = ScriptMess_RESUME;
 		unsigned char tempBuff[]{ currentMessage->senderId >> 0, currentMessage->senderId >> 8, currentMessage->senderId >> 16, currentMessage->senderId >> 24,
 			currentMessage->returnParam >> 0, currentMessage->returnParam >> 8, currentMessage->returnParam >> 16, currentMessage->returnParam >> 24,
 			outId >> 0, outId >> 8, outId >> 16, outId >> 24,
 			currentMessage->returnMess >> 0, currentMessage->returnMess >> 8, currentMessage->returnMess >> 16, currentMessage->returnMess >> 24
 		};
-		messageBuffer[this->currentMessage].SetParams(tempBuff, 0, 16);
-		messageBuffer[this->currentMessage].read = false;
-		outQueue->PushMessage(&messageBuffer[this->currentMessage]);
-		this->currentMessage = (this->currentMessage + 1) % outMessages;
+		msg->SetParams(tempBuff, 0, 16);
+		msg->read = false;
+
+		mBuffer->PushMessageOut();
 
 	}
 }
@@ -579,13 +589,16 @@ unsigned int ResourceHandler::copyObject(GameObject* objectToCopy, unsigned int 
 	memcpy(&tempBuff[28], &oldRotation.y, 4);
 	memcpy(&tempBuff[32], &oldRotation.z, 4);
 
-	messageBuffer[this->currentMessage].timeSent = time;
-	messageBuffer[this->currentMessage].destination = MessageSource_OBJECT;
-	messageBuffer[this->currentMessage].type = MessageType_OBJECT;
-	messageBuffer[this->currentMessage].mess = ObjectMess_COPY;
-	messageBuffer[this->currentMessage].SetParams(tempBuff, 0, 36);
-	messageBuffer[this->currentMessage].read = false;
-	obj->Update(&messageBuffer[this->currentMessage]);
+	Message* msg = mBuffer->GetCurrentMess();
+
+	msg->timeSent = time;
+	msg->destination = MessageSource_OBJECT;
+	msg->type = MessageType_OBJECT;
+	msg->mess = ObjectMess_COPY;
+	msg->SetParams(tempBuff, 0, 36);
+	msg->read = false;
+	obj->Update(msg);
+
 	return retVal;
 
 }
@@ -615,13 +628,16 @@ void ResourceHandler::saveGameBoard(std::string path, unsigned int gameBoard)
 {
 
 	unsigned int startTime = clock();
-	messageBuffer[this->currentMessage].timeSent = clock();
-	messageBuffer[this->currentMessage].destination = MessageSource_SYSTEM;
-	messageBuffer[this->currentMessage].type = MessageType_SYSTEM;
-	messageBuffer[this->currentMessage].mess = SystemMess_SKIP;
-	messageBuffer[this->currentMessage].read = false;
-	outQueue->PushMessage(&messageBuffer[this->currentMessage]);
-	this->currentMessage = (this->currentMessage + 1) % outMessages;
+
+	Message* msg = mBuffer->GetCurrentMess();
+
+	msg->timeSent = clock();
+	msg->destination = MessageSource_SYSTEM;
+	msg->type = MessageType_SYSTEM;
+	msg->mess = SystemMess_SKIP;
+	msg->read = false;
+
+	mBuffer->PushMessageOut();
 
 	GameBoard* board = (GameBoard*)gameObjects->GetValue(gameBoard);
 
@@ -653,14 +669,17 @@ void ResourceHandler::saveGameBoard(std::string path, unsigned int gameBoard)
 
 	unsigned int passedTime = clock() - startTime;
 
-	memcpy(messageBuffer[this->currentMessage].params, &passedTime, sizeof(passedTime));
-	messageBuffer[this->currentMessage].timeSent = clock();
-	messageBuffer[this->currentMessage].destination = MessageSource_SYSTEM;
-	messageBuffer[this->currentMessage].type = MessageType_SYSTEM;
-	messageBuffer[this->currentMessage].mess = SystemMess_SKIP;
-	messageBuffer[this->currentMessage].read = false;
-	outQueue->PushMessage(&messageBuffer[this->currentMessage]);
-	this->currentMessage = (this->currentMessage + 1) % outMessages;
+	msg = mBuffer->GetCurrentMess();
+
+	memcpy(msg->params, &passedTime, sizeof(passedTime));
+	msg->timeSent = clock();
+	msg->destination = MessageSource_SYSTEM;
+	msg->type = MessageType_SYSTEM;
+	msg->mess = SystemMess_SKIP;
+	msg->read = false;
+
+	mBuffer->PushMessageOut();
+
 }
 
 unsigned int ResourceHandler::loadGameBoard(std::string path, unsigned int gameBoard, unsigned int time)
@@ -740,14 +759,17 @@ unsigned int ResourceHandler::loadGameBoard(std::string path, unsigned int gameB
 	unsigned char tempBuff[]{ startTime >> 0, startTime >> 8, startTime >> 16, startTime >> 24,
 		localBoard->GetId() >> 0, localBoard->GetId() >> 8, localBoard->GetId() >> 16, localBoard->GetId() >> 24
 	};
-	messageBuffer[this->currentMessage].SetParams(tempBuff, 0, 8);
-	messageBuffer[this->currentMessage].timeSent = time;
-	messageBuffer[this->currentMessage].destination = MessageSource_TASKS;
-	messageBuffer[this->currentMessage].type = MessageType_TASKING;
-	messageBuffer[this->currentMessage].mess = TaskMess_SETTIME;
-	messageBuffer[this->currentMessage].read = false;
-	outQueue->PushMessage(&messageBuffer[this->currentMessage]);
-	this->currentMessage = (this->currentMessage + 1) % outMessages;
+
+	Message* msg = mBuffer->GetCurrentMess();
+
+	msg->SetParams(tempBuff, 0, 8);
+	msg->timeSent = time;
+	msg->destination = MessageSource_TASKS;
+	msg->type = MessageType_TASKING;
+	msg->mess = TaskMess_SETTIME;
+	msg->read = false;
+
+	mBuffer->PushMessageOut();
 
 	return localBoard->GetId();
 }

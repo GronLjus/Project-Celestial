@@ -1,6 +1,6 @@
 #pragma once
 #include "RunTimeOperations.h"
-#include "MessageQueue.h"
+#include "MessageBuffer.h"
 #include "HeapMemory.h"
 #include "CelestialSlicedList.h"
 #include "BaseObject.h"
@@ -20,10 +20,7 @@ namespace Logic
 
 			CrossHandlers::CelestialSlicedList<Resources::BaseObject*>* objectContainer;
 
-			CrossHandlers::MessageQueue* queue;
-			CrossHandlers::Message* mBuffer;
-			unsigned int maxMess;
-			unsigned int currentMess;
+			CrossHandlers::MessageBuffer* mBuffer;
 			CrossHandlers::Message* lastMess;
 
 			unsigned int time;
@@ -41,10 +38,7 @@ namespace Logic
 			unsigned int maxStack;
 
 		public:
-			KubLingMachine(CrossHandlers::MessageQueue* queue,
-				CrossHandlers::Message* mBuffer,
-				unsigned int maxMess,
-				unsigned int &currentMess,
+			KubLingMachine(CrossHandlers::MessageBuffer* mBuffer,
 				char* stackMem,
 				unsigned int maxStack,
 				CrossHandlers::CelestialSlicedList<Resources::BaseObject*>* objectContainer);

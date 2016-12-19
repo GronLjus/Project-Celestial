@@ -22,7 +22,7 @@ void KubLingHandler::Init(CelestialSlicedList<BaseObject*>* objectContainer)
 {
 
 	this->objectContainer = objectContainer;
-	runTime = new KubLingMachineHandler(outQueue, messageBuffer, outMessages, currentMessage, objectContainer);
+	runTime = new KubLingMachineHandler(mBuffer, objectContainer);
 
 }
 

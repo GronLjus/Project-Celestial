@@ -1,5 +1,5 @@
 #pragma once
-#include "MessageQueue.h"
+#include "MessageBuffer.h"
 
 namespace CrossHandlers
 {
@@ -16,10 +16,8 @@ namespace CrossHandlers
 		protected:
 			MessageQueue* inQueue;
 			MessageQueue* outQueue;
+			MessageBuffer* mBuffer;
 			MessageType filter;
-			Message* messageBuffer;
-			unsigned int outMessages;
-			unsigned int currentMessage;
 
 	};
 }

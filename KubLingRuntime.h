@@ -2,6 +2,7 @@
 #include "RunTimeOperations.h"
 #include "MemoryPool.h"
 #include "MessageQueue.h"
+#include "BaseObject.h"
 
 namespace Logic
 {

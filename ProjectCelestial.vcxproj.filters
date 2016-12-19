@@ -747,6 +747,9 @@
     <ClInclude Include="KubLingLabel.h">
       <Filter>Header Files\Resources\Objects\KubLing</Filter>
     </ClInclude>
+    <ClInclude Include="MessageBuffer.h">
+      <Filter>Header Files\CrossHandler-Tools\Messaging</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Camera.cpp">
@@ -1045,6 +1048,9 @@
     </ClCompile>
     <ClCompile Include="ClockTaskHandler.cpp">
       <Filter>Source Files\Tasking\SubHandlers</Filter>
+    </ClCompile>
+    <ClCompile Include="MessageBuffer.cpp">
+      <Filter>Source Files\CrossHandler-Tools\Messaging</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

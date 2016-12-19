@@ -4,21 +4,15 @@
 using namespace Logic;
 using namespace CrossHandlers;
 
-KubLingMachine::KubLingMachine(MessageQueue* queue,
-	Message* mBuffer,
-	unsigned int maxMess,
-	unsigned int &currentMess,
+KubLingMachine::KubLingMachine(MessageBuffer* mBuffer,
 	char* stackMem,
 	unsigned int maxStack,
 	CelestialSlicedList<Resources::BaseObject*>* objectContainer)
 {
 
 	this->objectContainer = objectContainer;
-	this->queue = queue;
 	this->mBuffer = mBuffer;
-	this->maxMess = maxMess;
-	this->currentMess = currentMess;
-	lastMess = &(mBuffer[currentMess]);
+	lastMess = mBuffer->GetCurrentMess();
 
 	iReg[4] = 0;
 
@@ -65,11 +59,8 @@ void KubLingMachine::sendMessage(unsigned int mess, unsigned int retVar, Message
 
 		}
 
-		queue->PushMessage(lastMess);
-
-		currentMess++;
-		currentMess %= maxMess;
-		lastMess = &(mBuffer[currentMess]);
+		mBuffer->PushMessageOut();
+		lastMess = mBuffer->GetCurrentMess();
 
 	}
 	else

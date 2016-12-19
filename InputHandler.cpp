@@ -67,16 +67,17 @@ void InputHandler::handleKeys(unsigned int time)
 
 			keyStatus[pressedKey.cat][pressedKey.keyVal] = pressedKey.up;
 
-			messageBuffer[this->currentMessage].params[0] = pressedKey.cat;
-			messageBuffer[this->currentMessage].params[1] = pressedKey.keyVal;
-			messageBuffer[this->currentMessage].params[2] = pressedKey.up ?  1 : 0;
-			messageBuffer[this->currentMessage].timeSent = time;
-			messageBuffer[this->currentMessage].destination = MessageSource_GUIENTITIES;
-			messageBuffer[this->currentMessage].type = MessageType_GUIENTITIES;
-			messageBuffer[this->currentMessage].mess = GUIMess_HANDLEKEY;
-			messageBuffer[this->currentMessage].read = false;
-			outQueue->PushMessage(&messageBuffer[this->currentMessage]);
-			this->currentMessage = (this->currentMessage + 1) % outMessages;
+			Message* mess = mBuffer->GetCurrentMess();
+			mess->params[0] = pressedKey.cat;
+			mess->params[1] = pressedKey.keyVal;
+			mess->params[2] = pressedKey.up ?  1 : 0;
+			mess->timeSent = time;
+			mess->destination = MessageSource_GUIENTITIES;
+			mess->type = MessageType_GUIENTITIES;
+			mess->mess = GUIMess_HANDLEKEY;
+			mess->read = false;
+
+			mBuffer->PushMessageOut();
 
 		}
 	}
@@ -172,14 +173,16 @@ void InputHandler::sendMessage(unsigned int mess, unsigned int time, short delta
 		delta >> 0, delta >> 8
 	};
 
-	messageBuffer[this->currentMessage].SetParams(tempBuff, 0, 2);
-	messageBuffer[this->currentMessage].timeSent = time;
-	messageBuffer[this->currentMessage].destination = MessageSource_ENTITIES;
-	messageBuffer[this->currentMessage].type = MessageType_ENTITIES;
-	messageBuffer[this->currentMessage].mess = mess;
-	messageBuffer[this->currentMessage].read = false;
-	outQueue->PushMessage(&messageBuffer[this->currentMessage]);
-	this->currentMessage = (this->currentMessage + 1) % outMessages;
+	Message* msg = mBuffer->GetCurrentMess();
+
+	msg->SetParams(tempBuff, 0, 2);
+	msg->timeSent = time;
+	msg->destination = MessageSource_ENTITIES;
+	msg->type = MessageType_ENTITIES;
+	msg->mess = mess;
+	msg->read = false;
+
+	mBuffer->PushMessageOut();
 
 }
 
@@ -190,14 +193,16 @@ void InputHandler::sendMessage(unsigned int mess, unsigned int time, keyCode key
 		key
 	};
 
-	messageBuffer[this->currentMessage].SetParams(tempBuff, 0, 12);
-	messageBuffer[this->currentMessage].timeSent = time;
-	messageBuffer[this->currentMessage].destination = MessageSource_ENTITIES;
-	messageBuffer[this->currentMessage].type = MessageType_ENTITIES;
-	messageBuffer[this->currentMessage].mess = mess;
-	messageBuffer[this->currentMessage].read = false;
-	outQueue->PushMessage(&messageBuffer[this->currentMessage]);
-	this->currentMessage = (this->currentMessage + 1) % outMessages;
+	Message* msg = mBuffer->GetCurrentMess();
+
+	msg->SetParams(tempBuff, 0, 12);
+	msg->timeSent = time;
+	msg->destination = MessageSource_ENTITIES;
+	msg->type = MessageType_ENTITIES;
+	msg->mess = mess;
+	msg->read = false;
+
+	mBuffer->PushMessageOut();
 
 }
 
@@ -209,14 +214,16 @@ void InputHandler::sendMessage(unsigned int mess, unsigned int time, keyCode key
 		up ? 1 : 0
 	};
 
-	messageBuffer[this->currentMessage].SetParams(tempBuff, 0, 2);
-	messageBuffer[this->currentMessage].timeSent = time;
-	messageBuffer[this->currentMessage].destination = MessageSource_ENTITIES;
-	messageBuffer[this->currentMessage].type = MessageType_ENTITIES;
-	messageBuffer[this->currentMessage].mess = mess;
-	messageBuffer[this->currentMessage].read = false;
-	outQueue->PushMessage(&messageBuffer[this->currentMessage]);
-	this->currentMessage = (this->currentMessage + 1) % outMessages;
+	Message* msg = mBuffer->GetCurrentMess();
+
+	msg->SetParams(tempBuff, 0, 2);
+	msg->timeSent = time;
+	msg->destination = MessageSource_ENTITIES;
+	msg->type = MessageType_ENTITIES;
+	msg->mess = mess;
+	msg->read = false;
+
+	mBuffer->PushMessageOut();
 
 }
 
@@ -228,14 +235,16 @@ void InputHandler::sendMessage(unsigned int mess, unsigned int time)
 		mouse.y >> 0, mouse.y >> 8, mouse.y >> 16, mouse.y >> 24
 	};
 
-	messageBuffer[this->currentMessage].SetParams(tempBuff, 0, 8);
-	messageBuffer[this->currentMessage].timeSent = time;
-	messageBuffer[this->currentMessage].destination = MessageSource_ENTITIES;
-	messageBuffer[this->currentMessage].type = MessageType_ENTITIES;
-	messageBuffer[this->currentMessage].mess = mess;
-	messageBuffer[this->currentMessage].read = false;
-	outQueue->PushMessage(&messageBuffer[this->currentMessage]);
-	this->currentMessage = (this->currentMessage + 1) % outMessages;
+	Message* msg = mBuffer->GetCurrentMess();
+
+	msg->SetParams(tempBuff, 0, 8);
+	msg->timeSent = time;
+	msg->destination = MessageSource_ENTITIES;
+	msg->type = MessageType_ENTITIES;
+	msg->mess = mess;
+	msg->read = false;
+
+	mBuffer->PushMessageOut();
 
 }
 
@@ -270,7 +279,8 @@ void InputHandler::Update(unsigned int time)
 	while (currentMessage->type != MessageType_NA)
 	{
 
-		messageBuffer[this->currentMessage].timeSent = time;
+		Message* msg = mBuffer->GetCurrentMess();
+		msg->timeSent = time;
 
 		short param10 = currentMessage->params[0] | ((int)currentMessage->params[1] << 8);
 		short param20 = currentMessage->params[2] | ((int)currentMessage->params[3] << 8);
@@ -312,14 +322,14 @@ void InputHandler::Update(unsigned int time)
 		else if (currentMessage->mess == InputMess_CHAR)
 		{
 
-			messageBuffer[this->currentMessage].SetParams(currentMessage->params, 0, 1);
-			messageBuffer[this->currentMessage].timeSent = time;
-			messageBuffer[this->currentMessage].destination = MessageSource_GUIENTITIES;
-			messageBuffer[this->currentMessage].type = MessageType_GUIENTITIES;
-			messageBuffer[this->currentMessage].mess = GUIMess_HANDLECHAR;
-			messageBuffer[this->currentMessage].read = false;
-			outQueue->PushMessage(&messageBuffer[this->currentMessage]);
-			this->currentMessage = (this->currentMessage + 1) % outMessages;
+			msg->SetParams(currentMessage->params, 0, 1);
+			msg->timeSent = time;
+			msg->destination = MessageSource_GUIENTITIES;
+			msg->type = MessageType_GUIENTITIES;
+			msg->mess = GUIMess_HANDLECHAR;
+			msg->read = false;
+
+			mBuffer->PushMessageOut();
 
 		}
 

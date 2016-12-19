@@ -1,6 +1,6 @@
 #pragma once
 #include "TaskObject.h"
-#include "MessageQueue.h"
+#include "MessageBuffer.h"
 
 namespace Tasking
 {
@@ -9,8 +9,7 @@ namespace Tasking
 	{
 
 		private:
-			CrossHandlers::MessageQueue* queue;
-			CrossHandlers::Message* mBuffer;
+			CrossHandlers::MessageBuffer* mBuffer;
 			unsigned int maxMess;
 			unsigned int currentMess;
 			void addParam(unsigned int script, int value, unsigned int time);
@@ -23,10 +22,7 @@ namespace Tasking
 
 		public:
 
-			void Init(CrossHandlers::MessageQueue* queue,
-				CrossHandlers::Message* mBuffer,
-				unsigned int maxMess,
-				unsigned int &currentMess);
+			void Init(CrossHandlers::MessageBuffer* mBuffer);
 
 			virtual void AddTask(Resources::TaskObject* object, unsigned int fireTime) = 0;
 			virtual void RemoveTask(Resources::TaskObject* object) = 0;

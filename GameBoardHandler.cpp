@@ -24,44 +24,45 @@ void GameBoardHandler::Init(CelestialSlicedList<BaseObject*>* gameObjects)
 
 	this->gameObjects = gameObjects;
 	mH->Init(gameObjects,
-		messageBuffer,
-		currentMessage,
-		outQueue,
-		outMessages);
+		mBuffer);
 
 }
 
 void GameBoardHandler::runScript(unsigned int script, unsigned int time)
 {
 
+	Message* msg = mBuffer->GetCurrentMess();
+
 	unsigned char tempBuff[]{ script >> 0, script >> 8, script >> 16, script >> 24 };
-	messageBuffer[this->currentMessage].timeSent = time;
-	messageBuffer[this->currentMessage].destination = MessageSource_CELSCRIPT;
-	messageBuffer[this->currentMessage].type = MessageType_SCRIPT;
-	messageBuffer[this->currentMessage].mess = ScriptMess_RUN;
-	messageBuffer[this->currentMessage].read = false;
-	messageBuffer[this->currentMessage].SetParams(tempBuff, 0, 4);
-	outQueue->PushMessage(&messageBuffer[this->currentMessage]);
-	this->currentMessage = (this->currentMessage + 1) % outMessages;
+	msg->timeSent = time;
+	msg->destination = MessageSource_CELSCRIPT;
+	msg->type = MessageType_SCRIPT;
+	msg->mess = ScriptMess_RUN;
+	msg->read = false;
+	msg->SetParams(tempBuff, 0, 4);
+
+	mBuffer->PushMessageOut();
 
 }
 
 void GameBoardHandler::addScriptParamNum(unsigned int script, unsigned int num, unsigned int time)
 {
 
+	Message* msg = mBuffer->GetCurrentMess();
+
 	unsigned char tempBuff[]{ script >> 0, script >> 8, script >> 16, script >> 24,
 		0.0f, 0.0f,0.0f,0.0f
 	};
 	memcpy(&(tempBuff[4]), &(num), 4);
 
-	messageBuffer[this->currentMessage].timeSent = time;
-	messageBuffer[this->currentMessage].destination = MessageSource_CELSCRIPT;
-	messageBuffer[this->currentMessage].type = MessageType_SCRIPT;
-	messageBuffer[this->currentMessage].mess = ScriptMess_ADDPARNUM;
-	messageBuffer[this->currentMessage].read = false;
-	messageBuffer[this->currentMessage].SetParams(tempBuff, 0, 8);
-	outQueue->PushMessage(&messageBuffer[this->currentMessage]);
-	this->currentMessage = (this->currentMessage + 1) % outMessages;
+	msg->timeSent = time;
+	msg->destination = MessageSource_CELSCRIPT;
+	msg->type = MessageType_SCRIPT;
+	msg->mess = ScriptMess_ADDPARNUM;
+	msg->read = false;
+	msg->SetParams(tempBuff, 0, 8);
+
+	mBuffer->PushMessageOut();
 
 }
 
@@ -154,13 +155,15 @@ void GameBoardHandler::UpdateMessages(unsigned int time, unsigned int clock)
 
 			localGameBoard->GetDrawingBoard()->AddMesh((CelMesh*)(gameObjects->GetValue(param1)));
 
-			messageBuffer[this->currentMessage].timeSent = time;
-			messageBuffer[this->currentMessage].destination = MessageSource_GRAPHICS;
-			messageBuffer[this->currentMessage].type = MessageType_GRAPHICS;
-			messageBuffer[this->currentMessage].mess = GraphicMess_UPDATEGAMEBOARDBUFFERS;
-			messageBuffer[this->currentMessage].read = false;
-			outQueue->PushMessage(&messageBuffer[this->currentMessage]);
-			this->currentMessage = (this->currentMessage + 1) % outMessages;
+			Message* msg = mBuffer->GetCurrentMess();
+
+			msg->timeSent = time;
+			msg->destination = MessageSource_GRAPHICS;
+			msg->type = MessageType_GRAPHICS;
+			msg->mess = GraphicMess_UPDATEGAMEBOARDBUFFERS;
+			msg->read = false;
+
+			mBuffer->PushMessageOut();
 
 		}
 		else if (currentMessage->mess == GameBoardMess_ADDOBJECT && localGameBoard != nullptr)
@@ -212,19 +215,22 @@ void GameBoardHandler::UpdateMessages(unsigned int time, unsigned int clock)
 
 			bool result = localGameBoard->GetBoardPosition(object->GetPosition(), objectDirection, gameBoardPos);
 
-			messageBuffer[this->currentMessage].timeSent = time;
-			messageBuffer[this->currentMessage].destination = MessageSource_OBJECT;
-			messageBuffer[this->currentMessage].type = MessageType_OBJECT;
-			messageBuffer[this->currentMessage].mess = ObjectMess_ORBIT;
-			messageBuffer[this->currentMessage].read = false;
+			Message* msg = mBuffer->GetCurrentMess();
+
+			msg->timeSent = time;
+			msg->destination = MessageSource_OBJECT;
+			msg->type = MessageType_OBJECT;
+			msg->mess = ObjectMess_ORBIT;
+			msg->read = false;
 
 			unsigned char tempBuff[16];
 			memcpy(tempBuff, &gameBoardPos.x, 4);
 			memcpy(&tempBuff[4], &gameBoardPos.y, 4);
 			memcpy(&tempBuff[8], &gameBoardPos.z, 4);
 			memcpy(&tempBuff[12], &currentMessage->params[4], 4);
-			messageBuffer[this->currentMessage].SetParams(tempBuff, 0, 16);
-			object->Update(&messageBuffer[this->currentMessage]);
+			msg->SetParams(tempBuff, 0, 16);
+
+			object->Update(msg);
 
 		}
 		else if (currentMessage->mess == GameBoardMess_SETTRACKING)
@@ -272,14 +278,16 @@ void GameBoardHandler::UpdateMessages(unsigned int time, unsigned int clock)
 
 			localGameBoard->SetCamera((CameraObject*)(gameObjects->GetValue(param1)));
 
-			messageBuffer[this->currentMessage].timeSent = time;
-			messageBuffer[this->currentMessage].destination = MessageSource_GRAPHICS;
-			messageBuffer[this->currentMessage].type = MessageType_GRAPHICS;
-			messageBuffer[this->currentMessage].mess = GraphicMess_SETCAMERA;
-			messageBuffer[this->currentMessage].read = false;
-			messageBuffer[this->currentMessage].SetParams(currentMessage->params, 0, 4);
-			outQueue->PushMessage(&messageBuffer[this->currentMessage]);
-			this->currentMessage = (this->currentMessage + 1) % outMessages;
+			Message* msg = mBuffer->GetCurrentMess();
+
+			msg->timeSent = time;
+			msg->destination = MessageSource_GRAPHICS;
+			msg->type = MessageType_GRAPHICS;
+			msg->mess = GraphicMess_SETCAMERA;
+			msg->read = false;
+			msg->SetParams(currentMessage->params, 0, 4);
+
+			mBuffer->PushMessageOut();
 
 		}
 		else if (currentMessage->mess == GameBoardMess_SETUI)
@@ -297,26 +305,31 @@ void GameBoardHandler::UpdateMessages(unsigned int time, unsigned int clock)
 			routing = gB->GetRoutingManager();
 			routing->Init(gameObjects);
 
-			messageBuffer[this->currentMessage].timeSent = time;
-			messageBuffer[this->currentMessage].destination = MessageSource_GRAPHICS;
-			messageBuffer[this->currentMessage].type = MessageType_GRAPHICS;
-			messageBuffer[this->currentMessage].mess = GraphicMess_SETGAMEBOARD;
-			messageBuffer[this->currentMessage].read = false;
-			messageBuffer[this->currentMessage].SetParams(currentMessage->params, 0, 4);
-			outQueue->PushMessage(&messageBuffer[this->currentMessage]);
-			this->currentMessage = (this->currentMessage + 1) % outMessages;
+			Message* msg = mBuffer->GetCurrentMess();
+
+			msg->timeSent = time;
+			msg->destination = MessageSource_GRAPHICS;
+			msg->type = MessageType_GRAPHICS;
+			msg->mess = GraphicMess_SETGAMEBOARD;
+			msg->read = false;
+			msg->SetParams(currentMessage->params, 0, 4);
+
+			mBuffer->PushMessageOut();
 
 			if (gB->GetBoardObject() != nullptr)
 			{
 
 				gB->GetDrawingBoard()->AddMesh((CelMesh*)(gameObjects->GetValue(gB->GetBoardObject()->GetMeshId())));
-				messageBuffer[this->currentMessage].timeSent = time;
-				messageBuffer[this->currentMessage].destination = MessageSource_GRAPHICS;
-				messageBuffer[this->currentMessage].type = MessageType_GRAPHICS;
-				messageBuffer[this->currentMessage].mess = GraphicMess_UPDATEGAMEBOARDBUFFERS;
-				messageBuffer[this->currentMessage].read = false;
-				outQueue->PushMessage(&messageBuffer[this->currentMessage]);
-				this->currentMessage = (this->currentMessage + 1) % outMessages;
+
+				msg = mBuffer->GetCurrentMess();
+
+				msg->timeSent = time;
+				msg->destination = MessageSource_GRAPHICS;
+				msg->type = MessageType_GRAPHICS;
+				msg->mess = GraphicMess_UPDATEGAMEBOARDBUFFERS;
+				msg->read = false;
+
+				mBuffer->PushMessageOut();
 
 			}
 
@@ -400,19 +413,22 @@ void GameBoardHandler::UpdateMessages(unsigned int time, unsigned int clock)
 		{
 
 			outId--;
-			messageBuffer[this->currentMessage].timeSent = time;
-			messageBuffer[this->currentMessage].destination = MessageSource_CELSCRIPT;
-			messageBuffer[this->currentMessage].type = MessageType_SCRIPT;
-			messageBuffer[this->currentMessage].mess = ScriptMess_RESUME;
+
+			Message* msg = mBuffer->GetCurrentMess();
+
+			msg->timeSent = time;
+			msg->destination = MessageSource_CELSCRIPT;
+			msg->type = MessageType_SCRIPT;
+			msg->mess = ScriptMess_RESUME;
 			unsigned char tempBuff[]{ currentMessage->senderId >> 0, currentMessage->senderId >> 8, currentMessage->senderId >> 16, currentMessage->senderId >> 24,
 				currentMessage->returnParam >> 0, currentMessage->returnParam >> 8, currentMessage->returnParam >> 16, currentMessage->returnParam >> 24,
 				outId >> 0, outId >> 8, outId >> 16, outId >> 24,
 				currentMessage->returnMess >> 0, currentMessage->returnMess >> 8, currentMessage->returnMess >> 16, currentMessage->returnMess >> 24
 			};
-			messageBuffer[this->currentMessage].SetParams(tempBuff, 0, 16);
-			messageBuffer[this->currentMessage].read = false;
-			outQueue->PushMessage(&messageBuffer[this->currentMessage]);
-			this->currentMessage = (this->currentMessage + 1) % outMessages;
+			msg->SetParams(tempBuff, 0, 16);
+			msg->read = false;
+
+			mBuffer->PushMessageOut();
 
 		}
 
@@ -472,10 +488,12 @@ void GameBoardHandler::splitObject(GameObject* object, Vector3 position, float w
 	object->SetPosition(pos1);
 	object->UpdateMatrix();
 
-	messageBuffer[this->currentMessage].timeSent = time;
-	messageBuffer[this->currentMessage].destination = MessageSource_RESOURCES;
-	messageBuffer[this->currentMessage].type = MessageType_RESOURCES;
-	messageBuffer[this->currentMessage].mess = ResourceMess_LOADCOPYOBJECTAT;
+	Message* msg = mBuffer->GetCurrentMess();
+
+	msg->timeSent = time;
+	msg->destination = MessageSource_RESOURCES;
+	msg->type = MessageType_RESOURCES;
+	msg->mess = ResourceMess_LOADCOPYOBJECTAT;
 	unsigned char tempBuff[]{ object->GetId() >> 0, object->GetId() >> 8, object->GetId() >> 16, object->GetId() >> 24,
 		0,0,0,0,
 		0,0,0,0,
@@ -488,10 +506,10 @@ void GameBoardHandler::splitObject(GameObject* object, Vector3 position, float w
 	memcpy(&tempBuff[12], &(pos2.y), 4);
 	memcpy(&tempBuff[16], &(pos2.z), 4);
 
-	messageBuffer[this->currentMessage].SetParams(tempBuff, 0, 20);
-	messageBuffer[this->currentMessage].read = false;
-	outQueue->PushMessage(&messageBuffer[this->currentMessage]);
-	this->currentMessage = (this->currentMessage + 1) % outMessages;
+	msg->SetParams(tempBuff, 0, 20);
+	msg->read = false;
+
+	mBuffer->PushMessageOut();
 
 }
 
@@ -672,16 +690,17 @@ Vector3 GameBoardHandler::handleTracked(unsigned int time)
 				if (smallest < currentDist && cellToMouse >= 2.0f)
 				{
 
+					Message* msg = mBuffer->GetCurrentMess();
 
 					unsigned char tempBuff[]{ trackedMX >> 0, trackedMX >> 8, trackedMY >> 0, trackedMY >> 8 };
-					messageBuffer[this->currentMessage].timeSent = time;
-					messageBuffer[this->currentMessage].destination = MessageSource_SYSTEM;
-					messageBuffer[this->currentMessage].type = MessageType_SYSTEM;
-					messageBuffer[this->currentMessage].mess = SystemMess_MOVECURSOR;
-					messageBuffer[this->currentMessage].read = false;
-					messageBuffer[this->currentMessage].SetParams(tempBuff, 0, 4);
-					outQueue->PushMessage(&messageBuffer[this->currentMessage]);
-					this->currentMessage = (this->currentMessage + 1) % outMessages;
+					msg->timeSent = time;
+					msg->destination = MessageSource_SYSTEM;
+					msg->type = MessageType_SYSTEM;
+					msg->mess = SystemMess_MOVECURSOR;
+					msg->read = false;
+					msg->SetParams(tempBuff, 0, 4);
+
+					mBuffer->PushMessageOut();
 
 					mouseCell.x = floor(worldMouse.x);
 					mouseCell.y = floor(worldMouse.z);

@@ -57,10 +57,7 @@ namespace Logic
 
 		static const unsigned int MAXSTACK = 524287;
 
-		KubLingMachineHandler(CrossHandlers::MessageQueue* queue,
-			CrossHandlers::Message* mBuffer,
-			unsigned int maxMess,
-			unsigned int &currentMess,
+		KubLingMachineHandler(CrossHandlers::MessageBuffer* mBuffer,
 			CrossHandlers::CelestialSlicedList<Resources::BaseObject*>* objectContainer);
 
 		void SetCode(unsigned long long* code, unsigned int size, HeapMemory* heap);

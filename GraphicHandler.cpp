@@ -145,13 +145,13 @@ void GraphicHandler::Update(unsigned int time)
 		if (currentMessage->mess == GraphicMess_GETSCREEN)
 		{
 			///TODO:REMOVE
-			messageBuffer[this->currentMessage].timeSent = time;
+			/*messageBuffer[this->currentMessage].timeSent = time;
 			messageBuffer[this->currentMessage].destination = MessageSource_NA;
 			messageBuffer[this->currentMessage].type = MessageType_NA;
 			messageBuffer[this->currentMessage].mess = ScriptMess_RESUME;
 			messageBuffer[this->currentMessage].read = false;
 			outQueue->PushMessage(&messageBuffer[this->currentMessage]);
-			this->currentMessage = (this->currentMessage + 1) % outMessages;
+			this->currentMessage = (this->currentMessage + 1) % outMessages;*/
 
 		}
 		else if (currentMessage->mess == GraphicMess_UPDATEGAMEBOARDBUFFERS && gameBoard != nullptr)

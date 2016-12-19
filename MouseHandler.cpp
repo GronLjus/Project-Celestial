@@ -21,71 +21,71 @@ MouseHandler::MouseHandler()
 }
 
 void MouseHandler::Init(CelestialSlicedList<BaseObject*>* gameObjects,
-	Message* mBuffer,
-	unsigned int &currentMessage,
-	MessageQueue* outQueue,
-	unsigned int maxMess)
+	MessageBuffer* mBuffer)
 {
 
 
 	this->gameObjects = gameObjects;
 	this->mBuffer = mBuffer;
-	this->outQueue = outQueue;
-	this->currentMessage = currentMessage;
-	outMessages = maxMess;
 
 }
 
 void MouseHandler::runScript(unsigned int script, unsigned int time)
 {
 
+	Message* msg = mBuffer->GetCurrentMess();
+
 	unsigned char tempBuff[]{ script >> 0, script >> 8, script >> 16, script >> 24 };
-	mBuffer[this->currentMessage].timeSent = time;
-	mBuffer[this->currentMessage].destination = MessageSource_CELSCRIPT;
-	mBuffer[this->currentMessage].type = MessageType_SCRIPT;
-	mBuffer[this->currentMessage].mess = ScriptMess_RUN;
-	mBuffer[this->currentMessage].read = false;
-	mBuffer[this->currentMessage].SetParams(tempBuff, 0, 4);
-	outQueue->PushMessage(&mBuffer[this->currentMessage]);
-	this->currentMessage = (this->currentMessage + 1) % outMessages;
+	msg->timeSent = time;
+	msg->destination = MessageSource_CELSCRIPT;
+	msg->type = MessageType_SCRIPT;
+	msg->mess = ScriptMess_RUN;
+	msg->read = false;
+	msg->SetParams(tempBuff, 0, 4);
+
+	mBuffer->PushMessageOut();
 
 }
 
 void MouseHandler::addScriptParamNum(unsigned int script, unsigned int num, unsigned int time)
 {
 
+	Message* msg = mBuffer->GetCurrentMess();
+
 	unsigned char tempBuff[]{ script >> 0, script >> 8, script >> 16, script >> 24,
 		0.0f, 0.0f,0.0f,0.0f
 	};
 	memcpy(&(tempBuff[4]), &(num), 4);
 
-	mBuffer[this->currentMessage].timeSent = time;
-	mBuffer[this->currentMessage].destination = MessageSource_CELSCRIPT;
-	mBuffer[this->currentMessage].type = MessageType_SCRIPT;
-	mBuffer[this->currentMessage].mess = ScriptMess_ADDPARNUM;
-	mBuffer[this->currentMessage].read = false;
-	mBuffer[this->currentMessage].SetParams(tempBuff, 0, 8);
-	outQueue->PushMessage(&mBuffer[this->currentMessage]);
-	this->currentMessage = (this->currentMessage + 1) % outMessages;
+	msg->timeSent = time;
+	msg->destination = MessageSource_CELSCRIPT;
+	msg->type = MessageType_SCRIPT;
+	msg->mess = ScriptMess_ADDPARNUM;
+	msg->read = false;
+	msg->SetParams(tempBuff, 0, 8);
+
+	mBuffer->PushMessageOut();
 
 }
 
 void MouseHandler::addScriptParamFloat(unsigned int script, float num, unsigned int time)
 {
 
+	Message* msg = mBuffer->GetCurrentMess();
+
 	unsigned char tempBuff[]{ script >> 0, script >> 8, script >> 16, script >> 24,
 		0.0f, 0.0f,0.0f,0.0f
 	};
 	memcpy(&(tempBuff[4]), &(num), 4);
 
-	mBuffer[this->currentMessage].timeSent = time;
-	mBuffer[this->currentMessage].destination = MessageSource_CELSCRIPT;
-	mBuffer[this->currentMessage].type = MessageType_SCRIPT;
-	mBuffer[this->currentMessage].mess = ScriptMess_ADDPARFLOAT;
-	mBuffer[this->currentMessage].read = false;
-	mBuffer[this->currentMessage].SetParams(tempBuff, 0, 8);
-	outQueue->PushMessage(&mBuffer[this->currentMessage]);
-	this->currentMessage = (this->currentMessage + 1) % outMessages;
+	msg->timeSent = time;
+	msg->destination = MessageSource_CELSCRIPT;
+	msg->type = MessageType_SCRIPT;
+	msg->mess = ScriptMess_ADDPARFLOAT;
+	msg->read = false;
+	msg->SetParams(tempBuff, 0, 8);
+
+	mBuffer->PushMessageOut();
 
 }
 
@@ -253,15 +253,17 @@ ScreenTarget* MouseHandler::getScreenTarget(vectorUI2 mouse, GUILayout* base)
 void MouseHandler::setCursor(Logic::CursorCode code, unsigned int time)
 {
 
+	Message* msg = mBuffer->GetCurrentMess();
+
 	unsigned char cd = code;
-	mBuffer[this->currentMessage].timeSent = time;
-	mBuffer[this->currentMessage].destination = MessageSource_SYSTEM;
-	mBuffer[this->currentMessage].type = MessageType_SYSTEM;
-	mBuffer[this->currentMessage].mess = SystemMess_SETCURSOR;
-	mBuffer[this->currentMessage].read = false;
-	mBuffer[this->currentMessage].SetParams(&cd, 0, 1);
-	outQueue->PushMessage(&mBuffer[this->currentMessage]);
-	this->currentMessage = (this->currentMessage + 1) % outMessages;
+	msg->timeSent = time;
+	msg->destination = MessageSource_SYSTEM;
+	msg->type = MessageType_SYSTEM;
+	msg->mess = SystemMess_SETCURSOR;
+	msg->read = false;
+	msg->SetParams(&cd, 0, 1);
+
+	mBuffer->PushMessageOut();
 
 }
 

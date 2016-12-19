@@ -10,10 +10,7 @@ using namespace Resources;
 using namespace CrossHandlers;
 
 
-KubLingMachineHandler::KubLingMachineHandler(MessageQueue* queue,
-	Message* mBuffer,
-	unsigned int maxMess,
-	unsigned int &currentMess,
+KubLingMachineHandler::KubLingMachineHandler(MessageBuffer* mBuffer,
 	CelestialSlicedList<BaseObject*>* objectContainer)
 {
 
@@ -31,7 +28,7 @@ KubLingMachineHandler::KubLingMachineHandler(MessageQueue* queue,
 	for (unsigned int i = 0; i < totalMachines; i++)
 	{
 
-		machines[i] = new KubLingMachine(queue, mBuffer, maxMess, currentMess, stackMem, 524287, objectContainer);
+		machines[i] = new KubLingMachine(mBuffer, stackMem, 524287, objectContainer);
 		readyMachines->PushElement(machines[i]);
 
 	}

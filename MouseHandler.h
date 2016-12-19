@@ -1,7 +1,7 @@
 #pragma once
 #include "CelestialMath.h"
 #include "GameBoard.h"
-#include "MessageQueue.h"
+#include "MessageBuffer.h"
 #include "GUILayout.h"
 #include "CursorCodes.h"
 
@@ -19,10 +19,7 @@ namespace Entities
 			Resources::ScriptableObject* gameObject;
 
 			CrossHandlers::CelestialSlicedList<Resources::BaseObject*>* gameObjects; 
-			CrossHandlers::Message* mBuffer;
-			unsigned int currentMessage;
-			unsigned int outMessages;
-			CrossHandlers::MessageQueue* outQueue;
+			CrossHandlers::MessageBuffer* mBuffer;
 
 			CelestialMath::Vector3 getMouseWorldLine(CelestialMath::vectorUI2 mouse) const;
 			Resources::ScriptableObject* getMouseObject(CelestialMath::Vector3 direction) const;
@@ -52,10 +49,7 @@ namespace Entities
 		public:
 			MouseHandler();
 			void Init(CrossHandlers::CelestialSlicedList<Resources::BaseObject*>* gameObjects,
-				CrossHandlers::Message* mBuffer,
-				unsigned int &currentMessage,
-				CrossHandlers::MessageQueue* outQueue,
-				unsigned int maxMess);
+				CrossHandlers::MessageBuffer* mBuffer);
 
 			CelestialMath::Vector3 GetWorldMouse() const;
 

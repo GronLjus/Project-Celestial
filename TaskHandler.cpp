@@ -35,14 +35,14 @@ void TaskHandler::Init(CelestialSlicedList<BaseObject*>* gameObjects)
 	if (subManager[TaskClass_CLOCK] != nullptr)
 	{
 
-		subManager[TaskClass_CLOCK]->Init(this->outQueue, this->messageBuffer, this->outMessages, this->currentMessage);
+		subManager[TaskClass_CLOCK]->Init(mBuffer);
 
 	}
 
 	if (subManager[TaskClass_SYSTEM] != nullptr)
 	{
 
-		subManager[TaskClass_SYSTEM]->Init(this->outQueue, this->messageBuffer, this->outMessages, this->currentMessage);
+		subManager[TaskClass_SYSTEM]->Init(mBuffer);
 
 	}
 }
