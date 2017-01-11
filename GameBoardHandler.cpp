@@ -9,13 +9,15 @@ using namespace CrossHandlers;
 GameBoardHandler::GameBoardHandler() : IHandleMessages(200, MessageSource_ENTITIES)
 {
 
+	snap = true;
 	localGameBoard = nullptr;
 	trackedObject = nullptr;
 	filter = MessageType_ENTITIES;
 	hookObject = false;
-	hookColl = new unsigned int[128];
 	mH = new MouseHandler();
 	lastTime = 0;
+
+	hookOccupied = false;
 
 }
 
@@ -82,7 +84,7 @@ void  GameBoardHandler::handleInput(CrossHandlers::Message* currentMessage, unsi
 	if (currentMessage->mess == GameBoardMess_CLICKOBJECT)
 	{
 
-		mH->Click(currentMessage->params[0], time, trackedObject);
+		mH->Click(currentMessage->params[0], time, trackedObject, hookOccupied);
 
 	}
 	else if (currentMessage->mess == GameBoardMess_WHEELOBJECT)
@@ -542,14 +544,17 @@ void GameBoardHandler::transformHookedObject(Vector3 mousePos)
 
 }
 
-PositionableObject* GameBoardHandler::snapMouse(unsigned int amounts, unsigned int* collidedObjects, PositionableObject* lastObj, Vector3 &worldMouse)
+Vector3 GameBoardHandler::snapMouse(unsigned int amounts, unsigned int* collidedObjects, PositionableObject* lastObj, Vector3 worldMouse)
 {
 
 	for (unsigned int i = 0; i < amounts; i++)
 	{
 
 		PositionableObject* obj = (PositionableObject*)gameObjects->GetValue(collidedObjects[i]);
-		Vector3 newPos = obj->GetObjectCenterLine(worldMouse, worldMouse, trackedObject->GetScale().x / 2);
+
+		Vector3 newPos = lastObj == nullptr ?
+			obj->GetObjectCenterLine(worldMouse) :
+			obj->GetObjectCenterLine(worldMouse, lastObj->GetDirection());
 
 		worldMouse.x = newPos.x;
 		worldMouse.y = newPos.y;
@@ -558,7 +563,7 @@ PositionableObject* GameBoardHandler::snapMouse(unsigned int amounts, unsigned i
 
 	}
 
-	return lastObj;
+	return worldMouse;
 
 }
 
@@ -583,150 +588,38 @@ Vector3 GameBoardHandler::handleTracked(unsigned int time)
 		BoundingSphere cursor = BoundingSphere(worldMouse.x,
 			trackedObject->GetScale().y / 2,
 			worldMouse.z, 
-			0.5f);
+			0.51f);
+		unsigned int cursorAmounts = 0;
+
+		if (snap)
+		{
+
+			Vector3 midPos = worldMouse;
+			unsigned int* collidedObjects = localGameBoard->GetCollidedObject(&cursor, GameObjectType_ROUTE, cursorAmounts);
+			PositionableObject* lastObject = nullptr;
+			worldMouse = snapMouse(cursorAmounts, collidedObjects, nullptr, worldMouse);
+
+		}
 
 		if (!hookObject)
 		{
 
-			Vector3 midPos = worldMouse;
-			unsigned int amounts = 0;
-			unsigned int* collidedObjects = localGameBoard->GetCollidedObject(&cursor, GameObjectType_ROUTE, amounts);
-			PositionableObject* lastObject = nullptr;
-			hookTargets = 0;
-
-			if (amounts > 0)
-			{
-
-				lastObject = snapMouse(amounts, collidedObjects, lastObject, worldMouse);
-				memcpy(hookColl, collidedObjects, min(amounts, 128) * sizeof(unsigned int));
-				hookTargets += amounts;
-
-			}
-
-			amounts = 0;
-			collidedObjects = localGameBoard->GetCollidedObject(&cursor, GameObjectType_SCENERY, amounts);
-
-			if (amounts > 0)
-			{
-
-				snapMouse(amounts, collidedObjects, lastObject, worldMouse);
-				memcpy(&hookColl[hookTargets], collidedObjects, min(amounts, 128 - hookTargets) * sizeof(unsigned int));
-				hookTargets += amounts;
-
-			}
-
 			trackedObject->SetPosition(worldMouse);
 			trackedObject->UpdateMatrix();
+			hookTargets = cursorAmounts;
 
 		}
 		else
 		{
 
 			transformHookedObject(worldMouse);
+			unsigned int collidedAmounts = 0;
+			localGameBoard->GetCollidedObject(trackedObject, collidedAmounts);
 
-			unsigned int amountOfCollidedObjects = 0;
-			unsigned int* collidedObjects = localGameBoard->GetCollidedObject(trackedObject, amountOfCollidedObjects);
+			//The tracked object intersects with more then the end and start
+			hookOccupied = collidedAmounts > (cursorAmounts + hookTargets);
 
-			if (amountOfCollidedObjects > hookTargets)
-			{
-
-				Vector3 distVect1 = worldMouse - hookPos;
-				float currentDist = VectorDot(distVect1, distVect1);
-
-				float smallest = -1.0f;
-				Vector3 smallestVect = worldMouse;
-				float cellToMouse = 0.0f;
-
-				for (unsigned int i = 0; i < amountOfCollidedObjects; i++)
-				{
-
-					bool safe = true;
-
-					for (unsigned int k = 0; k < hookTargets && safe; k++)
-					{
-
-						safe = !(collidedObjects[i] == hookColl[k]);
-
-					}
-
-					if (safe)
-					{
-					
-						PositionableObject* obj = (PositionableObject*)gameObjects->GetValue(collidedObjects[i]);
-						float widthDiff = trackedObject->GetScale().x - obj->GetScale().x;
-
-						Vector3 newPos = obj->GetObjectCenterLine(worldMouse, hookPos, trackedObject->GetScale().x / 2);
-						Vector3 distVect = newPos - hookPos;
-						float dist = VectorDot(distVect, distVect);
-
-						if (dist != dist)
-						{
-
-							int brk = 0;
-
-						}
-
-						if (smallest < 0 || dist < smallest)
-						{
-
-							smallest = dist;
-							smallestVect = newPos;
-							Vector3 mToC = worldMouse - newPos;
-							cellToMouse = VectorDot(mToC);
-
-						}
-					}
-				}
-
-				worldMouse = smallestVect;
-				transformHookedObject(worldMouse);
-
-				CameraObject* cam = localGameBoard->GetCam();
-				Vector3 onScreen = VectorTransform(worldMouse,
-					cam->GetView()->GetViewProjection(cam->GetFlip()));
-				trackedMX = ((onScreen.x + 1) / 2) * cam->GetView()->GetPort().width;
-				trackedMY = ((-onScreen.y + 1) / 2) * cam->GetView()->GetPort().height;
-
-				if (smallest < currentDist && cellToMouse >= 2.0f)
-				{
-
-					Message* msg = mBuffer->GetCurrentMess();
-
-					unsigned char tempBuff[]{ trackedMX >> 0, trackedMX >> 8, trackedMY >> 0, trackedMY >> 8 };
-					msg->timeSent = time;
-					msg->destination = MessageSource_SYSTEM;
-					msg->type = MessageType_SYSTEM;
-					msg->mess = SystemMess_MOVECURSOR;
-					msg->read = false;
-					msg->SetParams(tempBuff, 0, 4);
-
-					mBuffer->PushMessageOut();
-
-					mouseCell.x = floor(worldMouse.x);
-					mouseCell.y = floor(worldMouse.z);
-
-				}
-			}
-			else
-			{
-
-				CameraObject* cam = localGameBoard->GetCam();
-				Vector3 onScreen = VectorTransform(worldMouse,
-					cam->GetView()->GetViewProjection(cam->GetFlip()));
-				trackedMX = ((onScreen.x + 1) / 2) * cam->GetView()->GetPort().width;
-				trackedMY = ((-onScreen.y + 1) / 2) * cam->GetView()->GetPort().height;
-
-			}
 		}
-
-		mouseCache = worldMouse;
-
-	}
-	else
-	{
-
-		worldMouse = mouseCache;
-
 	}
 
 	return worldMouse;
@@ -775,6 +668,5 @@ GameBoardHandler::~GameBoardHandler()
 {
 
 	delete mH;
-	delete[] hookColl;
 
 }

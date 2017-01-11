@@ -405,7 +405,7 @@ void MouseHandler::UpDown(char button, bool up, unsigned int time)
 	}
 }
 
-void MouseHandler::Click(char button, unsigned int time, PositionableObject* trackedObject)
+void MouseHandler::Click(char button, unsigned int time, PositionableObject* trackedObject, bool trackedOccluded)
 {
 
 	ScriptableObject* clickOb = hoverObject;
@@ -438,6 +438,7 @@ void MouseHandler::Click(char button, unsigned int time, PositionableObject* tra
 
 		script--;
 		sendCommonScriptParams(script, clickOb->GetTargetId(), time);
+		addScriptParamNum(script, trackedOccluded ? 1 : 0, time);
 		runScript(script, time);
 
 	}

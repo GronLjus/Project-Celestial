@@ -22,13 +22,13 @@ namespace Entities
 			CelestialMath::Vector3 hookPos;
 			CelestialMath::Vector3 hookScale;
 			CelestialMath::Vector3 hookRot;
-			CelestialMath::Vector3 mouseCache;
 
+			bool snap;
 			bool hookObject;
+			bool hookOccupied;
 
 			unsigned int lastTime;
 			unsigned int hookTargets;
-			unsigned int* hookColl;
 
 			CrossHandlers::CelestialSlicedList<Resources::BaseObject*>* gameObjects;
 			Resources::GameBoard* localGameBoard;
@@ -47,7 +47,7 @@ namespace Entities
 			void splitObject(Resources::GameObject* object, CelestialMath::Vector3 position, float width, unsigned int time);
 			void transformHookedObject(CelestialMath::Vector3 mousePos);
 
-			Resources::PositionableObject* snapMouse(unsigned int amounts, unsigned int* collidedObjects, Resources::PositionableObject* lastObj, CelestialMath::Vector3 &worldMouse);
+			CelestialMath::Vector3 snapMouse(unsigned int amounts, unsigned int* collidedObjects, Resources::PositionableObject* lastObj, CelestialMath::Vector3 worldMouse);
 			CelestialMath::Vector3 handleTracked(unsigned int time);
 
 			void handleInput(CrossHandlers::Message* currentMessage, unsigned int time);

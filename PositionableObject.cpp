@@ -270,8 +270,9 @@ Vector3 PositionableObject::capLine(Vector3 point)
 
 	Vector3 centerLine = point - (position + absOffset);
 	float distSqr = VectorDot(centerLine, centerLine);
+	float edgeSqrOffset = ((scl.z - 1.5) / 2)*((scl.z - 1.5) / 2);
 
-	if (distSqr > (scl.z / 2)*(scl.z / 2))
+	if (distSqr > edgeSqrOffset)
 	{
 
 		float dist = (scl.z / 2);
@@ -280,9 +281,13 @@ Vector3 PositionableObject::capLine(Vector3 point)
 		dist += 0.5f;
 
 		Vector3 halfDist = (direction * dist);
-		return VectorDot(centerLine, direction) > 0 ?
+		Vector3 capPos = VectorDot(centerLine, direction) > 0 ?
 			(position + absOffset) + halfDist :
 			(position + absOffset) - halfDist;
+		capPos.x = floor(capPos.x) + 0.5f;
+		capPos.z = floor(capPos.z) + 0.5f;
+
+		return capPos;
 
 	}
 

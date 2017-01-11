@@ -58,7 +58,7 @@ namespace Entities
 			void Drag(unsigned int time);
 			void StopDrag(unsigned int time);
 			void UpDown(char button, bool up, unsigned int time);
-			void Click(char button, unsigned int time, Resources::PositionableObject* trackedObject);
+			void Click(char button, unsigned int time, Resources::PositionableObject* trackedObject, bool trackedOccluded);
 			void Wheel(unsigned int time, short delta, Resources::PositionableObject* trackedObject);
 
 			void MoveMouse(CelestialMath::vectorUI2 newMouse, unsigned int time);
