@@ -26,6 +26,7 @@ namespace Resources
 			unsigned int GetUpdownScript() const;
 
 			unsigned int GetTravelNodeScript() const;
+			unsigned int GetSplitNodeScript() const;
 
 			unsigned int GetKeyScript(Input::CelestialKeyCategories cat, unsigned char code) const;
 
@@ -53,7 +54,7 @@ namespace Resources
 			unsigned int upDownScript;
 
 			unsigned int travelArrivedNodeScript;
-
+			unsigned int splitNodeScript;
 
 			struct trigger
 			{

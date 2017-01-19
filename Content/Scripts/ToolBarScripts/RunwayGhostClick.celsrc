@@ -34,7 +34,4 @@ else
 	r1 = add routegoal hckX hckY hckZ 3
 	r2 = add routegoal ?f0 ?f1 ?f2 3
 
-	split r1 1.0
-	split r2 1.0
-
 }

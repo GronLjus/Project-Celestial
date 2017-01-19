@@ -60,6 +60,7 @@ namespace Logic
 		OperatorTypes_IGNORE, OperatorTypes_ACCEPT,
 		OperatorTypes_TRACK, OperatorTypes_CLEAR,
 		OperatorTypes_HOOK, OperatorTypes_GLUE,
+		OperatorTypes_ROUTE,
 		OperatorTypes_LINK,
 		OperatorTypes_SPAWN, OperatorTypes_TRAVEL,
 		OperatorTypes_SPLIT,

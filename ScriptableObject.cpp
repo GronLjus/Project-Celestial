@@ -20,6 +20,8 @@ ScriptableObject::ScriptableObject() : SerializableObject(), BaseObject()
 	upDownScript = 0;
 
 	travelArrivedNodeScript = 0;
+	splitNodeScript = 0;
+
 	serial = 40;
 
 	currentTriggers = 0;
@@ -325,6 +327,9 @@ void ScriptableObject::Update(Message* mess)
 		case ObjectMess_SETTRVLNDESCRPT:
 			travelArrivedNodeScript = param1 + 1;
 			break;
+		case ObjectMess_SETSPLTSCRPT:
+			splitNodeScript = param1 + 1;
+			break;
 		case ObjectMess_ADDKEYSCRPT:
 			trg.cat = Input::GetCat(param2);
 			trg.code = Input::GetCode(param2, trg.cat);
@@ -441,6 +446,13 @@ unsigned int ScriptableObject::GetTravelNodeScript() const
 {
 
 	return travelArrivedNodeScript;
+
+}
+
+unsigned int ScriptableObject::GetSplitNodeScript() const
+{
+
+	return splitNodeScript;
 
 }
 

@@ -1229,6 +1229,9 @@
     <None Include="Content\Scripts\ToolBarScripts\RunWayGhostClick.celsrc">
       <Filter>Resource Files\Content\Scripts\ToolBarScripts</Filter>
     </None>
+    <None Include="Content\Scripts\ObjectScripts\TaxiwaySplit.celsrc">
+      <Filter>Resource Files\Content\Scripts\ObjectScripts</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Project Celestial.rc">

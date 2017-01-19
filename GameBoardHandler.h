@@ -38,11 +38,17 @@ namespace Entities
 			short trackedMY;
 
 			CelestialMath::Vector2 mouseCell;
+			CelestialMath::Vector3 mouseCache;
+
 			bool resetMouse;
 
 			void runScript(unsigned int script, unsigned int time);
 			void addScriptParamNum(unsigned int script, unsigned int num, unsigned int time);
+			void addScriptParamFloat(unsigned int script, float num, unsigned int time);
+
 			void triggerNodeScript(unsigned int script, unsigned int obj, unsigned int goalNode, unsigned int currentNode, unsigned int time);
+
+			void triggerSplitScript(unsigned int script, unsigned int obj, CelestialMath::Vector3 pos, unsigned int time);
 
 			void splitObject(Resources::GameObject* object, CelestialMath::Vector3 position, float width, unsigned int time);
 			void transformHookedObject(CelestialMath::Vector3 mousePos);

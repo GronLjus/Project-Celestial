@@ -18,6 +18,7 @@ GameBoardHandler::GameBoardHandler() : IHandleMessages(200, MessageSource_ENTITI
 	lastTime = 0;
 
 	hookOccupied = false;
+	mouseCache = Vector3(0.0f, 0.0f, 0.0f);
 
 }
 
@@ -68,12 +69,46 @@ void GameBoardHandler::addScriptParamNum(unsigned int script, unsigned int num, 
 
 }
 
+void GameBoardHandler::addScriptParamFloat(unsigned int script, float num, unsigned int time)
+{
+
+	Message* msg = mBuffer->GetCurrentMess();
+
+	unsigned char tempBuff[]{ script >> 0, script >> 8, script >> 16, script >> 24,
+		0.0f, 0.0f,0.0f,0.0f
+	};
+	memcpy(&(tempBuff[4]), &(num), 4);
+
+	msg->timeSent = time;
+	msg->destination = MessageSource_CELSCRIPT;
+	msg->type = MessageType_SCRIPT;
+	msg->mess = ScriptMess_ADDPARFLOAT;
+	msg->read = false;
+	msg->SetParams(tempBuff, 0, 8);
+
+	mBuffer->PushMessageOut();
+
+}
+
 void GameBoardHandler::triggerNodeScript(unsigned int script, unsigned int obj, unsigned int goalNode, unsigned int currentNode, unsigned int time)
 {
 
 	addScriptParamNum(script, obj, time);
 	addScriptParamNum(script, currentNode, time);
 	addScriptParamNum(script, goalNode, time);
+	runScript(script, time);
+
+}
+
+void GameBoardHandler::triggerSplitScript(unsigned int script, unsigned int obj, Vector3 pos, unsigned int time)
+{
+
+	addScriptParamNum(script, obj, time);
+
+	addScriptParamFloat(script, pos.x, time);
+	addScriptParamFloat(script, pos.y, time);
+	addScriptParamFloat(script, pos.z, time);
+
 	runScript(script, time);
 
 }
@@ -363,8 +398,19 @@ void GameBoardHandler::UpdateMessages(unsigned int time, unsigned int clock)
 				{
 
 					RouteNodeObject* middleNode = routing->GetNode(routeObj->GetMiddleNode() - 1);
-					splitObject(routeObj, middleNode->GetPosition(), width, time);
 
+					if (routeObj->GetSplitNodeScript() != 0)
+					{
+
+						triggerSplitScript(routeObj->GetSplitNodeScript() - 1, routeObj->GetId(), middleNode->GetPosition(), time);
+						
+					}
+					else
+					{
+
+						splitObject(routeObj, middleNode->GetPosition(), width, time);
+
+					}
 				}
 			}
 		}
@@ -400,6 +446,30 @@ void GameBoardHandler::UpdateMessages(unsigned int time, unsigned int clock)
 		}
 		else if (currentMessage->mess == GameBoardMess_SPLITOBJECT)
 		{
+
+			GameRouteObject* routeObj = (GameRouteObject*)gameObjects->GetValue(param1);
+
+			Vector3 pos;
+			memcpy(&pos.x, &currentMessage->params[4], 4);
+			memcpy(&pos.y, &currentMessage->params[8], 4);
+			memcpy(&pos.z, &currentMessage->params[12], 4);
+
+			float width;
+			memcpy(&width, &currentMessage->params[16], 4);
+
+			splitObject(routeObj, pos, width, time);
+
+
+		}
+		else if (currentMessage->mess == GameBoardMess_ROUTEOBJECT)
+		{
+
+			GameRouteObject* routeObj = (GameRouteObject*)gameObjects->GetValue(param1);
+
+			Vector3 size = routeObj->GetDirection() * (routeObj->GetScale().z / 2);
+			Vector3 startPoint = routeObj->GetPosition() + size;
+			Vector3 endPoint = routeObj->GetPosition() - size;
+
 
 		}
 		else if (currentMessage->mess == GameBoardMess_GETPARENT)
@@ -581,8 +651,6 @@ Vector3 GameBoardHandler::handleTracked(unsigned int time)
 	{
 
 		resetMouse = false;
-		mouseCell.x = floor(worldMouse.x);
-		mouseCell.y = floor(worldMouse.z);
 		worldMouse.x = floor(worldMouse.x) + 0.5f;
 		worldMouse.z = floor(worldMouse.z) + 0.5f;
 		BoundingSphere cursor = BoundingSphere(worldMouse.x,
@@ -590,6 +658,8 @@ Vector3 GameBoardHandler::handleTracked(unsigned int time)
 			worldMouse.z, 
 			0.51f);
 		unsigned int cursorAmounts = 0;
+
+		
 
 		if (snap)
 		{
@@ -620,6 +690,17 @@ Vector3 GameBoardHandler::handleTracked(unsigned int time)
 			hookOccupied = collidedAmounts > (cursorAmounts + hookTargets);
 
 		}
+
+		mouseCache = worldMouse;
+		mouseCell.x = floor(worldMouse.x);
+		mouseCell.y = floor(worldMouse.z);
+
+	}
+	else
+	{
+
+		worldMouse = mouseCache;
+
 	}
 
 	return worldMouse;

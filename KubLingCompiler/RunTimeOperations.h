@@ -22,7 +22,7 @@ namespace Logic
 		bytecode_SETLCLK, bytecode_SETMCLK, bytecode_SETRCLK,
 		bytecode_SETLDRG, bytecode_SETMDRG, bytecode_SETRDRG,
 		bytecode_SETMWHL, bytecode_SETUD,
-		bytecode_SETNDEARRVL,
+		bytecode_SETNDEARRVL, bytecode_SETSPLT,
 		bytecode_SETUI,
 		bytecode_SETCRS,
 		bytecode_FCSUI,
@@ -80,6 +80,8 @@ namespace Logic
 
 		bytecode_ADDTSKPARNUM, bytecode_ADDTSKPARFLT, bytecode_ADDTSKPARSTR,
 		bytecode_QSTSK, bytecode_QCTSK, bytecode_RMTSK,
+		
+		bytecode_RUTE,
 
 		bytecode_NUMARR, bytecode_STRARR,bytecode_NUMOFFST, bytecode_STROFFST,
 

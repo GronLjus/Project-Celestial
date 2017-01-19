@@ -444,6 +444,7 @@
     <None Include="Content\Scripts\LoadScripts\LoadScripts.celsrc" />
     <None Include="Content\Scripts\LoadScripts\LoadToolBar.celsrc" />
     <None Include="Content\Scripts\ObjectScripts\NodeArrive.celsrc" />
+    <None Include="Content\Scripts\ObjectScripts\TaxiwaySplit.celsrc" />
     <None Include="Content\Scripts\PreLoad.celsrc" />
     <None Include="Content\Scripts\Root.celsrc" />
     <None Include="Content\Scripts\TaskScripts\ClockTest.celsrc" />

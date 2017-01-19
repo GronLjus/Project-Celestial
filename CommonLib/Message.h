@@ -46,6 +46,7 @@ namespace CrossHandlers
 		GameBoardMess_ADDROUTE, GameBoardMess_SPAWN, GameBoardMess_TRAVEL,
 		GameBoardMess_SPLITOBJECT, GameBoardMess_GLUEOBJECT,
 		GameBoardMess_GETPARENT,
+		GameBoardMess_ROUTEOBJECT,
 		GameBoardMess_NA };
 	enum SystemMess{SystemMess_GETSCREENRES, 
 		SystemMess_SETCURSOR, SystemMess_HIDECURSOR, SystemMess_SHOWCURSOR, SystemMess_MOVECURSOR,
@@ -62,7 +63,7 @@ namespace CrossHandlers
 		ObjectMess_SETLCSCRPT, ObjectMess_SETRCSCRPT, ObjectMess_SETMCSCRPT,
 		ObjectMess_SETLDSCRPT, ObjectMess_SETRDSCRPT, ObjectMess_SETMDSCRPT,
 		ObjectMess_SETWHLSCRPT, ObjectMess_SETUPDWNSCRPT, ObjectMess_ADDKEYSCRPT,
-		ObjectMess_SETTRVLNDESCRPT,
+		ObjectMess_SETTRVLNDESCRPT, ObjectMess_SETSPLTSCRPT,
 		ObjectMess_SETSCRPTTRGT,
 		ObjectMess_SETSNAP, ObjectMess_SETTEXT, ObjectMess_APPENDTEXT, ObjectMess_APPENDTEXTLINE,
 		ObjectMess_HANDLECHAR, ObjectMess_HANDLEKEY,

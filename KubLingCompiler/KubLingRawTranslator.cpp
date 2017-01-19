@@ -3694,6 +3694,33 @@ RunTimeError RotateOperator(rawCode* raw, unsigned int returnVar, unsigned char*
 
 }
 
+RunTimeError RouteOperator(rawCode* raw, unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int offset, unsigned int byteLine, runTimeVal &rtv)
+{
+
+	if (paramSize < 4)
+	{
+
+		return RunTimeError_BADPARAMS;
+
+	}
+
+	raw->maxLines = addMessParLinesO * 3 + sendLines;
+	raw->code = new rawCode::line[raw->maxLines];
+
+	unsigned int var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
+	Message mess;
+	mess.destination = MessageSource_ENTITIES;
+	mess.type = MessageType_ENTITIES;
+	mess.mess = GameBoardMess_ROUTEOBJECT;
+	mess.returnParam = 0;
+
+	addMessStackParamO(var - 1, 0, 4, rtv, raw);
+	sendMessageOut(mess, rtv, raw);
+
+	return RunTimeError_OK;
+
+}
+
 RunTimeError RunScriptOperator(rawCode* raw, unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int offset, unsigned int byteLine, runTimeVal &rtv)
 {
 
@@ -4340,6 +4367,28 @@ RunTimeError SetNodeArrivalOperator(rawCode* raw, unsigned int returnVar, unsign
 
 }
 
+RunTimeError SetNodeSplitOperator(rawCode* raw, unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int offset, unsigned int byteLine, runTimeVal &rtv)
+{
+
+	if (paramSize < 8)
+	{
+
+		return RunTimeError_BADPARAMS;
+
+	}
+
+	raw->maxLines = setObjectMessLines;
+	raw->code = new rawCode::line[raw->maxLines];
+
+	unsigned int var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
+	unsigned int var2 = (params[4] | ((int)params[5] << 8) | ((int)params[6] << 16) | ((int)params[7] << 24));
+
+	setCommon(var, var2, ObjectMess_SETSPLTSCRPT, rtv, raw);
+
+	return RunTimeError_OK;
+
+}
+
 RunTimeError SetRightClickOperator(rawCode* raw, unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int offset, unsigned int byteLine, runTimeVal &rtv)
 {
 
@@ -4635,12 +4684,16 @@ RunTimeError SplitRouteOperator(rawCode* raw, unsigned int returnVar, unsigned c
 
 	}
 
-	raw->maxLines = addMessParLinesO * 2 + sendLines;
+	raw->maxLines = addMessParLinesO * 5 + sendLines;
 	raw->code = new rawCode::line[raw->maxLines];
 
-	unsigned int var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
-	unsigned int var2 = (params[4] | ((int)params[5] << 8) | ((int)params[6] << 16) | ((int)params[7] << 24));
+	unsigned int obj = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
 
+	unsigned int posX = (params[4] | ((int)params[5] << 8) | ((int)params[6] << 16) | ((int)params[7] << 24));
+	unsigned int posY = (params[8] | ((int)params[9] << 8) | ((int)params[10] << 16) | ((int)params[11] << 24));
+	unsigned int posZ = (params[12] | ((int)params[13] << 8) | ((int)params[14] << 16) | ((int)params[15] << 24));
+
+	unsigned int width = (params[16] | ((int)params[17] << 8) | ((int)params[18] << 16) | ((int)params[19] << 24));
 
 	Message mess;
 	mess.destination = MessageSource_ENTITIES;
@@ -4648,8 +4701,14 @@ RunTimeError SplitRouteOperator(rawCode* raw, unsigned int returnVar, unsigned c
 	mess.mess = GameBoardMess_SPLITOBJECT;
 	mess.returnParam = 0;
 
-	addMessStackParamO(var2 - 1, 4, 4, rtv, raw);
-	addMessStackParamO(var - 1, 0, 4, rtv, raw);
+	addMessStackParamO(width - 1, 16, 4, rtv, raw);
+
+	addMessStackParamO(posZ - 1, 12, 4, rtv, raw);
+	addMessStackParamO(posY - 1, 8, 4, rtv, raw);
+	addMessStackParamO(posX - 1, 4, 4, rtv, raw);
+
+	addMessStackParamO(obj - 1, 0, 4, rtv, raw);
+
 	sendMessageOut(mess, rtv, raw);
 
 	return RunTimeError_OK;
@@ -5202,6 +5261,7 @@ KubLingRawTranslator::KubLingRawTranslator()
 	translator[bytecode_SETMWHL] = SetMouseWheelOperator;
 	translator[bytecode_SETUD] = SetMouseUpDownOperator;
 	translator[bytecode_SETNDEARRVL] = SetNodeArrivalOperator;
+	translator[bytecode_SETSPLT] = SetNodeSplitOperator;
 
 	translator[bytecode_SETUI] = SetUIOperator;
 	translator[bytecode_SETCRS] = SetMouseCursor;
@@ -5325,6 +5385,8 @@ KubLingRawTranslator::KubLingRawTranslator()
 	translator[bytecode_QSTSK] = QueueSystemTaskOperator;
 	translator[bytecode_QCTSK] = QueueClockTaskOperator;
 	translator[bytecode_RMTSK] = RemoveTaskOperator;
+
+	translator[bytecode_RUTE] = RouteOperator;
 
 	translator[bytecode_NUMARR] = ArrayNumOperator;
 	translator[bytecode_STRARR] = ArrayStrOperator;
