@@ -2126,6 +2126,37 @@ KubLingCompiler::KubLingCompiler()
 		new bool[operators[OperatorTypes_ROUTE].params[0]]{ false }
 	};
 
+	operators[OperatorTypes_FILL].keyword = "fill";
+	operators[OperatorTypes_FILL].enumAmount = 1;
+	operators[OperatorTypes_FILL].enums = new std::string[operators[OperatorTypes_FILL].enumAmount]; operators[OperatorTypes_FILL].enums[0] = "gridObject";
+	operators[OperatorTypes_FILL].byteCodes = new unsigned char[operators[OperatorTypes_FILL].enumAmount]{ bytecode_FLGRD };
+	operators[OperatorTypes_FILL].params = new unsigned char[operators[OperatorTypes_FILL].enumAmount]{ 2 };
+	operators[OperatorTypes_FILL].minParams = new unsigned char[operators[OperatorTypes_FILL].enumAmount]{ 2 };
+	operators[OperatorTypes_FILL].paramsyntax = new VarType*[operators[OperatorTypes_FILL].enumAmount]{
+		new VarType[operators[OperatorTypes_FILL].params[0]]{ VarType_NUMBER,VarType_FLOAT }
+	};
+	operators[OperatorTypes_FILL].paramTypes = new ParamType*[operators[OperatorTypes_FILL].enumAmount]{
+		new ParamType[operators[OperatorTypes_FILL].params[0]]{ ParamType_NA,ParamType_NA }
+	};
+	operators[OperatorTypes_FILL].optionalPar = new bool*[operators[OperatorTypes_FILL].enumAmount]{
+		new bool[operators[OperatorTypes_FILL].params[0]]{ false,false }
+	};
+	operators[OperatorTypes_FILL].readParam = new unsigned char[operators[OperatorTypes_FILL].enumAmount]{ 0,};
+	operators[OperatorTypes_FILL].returns = new VarType[operators[OperatorTypes_FILL].enumAmount]{ VarType_NUMBER };
+	operators[OperatorTypes_FILL].returnType = new ParamType[operators[OperatorTypes_FILL].enumAmount]{ ParamType_VAR };
+	operators[OperatorTypes_FILL].writeParam = new unsigned char[operators[OperatorTypes_FILL].enumAmount]{ 0 };
+	operators[OperatorTypes_FILL].priority = 0;
+	operators[OperatorTypes_FILL].shortHandsAmounts = 0;
+	operators[OperatorTypes_FILL].amountParOperators = new unsigned char[operators[OperatorTypes_FILL].enumAmount]{ 0 };
+	operators[OperatorTypes_FILL].parRepeatsMin = new unsigned char*[operators[OperatorTypes_FILL].enumAmount]{
+		new unsigned char[operators[OperatorTypes_FILL].params[0]]{ 0, 0 }
+	};
+	operators[OperatorTypes_FILL].parRepeatsMax = new unsigned char*[operators[OperatorTypes_FILL].enumAmount]{
+		new unsigned char[operators[OperatorTypes_FILL].params[0]]{ 0, 0 }
+	};
+	operators[OperatorTypes_FILL].parOperatorAppend = new bool*[operators[OperatorTypes_FILL].enumAmount]{
+		new bool[operators[OperatorTypes_FILL].params[0]]{ false, false }
+	};
 
 	flowOps = new FlowController[FlowOperator_NA];
 

@@ -19,12 +19,14 @@ namespace Entities
 
 		private:
 			RoutingManager* routing;
+
 			CelestialMath::Vector3 hookPos;
 			CelestialMath::Vector3 hookScale;
 			CelestialMath::Vector3 hookRot;
+			CelestialMath::Vector3 hookSide;
 
 			bool snap;
-			bool hookObject;
+			unsigned int hookStatus;
 			bool hookOccupied;
 
 			unsigned int lastTime;
@@ -55,6 +57,8 @@ namespace Entities
 
 			CelestialMath::Vector3 snapMouse(unsigned int amounts, unsigned int* collidedObjects, Resources::PositionableObject* lastObj, CelestialMath::Vector3 worldMouse);
 			CelestialMath::Vector3 handleTracked(unsigned int time);
+
+			CelestialMath::Vector3 getClosestPositionOnObj(Resources::GameGridObject* grid, CelestialMath::Vector3 mouse,CelestialMath::Vector3 origin) const;
 
 			void handleInput(CrossHandlers::Message* currentMessage, unsigned int time);
 

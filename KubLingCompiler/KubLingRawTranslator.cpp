@@ -1921,6 +1921,37 @@ RunTimeError ExportStrOperator(rawCode* raw, unsigned int returnVar, unsigned ch
 
 }
 
+RunTimeError FillGridOperator(rawCode* raw, unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int offset, unsigned int byteLine, runTimeVal &rtv)
+{
+
+	if (paramSize < 8)
+	{
+
+		return RunTimeError_BADPARAMS;
+
+	}
+
+	raw->maxLines = addMessParLinesO * 2 + waitingLines + sendLines;
+	raw->code = new rawCode::line[raw->maxLines];
+
+	Message mess;
+	mess.returnParam = 0;
+	mess.destination = MessageSource_ENTITIES;
+	mess.type = MessageType_ENTITIES;
+	mess.mess = GameBoardMess_POPULATEGRID;
+
+	unsigned int var = (params[4] | ((int)params[5] << 8) | ((int)params[6] << 16) | ((int)params[7] << 24));
+	addMessStackParamO(var - 1, 4, 4, rtv, raw);
+
+	var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
+	addMessStackParamO(var - 1, 0, 4, rtv, raw);
+
+	sendMessageOut(mess, rtv, raw);
+
+	return RunTimeError_OK;
+
+}
+
 RunTimeError FloatEqlVarOperator(rawCode* raw, unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int offset, unsigned int byteLine, runTimeVal &rtv)
 {
 
@@ -5266,6 +5297,8 @@ KubLingRawTranslator::KubLingRawTranslator()
 	translator[bytecode_SETUI] = SetUIOperator;
 	translator[bytecode_SETCRS] = SetMouseCursor;
 	translator[bytecode_FCSUI] = FocusUIOperator;
+
+	translator[bytecode_FLGRD] = FillGridOperator;
 
 	translator[bytecode_GETSCRNY] = GetScreenHeightOperator;
 	translator[bytecode_PRNT] = ParentOperator;

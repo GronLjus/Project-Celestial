@@ -307,6 +307,9 @@
     <Filter Include="Resource Files\Content\Scripts\TaskScripts">
       <UniqueIdentifier>{493bc72b-bba6-41d7-85e8-40afa855c562}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resource Files\Content\Scripts\ToolBarScripts\GhostClicks">
+      <UniqueIdentifier>{c65b3225-b07d-433d-a38f-9016009de96d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MeshObject.h">
@@ -750,6 +753,9 @@
     <ClInclude Include="MessageBuffer.h">
       <Filter>Header Files\CrossHandler-Tools\Messaging</Filter>
     </ClInclude>
+    <ClInclude Include="GameGridObject.h">
+      <Filter>Header Files\Resources\Objects\GameObjects</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Camera.cpp">
@@ -1052,6 +1058,9 @@
     <ClCompile Include="MessageBuffer.cpp">
       <Filter>Source Files\CrossHandler-Tools\Messaging</Filter>
     </ClCompile>
+    <ClCompile Include="GameGridObject.cpp">
+      <Filter>Source Files\Resources\Objects\GameObjects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico">
@@ -1226,11 +1235,17 @@
     <None Include="Content\Scripts\ToolBarScripts\RunWayClick.celsrc">
       <Filter>Resource Files\Content\Scripts\ToolBarScripts</Filter>
     </None>
-    <None Include="Content\Scripts\ToolBarScripts\RunWayGhostClick.celsrc">
-      <Filter>Resource Files\Content\Scripts\ToolBarScripts</Filter>
-    </None>
     <None Include="Content\Scripts\ObjectScripts\TaxiwaySplit.celsrc">
       <Filter>Resource Files\Content\Scripts\ObjectScripts</Filter>
+    </None>
+    <None Include="Content\Scripts\ToolBarScripts\ApronButtonClick.celsrc">
+      <Filter>Resource Files\Content\Scripts\ToolBarScripts</Filter>
+    </None>
+    <None Include="Content\Scripts\ToolBarScripts\RunWayGhostClick.celsrc">
+      <Filter>Resource Files\Content\Scripts\ToolBarScripts\GhostClicks</Filter>
+    </None>
+    <None Include="Content\Scripts\ToolBarScripts\GhostClicks\ApronGhostClick.celsrc">
+      <Filter>Resource Files\Content\Scripts\ToolBarScripts\GhostClicks</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -1245,7 +1260,7 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="Content\Scripts\ToolBarScripts\TaxiWayGhostClick.celsrc">
-      <Filter>Resource Files\Content\Scripts\ToolBarScripts</Filter>
+      <Filter>Resource Files\Content\Scripts\ToolBarScripts\GhostClicks</Filter>
     </Text>
   </ItemGroup>
 </Project>

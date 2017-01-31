@@ -15,7 +15,7 @@ set border toolbarLY 0.0 1.0 0.0
 accept mouse toolbarLY
 set content toolbarLY 0.8 0.8 0.8
 
-nrButtons = 5
+nrButtons = 6
 
 buttons = array num nrButtons
 buttonTexts = array num nrButtons
@@ -27,6 +27,7 @@ buttonScripts[1] = load script 'Content\Scripts\ToolBarScripts\TaxiWayClick'
 buttonScripts[2] = load script 'Content\Scripts\ToolBarScripts\RunWayClick'
 buttonScripts[3] = load script 'Content\Scripts\ToolBarScripts\SaveClick'
 buttonScripts[4] = load script 'Content\Scripts\ToolBarScripts\PauseButtonClick'
+buttonScripts[5] = load script 'Content\Scripts\ToolBarScripts\ApronButtonClick'
 
 timeScript = load script 'Content\Scripts\TaskScripts\ClockUpdater'
 button1UD = load script 'Content\Scripts\ToolBarScripts\Button1UpDown'
@@ -38,6 +39,7 @@ buttonLabels[1] = 'Taxiway'
 buttonLabels[2] = 'Runway'
 buttonLabels[3] = 'Save'
 buttonLabels[4] = 'Pause'
+buttonLabels[5] = 'Apron'
 
 
 gameBoard = import 'board'

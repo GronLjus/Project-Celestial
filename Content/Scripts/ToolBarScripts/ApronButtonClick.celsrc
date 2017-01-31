@@ -1,0 +1,14 @@
+$
+{
+	
+	objClick = load script 'Content\Scripts\ToolBarScripts\GhostClicks\ApronGhostClick'
+	tile = import 'baseTile'
+	roadGhost = load object tile 4
+	scope sve roadGhost 0
+	size roadGhost 1.0 0.2 1.0
+	set leftclick roadGhost objClick
+
+}
+
+size roadGhost 1.0 0.2 1.0
+track roadGhost

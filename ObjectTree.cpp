@@ -289,7 +289,7 @@ unsigned int* ObjectTree::GetCollidedObject(BoundingSphere* sphere, GameObjectTy
 
 			}
 
-			if ((filter == GameObjectType_NA || localObj->GetType() == filter) && !dbl)
+			if ((filter == GameObjectType_NA || (localObj->GetType() & filter) > 0) && !dbl)
 			{
 
 				Intersection inter = localObj->GetBox()->IntersectsBounding(sphere, Shape_SPHERE);

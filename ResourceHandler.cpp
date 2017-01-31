@@ -121,7 +121,13 @@ GameObject* ResourceHandler::loadGameObject(unsigned int param1, GameObjectType 
 		obj = new GameTravelObject(baseBox, baseSphere, meshId);
 
 	}
-	else
+	else if (type == GameObjectType_GRIDROUTE)
+	{
+
+		obj = new GameGridObject(baseBox, baseSphere, meshId);
+
+	}
+	else if(type == GameObjectType_SCENERY)
 	{
 
 		obj = new GameObject(baseBox, baseSphere, meshId);

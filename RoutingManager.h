@@ -3,6 +3,7 @@
 #include "GameTravelObject.h"
 #include "RouteNodeObject.h"
 #include "GameRouteObject.h"
+#include "GameGridObject.h"
 #include "SerializableObject.h"
 #include "Route.h"
 #include <vector>
@@ -18,6 +19,9 @@ namespace Entities
 			void Init(CrossHandlers::CelestialSlicedList<Resources::BaseObject*>* gameObjects);
 			void AddNode(CelestialMath::Vector3 position, float width, unsigned int id);
 			unsigned int AddNode(CelestialMath::Vector3 position, unsigned int* objects, unsigned int amounts);
+
+			void PopulateGrid(Resources::GameGridObject* grid, float nodeWidth);
+
 			void HandleNode(unsigned int nodeId, unsigned int* objects, unsigned int amounts);
 			unsigned int* Update(unsigned int time, unsigned int &scripts, float timeDiff);
 			RouteNodeObject* GetNode(unsigned int id) const;
@@ -43,6 +47,8 @@ namespace Entities
 			CrossHandlers::CelestialList<Resources::GameTravelObject*>* travelObjects;
 			CrossHandlers::CelestialSlicedList<RouteNodeObject*>* routeNodes;
 			CrossHandlers::CelestialSlicedList<Route*>* roads;
+
+			void addNewRoad(RouteNodeObject* node1, RouteNodeObject* node2);
 
 			RouteNodeObject* getPreExistantNode(CelestialMath::Vector3 position, unsigned int* objects, unsigned int amounts) const;
 

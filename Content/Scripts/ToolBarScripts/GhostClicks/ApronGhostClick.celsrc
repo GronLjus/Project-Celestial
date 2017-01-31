@@ -1,0 +1,28 @@
+$
+{
+
+	hcktrck = 0
+
+}
+
+if hcktrck < 2
+{
+	
+	hook tracking
+	hcktrck = hcktrck + 1
+
+}
+else
+{
+
+	apronObject = load copyobject ?0
+
+	show cursor
+
+	add apronObject
+	fill apronObject 0.98
+
+	clear tracking
+	hcktrck = 0
+
+}

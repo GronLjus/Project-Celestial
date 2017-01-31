@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "GameBoardHandler.h"
 #include "GameRouteObject.h"
+#include "GameGridObject.h"
 
 using namespace Entities;
 using namespace Resources;
@@ -13,7 +14,7 @@ GameBoardHandler::GameBoardHandler() : IHandleMessages(200, MessageSource_ENTITI
 	localGameBoard = nullptr;
 	trackedObject = nullptr;
 	filter = MessageType_ENTITIES;
-	hookObject = false;
+	hookStatus = 0;
 	mH = new MouseHandler();
 	lastTime = 0;
 
@@ -284,26 +285,34 @@ void GameBoardHandler::UpdateMessages(unsigned int time, unsigned int clock)
 			trackedObject->SetScale(hookScale);
 			trackedObject->SetRotation(hookRot);
 			trackedObject = nullptr;
-			hookObject = false;
+			hookStatus = 0;
 
 		}
 		else if ((currentMessage->mess == GameBoardMess_HOOKTRACK || currentMessage->mess == GameBoardMess_UNHOOKTRACK ) 
 			&& trackedObject != nullptr)
 		{
 
-			hookObject = currentMessage->mess == GameBoardMess_HOOKTRACK;
-
-			if (hookObject)
+			if (currentMessage->mess == GameBoardMess_HOOKTRACK)
 			{
 
+				hookStatus++;
 				hookPos = trackedObject->GetPosition();
 				hookScale = trackedObject->GetScale();
 				hookRot = trackedObject->GetRotation();
 
+				hookSide = VectorCross(trackedObject->GetDirection(), Vector3(0.0f, 1.0f, 0.0f));
+				hookSide /= sqrt(VectorDot(hookSide));
+
+				if (hookStatus == 2)
+				{
+
+					hookPos -= hookSide*(trackedObject->GetScale().x / 2);
+				}
 			}
 			else
 			{
 
+				hookStatus = 0;
 				trackedObject->SetPosition(hookPos);
 				trackedObject->SetScale(hookScale);
 				trackedObject->SetRotation(hookRot);
@@ -386,30 +395,36 @@ void GameBoardHandler::UpdateMessages(unsigned int time, unsigned int clock)
 			BoundingSphere sphere = BoundingSphere(pos.x, pos.y, pos.z, width / 2.0f);
 			unsigned int amount = 0;
 
-			unsigned int* collided = localGameBoard->GetCollidedObject(&sphere, GameObjectType_ROUTE, amount);
+			unsigned int* collided = localGameBoard->GetCollidedObject(&sphere, GameObjectType_ROUTE | GameObjectType_GRIDROUTE, amount);
 			outId = localGameBoard->AddRouteNode(pos, width, collided, amount) + 1;
 
 			for (unsigned int i = 0; i < amount; i++)
 			{
 
-				GameRouteObject* routeObj = (GameRouteObject*)gameObjects->GetValue(collided[i]);
+				GameObject* obj = (GameObject*)gameObjects->GetValue(collided[i]);
 
-				if (routeObj->GetMiddleNode() != 0)
+				if(obj->GetType() == GameObjectType_ROUTE)
 				{
 
-					RouteNodeObject* middleNode = routing->GetNode(routeObj->GetMiddleNode() - 1);
+					GameRouteObject* routeObj = (GameRouteObject*)gameObjects->GetValue(collided[i]);
 
-					if (routeObj->GetSplitNodeScript() != 0)
+					if (routeObj->GetMiddleNode() != 0)
 					{
 
-						triggerSplitScript(routeObj->GetSplitNodeScript() - 1, routeObj->GetId(), middleNode->GetPosition(), time);
-						
-					}
-					else
-					{
+						RouteNodeObject* middleNode = routing->GetNode(routeObj->GetMiddleNode() - 1);
 
-						splitObject(routeObj, middleNode->GetPosition(), width, time);
+						if (routeObj->GetSplitNodeScript() != 0)
+						{
 
+							triggerSplitScript(routeObj->GetSplitNodeScript() - 1, routeObj->GetId(), middleNode->GetPosition(), time);
+
+						}
+						else
+						{
+
+							splitObject(routeObj, middleNode->GetPosition(), 0.0f, time);
+
+						}
 					}
 				}
 			}
@@ -477,6 +492,20 @@ void GameBoardHandler::UpdateMessages(unsigned int time, unsigned int clock)
 
 			BaseObject* obj = gameObjects->GetValue(param1);
 			outId = obj->GetParentId() + 1;
+
+		}
+		else if (currentMessage->mess == GameBoardMess_POPULATEGRID && localGameBoard != nullptr)
+		{
+
+			unsigned int gridObject;
+			float nodeWidth;
+
+			memcpy(&gridObject, currentMessage->params, sizeof(unsigned int));
+			memcpy(&nodeWidth, &currentMessage->params[4], sizeof(float));
+
+			GameGridObject* grid = (GameGridObject*)gameObjects->GetValue(gridObject);
+
+			localGameBoard->GetRoutingManager()->PopulateGrid(grid, nodeWidth);
 
 		}
 
@@ -589,6 +618,7 @@ void GameBoardHandler::transformHookedObject(Vector3 mousePos)
 {
 
 	Vector3 scale = trackedObject->GetScale();
+	mousePos.y = hookPos.y;
 	Vector3 dist = mousePos - hookPos;
 	float distL = sqrt(VectorDot(dist, dist));
 	Vector3 normalDist = dist / distL;
@@ -614,23 +644,91 @@ void GameBoardHandler::transformHookedObject(Vector3 mousePos)
 
 }
 
+Vector3 GameBoardHandler::getClosestPositionOnObj(GameGridObject* grid, Vector3 mouse, Vector3 origin) const
+{
+
+	BoundingBox* box = grid->GetBox();
+
+	if (hookStatus == 1)
+	{
+
+		Vector3 dir = mouse - origin;
+		dir /= sqrt(VectorDot(dir));
+
+		float dist = 0.0f;
+		Intersection inter = box->IntersectsLine(origin, dir, dist);
+
+		dist = sqrt(dist);
+
+		mouse = origin + (dir * dist);
+
+	}
+
+	unsigned int closestNode = 0;
+	float closest = -1.0f;
+	Vector3 closestPos;
+
+	for (unsigned int x = 0; x < grid->GetNodeWidth(); x++)
+	{
+
+		for (unsigned int y = 0; y < grid->GetNodeHeigth(); y++)
+		{
+
+			if ((x == 0 || x == grid->GetNodeWidth() - 1) ||
+				(y == 0 || y == grid->GetNodeHeigth() - 1))//Filter out all nodes not on the edge of the grid
+			{
+
+				RouteNodeObject* node = localGameBoard->GetRoutingManager()->GetNode(grid->GetNode(x, y));
+
+				//Check the distance from the mouseposition to the node
+				float dist = VectorDot(node->GetPosition() - mouse);
+
+				if (dist < closest || closest < 0)
+				{
+
+					closest = dist;
+					closestNode = node->GetId();
+					closestPos = node->GetPosition();
+
+				}
+			}
+		}
+	}
+
+	return closestPos;
+
+}
+
 Vector3 GameBoardHandler::snapMouse(unsigned int amounts, unsigned int* collidedObjects, PositionableObject* lastObj, Vector3 worldMouse)
 {
 
 	for (unsigned int i = 0; i < amounts; i++)
 	{
 
-		PositionableObject* obj = (PositionableObject*)gameObjects->GetValue(collidedObjects[i]);
+		GameObject* obj = (GameObject*)gameObjects->GetValue(collidedObjects[i]);
 
-		Vector3 newPos = lastObj == nullptr ?
-			obj->GetObjectCenterLine(worldMouse) :
-			obj->GetObjectCenterLine(worldMouse, lastObj->GetDirection());
+		if (obj->GetType() == GameObjectType_ROUTE)
+		{
 
-		worldMouse.x = newPos.x;
-		worldMouse.y = newPos.y;
-		worldMouse.z = newPos.z;
-		lastObj = obj;
+			Vector3 newPos = lastObj == nullptr ?
+				obj->GetObjectCenterLine(worldMouse) :
+				obj->GetObjectCenterLine(worldMouse, lastObj->GetDirection());
 
+			worldMouse.x = newPos.x;
+			worldMouse.y = newPos.y;
+			worldMouse.z = newPos.z;
+			lastObj = obj;
+
+		}
+		else if(obj->GetType() == GameObjectType_GRIDROUTE)
+		{
+
+			GameGridObject* gridObj = (GameGridObject*)obj;
+
+			worldMouse = getClosestPositionOnObj(gridObj, worldMouse, hookPos);
+			worldMouse.y -= gridObj->GetScale().y / 2;
+
+		}
 	}
 
 	return worldMouse;
@@ -661,17 +759,17 @@ Vector3 GameBoardHandler::handleTracked(unsigned int time)
 
 		
 
-		if (snap)
+		if (snap && hookStatus < 2)
 		{
 
 			Vector3 midPos = worldMouse;
-			unsigned int* collidedObjects = localGameBoard->GetCollidedObject(&cursor, GameObjectType_ROUTE, cursorAmounts);
+			unsigned int* collidedObjects = localGameBoard->GetCollidedObject(&cursor, GameObjectType_ROUTE | GameObjectType_GRIDROUTE, cursorAmounts);
 			PositionableObject* lastObject = nullptr;
 			worldMouse = snapMouse(cursorAmounts, collidedObjects, nullptr, worldMouse);
 
 		}
 
-		if (!hookObject)
+		if (hookStatus == 0)
 		{
 
 			trackedObject->SetPosition(worldMouse);
@@ -679,7 +777,7 @@ Vector3 GameBoardHandler::handleTracked(unsigned int time)
 			hookTargets = cursorAmounts;
 
 		}
-		else
+		else if (hookStatus == 1)//Fill one dimension
 		{
 
 			transformHookedObject(worldMouse);
@@ -688,6 +786,46 @@ Vector3 GameBoardHandler::handleTracked(unsigned int time)
 
 			//The tracked object intersects with more then the end and start
 			hookOccupied = collidedAmounts > (cursorAmounts + hookTargets);
+
+		}
+		else if (hookStatus == 2)//Fill the second dimension
+		{
+
+
+			Vector3 scale = trackedObject->GetScale();
+			Vector3 pos = hookPos;
+
+			Vector3 projectedLine = Vector3(0.0f,0.0f,0.0f);
+
+			Vector3 line = worldMouse - hookPos;
+			float vd1 = VectorDot(line, hookSide);
+			float vd2 = VectorDot(hookSide, hookSide);
+
+			if (vd2 > CELESTIAL_EPSILON)
+			{
+
+				projectedLine = hookSide * (vd1 / vd2);
+
+			}
+
+			float dist = sqrt(VectorDot(projectedLine)) + (hookScale.x/2);
+			float projectedDot = VectorDot(projectedLine, hookSide);
+
+			dist *= projectedDot < 0 ? -1 : 1;
+			
+			if (dist < 0)
+			{
+
+				pos += hookSide*hookScale.x;
+
+			}
+
+			pos += hookSide * (dist / 2.0f);
+			scale.x = max(abs(dist), hookScale.x);
+
+			trackedObject->SetPosition(pos);
+			trackedObject->SetScale(scale);
+			trackedObject->UpdateMatrix();
 
 		}
 

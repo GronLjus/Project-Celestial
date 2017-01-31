@@ -175,6 +175,7 @@
     <ClInclude Include="CelestialMatrix.h" />
     <ClInclude Include="CelMesh.h" />
     <ClInclude Include="ClockTaskHandler.h" />
+    <ClInclude Include="GameGridObject.h" />
     <ClInclude Include="HeapMemContainer.h" />
     <ClInclude Include="ITaskManager.h" />
     <ClInclude Include="KubLingBinLoader.h" />
@@ -326,6 +327,7 @@
     <ClCompile Include="Celestial2DDrawer.cpp" />
     <ClCompile Include="CelMesh.cpp" />
     <ClCompile Include="ClockTaskHandler.cpp" />
+    <ClCompile Include="GameGridObject.cpp" />
     <ClCompile Include="HeapMemContainer.cpp" />
     <ClCompile Include="ITaskManager.cpp" />
     <ClCompile Include="KeyCodes.cpp" />
@@ -450,6 +452,8 @@
     <None Include="Content\Scripts\TaskScripts\ClockTest.celsrc" />
     <None Include="Content\Scripts\TaskScripts\ClockUpdater.celsrc" />
     <None Include="Content\Scripts\TaskScripts\DebugUpdater.celsrc" />
+    <None Include="Content\Scripts\ToolBarScripts\ApronButtonClick.celsrc" />
+    <None Include="Content\Scripts\ToolBarScripts\GhostClicks\ApronGhostClick.celsrc" />
     <None Include="Content\Scripts\ToolBarScripts\RunWayClick.celsrc" />
     <None Include="Content\Scripts\ToolBarScripts\RunWayGhostClick.celsrc" />
     <None Include="Content\Scripts\ToolBarScripts\SpawnClick.celsrc" />

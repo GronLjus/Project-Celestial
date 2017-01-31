@@ -683,53 +683,89 @@ RouteNodeObject* RoutingManager::getPreExistantNode(Vector3 position, unsigned i
 	for (unsigned int i = 0; i < amounts && preExist == nullptr; i++)
 	{
 
-		GameRouteObject* obj = ((GameRouteObject*)this->gameObjects->GetValue(objects[i]));
+		GameObject* gameObj = (GameObject*)this->gameObjects->GetValue(objects[i]);
 
-		if (lastObject == nullptr)
+		if (gameObj->GetType() == GameObjectType_ROUTE)
 		{
 
-			position = obj->GetObjectCenterLine(position);
+			GameRouteObject* obj = ((GameRouteObject*)gameObj);
 
-		}
-		else
-		{
-
-			position = obj->GetObjectCenterLine(position, lastObject->GetDirection());
-
-		}
-
-		position.y = obj->GetPosition().y + obj->GetScale().y / 2;
-
-		if (obj != nullptr && obj->GetLowerNode() != 0)
-		{
-
-			RouteNodeObject* lower = routeNodes->GetValue(obj->GetLowerNode() - 1);
-			Vector3 dir = lower->GetPosition() - position;
-
-			if (abs(VectorDot(dir)) < CELESTIAL_EPSILON)
+			if (lastObject == nullptr)
 			{
 
-				preExist = lower;
+				position = obj->GetObjectCenterLine(position);
 
 			}
-			else if (obj->GetUpperNode() != 0)
+			else
 			{
 
-				RouteNodeObject* upper = routeNodes->GetValue(obj->GetUpperNode() - 1);
-				dir = upper->GetPosition() - position;
+				position = obj->GetObjectCenterLine(position, lastObject->GetDirection());
+
+			}
+
+			position.y = obj->GetPosition().y + obj->GetScale().y / 2;
+
+			if (obj != nullptr && obj->GetLowerNode() != 0)
+			{
+
+				RouteNodeObject* lower = routeNodes->GetValue(obj->GetLowerNode() - 1);
+				Vector3 dir = lower->GetPosition() - position;
 
 				if (abs(VectorDot(dir)) < CELESTIAL_EPSILON)
 				{
 
-					preExist = upper;
+					preExist = lower;
 
+				}
+				else if (obj->GetUpperNode() != 0)
+				{
+
+					RouteNodeObject* upper = routeNodes->GetValue(obj->GetUpperNode() - 1);
+					dir = upper->GetPosition() - position;
+
+					if (abs(VectorDot(dir)) < CELESTIAL_EPSILON)
+					{
+
+						preExist = upper;
+
+					}
+				}
+			}
+
+
+			lastObject = obj;
+		}
+		else if(gameObj->GetType() == GameObjectType_GRIDROUTE)
+		{
+
+			lastObject = nullptr;
+			GameGridObject* obj = ((GameGridObject*)gameObj);
+
+			unsigned int* nodes = obj->GetNodes();
+
+			float closestDist = -1.0f;
+
+			for (unsigned int x = 0; x < obj->GetNodeWidth(); x++)
+			{
+
+				for (unsigned int z = 0; z < obj->GetNodeHeigth(); z++)
+				{
+
+					unsigned int nodeHere = obj->GetNode(x, z);
+					RouteNodeObject* node = this->routeNodes->GetValue(nodeHere);
+
+					float dist = VectorDot(node->GetPosition() - position);
+
+					if (dist < closestDist || closestDist < 0.0f)
+					{
+
+						preExist = node;
+						closestDist = dist;
+					
+					}
 				}
 			}
 		}
-
-
-		lastObject = obj;
-
 	}
 
 	return preExist;
@@ -744,56 +780,61 @@ void RoutingManager::handleObjectNode(RouteNodeObject* preExist, unsigned int* o
 
 		GameRouteObject* obj = ((GameRouteObject*)this->gameObjects->GetValue(objects[i]));
 
-		if (obj->GetLowerNode() == 0)//First node on a route
+		if (obj->GetType() == GameObjectType_ROUTE)
 		{
 
-			obj->SetLowerNode(preExist->GetId() + 1);
-
-		}
-		else if (obj->GetUpperNode() == 0)//Second node on a route
-		{
-
-			obj->SetUpperNode(preExist->GetId() + 1);
-
-			RouteNodeObject* lower = routeNodes->GetValue(obj->GetLowerNode() - 1);
-			unsigned int routeId = 0;
-
-			if (!lower->ContainsRoute(preExist->GetId()))//The node lacks route
+			if (obj->GetLowerNode() == 0)//First node on a route
 			{
 
-				Vector3 dir = lower->GetPosition() - preExist->GetPosition();
-				float dist = sqrt(VectorDot(dir));
-				Route* route = new Route(dist, dir / dist);
-				routeId = roads->Add(route);
-				route->SetId(routeId);
-
-				preExist->AddRoute(route);
-				lower->AddRoute(route);
+				obj->SetLowerNode(preExist->GetId() + 1);
 
 			}
-			else
+			else if (obj->GetUpperNode() == 0)//Second node on a route
 			{
 
-				unsigned int lId = lower->GetLocalId(preExist->GetId());
-				Route* rt = lower->GetRoute(lId);
-				routeId = rt->GetId();
+				obj->SetUpperNode(preExist->GetId() + 1);
+
+				RouteNodeObject* lower = routeNodes->GetValue(obj->GetLowerNode() - 1);
+				unsigned int routeId = 0;
+
+				if (!lower->ContainsRoute(preExist->GetId()))//The node lacks route
+				{
+
+					Vector3 dir = lower->GetPosition() - preExist->GetPosition();
+					float dist = sqrt(VectorDot(dir));
+					Route* route = new Route(dist, dir / dist);
+					routeId = roads->Add(route);
+					route->SetId(routeId);
+
+					preExist->AddRoute(route);
+					lower->AddRoute(route);
+
+				}
+				else
+				{
+
+					unsigned int lId = lower->GetLocalId(preExist->GetId());
+					Route* rt = lower->GetRoute(lId);
+					routeId = rt->GetId();
+
+				}
+
+				obj->SetRoute(routeId + 1);
 
 			}
+			else if (preExist->GetId() + 1 != obj->GetLowerNode() &&
+				preExist->GetId() + 1 != obj->GetUpperNode())
+			{
 
-			obj->SetRoute(routeId + 1);
+				RouteNodeObject* lower = routeNodes->GetValue(obj->GetLowerNode() - 1);
+				RouteNodeObject* upper = routeNodes->GetValue(obj->GetUpperNode() - 1);
 
-		}
-		else if (preExist->GetId() + 1 != obj->GetLowerNode() &&
-			preExist->GetId() + 1 != obj->GetUpperNode())
-		{
+				handleSplit(preExist, lower, upper);
 
-			RouteNodeObject* lower = routeNodes->GetValue(obj->GetLowerNode() - 1);
-			RouteNodeObject* upper = routeNodes->GetValue(obj->GetUpperNode() - 1);
+				obj->SetMiddleNode(preExist->GetId() + 1);
 
-			handleSplit(preExist, lower, upper);
 
-			obj->SetMiddleNode(preExist->GetId() + 1);
-
+			}
 
 		}
 	}
@@ -836,6 +877,79 @@ unsigned int RoutingManager::AddNode(Vector3 position, unsigned int* objects, un
 
 	return 0;
 
+}
+
+void RoutingManager::addNewRoad(RouteNodeObject* node1, RouteNodeObject* node2)
+{
+
+	Vector3 dir = node1->GetPosition() - node2->GetPosition();
+	float dist = sqrt(VectorDot(dir));
+	Route* route = new Route(dist, dir / dist);
+	route->SetId(roads->Add(route));
+
+	node2->AddRoute(route);
+	node1->AddRoute(route);
+
+}
+
+void RoutingManager::PopulateGrid(GameGridObject* grid, float width)
+{
+
+	grid->SizeGrid(width);
+
+	Vector3 up = Vector3(0.0f, 1.0f, 0.0f);
+	Vector3 dir = grid->GetDirection();
+
+	dir /= sqrt(VectorDot(dir));
+
+	Vector3 side = VectorCross(dir, up);
+
+	Vector3 cornerPos = grid->GetPosition() - 
+		(dir*(grid->GetScale().z / 2)) - 
+		(side*(grid->GetScale().x / 2));
+
+	float xSpacing = (grid->GetNodeWidth() / grid->GetScale().x);
+	float zSpacing = (grid->GetNodeHeigth() / grid->GetScale().z);
+
+	float xStart = xSpacing / 2;
+	float zStart = zSpacing / 2;
+
+	for (unsigned int x = 0; x < grid->GetNodeWidth(); x++)
+	{
+
+		for (unsigned int z = 0; z < grid->GetNodeHeigth(); z++)
+		{
+
+			Vector3 xOffset = side * (xStart + ((x)*xSpacing));
+			Vector3 zOffset = dir * (zStart + ((z)*zSpacing));
+			Vector3 offset = xOffset + zOffset;
+
+			Vector3 nodePos = cornerPos + offset;
+
+			nodePos.y = grid->GetPosition().y + grid->GetScale().y / 2;
+
+			RouteNodeObject* nodeObj = new RouteNodeObject(nodePos, width);
+			nodeObj->SetId(routeNodes->Add(nodeObj));
+			grid->PopulateGrid(nodeObj->GetId(), x, z);
+
+			//Link the node with its' neighbours
+			if (z > 0)
+			{
+
+				RouteNodeObject* upperNode = routeNodes->GetValue(grid->GetNode(x, z - 1));
+				addNewRoad(nodeObj, upperNode);
+
+			}
+
+			if (x > 0)
+			{
+
+				RouteNodeObject* leftNode = routeNodes->GetValue(grid->GetNode(x - 1, z));
+				addNewRoad(nodeObj, leftNode);
+
+			}
+		}
+	}
 }
 
 void RoutingManager::handleSplit(RouteNodeObject* intersect, RouteNodeObject* lower, RouteNodeObject* upper)

@@ -24,6 +24,8 @@ namespace Resources
 			CelestialMath::Vector3 GetObjectCenterLine(CelestialMath::Vector3 startPoint, CelestialMath::Vector3 direction);
 			CelestialMath::Vector3 GetObjectCenterLine(CelestialMath::Vector3 startPoint);
 
+			CelestialMath::Vector3 GetRightDistance(CelestialMath::Vector3 startPoint);
+
 			CelestialMath::Vector3 GetPosition() const;
 			CelestialMath::Vector3 GetRelativePosition() const;
 			CelestialMath::Vector3 GetRotation() const;

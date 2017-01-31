@@ -67,6 +67,7 @@ namespace Logic
 		OperatorTypes_PAUSE, OperatorTypes_RESUME,
 		OperatorTypes_ARRAY, OperatorTypes_OFFSET,
 		OperatorTypes_AND, OperatorTypes_OR,
+		OperatorTypes_FILL,
 		OperatorTypes_NA
 	};
 

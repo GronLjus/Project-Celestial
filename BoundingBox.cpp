@@ -134,6 +134,7 @@ Intersection BoundingBox::getPlaneDistSquare(Vector3& origin, Vector3& direction
 
 	Vector3 point(0, 0, 0);
 
+	//Pick an arbitrary point on the plane
 	if (plane.GetNormal().x != 0)
 	{
 		point = Vector3((-plane.GetD()) / plane.GetNormal().x, 0, 0);
@@ -168,7 +169,8 @@ Intersection BoundingBox::getPlaneDistSquare(Vector3& origin, Vector3& direction
 	}
 
 	float lineMag = sqrt(VectorDot(projectedLine, projectedLine));
-	float angle = acos(VectorDot(direction, projectedLine) / lineMag);
+	projectedLine /= lineMag;
+	float angle = acos(VectorDot(direction, projectedLine));
 
 	float dist = (1 / cos(angle)) *lineMag;
 	distSquare = dist*dist;
@@ -180,6 +182,14 @@ Intersection BoundingBox::getPlaneDistSquare(Vector3& origin, Vector3& direction
 Intersection BoundingBox::IntersectsLine(Vector3 origin, Vector3 direction, float& smallestDistanceSquare)
 {
 
+	float dirMag = VectorDot(direction);
+
+	if (abs(dirMag - 1) > CELESTIAL_EPSILON)
+	{
+
+		direction /= sqrt(dirMag);
+
+	}
 
 	char dims[] = { 'x', 'x', 'y', 'y', 'z', 'z' };
 	float distances[6];
@@ -217,12 +227,11 @@ Intersection BoundingBox::IntersectsLine(Vector3 origin, Vector3 direction, floa
 
 							bool foundSmallest = false;
 
-							for (unsigned char i = 0; i < 6; i++)
+							for (unsigned char i = 0; i < 6 && !foundSmallest; i++)
 							{
-								if (distances[i] < smallestDistanceSquare || smallestDistanceSquare == 0)
+								if (distances[i] > epsilon)
 								{
 
-									smallestDistanceSquare = distances[i];
 									foundSmallest = true;
 
 								}
@@ -267,12 +276,15 @@ Intersection BoundingBox::IntersectsLine(Vector3 origin, Vector3 direction, floa
 							bool hitz = false;
 							bool outside = false;
 
+							unsigned char uniqueDim = 0;
+
 							for (unsigned char i = 0; i < 6 && (!outside && ( !hitx || !hity || !hitz)); i++)
 							{
 
 								if (dims[i] == 'x')
 								{
 
+									uniqueDim += hitx ? 0 : 1;
 									outside = hitx && inters[i] != Intersection_FRONT;
 									hitx = true;
 
@@ -280,6 +292,7 @@ Intersection BoundingBox::IntersectsLine(Vector3 origin, Vector3 direction, floa
 								else if (dims[i] == 'y')
 								{
 
+									uniqueDim += hity ? 0 : 1;
 									outside = hity && inters[i] != Intersection_FRONT;
 									hity = true;
 
@@ -287,8 +300,16 @@ Intersection BoundingBox::IntersectsLine(Vector3 origin, Vector3 direction, floa
 								else if (dims[i] == 'z')
 								{
 
+									uniqueDim += hitz ? 0 : 1;
 									outside = hitz && inters[i] != Intersection_FRONT;
 									hitz = true;
+
+								}
+
+								if (uniqueDim >= 3 && inters[i] == Intersection_THROUGH)
+								{
+
+									smallestDistanceSquare = distances[i];
 
 								}
 							}

@@ -6,8 +6,14 @@
 
 namespace Resources
 {
-	enum GameObjectType{ GameObjectType_ROUTE, GameObjectType_SCENERY, GameObjectType_TRAVELING, GameObjectType_NA
+	enum GameObjectType {
+		GameObjectType_NA = 0, GameObjectType_ROUTE = 2, GameObjectType_GRIDROUTE = 4, GameObjectType_SCENERY = 8, GameObjectType_TRAVELING = 16
 	};
+
+	inline GameObjectType operator|(GameObjectType a, GameObjectType b)
+	{
+		return static_cast<GameObjectType>(static_cast<int>(a) | static_cast<int>(b));
+	}
 
 	class GameObject : public PositionableObject, public SaveObject
 	{

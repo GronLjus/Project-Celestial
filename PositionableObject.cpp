@@ -253,13 +253,33 @@ Vector3 PositionableObject::GetObjectCenterLine(Vector3 point3)
 	if (vd2 > CELESTIAL_EPSILON)
 	{
 
-
 		Vector3 projectedLine = plane2 * (vd1 / vd2);
 		centerPoint = point3 + projectedLine;
 	
 	}
 
 	return capLine(centerPoint);
+
+}
+
+Vector3 PositionableObject::GetRightDistance(Vector3 startPoint)
+{
+
+	Vector3 rPlane = getPlane(startPoint);
+
+	Vector3 line2 = position - startPoint;
+	float vd1 = VectorDot(line2, rPlane);
+	float vd2 = VectorDot(rPlane, rPlane);
+
+	if (vd2 > CELESTIAL_EPSILON)
+	{
+
+		Vector3 projectedLine = rPlane * (vd1 / vd2);
+		return -projectedLine;
+
+	}
+
+	return Vector3(0.0f,0.0f,0.0f);
 
 }
 
