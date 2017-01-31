@@ -1241,10 +1241,13 @@
     <None Include="Content\Scripts\ToolBarScripts\ApronButtonClick.celsrc">
       <Filter>Resource Files\Content\Scripts\ToolBarScripts</Filter>
     </None>
-    <None Include="Content\Scripts\ToolBarScripts\RunWayGhostClick.celsrc">
+    <None Include="Content\Scripts\ToolBarScripts\GhostClicks\ApronGhostClick.celsrc">
       <Filter>Resource Files\Content\Scripts\ToolBarScripts\GhostClicks</Filter>
     </None>
-    <None Include="Content\Scripts\ToolBarScripts\GhostClicks\ApronGhostClick.celsrc">
+    <None Include="Content\Scripts\ToolBarScripts\GhostClicks\RunWayGhostClick.celsrc">
+      <Filter>Resource Files\Content\Scripts\ToolBarScripts\GhostClicks</Filter>
+    </None>
+    <None Include="Content\Scripts\ToolBarScripts\GhostClicks\TaxiWayGhostClick.celsrc">
       <Filter>Resource Files\Content\Scripts\ToolBarScripts\GhostClicks</Filter>
     </None>
   </ItemGroup>
@@ -1257,10 +1260,5 @@
     <Object Include="Tile.obj">
       <Filter>Source Files</Filter>
     </Object>
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="Content\Scripts\ToolBarScripts\TaxiWayGhostClick.celsrc">
-      <Filter>Resource Files\Content\Scripts\ToolBarScripts\GhostClicks</Filter>
-    </Text>
   </ItemGroup>
 </Project>

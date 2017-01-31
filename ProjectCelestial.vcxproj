@@ -454,8 +454,9 @@
     <None Include="Content\Scripts\TaskScripts\DebugUpdater.celsrc" />
     <None Include="Content\Scripts\ToolBarScripts\ApronButtonClick.celsrc" />
     <None Include="Content\Scripts\ToolBarScripts\GhostClicks\ApronGhostClick.celsrc" />
+    <None Include="Content\Scripts\ToolBarScripts\GhostClicks\RunWayGhostClick.celsrc" />
+    <None Include="Content\Scripts\ToolBarScripts\GhostClicks\TaxiWayGhostClick.celsrc" />
     <None Include="Content\Scripts\ToolBarScripts\RunWayClick.celsrc" />
-    <None Include="Content\Scripts\ToolBarScripts\RunWayGhostClick.celsrc" />
     <None Include="Content\Scripts\ToolBarScripts\SpawnClick.celsrc" />
     <None Include="Content\Scripts\ToolBarScripts\Button1UpDown.celsrc" />
     <None Include="Content\Scripts\ToolBarScripts\TaxiWayClick.celsrc" />
@@ -551,7 +552,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="Content\Scripts\ToolBarScripts\TaxiWayGhostClick.celsrc" />
     <Object Include="Tile.obj">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </Object>

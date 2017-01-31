@@ -21,6 +21,8 @@ namespace Logic
 
 			unsigned long long scale = 10;
 
+			bytecode traceCode = bytecode_NA;
+
 		};
 
 		line* code;

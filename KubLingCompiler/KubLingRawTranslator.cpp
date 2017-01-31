@@ -1298,7 +1298,6 @@ RunTimeError AddObjectOperator(rawCode* raw, unsigned int returnVar, unsigned ch
 	addMessStackParamO(var1 - 1, 0, 4, rtv, raw);
 
 	sendMessageOut(mess, rtv, raw);
-	startWaiting(returnVar - 1, raw);
 
 	return RunTimeError_OK;
 
@@ -5474,6 +5473,16 @@ rawCode KubLingRawTranslator::Translate(unsigned char* bytes,
 	}
 
 	RunTimeError re = translator[bytes[4]](&raw, retVal, &bytes[5], byteSize - 5, codeOffset, line,rtv);
+
+
+	//TODO: Remove in release
+	for (unsigned int i = 0; i < raw.codeSize; i++)
+	{
+
+		raw.code[i].traceCode = bytecode(bytes[4]);
+
+	}
+
 	return raw;
 
 }

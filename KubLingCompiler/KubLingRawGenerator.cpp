@@ -1,5 +1,7 @@
 #include "KubLingRawGenerator.h"
 
+#include <stdio.h>
+
 using namespace Logic;
 using namespace Resources;
 
