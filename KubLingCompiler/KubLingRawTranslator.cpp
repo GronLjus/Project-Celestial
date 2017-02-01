@@ -880,7 +880,7 @@ void commonConditional(unsigned int var, unsigned int var2, unsigned int returnV
 	rawCode::line line;
 	//Place -1 in c3
 	line.code = opcode_PLACE;
-	line.r1 = 1;
+	line.r1 = 2;
 	line.type = 2;
 	line.scale = -1;
 	raw->code[raw->codeSize] = line;

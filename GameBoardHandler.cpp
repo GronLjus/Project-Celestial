@@ -785,7 +785,8 @@ Vector3 GameBoardHandler::handleTracked(unsigned int time)
 			localGameBoard->GetCollidedObject(trackedObject, collidedAmounts);
 
 			//The tracked object intersects with more then the end and start
-			hookOccupied = collidedAmounts > (cursorAmounts + hookTargets);
+			hookOccupied = collidedAmounts > (cursorAmounts + hookTargets) || 
+				(trackedObject->GetType() == GameObjectType_GRIDROUTE && collidedAmounts > 0);
 
 		}
 		else if (hookStatus == 2)//Fill the second dimension
@@ -826,6 +827,12 @@ Vector3 GameBoardHandler::handleTracked(unsigned int time)
 			trackedObject->SetPosition(pos);
 			trackedObject->SetScale(scale);
 			trackedObject->UpdateMatrix();
+
+			unsigned int collidedAmounts = 0;
+			localGameBoard->GetCollidedObject(trackedObject, collidedAmounts);
+
+			//The tracked object intersects with more then the end and start
+			hookOccupied = collidedAmounts > 0;
 
 		}
 

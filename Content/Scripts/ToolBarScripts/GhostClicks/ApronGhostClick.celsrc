@@ -5,14 +5,16 @@ $
 
 }
 
-if hcktrck < 2
+post ?3
+
+if (hcktrck < 2) & (?3 : 0)
 {
 	
 	hook tracking
 	hcktrck = hcktrck + 1
 
 }
-else
+else ?3 : 0
 {
 
 	apronObject = load copyobject ?0
@@ -24,5 +26,7 @@ else
 
 	clear tracking
 	hcktrck = 0
+
+	post 'unhook'
 
 }

@@ -908,8 +908,8 @@ void RoutingManager::PopulateGrid(GameGridObject* grid, float width)
 		(dir*(grid->GetScale().z / 2)) - 
 		(side*(grid->GetScale().x / 2));
 
-	float xSpacing = (grid->GetNodeWidth() / grid->GetScale().x);
-	float zSpacing = (grid->GetNodeHeigth() / grid->GetScale().z);
+	float xSpacing = (grid->GetScale().x / grid->GetNodeWidth());
+	float zSpacing = (grid->GetScale().z / grid->GetNodeHeigth());
 
 	float xStart = xSpacing / 2;
 	float zStart = zSpacing / 2;
