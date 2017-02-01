@@ -8,7 +8,7 @@ namespace Resources
 	{
 
 		public:
-			GameRouteObject(CrossHandlers::BoundingBox* baseBox, CrossHandlers::BoundingSphere* baseSphere, unsigned int meshId);
+			GameRouteObject(CrossHandlers::BoundingBox* baseBox, CrossHandlers::BoundingSphere* baseSphere, unsigned int meshId, std::string name);
 			GameRouteObject();
 			
 			virtual GameObjectType GetType() const;

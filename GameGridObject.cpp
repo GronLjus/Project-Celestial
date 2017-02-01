@@ -6,7 +6,7 @@ using namespace CrossHandlers;
 using namespace CelestialMath;
 
 GameGridObject::GameGridObject(CrossHandlers::BoundingBox* baseBox, CrossHandlers::BoundingSphere* baseSphere,
-	unsigned int meshId) : GameObject(baseBox, baseSphere, meshId)
+	unsigned int meshId, std::string name) : GameObject(baseBox, baseSphere, meshId, name)
 {
 
 	gridHeight = 0;

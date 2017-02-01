@@ -36,7 +36,7 @@ namespace Resources
 		void unloadObject(unsigned int param1, unsigned int time);
 		unsigned int heapObject;
 		ResourceLoader* loader;
-		GameObject* loadGameObject(unsigned int meshId, GameObjectType type);
+		GameObject* loadGameObject(unsigned int meshId, GameObjectType type, std::string name);
 		CrossHandlers::CelestialSlicedList<BaseObject*>* gameObjects;
 		CelestialMath::vectorUI2 screen;
 		unsigned int bufferFlips;
@@ -46,6 +46,7 @@ namespace Resources
 		CrossHandlers::CelestialSlicedList<GUIObject*>* activeGUI;
 		ResourceDictionary* currentDic;
 
+		std::string getStringFromBuffer(unsigned char* buffer) const;
 		unsigned int rawCode;
 
 		struct tempTask

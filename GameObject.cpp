@@ -5,7 +5,7 @@ using namespace Resources;
 using namespace CrossHandlers;
 using namespace CelestialMath;
 
-GameObject::GameObject(BoundingBox* box, BoundingSphere* baseSphere, unsigned int meshId) : PositionableObject(), SaveObject()
+GameObject::GameObject(BoundingBox* box, BoundingSphere* baseSphere, unsigned int meshId, std::string name) : PositionableObject(), SaveObject()
 {
 
 	this->box = box;
@@ -13,6 +13,9 @@ GameObject::GameObject(BoundingBox* box, BoundingSphere* baseSphere, unsigned in
 	this->mesh = meshId;
 	flipInit = false;
 	parent = nullptr;
+
+	this->objectName = name;
+	collisionFilter = " ";
 
 }
 
@@ -25,6 +28,9 @@ GameObject::GameObject() : PositionableObject(), SaveObject()
 	this->box = nullptr;
 	this->sphere = nullptr;
 	this->mesh = 0;
+
+	this->objectName = "nameless";
+	collisionFilter = " ";
 
 }
 
@@ -88,6 +94,20 @@ GameObjectType GameObject::GetType() const
 
 }
 
+std::string GameObject::GetCollisionFilter() const
+{
+
+	return collisionFilter;
+
+}
+
+std::string GameObject::GetObjectName() const
+{
+
+	return objectName;
+
+}
+
 void GameObject::Update(Message* mess)
 {
 
@@ -99,6 +119,9 @@ void GameObject::Update(Message* mess)
 		switch (mess->mess)
 		{
 
+		case ObjectMess_SETCOLLFILTER:
+			collisionFilter = std::string((char*)(mess->params));
+			break;
 		case ObjectMess_REMOVE:
 
 			if (parent != nullptr)

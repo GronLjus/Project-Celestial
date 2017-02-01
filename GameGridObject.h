@@ -9,7 +9,7 @@ namespace Resources
 
 	public:
 		GameGridObject(CrossHandlers::BoundingBox* baseBox, CrossHandlers::BoundingSphere* baseSphere, 
-			unsigned int meshId);
+			unsigned int meshId, std::string name);
 		GameGridObject();
 
 		virtual GameObjectType GetType() const;

@@ -10,7 +10,7 @@ namespace Resources
 	{
 
 		public:
-			GameTravelObject(CrossHandlers::BoundingBox* baseBox, CrossHandlers::BoundingSphere* baseSphere, unsigned int meshId);
+			GameTravelObject(CrossHandlers::BoundingBox* baseBox, CrossHandlers::BoundingSphere* baseSphere, unsigned int meshId, std::string name);
 			GameTravelObject();
 			
 			virtual GameObjectType GetType() const;

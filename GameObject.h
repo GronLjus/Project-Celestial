@@ -18,13 +18,18 @@ namespace Resources
 	class GameObject : public PositionableObject, public SaveObject
 	{
 		public:
-			GameObject(CrossHandlers::BoundingBox* baseBox, CrossHandlers::BoundingSphere* baseSphere, unsigned int meshId);
+			GameObject(CrossHandlers::BoundingBox* baseBox, CrossHandlers::BoundingSphere* baseSphere, unsigned int meshId, std::string name);
 			GameObject();
 
 			void SetMesh(CrossHandlers::BoundingBox* baseBox, CrossHandlers::BoundingSphere* baseSphere, unsigned int meshId);
 			virtual void Update(CrossHandlers::Message* mess);
+
 			unsigned int GetMeshId() const;
 			unsigned int GetScriptId() const;
+
+			std::string GetCollisionFilter() const;
+			std::string GetObjectName() const;
+
 			bool IsFlipBuffered(unsigned char flip);
 			void SetParent(BaseObject* parent);
 			virtual GameObjectType GetType() const;
@@ -54,6 +59,9 @@ namespace Resources
 			bool flipInit;
 			CelestialMath::Matrix lastMatrix;
 			BaseObject* parent;
+
+			std::string objectName;
+			std::string collisionFilter;
 
 	};
 }

@@ -25,6 +25,7 @@ namespace Logic
 		bytecode_SETNDEARRVL, bytecode_SETSPLT,
 		bytecode_SETUI,
 		bytecode_SETCRS,
+		bytecode_SETCLSFLT,
 		bytecode_FCSUI,
 	
 		bytecode_FLGRD,

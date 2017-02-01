@@ -2708,7 +2708,7 @@ RunTimeError LoadObjectOperator(rawCode* raw, unsigned int returnVar, unsigned c
 
 	}
 
-	raw->maxLines = addMessParLinesO * 2 + waitingLines + sendLines;
+	raw->maxLines = addMessParLinesO * 2 + waitingLines + sendLines + addMessStrParLines;
 	raw->code = new rawCode::line[raw->maxLines];
 
 	Message mess;
@@ -2717,7 +2717,10 @@ RunTimeError LoadObjectOperator(rawCode* raw, unsigned int returnVar, unsigned c
 	mess.type = MessageType_RESOURCES;
 	mess.mess = ResourceMess_LOADOBJECT;
 
-	unsigned int var = (params[4] | ((int)params[5] << 8) | ((int)params[6] << 16) | ((int)params[7] << 24));
+	unsigned int var = (params[8] | ((int)params[9] << 8) | ((int)params[10] << 16) | ((int)params[11] << 24));
+	addMessStackStringParamO(var - 1, 8, 4, rtv, raw);
+
+	var = (params[4] | ((int)params[5] << 8) | ((int)params[6] << 16) | ((int)params[7] << 24));
 	addMessStackParamO(var - 1, 4, 4, rtv, raw);
 
 	var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
@@ -4055,6 +4058,36 @@ RunTimeError SetCameraOperator(rawCode* raw, unsigned int returnVar, unsigned ch
 
 }
 
+RunTimeError SetCollisionFilterOperator(rawCode* raw, unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int offset, unsigned int byteLine, runTimeVal &rtv)
+{
+
+	if (paramSize < 8)
+	{
+
+		return RunTimeError_BADPARAMS;
+
+	}
+
+	raw->maxLines = addMessStrParLines + sendLines;
+	raw->code = new rawCode::line[raw->maxLines];
+
+	Message mess;
+	mess.destination = MessageSource_OBJECT;
+	mess.type = MessageType_OBJECT;
+	mess.mess = ObjectMess_SETCOLLFILTER;
+
+	unsigned int var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
+	mess.returnParam = var;
+
+	unsigned int var2 = (params[4] | ((int)params[5] << 8) | ((int)params[6] << 16) | ((int)params[7] << 24));
+
+	addMessStackStringParamO(var2 - 1, 0, 4, rtv, raw);
+	sendMessageOut(mess, rtv, raw);
+
+	return RunTimeError_OK;
+
+}
+
 RunTimeError SetConstValOperator(rawCode* raw,unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int offset, unsigned int byteLine, runTimeVal &rtv)
 {
 
@@ -5295,6 +5328,7 @@ KubLingRawTranslator::KubLingRawTranslator()
 
 	translator[bytecode_SETUI] = SetUIOperator;
 	translator[bytecode_SETCRS] = SetMouseCursor;
+	translator[bytecode_SETCLSFLT] = SetCollisionFilterOperator;
 	translator[bytecode_FCSUI] = FocusUIOperator;
 
 	translator[bytecode_FLGRD] = FillGridOperator;

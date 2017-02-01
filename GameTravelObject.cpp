@@ -3,7 +3,8 @@
 
 using namespace Resources;
 
-GameTravelObject::GameTravelObject(BoundingBox* baseBox, BoundingSphere* baseSphere, unsigned int meshId) : GameObject(baseBox,baseSphere,meshId)
+GameTravelObject::GameTravelObject(BoundingBox* baseBox, BoundingSphere* baseSphere, unsigned int meshId, std::string name) : 
+	GameObject(baseBox,baseSphere,meshId, name)
 {
 
 	lastTime = 0;

@@ -87,7 +87,7 @@ CelestialSlicedList<BaseObject*>* ResourceHandler::GetObjectContainer() const
 
 }
 
-GameObject* ResourceHandler::loadGameObject(unsigned int param1, GameObjectType type)
+GameObject* ResourceHandler::loadGameObject(unsigned int param1, GameObjectType type, std::string name)
 {
 
 	BaseObject* mesh = gameObjects->GetValue(param1);
@@ -112,25 +112,25 @@ GameObject* ResourceHandler::loadGameObject(unsigned int param1, GameObjectType 
 	if (type == GameObjectType_ROUTE) 
 	{
 
-		obj = new GameRouteObject(baseBox, baseSphere, meshId);
+		obj = new GameRouteObject(baseBox, baseSphere, meshId, name);
 
 	}
 	else if (type == GameObjectType_TRAVELING)
 	{
 
-		obj = new GameTravelObject(baseBox, baseSphere, meshId);
+		obj = new GameTravelObject(baseBox, baseSphere, meshId, name);
 
 	}
 	else if (type == GameObjectType_GRIDROUTE)
 	{
 
-		obj = new GameGridObject(baseBox, baseSphere, meshId);
+		obj = new GameGridObject(baseBox, baseSphere, meshId, name);
 
 	}
 	else if(type == GameObjectType_SCENERY)
 	{
 
-		obj = new GameObject(baseBox, baseSphere, meshId);
+		obj = new GameObject(baseBox, baseSphere, meshId, name);
 
 	}
 
@@ -138,6 +138,17 @@ GameObject* ResourceHandler::loadGameObject(unsigned int param1, GameObjectType 
 	obj->UpdateMatrix();
 	obj->SetId(gameObjects->Add(obj));
 	return obj;
+
+}
+
+std::string ResourceHandler::getStringFromBuffer(unsigned char* buffer) const
+{
+
+	unsigned int size;
+	memcpy(&size, buffer, sizeof(unsigned int));
+	char* cBuff = (char*)buffer;
+
+	return std::string(cBuff);
 
 }
 
@@ -157,7 +168,7 @@ void ResourceHandler::handleMess(Message* currentMessage, unsigned int time)
 		if (currentMessage->params[4] == 1)
 		{
 
-			GameObject* obj = loadGameObject(currentMessage->params[5] | ((int)currentMessage->params[6] << 8) | ((int)currentMessage->params[7] << 16) | ((int)currentMessage->params[8] << 24), GameObjectType_SCENERY);
+			GameObject* obj = loadGameObject(currentMessage->params[5] | ((int)currentMessage->params[6] << 8) | ((int)currentMessage->params[7] << 16) | ((int)currentMessage->params[8] << 24), GameObjectType_SCENERY, "board");
 			bo->SetBoardObject(obj);
 
 		}
@@ -165,7 +176,8 @@ void ResourceHandler::handleMess(Message* currentMessage, unsigned int time)
 	else if (currentMessage->mess == ResourceMess_LOADOBJECT)
 	{
 
-		GameObject* obj = loadGameObject(currentMessage->params[0] | ((int)currentMessage->params[1] << 8) | ((int)currentMessage->params[2] << 16) | ((int)currentMessage->params[3] << 24), GameObjectType(currentMessage->params[4]));
+
+		GameObject* obj = loadGameObject(currentMessage->params[0] | ((int)currentMessage->params[1] << 8) | ((int)currentMessage->params[2] << 16) | ((int)currentMessage->params[3] << 24), GameObjectType(currentMessage->params[4]), getStringFromBuffer(&currentMessage->params[8]));
 		outId = obj->GetId();
 
 	}
@@ -181,7 +193,7 @@ void ResourceHandler::handleMess(Message* currentMessage, unsigned int time)
 
 		GameObject* oldObj = (GameObject*)gameObjects->GetValue(currentMessage->params[0] | ((int)currentMessage->params[1] << 8) | ((int)currentMessage->params[2] << 16) | ((int)currentMessage->params[3] << 24));
 
-		GameObject* obj = loadGameObject(oldObj->GetMeshId(), oldObj->GetType());
+		GameObject* obj = loadGameObject(oldObj->GetMeshId(), oldObj->GetType(), oldObj->GetObjectName());
 		outId = obj->GetId();
 
 		Vector3 oldScale = oldObj->GetScale();
@@ -576,7 +588,7 @@ void ResourceHandler::unloadObject(unsigned int param1, unsigned int time)
 unsigned int ResourceHandler::copyObject(GameObject* objectToCopy, unsigned int time)
 {
 
-	GameObject* obj = loadGameObject(objectToCopy->GetMeshId(), objectToCopy->GetType());
+	GameObject* obj = loadGameObject(objectToCopy->GetMeshId(), objectToCopy->GetType(), objectToCopy->GetObjectName());
 
 	unsigned int retVal = obj->GetId();
 

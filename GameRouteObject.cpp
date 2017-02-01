@@ -5,7 +5,8 @@ using namespace Resources;
 using namespace CrossHandlers;
 using namespace CelestialMath;
 
-GameRouteObject::GameRouteObject(BoundingBox* baseBox, BoundingSphere* baseSphere, unsigned int meshId) : GameObject(baseBox,baseSphere,meshId)
+GameRouteObject::GameRouteObject(BoundingBox* baseBox, BoundingSphere* baseSphere, unsigned int meshId, std::string name) : 
+	GameObject(baseBox,baseSphere,meshId, name)
 {
 
 	lowerNode = 0;

@@ -72,6 +72,7 @@ namespace CrossHandlers
 		ObjectMess_LOCKMOUSE, ObjectMess_LOCKKEYS, ObjectMess_LOCKINPUT,
 		ObjectMess_INCREMENTLAYER, ObjectMess_DECREMENTLAYER, ObjectMess_SETLAYER,
 		ObjectMess_SAVESCOPE,
+		ObjectMess_SETCOLLFILTER,
 		ObjectMess_NA
 	};
 

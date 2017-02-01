@@ -11,7 +11,7 @@ KubLingCompiler::KubLingCompiler()
 	operators = new Operator[OperatorTypes_NA];
 
 	operators[OperatorTypes_SET].keyword = "set";
-	operators[OperatorTypes_SET].enumAmount = 21;
+	operators[OperatorTypes_SET].enumAmount = 22;
 	operators[OperatorTypes_SET].enums = new std::string[operators[OperatorTypes_SET].enumAmount]; 
 	operators[OperatorTypes_SET].enums[0] = ""; 
 	operators[OperatorTypes_SET].enums[1] = ""; 
@@ -34,6 +34,7 @@ KubLingCompiler::KubLingCompiler()
 	operators[OperatorTypes_SET].enums[18] = "cursor";
 	operators[OperatorTypes_SET].enums[19] = "nodearrival";
 	operators[OperatorTypes_SET].enums[20] = "splitscript";
+	operators[OperatorTypes_SET].enums[21] = "collisionfilter";
 	operators[OperatorTypes_SET].byteCodes = new unsigned char[operators[OperatorTypes_SET].enumAmount]{
 		bytecode_SETCONST, 
 		bytecode_SETVAR, 
@@ -55,9 +56,10 @@ KubLingCompiler::KubLingCompiler()
 		bytecode_SETUD,
 		bytecode_SETCRS,
 		bytecode_SETNDEARRVL,
-		bytecode_SETSPLT};
-	operators[OperatorTypes_SET].params = new unsigned char[operators[OperatorTypes_SET].enumAmount]{2, 2, 1, 1, 2, 1, 2, 1, 4, 4, 2, 2, 2, 2, 2, 2, 2, 2, 1, 2, 2};
-	operators[OperatorTypes_SET].minParams = new unsigned char[operators[OperatorTypes_SET].enumAmount]{ 2, 2, 1, 1, 2, 1, 2, 1, 4, 4, 2, 2, 2, 2, 2, 2, 2, 2, 1, 2, 2};
+		bytecode_SETSPLT,
+		bytecode_SETCLSFLT };
+	operators[OperatorTypes_SET].params = new unsigned char[operators[OperatorTypes_SET].enumAmount]{2, 2, 1, 1, 2, 1, 2, 1, 4, 4, 2, 2, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2};
+	operators[OperatorTypes_SET].minParams = new unsigned char[operators[OperatorTypes_SET].enumAmount]{ 2, 2, 1, 1, 2, 1, 2, 1, 4, 4, 2, 2, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2};
 	operators[OperatorTypes_SET].paramsyntax = new VarType*[operators[OperatorTypes_SET].enumAmount]{
 		new VarType[operators[OperatorTypes_SET].params[0]]{VarType_NA, VarType_NA},
 			new VarType[operators[OperatorTypes_SET].params[1]]{VarType_NA, VarType_NA},
@@ -79,7 +81,8 @@ KubLingCompiler::KubLingCompiler()
 			new VarType[operators[OperatorTypes_SET].params[17]]{ VarType_NUMBER, VarType_NUMBER },
 			new VarType[operators[OperatorTypes_SET].params[18]]{ VarType_NUMBER },
 			new VarType[operators[OperatorTypes_SET].params[19]]{ VarType_NUMBER, VarType_NUMBER },
-			new VarType[operators[OperatorTypes_SET].params[20]]{ VarType_NUMBER, VarType_NUMBER }
+			new VarType[operators[OperatorTypes_SET].params[20]]{ VarType_NUMBER, VarType_NUMBER },
+		new VarType[operators[OperatorTypes_SET].params[21]]{ VarType_NUMBER, VarType_STRING }
 	};
 	operators[OperatorTypes_SET].paramTypes = new ParamType*[operators[OperatorTypes_SET].enumAmount]{
 		new ParamType[operators[OperatorTypes_SET].params[0]]{ParamType_VAR, ParamType_CONST}, 
@@ -102,7 +105,8 @@ KubLingCompiler::KubLingCompiler()
 			new ParamType[operators[OperatorTypes_SET].params[17]]{ ParamType_NA, ParamType_NA },
 			new ParamType[operators[OperatorTypes_SET].params[18]]{ ParamType_NA},
 			new ParamType[operators[OperatorTypes_SET].params[19]]{ ParamType_NA, ParamType_NA },
-			new ParamType[operators[OperatorTypes_SET].params[20]]{ ParamType_NA, ParamType_NA }
+			new ParamType[operators[OperatorTypes_SET].params[20]]{ ParamType_NA, ParamType_NA },
+			new ParamType[operators[OperatorTypes_SET].params[21]]{ ParamType_NA, ParamType_NA }
 	};
 	operators[OperatorTypes_SET].optionalPar = new bool*[operators[OperatorTypes_SET].enumAmount]{
 		new bool[operators[OperatorTypes_SET].params[0]]{ false, false },
@@ -125,11 +129,12 @@ KubLingCompiler::KubLingCompiler()
 		new bool[operators[OperatorTypes_SET].params[17]]{ false, false },
 		new bool[operators[OperatorTypes_SET].params[18]]{ false},
 		new bool[operators[OperatorTypes_SET].params[19]]{ false, false },
-		new bool[operators[OperatorTypes_SET].params[20]]{ false, false }
+		new bool[operators[OperatorTypes_SET].params[20]]{ false, false },
+		new bool[operators[OperatorTypes_SET].params[21]]{ false, false }
 	};
-	operators[OperatorTypes_SET].readParam = new unsigned char[operators[OperatorTypes_SET].enumAmount]{2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
-	operators[OperatorTypes_SET].returns = new VarType[operators[OperatorTypes_SET].enumAmount]{VarType_NA, VarType_NA, VarType_NA, VarType_NA, VarType_NA, VarType_NA, VarType_NA, VarType_NA, VarType_NA, VarType_NA, VarType_NA, VarType_NA, VarType_NA,VarType_NA,VarType_NA,VarType_NA,VarType_NA,VarType_NA,VarType_NA,VarType_NA,VarType_NA };
-	operators[OperatorTypes_SET].returnType = new ParamType[operators[OperatorTypes_SET].enumAmount]{ParamType_NA, ParamType_NA, ParamType_NA, ParamType_NA, ParamType_NA, ParamType_NA, ParamType_NA, ParamType_NA, ParamType_NA, ParamType_NA, ParamType_NA, ParamType_NA, ParamType_NA,ParamType_NA,ParamType_NA,ParamType_NA,ParamType_NA,ParamType_NA,ParamType_NA,ParamType_NA,ParamType_NA };
+	operators[OperatorTypes_SET].readParam = new unsigned char[operators[OperatorTypes_SET].enumAmount]{2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+	operators[OperatorTypes_SET].returns = new VarType[operators[OperatorTypes_SET].enumAmount]{VarType_NA, VarType_NA, VarType_NA, VarType_NA, VarType_NA, VarType_NA, VarType_NA, VarType_NA, VarType_NA, VarType_NA, VarType_NA, VarType_NA, VarType_NA,VarType_NA,VarType_NA,VarType_NA,VarType_NA,VarType_NA,VarType_NA,VarType_NA,VarType_NA,VarType_NA };
+	operators[OperatorTypes_SET].returnType = new ParamType[operators[OperatorTypes_SET].enumAmount]{ParamType_NA, ParamType_NA, ParamType_NA, ParamType_NA, ParamType_NA, ParamType_NA, ParamType_NA, ParamType_NA, ParamType_NA, ParamType_NA, ParamType_NA, ParamType_NA, ParamType_NA,ParamType_NA,ParamType_NA,ParamType_NA,ParamType_NA,ParamType_NA,ParamType_NA,ParamType_NA,ParamType_NA,ParamType_NA };
 	operators[OperatorTypes_SET].writeParam = new unsigned char[operators[OperatorTypes_SET].enumAmount]{1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,0,0};
 	operators[OperatorTypes_SET].priority = 0;
 	operators[OperatorTypes_SET].shortHandsAmounts = 1;
@@ -137,7 +142,7 @@ KubLingCompiler::KubLingCompiler()
 	operators[OperatorTypes_SET].rightParams = new unsigned char[operators[OperatorTypes_SET].shortHandsAmounts]{1};
 	operators[OperatorTypes_SET].leftParams = new unsigned char[operators[OperatorTypes_SET].shortHandsAmounts]{1};
 	operators[OperatorTypes_SET].shortFlipParams = new bool[operators[OperatorTypes_SET].shortHandsAmounts]{false};
-	operators[OperatorTypes_SET].amountParOperators = new unsigned char[operators[OperatorTypes_SET].enumAmount]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,0,0};
+	operators[OperatorTypes_SET].amountParOperators = new unsigned char[operators[OperatorTypes_SET].enumAmount]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,0,0,0};
 	operators[OperatorTypes_SET].parRepeatsMin = new unsigned char*[operators[OperatorTypes_SET].enumAmount]{
 		new unsigned char[operators[OperatorTypes_SET].params[0]]{0, 0}, 
 		new unsigned char[operators[OperatorTypes_SET].params[1]]{0, 0},
@@ -159,7 +164,8 @@ KubLingCompiler::KubLingCompiler()
 		new unsigned char[operators[OperatorTypes_SET].params[17]]{ 0, 0 },
 		new unsigned char[operators[OperatorTypes_SET].params[18]]{ 0},
 		new unsigned char[operators[OperatorTypes_SET].params[19]]{ 0, 0 },
-		new unsigned char[operators[OperatorTypes_SET].params[20]]{ 0, 0 }
+		new unsigned char[operators[OperatorTypes_SET].params[20]]{ 0, 0 },
+		new unsigned char[operators[OperatorTypes_SET].params[21]]{ 0, 0 }
 	};
 	operators[OperatorTypes_SET].parRepeatsMax = new unsigned char*[operators[OperatorTypes_SET].enumAmount]{
 		new unsigned char[operators[OperatorTypes_SET].params[0]]{0, 0}, 
@@ -182,7 +188,8 @@ KubLingCompiler::KubLingCompiler()
 		new unsigned char[operators[OperatorTypes_SET].params[17]]{ 0, 0 },
 		new unsigned char[operators[OperatorTypes_SET].params[18]]{ 0},
 		new unsigned char[operators[OperatorTypes_SET].params[19]]{ 0, 0 },
-		new unsigned char[operators[OperatorTypes_SET].params[20]]{ 0, 0 }
+		new unsigned char[operators[OperatorTypes_SET].params[20]]{ 0, 0 },
+		new unsigned char[operators[OperatorTypes_SET].params[21]]{ 0, 0 }
 	};
 	operators[OperatorTypes_SET].parOperatorAppend = new bool*[operators[OperatorTypes_SET].enumAmount]{
 		new bool[operators[OperatorTypes_SET].params[0]]{false, false},
@@ -205,7 +212,8 @@ KubLingCompiler::KubLingCompiler()
 		new bool[operators[OperatorTypes_SET].params[17]]{ false, false },
 		new bool[operators[OperatorTypes_SET].params[18]]{ false},
 		new bool[operators[OperatorTypes_SET].params[19]]{ false, false },
-		new bool[operators[OperatorTypes_SET].params[20]]{ false, false }
+		new bool[operators[OperatorTypes_SET].params[20]]{ false, false },
+		new bool[operators[OperatorTypes_SET].params[21]]{ false, false }
 	};
 
 	operators[OperatorTypes_LOAD].keyword = "load";
@@ -225,9 +233,9 @@ KubLingCompiler::KubLingCompiler()
 	operators[OperatorTypes_LOAD].enums[11] = "state";
 	operators[OperatorTypes_LOAD].byteCodes = new unsigned char[operators[OperatorTypes_LOAD].enumAmount]{bytecode_LOADLIGHT, bytecode_LOADMESH, bytecode_LOADSCRIPT, bytecode_LOADTXTBX, bytecode_LOADPANEL, bytecode_LOADIMAGE, bytecode_LOADTSK, bytecode_LOADGMBRD, bytecode_LOADCAM, bytecode_LOADOBJCT,bytecode_LOADCPY, bytecode_LDSTT };
 	operators[OperatorTypes_LOAD].params = new unsigned char[operators[OperatorTypes_LOAD].enumAmount]{3,1,1, 0,0,1,
-		2,2,0, 2, 1, 2};
+		2,2,0, 3, 1, 2};
 	operators[OperatorTypes_LOAD].minParams = new unsigned char[operators[OperatorTypes_LOAD].enumAmount]{ 3, 1,1, 0,0,1,
-		1,1, 0, 2, 1, 2};
+		1,1, 0, 3, 1, 2};
 	operators[OperatorTypes_LOAD].paramsyntax = new VarType*[operators[OperatorTypes_LOAD].enumAmount]{
 		new VarType[operators[OperatorTypes_LOAD].params[0]]{VarType_NUMBER, VarType_NUMBER, VarType_NUMBER}, 
 			new VarType[operators[OperatorTypes_LOAD].params[1]]{VarType_STRING},
@@ -237,7 +245,7 @@ KubLingCompiler::KubLingCompiler()
 			new VarType[operators[OperatorTypes_LOAD].params[6]]{VarType_NUMBER, VarType_NA},
 			new VarType[operators[OperatorTypes_LOAD].params[7]]{VarType_NUMBER, VarType_NUMBER},
 			nullptr,
-			new VarType[operators[OperatorTypes_LOAD].params[9]]{VarType_NUMBER, VarType_NUMBER },
+			new VarType[operators[OperatorTypes_LOAD].params[9]]{VarType_NUMBER, VarType_NUMBER, VarType_STRING },
 			new VarType[operators[OperatorTypes_LOAD].params[10]]{ VarType_NUMBER },
 			new VarType[operators[OperatorTypes_LOAD].params[11]]{ VarType_NUMBER, VarType_STRING } };
 	operators[OperatorTypes_LOAD].paramTypes = new ParamType*[operators[OperatorTypes_LOAD].enumAmount]{
@@ -250,7 +258,7 @@ KubLingCompiler::KubLingCompiler()
 			new ParamType[operators[OperatorTypes_LOAD].params[6]]{ParamType_NA, ParamType_NA},
 			new ParamType[operators[OperatorTypes_LOAD].params[7]]{ParamType_NA, ParamType_NA},
 			nullptr,
-			new ParamType[operators[OperatorTypes_LOAD].params[9]]{ParamType_NA, ParamType_NA },
+			new ParamType[operators[OperatorTypes_LOAD].params[9]]{ParamType_NA, ParamType_NA, ParamType_NA },
 			new ParamType[operators[OperatorTypes_LOAD].params[10]]{ ParamType_NA },
 			new ParamType[operators[OperatorTypes_LOAD].params[11]]{ ParamType_NA, ParamType_NA } };
 	operators[OperatorTypes_LOAD].optionalPar = new bool*[operators[OperatorTypes_LOAD].enumAmount]{
@@ -263,7 +271,7 @@ KubLingCompiler::KubLingCompiler()
 		new bool[operators[OperatorTypes_LOAD].params[6]]{ false, true },
 		new bool[operators[OperatorTypes_LOAD].params[7]]{ false, true },
 		nullptr,
-		new bool[operators[OperatorTypes_LOAD].params[9]]{ false, false },
+		new bool[operators[OperatorTypes_LOAD].params[9]]{ false, false, false },
 		new bool[operators[OperatorTypes_LOAD].params[10]]{ false },
 		new bool[operators[OperatorTypes_LOAD].params[11]]{ false, false }
 	};
@@ -285,7 +293,7 @@ KubLingCompiler::KubLingCompiler()
 			new unsigned char[operators[OperatorTypes_LOAD].params[6]]{0, 0},
 			new unsigned char[operators[OperatorTypes_LOAD].params[7]]{0,0},
 			nullptr,
-			new unsigned char[operators[OperatorTypes_LOAD].params[9]]{0, 0},
+			new unsigned char[operators[OperatorTypes_LOAD].params[9]]{0, 0, 0},
 			new unsigned char[operators[OperatorTypes_LOAD].params[10]]{ 0 },
 			new unsigned char[operators[OperatorTypes_LOAD].params[11]]{ 0, 0 }
 	};
@@ -299,7 +307,7 @@ KubLingCompiler::KubLingCompiler()
 			new unsigned char[operators[OperatorTypes_LOAD].params[6]]{0, 16},
 			new unsigned char[operators[OperatorTypes_LOAD].params[7]]{0,0},
 			nullptr,
-			new unsigned char[operators[OperatorTypes_LOAD].params[9]]{0, 0},
+			new unsigned char[operators[OperatorTypes_LOAD].params[9]]{0, 0, 0},
 			new unsigned char[operators[OperatorTypes_LOAD].params[10]]{ 0 },
 			new unsigned char[operators[OperatorTypes_LOAD].params[11]]{ 0, 0 }
 	};
