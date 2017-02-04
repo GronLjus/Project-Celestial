@@ -3,7 +3,10 @@ $
 	
 	objClick = load script 'Content\Scripts\ToolBarScripts\GhostClicks\RunWayGhostClick'
 	tile = import 'baseTile'
+
 	roadGhost = load object tile 2 'runway'
+	set collisionfilter roadGhost 'none'
+
 	scope sve roadGhost 0
 	size roadGhost 2.8 0.2 0.8
 	set leftclick roadGhost objClick

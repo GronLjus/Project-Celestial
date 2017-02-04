@@ -11,7 +11,7 @@ $
 
 }
 
-if hcktrck : 0
+if hcktrck : 0 & ?3 : 0
 {
 	
 	hook tracking

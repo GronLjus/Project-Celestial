@@ -8,30 +8,36 @@ $
 
 }
 
-if hcktrck : 0
-{
-	
-	hook tracking
-	hcktrck = 1
-	
-	hckX = ?f0
-	hckY = ?f1
-	hckZ = ?f2
+post ?3
 
-}
-else
+if ?3 : 0
 {
 
-	obj = load copyobject ?0
-
-	show cursor
-
-	add obj
-
-	clear tracking
-	hcktrck = 0
+	if hcktrck : 0
+	{
 	
-	r1 = add routegoal hckX hckY hckZ 3
-	r2 = add routegoal ?f0 ?f1 ?f2 3
+		hook tracking
+		hcktrck = 1
+	
+		hckX = ?f0
+		hckY = ?f1
+		hckZ = ?f2
 
+	}
+	else
+	{
+
+		obj = load copyobject ?0
+
+		show cursor
+
+		add obj
+
+		clear tracking
+		hcktrck = 0
+	
+		r1 = add routegoal hckX hckY hckZ 3
+		r2 = add routegoal ?f0 ?f1 ?f2 3
+
+	}
 }

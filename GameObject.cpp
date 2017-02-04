@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "GameObject.h"
 
+#include <algorithm>
+
 using namespace Resources;
 using namespace CrossHandlers;
 using namespace CelestialMath;
@@ -121,6 +123,7 @@ void GameObject::Update(Message* mess)
 
 		case ObjectMess_SETCOLLFILTER:
 			collisionFilter = std::string((char*)(mess->params));
+			collisionFilter.erase(std::remove(collisionFilter.begin(), collisionFilter.end(), ' '), collisionFilter.end());
 			break;
 		case ObjectMess_REMOVE:
 

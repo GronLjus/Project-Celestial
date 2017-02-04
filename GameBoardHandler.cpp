@@ -3,6 +3,8 @@
 #include "GameRouteObject.h"
 #include "GameGridObject.h"
 
+#include <algorithm>
+
 using namespace Entities;
 using namespace Resources;
 using namespace CrossHandlers;
@@ -639,8 +641,8 @@ void GameBoardHandler::transformHookedObject(Vector3 mousePos)
 	}
 
 	dist /= 2;
-	trackedObject->SetPosition(hookPos + dist);
-	trackedObject->UpdateMatrix();
+trackedObject->SetPosition(hookPos + dist);
+trackedObject->UpdateMatrix();
 
 }
 
@@ -720,7 +722,7 @@ Vector3 GameBoardHandler::snapMouse(unsigned int amounts, unsigned int* collided
 			lastObj = obj;
 
 		}
-		else if(obj->GetType() == GameObjectType_GRIDROUTE)
+		else if (obj->GetType() == GameObjectType_GRIDROUTE)
 		{
 
 			GameGridObject* gridObj = (GameGridObject*)obj;
@@ -732,6 +734,66 @@ Vector3 GameBoardHandler::snapMouse(unsigned int amounts, unsigned int* collided
 	}
 
 	return worldMouse;
+
+}
+
+bool GameBoardHandler::filterObjects(unsigned int* objects, unsigned int amounts, std::string filters)
+{
+
+	if( filters == " " || amounts == 0)
+	{
+		
+		return false;
+
+	}
+
+	for (unsigned int i = 0; i < amounts; i++)
+	{
+
+		GameObject* obj = (GameObject*)gameObjects->GetValue(objects[i]);
+		std::string tempStr = "";
+		bool objectGood = false;
+
+		for (unsigned int k = 0; k < filters.size() && !objectGood; k++)
+		{
+
+			if(filters[k] != ',')
+			{ 
+			
+				tempStr += filters[k];
+
+			}
+			else
+			{
+
+				if (tempStr == obj->GetObjectName())
+				{
+
+					objectGood = true;
+
+				}
+
+				tempStr = "";
+
+			}
+		}
+
+		if (tempStr == obj->GetObjectName() && !objectGood)
+		{
+
+			objectGood = true;
+
+		}
+
+		if (!objectGood)
+		{
+
+			return true;
+
+		}
+	}
+
+	return false;
 
 }
 
@@ -755,15 +817,14 @@ Vector3 GameBoardHandler::handleTracked(unsigned int time)
 			trackedObject->GetScale().y / 2,
 			worldMouse.z, 
 			0.51f);
-		unsigned int cursorAmounts = 0;
 
-		
+		unsigned int cursorAmounts = 0;
 
 		if (snap && hookStatus < 2)
 		{
 
 			Vector3 midPos = worldMouse;
-			unsigned int* collidedObjects = localGameBoard->GetCollidedObject(&cursor, GameObjectType_ROUTE | GameObjectType_GRIDROUTE, cursorAmounts);
+			unsigned int* collidedObjects = localGameBoard->GetCollidedObject(&cursor, GameObjectType_ROUTE | GameObjectType_GRIDROUTE | GameObjectType_SCENERY, cursorAmounts);
 			PositionableObject* lastObject = nullptr;
 			worldMouse = snapMouse(cursorAmounts, collidedObjects, nullptr, worldMouse);
 
@@ -781,12 +842,6 @@ Vector3 GameBoardHandler::handleTracked(unsigned int time)
 		{
 
 			transformHookedObject(worldMouse);
-			unsigned int collidedAmounts = 0;
-			localGameBoard->GetCollidedObject(trackedObject, collidedAmounts);
-
-			//The tracked object intersects with more then the end and start
-			hookOccupied = collidedAmounts > (cursorAmounts + hookTargets) || 
-				(trackedObject->GetType() == GameObjectType_GRIDROUTE && collidedAmounts > 0);
 
 		}
 		else if (hookStatus == 2)//Fill the second dimension
@@ -796,7 +851,7 @@ Vector3 GameBoardHandler::handleTracked(unsigned int time)
 			Vector3 scale = trackedObject->GetScale();
 			Vector3 pos = hookPos;
 
-			Vector3 projectedLine = Vector3(0.0f,0.0f,0.0f);
+			Vector3 projectedLine = Vector3(0.0f, 0.0f, 0.0f);
 
 			Vector3 line = worldMouse - hookPos;
 			float vd1 = VectorDot(line, hookSide);
@@ -809,11 +864,11 @@ Vector3 GameBoardHandler::handleTracked(unsigned int time)
 
 			}
 
-			float dist = sqrt(VectorDot(projectedLine)) + (hookScale.x/2);
+			float dist = sqrt(VectorDot(projectedLine)) + (hookScale.x / 2);
 			float projectedDot = VectorDot(projectedLine, hookSide);
 
 			dist *= projectedDot < 0 ? -1 : 1;
-			
+
 			if (dist < 0)
 			{
 
@@ -828,11 +883,24 @@ Vector3 GameBoardHandler::handleTracked(unsigned int time)
 			trackedObject->SetScale(scale);
 			trackedObject->UpdateMatrix();
 
-			unsigned int collidedAmounts = 0;
-			localGameBoard->GetCollidedObject(trackedObject, collidedAmounts);
+		}
+
+		unsigned int trackedObjCollidedAmounts = 0;
+		unsigned int* trackedCollided = localGameBoard->GetCollidedObject(trackedObject, trackedObjCollidedAmounts);
+		hookOccupied = false;
+
+		if (hookStatus > 0)
+		{
 
 			//The tracked object intersects with more then the end and start
-			hookOccupied = collidedAmounts > 0;
+			hookOccupied = trackedObjCollidedAmounts > (cursorAmounts + hookTargets);
+
+		}
+
+		if (!hookOccupied)
+		{
+
+			hookOccupied = filterObjects(trackedCollided, trackedObjCollidedAmounts, trackedObject->GetCollisionFilter());
 
 		}
 
