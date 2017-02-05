@@ -2899,6 +2899,24 @@ RunTimeError LoadTextBoxOperator(rawCode* raw, unsigned int returnVar, unsigned 
 
 }
 
+RunTimeError LockTrackingOperator(rawCode* raw, unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int offset, unsigned int byteLine, runTimeVal &rtv)
+{
+
+	raw->maxLines = sendLines;
+	raw->code = new rawCode::line[raw->maxLines];
+
+	Message mess;
+	mess.destination = MessageSource_ENTITIES;
+	mess.type = MessageType_ENTITIES;
+	mess.mess = GameBoardMess_LOCKTRACK;
+	mess.returnParam = 0;
+
+	sendMessageOut(mess, rtv, raw);
+
+	return RunTimeError_OK;
+
+}
+
 RunTimeError ModulusVarOperator(rawCode* raw, unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int offset, unsigned int byteLine, runTimeVal &rtv)
 {
 
@@ -5426,6 +5444,7 @@ KubLingRawTranslator::KubLingRawTranslator()
 
 	translator[bytecode_SPLTRTE] = SplitRouteOperator;
 
+	translator[bytecode_LCKTRCK] = LockTrackingOperator;
 	translator[bytecode_TRCK] = TrackObjectOperator;
 	translator[bytecode_CRLTRCK] = ClearTrackingOperator;
 	translator[bytecode_HCKTRCK] = HockTrackingOperator;

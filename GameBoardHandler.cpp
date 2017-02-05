@@ -21,6 +21,7 @@ GameBoardHandler::GameBoardHandler() : IHandleMessages(200, MessageSource_ENTITI
 	lastTime = 0;
 
 	hookOccupied = false;
+	trackLock = false;
 	mouseCache = Vector3(0.0f, 0.0f, 0.0f);
 
 }
@@ -287,6 +288,7 @@ void GameBoardHandler::UpdateMessages(unsigned int time, unsigned int clock)
 			trackedObject->SetScale(hookScale);
 			trackedObject->SetRotation(hookRot);
 			trackedObject = nullptr;
+			trackLock = false;
 			hookStatus = 0;
 
 		}
@@ -510,6 +512,12 @@ void GameBoardHandler::UpdateMessages(unsigned int time, unsigned int clock)
 			localGameBoard->GetRoutingManager()->PopulateGrid(grid, nodeWidth);
 
 		}
+		else if (currentMessage->mess == GameBoardMess_LOCKTRACK)
+		{
+
+			trackLock = !trackLock;
+
+		}
 
 		if (currentMessage->source == MessageSource_CELSCRIPT && currentMessage->returnParam > 0 &&
 			outId > 0)
@@ -619,6 +627,13 @@ void GameBoardHandler::splitObject(GameObject* object, Vector3 position, float w
 void GameBoardHandler::transformHookedObject(Vector3 mousePos)
 {
 
+	if (trackLock)
+	{
+
+		mousePos = trackedObject->GetObjectCenterLineNoCap(mousePos);
+
+	}
+
 	Vector3 scale = trackedObject->GetScale();
 	mousePos.y = hookPos.y;
 	Vector3 dist = mousePos - hookPos;
@@ -627,7 +642,7 @@ void GameBoardHandler::transformHookedObject(Vector3 mousePos)
 	scale.z = hookScale.z + distL;
 	trackedObject->SetScale(scale);
 
-	if (scale.z - hookScale.z > 0)
+	if (scale.z - hookScale.z > 0 && !trackLock)
 	{
 
 		Vector3 forward = Vector3(0.0f, 0.0f, 1.0f);
@@ -651,7 +666,7 @@ Vector3 GameBoardHandler::getClosestPositionOnObj(GameGridObject* grid, Vector3 
 
 	BoundingBox* box = grid->GetBox();
 
-	if (hookStatus == 1)
+	if (hookStatus == 1 && !trackLock)
 	{
 
 		Vector3 dir = mouse - origin;

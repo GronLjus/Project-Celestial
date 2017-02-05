@@ -71,7 +71,7 @@ namespace Logic
 		
 		bytecode_SPLTRTE,
 
-		bytecode_TRCK, bytecode_CRLTRCK, bytecode_HCKTRCK, 
+		bytecode_LCKTRCK, bytecode_TRCK, bytecode_CRLTRCK, bytecode_HCKTRCK,
 		bytecode_SPWN, bytecode_TRVL,
 		bytecode_GLUOBJCT,
 

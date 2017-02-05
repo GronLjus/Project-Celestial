@@ -15,6 +15,7 @@ if ?3 : 0
 	
 		hook tracking
 		hcktrck = 1
+		lock tracking
 	
 	}
 	else

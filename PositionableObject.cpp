@@ -28,7 +28,7 @@ PositionableObject::PositionableObject(Vector3 position, Vector3 scale) : Script
 	serial = 40;
 
 	absOffset = Vector3(0, 0, 0);
-	absScale = scale;
+	absScale = Vector3(abs(scale.x), abs(scale.y), abs(scale.z));;
 
 }
 
@@ -192,7 +192,7 @@ Vector3 PositionableObject::getPlane(Vector3 point)
 Vector3 PositionableObject::GetObjectCenterLine(Vector3 startPoint, Vector3 endPoint, float offSetFromEdge)
 {
 
-	if (offSetFromEdge > (scale.x / 2))
+	if (offSetFromEdge > (abs(scale.x) / 2))
 	{
 
 		return GetObjectCenterLine(startPoint, startPoint - endPoint);
@@ -214,7 +214,7 @@ Vector3 PositionableObject::GetObjectCenterLine(Vector3 startPoint, Vector3 endP
 
 	plane /= -normPlane;
 
-	float newScal = (scale.x / 2) - offSetFromEdge;
+	float newScal = (abs(scale.x) / 2) - offSetFromEdge;
 	Vector3 toEdge = plane * newScal;
 
 	return newPoint + toEdge;
@@ -244,21 +244,28 @@ Vector3 PositionableObject::GetObjectCenterLine(Vector3 startPoint, Vector3 dire
 Vector3 PositionableObject::GetObjectCenterLine(Vector3 point3)
 {
 
-	Vector3 plane2 = getPlane(point3);
-	Vector3 line2 = position - point3;
+	return capLine(GetObjectCenterLineNoCap(point3));
+
+}
+
+Vector3 PositionableObject::GetObjectCenterLineNoCap(Vector3 startPoint)
+{
+
+	Vector3 plane2 = getPlane(startPoint);
+	Vector3 line2 = position - startPoint;
 	float vd1 = VectorDot(line2, plane2);
 	float vd2 = VectorDot(plane2, plane2);
-	Vector3 centerPoint = point3;
+	Vector3 centerPoint = startPoint;
 
 	if (vd2 > CELESTIAL_EPSILON)
 	{
 
 		Vector3 projectedLine = plane2 * (vd1 / vd2);
-		centerPoint = point3 + projectedLine;
-	
+		centerPoint = startPoint + projectedLine;
+
 	}
 
-	return capLine(centerPoint);
+	return centerPoint;
 
 }
 
@@ -781,7 +788,7 @@ Vector3 PositionableObject::GetRotation() const
 Vector3 PositionableObject::GetScale() const
 {
 
-	return scale;
+	return Vector3(abs(scale.x), abs(scale.y), abs(scale.z));
 
 }
 

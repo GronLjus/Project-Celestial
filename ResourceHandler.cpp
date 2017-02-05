@@ -101,8 +101,11 @@ GameObject* ResourceHandler::loadGameObject(unsigned int param1, GameObjectType 
 
 		meshId = mesh->GetId();
 		CelMesh* meshObj = (CelMesh*)mesh;
-		baseBox = (BoundingBox*)meshObj->GetBoundingObjectCopy(Shape_BOX);
-		baseSphere = (BoundingSphere*)meshObj->GetBoundingObjectCopy(Shape_SPHERE);
+		baseBox = new BoundingBox(1, 1, 1, 0, 0, 0);
+
+		//Create a sphere with the radi of sqrt(0.5^2 * 3), since math won't change we can use a magic number
+		baseSphere = new BoundingSphere(0, 0, 0, 0.866025);
+
 		baseScale = meshObj->GetScale();
 
 	}

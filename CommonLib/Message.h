@@ -41,6 +41,7 @@ namespace CrossHandlers
 		GameBoardMess_MOUSEMOVE, GameBoardMess_MOUSEUD,
 		GameBoardMess_HANDLEKEY,
 		GameBoardMess_CLEARTRACK,
+		GameBoardMess_LOCKTRACK,
 		GameBoardMess_HOOKTRACK, GameBoardMess_UNHOOKTRACK,
 		GameBoardMess_ORBITOBJECT, 
 		GameBoardMess_POPULATEGRID,

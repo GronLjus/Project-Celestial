@@ -23,6 +23,7 @@ namespace Resources
 			CelestialMath::Vector3 GetObjectCenterLine(CelestialMath::Vector3 startPoint, CelestialMath::Vector3 endPoint, float offSetFromEdge);
 			CelestialMath::Vector3 GetObjectCenterLine(CelestialMath::Vector3 startPoint, CelestialMath::Vector3 direction);
 			CelestialMath::Vector3 GetObjectCenterLine(CelestialMath::Vector3 startPoint);
+			CelestialMath::Vector3 GetObjectCenterLineNoCap(CelestialMath::Vector3 startPoint);
 
 			CelestialMath::Vector3 GetRightDistance(CelestialMath::Vector3 startPoint);
 

@@ -68,6 +68,7 @@ namespace Logic
 		OperatorTypes_ARRAY, OperatorTypes_OFFSET,
 		OperatorTypes_AND, OperatorTypes_OR,
 		OperatorTypes_FILL,
+		OperatorTypes_LOCK,
 		OperatorTypes_NA
 	};
 

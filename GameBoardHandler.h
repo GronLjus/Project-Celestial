@@ -35,6 +35,7 @@ namespace Entities
 			CrossHandlers::CelestialSlicedList<Resources::BaseObject*>* gameObjects;
 			Resources::GameBoard* localGameBoard;
 			Resources::GameObject* trackedObject;
+			bool trackLock;
 
 			short trackedMX;
 			short trackedMY;
