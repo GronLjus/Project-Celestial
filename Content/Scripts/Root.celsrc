@@ -23,7 +23,10 @@ run 'Content\Scripts\LoadScripts\LoadScripts'
 run 'Content\Scripts\LoadScripts\LoadDebug'
 
 export 'endTile' endTile
+
 export 'planeMesh' load mesh 'Content\Plane1.clmsh'
+export 'terminal' load mesh 'Content\Terminal.clmsh'
+
 set camera cam
 
 pos cam 0.0 15.0 0.0

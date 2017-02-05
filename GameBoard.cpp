@@ -227,7 +227,7 @@ bool GameBoard::GetBoardPosition(Vector3 origin, Vector3 unitDirection, Vector3 
 
 	}
 
-	Vector3 point(0, 0.5f + floor, 0);
+	Vector3 point(0, floor, 0);
 
 	Vector3 toLineOrigin = point - origin;
 	float scalar = VectorDot(toLineOrigin, boardNormal);
@@ -426,6 +426,7 @@ void GameBoard::SetBoardObject(GameObject* object)
 {
 
 	object->SetScale(Vector3(cells, 0.1f, cells));
+	object->SetPosition(Vector3(0.0f, -0.06f, 0.0f));
 	object->UpdateMatrix();
 	boardObject = object;
 

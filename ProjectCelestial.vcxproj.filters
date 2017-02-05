@@ -1250,6 +1250,15 @@
     <None Include="Content\Scripts\ToolBarScripts\GhostClicks\TaxiWayGhostClick.celsrc">
       <Filter>Resource Files\Content\Scripts\ToolBarScripts\GhostClicks</Filter>
     </None>
+    <None Include="Content\Terminal.clmsh">
+      <Filter>Resource Files\Content</Filter>
+    </None>
+    <None Include="Content\Scripts\ToolBarScripts\TerminalClick.celsrc">
+      <Filter>Resource Files\Content\Scripts\ToolBarScripts</Filter>
+    </None>
+    <None Include="Content\Scripts\ToolBarScripts\GhostClicks\TerminalGhostClick.celsrc">
+      <Filter>Resource Files\Content\Scripts\ToolBarScripts\GhostClicks</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Project Celestial.rc">

@@ -1,0 +1,16 @@
+$
+{
+	
+	objClick = load script 'Content\Scripts\ToolBarScripts\GhostClicks\TerminalGhostClick'
+	terminalMesh = import 'terminal'
+
+	terminalGhost = load object terminalMesh 8 'terminal'
+	set collisionfilter terminalGhost 'apron'
+
+	scope sve terminalGhost 0
+	size terminalGhost 0.5 0.6 1.0
+	set leftclick terminalGhost objClick
+
+}
+
+track terminalGhost

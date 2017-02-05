@@ -12,7 +12,7 @@ ObjectTree::ObjectTree(unsigned int cells, unsigned int minCells, Vector2 positi
 	collidedObjectAmounts = 10;
 	collidedObjects = new unsigned int[collidedObjectAmounts];
 
-	box = new BoundingBox(cells, 100.0f, cells, position.x, 0, position.y);
+	box = new BoundingBox(cells, 200.0f, cells, position.x, 100.0f, position.y);
 	subTrees = nullptr;
 	objects = nullptr;
 
@@ -42,7 +42,7 @@ ObjectTree::ObjectTree(unsigned int cells, unsigned int minCells, Vector2 positi
 	objectAmountMax = 0;
 	gridMeshId = mesh;
 
-	gridMatrix = MatrixTranslation(position.x, 0.6f, position.y);
+	gridMatrix = MatrixTranslation(position.x, 0.0f, position.y);
 	Matrix scaleMatrix = MatrixScaling(1.0f, 1.0f, 1.0f);
 	gridMatrix = MatrixMultiply(scaleMatrix, gridMatrix);
 	gridInvTrMatrix = MatrixInverse(gridMatrix);

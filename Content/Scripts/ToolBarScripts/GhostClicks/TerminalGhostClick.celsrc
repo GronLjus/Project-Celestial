@@ -1,0 +1,33 @@
+$
+{
+
+	hcktrck = 0
+
+}
+
+post ?3
+
+if ?3 : 0
+{
+
+	if hcktrck : 0
+	{
+	
+		hook tracking
+		hcktrck = 1
+	
+	}
+	else
+	{
+
+		obj = load copyobject ?0
+
+		show cursor
+
+		add obj
+
+		clear tracking
+		hcktrck = 0
+
+	}
+}
