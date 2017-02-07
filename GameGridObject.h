@@ -24,6 +24,8 @@ namespace Resources
 		unsigned int GetNode(unsigned int x, unsigned int y);
 		unsigned int* GetNodes() const;
 
+		CelestialMath::Vector3 GetOrthogonalNormalOfNode(unsigned int x, unsigned int y) const;
+
 		CrossHandlers::Intersection ContainsPoint(CelestialMath::Vector3 point);
 
 

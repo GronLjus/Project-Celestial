@@ -35,6 +35,11 @@ namespace Entities
 			CrossHandlers::CelestialSlicedList<Resources::BaseObject*>* gameObjects;
 			Resources::GameBoard* localGameBoard;
 			Resources::GameObject* trackedObject;
+
+			CelestialMath::Vector3 trackedRotation;
+			CelestialMath::Vector3 trackedSideRotation;
+
+			bool trackedCorner;
 			bool trackLock;
 
 			short trackedMX;
@@ -59,7 +64,7 @@ namespace Entities
 			CelestialMath::Vector3 snapMouse(unsigned int amounts, unsigned int* collidedObjects, Resources::PositionableObject* lastObj, CelestialMath::Vector3 worldMouse);
 			CelestialMath::Vector3 handleTracked(unsigned int time);
 
-			CelestialMath::Vector3 getClosestPositionOnObj(Resources::GameGridObject* grid, CelestialMath::Vector3 mouse,CelestialMath::Vector3 origin) const;
+			CelestialMath::Vector3 getClosestPositionOnObj(Resources::GameGridObject* grid, CelestialMath::Vector3 mouse,CelestialMath::Vector3 origin);
 
 			void handleInput(CrossHandlers::Message* currentMessage, unsigned int time);
 

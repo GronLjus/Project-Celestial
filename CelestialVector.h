@@ -60,6 +60,34 @@ namespace CelestialMath
 
 	} vectorUI2;
 
+	typedef struct vectorI2
+	{
+
+		int x;
+		int y;
+		vectorI2() {}
+		vectorI2(int x, int y) : x(x), y(y) {}
+
+		vectorI2 operator + (const vectorI2& vec) const { return vectorI2(x + vec.x, y + vec.y); }
+		vectorI2 operator - (const vectorI2& vec) const { return vectorI2(x - vec.x, y - vec.y); }
+		vectorI2 operator * (const vectorI2& vec) const { return vectorI2(x * vec.x, y * vec.y); }
+		vectorI2 operator / (const vectorI2& vec) const { return vectorI2(x / vec.x, y / vec.y); }
+		vectorI2 operator * (const int& amnt) const { return vectorI2(x * amnt, y * amnt); }
+		vectorI2 operator / (const int& amnt) const { return vectorI2(x / amnt, y / amnt); }
+
+		vectorI2& operator += (const vectorI2& vec) { x += vec.x; y += vec.y; return *this; }
+		vectorI2& operator -= (const vectorI2& vec) { x -= vec.x; y -= vec.y; return *this; }
+		vectorI2& operator *= (const vectorI2& vec) { x *= vec.x; y *= vec.y; return *this; }
+		vectorI2& operator /= (const vectorI2& vec) { x /= vec.x; y /= vec.y; return *this; }
+		vectorI2& operator *= (const int& amnt) { x *= amnt; y *= amnt; return *this; }
+		vectorI2& operator /= (const int& amnt) { x /= amnt; y /= amnt; return *this; }
+
+		bool operator > (const int& val) const { return x > val && y > val; }
+		bool operator < (const int& val) const { return x < val && y < val; }
+		unsigned int operator [] (const int& val) const { return val == 0 ? x : y; }
+
+	} vectorI2;
+
 	typedef struct Vector3
 	{
 		float x;

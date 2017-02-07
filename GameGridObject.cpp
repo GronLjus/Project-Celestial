@@ -89,6 +89,50 @@ unsigned int GameGridObject::GetNode(unsigned int x, unsigned int y)
 
 }
 
+Vector3 GameGridObject::GetOrthogonalNormalOfNode(unsigned int x, unsigned int y) const
+{
+
+	Vector3 dir;
+
+	if (x > 0 && x < gridWidth - 1)//Node is on the upper or lower edge
+	{
+
+		Vector3 up = Vector3(0.0f, 1.0f, 0.0f);
+
+		if (y == 0)//Node is on the upper edge in the direction of the object
+		{
+
+			dir = VectorCross(up, GetDirection());
+
+		}
+		else//Object is on the lower edge in the reverse direction of the object
+		{
+
+			dir = VectorCross(GetDirection(), up);
+
+		}
+	}
+	else//Node is on the right or the left edge, or on the corners
+	{
+
+		if (x == 0)
+		{
+
+			dir = GetDirection();
+
+		}
+		else
+		{
+
+			dir = -GetDirection();
+
+		}
+	}
+
+	return dir / sqrt(VectorDot(dir));
+
+}
+
 unsigned int* GameGridObject::GetNodes() const
 {
 

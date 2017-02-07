@@ -24,6 +24,8 @@ GameBoardHandler::GameBoardHandler() : IHandleMessages(200, MessageSource_ENTITI
 	trackLock = false;
 	mouseCache = Vector3(0.0f, 0.0f, 0.0f);
 
+	trackedRotation = Vector3();
+
 }
 
 void GameBoardHandler::Init(CelestialSlicedList<BaseObject*>* gameObjects)
@@ -656,12 +658,13 @@ void GameBoardHandler::transformHookedObject(Vector3 mousePos)
 	}
 
 	dist /= 2;
-trackedObject->SetPosition(hookPos + dist);
-trackedObject->UpdateMatrix();
+	trackedObject->SetPosition(hookPos + dist);
+
+	trackedObject->UpdateMatrix();
 
 }
 
-Vector3 GameBoardHandler::getClosestPositionOnObj(GameGridObject* grid, Vector3 mouse, Vector3 origin) const
+Vector3 GameBoardHandler::getClosestPositionOnObj(GameGridObject* grid, Vector3 mouse, Vector3 origin)
 {
 
 	BoundingBox* box = grid->GetBox();
@@ -685,6 +688,9 @@ Vector3 GameBoardHandler::getClosestPositionOnObj(GameGridObject* grid, Vector3 
 	float closest = -1.0f;
 	Vector3 closestPos;
 
+	CelestialMath::vectorUI2 selectedNode;
+	bool corner = false;
+
 	for (unsigned int x = 0; x < grid->GetNodeWidth(); x++)
 	{
 
@@ -707,7 +713,36 @@ Vector3 GameBoardHandler::getClosestPositionOnObj(GameGridObject* grid, Vector3 
 					closestNode = node->GetId();
 					closestPos = node->GetPosition();
 
+					selectedNode.x = x;
+					selectedNode.y = y;
+
+					trackedCorner = (x == 0 || x == grid->GetNodeWidth() - 1) &&
+						(y == 0 || y == grid->GetNodeHeigth() - 1);
+
 				}
+			}
+		}
+	}
+
+	if (closest >= 0)//We found a node
+	{
+		
+		trackedRotation = grid->GetOrthogonalNormalOfNode(selectedNode.x, selectedNode.y);
+
+		if (trackedCorner)
+		{
+
+
+			Vector3 up = Vector3(0.0f, 1.0f, 0.0f);
+			//Since up and tracedRotation are orthogonal and normalized vectors the cross products is also normalized
+			trackedSideRotation = VectorCross(trackedRotation, up);
+
+			if ((selectedNode.x == 0 && selectedNode.y == 0) ||
+				(selectedNode.x == grid->GetNodeWidth() - 1 && selectedNode.y == grid->GetNodeHeigth() - 1))
+			{
+
+				trackedSideRotation = -trackedSideRotation;
+
 			}
 		}
 	}
@@ -825,6 +860,9 @@ Vector3 GameBoardHandler::handleTracked(unsigned int time)
 		resetMouse)
 	{
 
+		trackedCorner = false;
+		trackedRotation = Vector3(0.0f, 0.0f, 0.0f);
+
 		resetMouse = false;
 		worldMouse.x = floor(worldMouse.x) + 0.5f;
 		worldMouse.z = floor(worldMouse.z) + 0.5f;
@@ -849,7 +887,56 @@ Vector3 GameBoardHandler::handleTracked(unsigned int time)
 		{
 
 			trackedObject->SetPosition(worldMouse);
-			trackedObject->UpdateMatrix();
+
+			if (VectorDot(trackedRotation) != 0)
+			{
+
+				Vector3 forwardPoint = worldMouse + trackedRotation;
+
+				if (trackedCorner)//The object is at a corner of a grid, we need extra calculations to snap the rotation
+				{
+
+					Vector3 objectDir = trackedObject->GetDirection();
+					objectDir /= sqrt(VectorDot(objectDir));
+
+					float forwardRot = VectorDot(trackedRotation, objectDir);
+					float sideRot = VectorDot(trackedSideRotation, objectDir);
+
+					//Only spin the object if needed
+					if (abs(forwardRot - 1) > CELESTIAL_EPSILON &&
+						abs(sideRot - 1) > CELESTIAL_EPSILON)
+					{
+
+						trackedObject->Point(forwardPoint);//This method updates the matrix
+
+					}
+					else
+					{
+
+						trackedObject->UpdateMatrix();
+
+					}
+				}
+				else if (VectorDot(trackedRotation) > 0)
+				{
+
+					trackedObject->Point(forwardPoint);//This method updates the matrix
+
+				}
+				else
+				{
+
+					trackedObject->UpdateMatrix();
+
+				}
+			}
+			else
+			{
+
+				trackedObject->UpdateMatrix();
+
+			}
+
 			hookTargets = cursorAmounts;
 
 		}
