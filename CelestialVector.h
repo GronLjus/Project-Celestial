@@ -116,7 +116,7 @@ namespace CelestialMath
 		bool operator > (const float& val) const{ return x > val && y > val && z > val; }
 		bool operator < (const float& val) const{ return x < val && y < val && z < val; }
 
-		float operator [] (const int& val) const { return val == 0 ? x : val == 1 ? y : z; }
+		float& operator [] (const int& val) { return val == 0 ? x : val == 1 ? y : z; }
 
 	} Vector3;
 

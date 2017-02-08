@@ -860,6 +860,8 @@ Vector3 GameBoardHandler::handleTracked(unsigned int time)
 		resetMouse)
 	{
 
+		trackedObject->SetRotationLimit(Vector3(CELESTIAL_PI, CELESTIAL_PI, CELESTIAL_PI), 
+			Vector3(-CELESTIAL_PI, -CELESTIAL_PI, -CELESTIAL_PI), true);
 		trackedCorner = false;
 		trackedRotation = Vector3(0.0f, 0.0f, 0.0f);
 
@@ -892,15 +894,28 @@ Vector3 GameBoardHandler::handleTracked(unsigned int time)
 			{
 
 				Vector3 forwardPoint = worldMouse + trackedRotation;
+				Vector3 right = Vector3(1.0f, 0.0f, 0.0f);
+				Vector3 forward = Vector3(0.0f, 0.0f, 1.0f);
+				float fDot = VectorDot(trackedRotation, forward);
+				float fAngle = acos(fDot) * (VectorDot(right, trackedRotation) >= 0 ? 1 : -1);
 
 				if (trackedCorner)//The object is at a corner of a grid, we need extra calculations to snap the rotation
 				{
+
+					float sDot = VectorDot(trackedSideRotation, forward);
+					float sAngle = acos(sDot) * (VectorDot(right, trackedSideRotation) >= 0 ? 1 : -1) ;
+
+					Vector3 uprLimit = Vector3(0.0f, fAngle > sAngle ? fAngle : sAngle, 0);
+					Vector3 lwrLimit = Vector3(0.0f, fAngle < sAngle ? fAngle : sAngle, 0);
+
+					trackedObject->SetRotationLimit(uprLimit, lwrLimit, false);
 
 					Vector3 objectDir = trackedObject->GetDirection();
 					objectDir /= sqrt(VectorDot(objectDir));
 
 					float forwardRot = VectorDot(trackedRotation, objectDir);
 					float sideRot = VectorDot(trackedSideRotation, objectDir);
+
 
 					//Only spin the object if needed
 					if (abs(forwardRot - 1) > CELESTIAL_EPSILON &&
@@ -919,6 +934,8 @@ Vector3 GameBoardHandler::handleTracked(unsigned int time)
 				}
 				else if (VectorDot(trackedRotation) > 0)
 				{
+
+					trackedObject->SetRotationLimit(Vector3(0.0f, fAngle, 0.0f), Vector3(0.0f, fAngle, 0.0f), false);
 
 					trackedObject->Point(forwardPoint);//This method updates the matrix
 

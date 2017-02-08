@@ -567,6 +567,9 @@
       <Project>{eef1598a-6870-49f1-a5be-d4b7c2e179bf}</Project>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="Content\Scripts\ToolBarScripts\GhostClicks\TerminalGhostMiddleClick.celsrc" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

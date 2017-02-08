@@ -12,7 +12,7 @@ InputHandler::InputHandler() : IHandleMessages(300,MessageSource_INPUT)
 
 	draggedTarget = 0;
 	draggedScript = 0;
-	clickTime = 125;
+	clickTime = 250;
 	filter = MessageType_INPUT;
 	gameObjects = nullptr;
 	mouse = vectorUI2(0, 0);

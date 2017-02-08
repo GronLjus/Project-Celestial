@@ -1270,4 +1270,9 @@
       <Filter>Source Files</Filter>
     </Object>
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="Content\Scripts\ToolBarScripts\GhostClicks\TerminalGhostMiddleClick.celsrc">
+      <Filter>Resource Files\Content\Scripts\ToolBarScripts\GhostClicks</Filter>
+    </Text>
+  </ItemGroup>
 </Project>

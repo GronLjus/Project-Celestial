@@ -16,6 +16,7 @@ PositionableObject::PositionableObject() : PositionableObject(Vector3(0.0f, 0.0f
 PositionableObject::PositionableObject(Vector3 position, Vector3 scale) : ScriptableObject()
 {
 
+	greaterCircle = true;
 	parent = nullptr;
 	this->position = position;
 	this->scale = scale;
@@ -29,6 +30,9 @@ PositionableObject::PositionableObject(Vector3 position, Vector3 scale) : Script
 
 	absOffset = Vector3(0, 0, 0);
 	absScale = Vector3(abs(scale.x), abs(scale.y), abs(scale.z));;
+
+	upperRotLimit = Vector3(CELESTIAL_PI, CELESTIAL_PI, CELESTIAL_PI);
+	lowerRotLimit = Vector3(-CELESTIAL_PI, -CELESTIAL_PI, -CELESTIAL_PI);
 
 }
 
@@ -381,6 +385,15 @@ void PositionableObject::SetObjectParent(PositionableObject* parent, unsigned in
 
 }
 
+void PositionableObject::SetRotationLimit(Vector3 upperLimit, Vector3 lowerLimit, bool greaterCircle)
+{
+
+	this->upperRotLimit = upperLimit;
+	this->lowerRotLimit = lowerLimit;
+	this->greaterCircle = greaterCircle;
+
+}
+
 bool PositionableObject::IsChild() const
 {
 
@@ -628,6 +641,151 @@ void PositionableObject::Point(CelestialMath::Vector3 point)
 
 }
 
+float PositionableObject::rotateInAxis(unsigned int axis, float angle)
+{
+
+	float newAxisVal = rotation[axis];
+
+	float leftDist = upperRotLimit[axis]- lowerRotLimit[axis];
+
+	bool goesRight = angle > 0;
+
+	if (greaterCircle)//The limit is in the great circle
+	{
+
+		if (leftDist > CELESTIAL_PI)//The great circle goes left of the upperlimit
+		{
+
+			if (rotation[axis] < lowerRotLimit[axis] || rotation[axis] > upperRotLimit[axis])//The new angle is outside the limit
+			{
+
+				if (goesRight)
+				{
+
+					newAxisVal = lowerRotLimit[axis];
+
+				}
+				else
+				{
+
+					newAxisVal = upperRotLimit[axis];
+
+				}
+			}
+		}
+		else//The great circle goes the right of the upperlimit
+		{
+
+			if (rotation[axis] < upperRotLimit[axis] && rotation[axis] > lowerRotLimit[axis])//The new angle is outside the limit
+			{
+
+				if (goesRight)
+				{
+
+					newAxisVal = upperRotLimit[axis];
+
+				}
+				else
+				{
+
+					newAxisVal = lowerRotLimit[axis];
+
+				}
+			}
+		}
+	}
+	else//The limit is in the lesser circle
+	{
+
+		if (leftDist > CELESTIAL_PI)//The great circle goes left of the upperlimit
+		{
+
+			if (rotation[axis] < upperRotLimit[axis] && rotation[axis] > lowerRotLimit[axis])//The new angle is outside the limit
+			{
+
+				if (goesRight)
+				{
+
+					newAxisVal = upperRotLimit[axis];
+
+				}
+				else
+				{
+
+					newAxisVal = lowerRotLimit[axis];
+
+				}
+			}
+		}
+		else//The great circle goes the right of the upperlimit
+		{
+
+			if (rotation[axis] < lowerRotLimit[axis] || rotation[axis] > upperRotLimit[axis])//The new angle is outside the limit
+			{
+
+				if (goesRight)
+				{
+
+					newAxisVal = lowerRotLimit[axis];
+
+				}
+				else
+				{
+
+					newAxisVal = upperRotLimit[axis];
+
+				}
+			}
+		}
+	}
+
+	return newAxisVal;
+
+}
+
+void PositionableObject::dealWithRotation(CelestialMath::Vector3 newRot)
+{
+
+	rotation += newRot;
+
+	double twoPi = 2.0 * CELESTIAL_PI;
+	rotation.x = (rotation.x - twoPi * floor(rotation.x / twoPi));
+	rotation.y = (rotation.y - twoPi * floor(rotation.y / twoPi));
+	rotation.z = (rotation.z - twoPi * floor(rotation.z / twoPi));
+
+	if (rotation.x > CELESTIAL_PI)
+	{
+
+		rotation.x = -(CELESTIAL_PI - (rotation.x - CELESTIAL_PI));
+
+	}
+
+	if (rotation.y > CELESTIAL_PI)
+	{
+
+		rotation.y = -(CELESTIAL_PI - (rotation.y - CELESTIAL_PI));
+
+	}
+
+	if (rotation.z > CELESTIAL_PI)
+	{
+
+		rotation.z = -(CELESTIAL_PI - (rotation.z - CELESTIAL_PI));
+
+	}
+
+	//Limit rotation
+	for (unsigned int i = 0; i < 3; i++)
+	{
+
+		rotation[i] = rotateInAxis(i, newRot[i]);
+
+	}
+
+	createMatrix();
+
+}
+
 void PositionableObject::Update(Message* mess)
 {
 
@@ -702,8 +860,7 @@ void PositionableObject::Update(Message* mess)
 			memcpy(&newVec.x, mess->params, 4);
 			memcpy(&newVec.y, &mess->params[4], 4);
 			memcpy(&newVec.z, &mess->params[8], 4);
-			rotation += newVec;
-			createMatrix();
+			dealWithRotation(newVec);
 			break;
 		case ObjectMess_INCREMENTLAYER:
 			if (layer < 255)
