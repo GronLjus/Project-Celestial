@@ -790,60 +790,80 @@ Vector3 GameBoardHandler::snapMouse(unsigned int amounts, unsigned int* collided
 bool GameBoardHandler::filterObjects(unsigned int* objects, unsigned int amounts, std::string filters)
 {
 
-	if( filters == " " || amounts == 0)
+	if( filters == " ")
 	{
 		
-		return false;
+		return true;
 
 	}
 
-	for (unsigned int i = 0; i < amounts; i++)
+	bool objectGood = false;
+	bool skip = false;
+	bool accept = false;
+
+	std::string tempStr = "";
+
+	for (unsigned int i = 0; i < filters.size() && !objectGood; i++)
 	{
 
-		GameObject* obj = (GameObject*)gameObjects->GetValue(objects[i]);
-		std::string tempStr = "";
-		bool objectGood = false;
+		bool breakInput = filters[i] == ',' || filters[i] == '&';
 
-		for (unsigned int k = 0; k < filters.size() && !objectGood; k++)
+		if (!breakInput)
 		{
 
-			if(filters[k] != ',')
-			{ 
-			
-				tempStr += filters[k];
+			tempStr += filters[i];
 
-			}
-			else
+		}
+
+		if(breakInput || i == filters.size()-1)
+		{
+
+			bool hasObject = false;
+
+			if (!skip)
 			{
 
-				if (tempStr == obj->GetObjectName())
+				if (tempStr == "none")
 				{
 
-					objectGood = true;
+					hasObject = amounts == 0;
 
 				}
+				else
+				{
 
-				tempStr = "";
+					for (unsigned int i = 0; i < amounts && !hasObject; i++)
+					{
+
+						GameObject* obj = (GameObject*)gameObjects->GetValue(objects[i]);
+						hasObject = obj->GetObjectName() == tempStr;
+
+					}
+				}
+
+				accept = hasObject;
+				skip = !hasObject;
 
 			}
-		}
 
-		if (tempStr == obj->GetObjectName() && !objectGood)
-		{
+			tempStr = "";
 
-			objectGood = true;
+			if (filters[i] == ',')
+			{
 
-		}
+				skip = false;
+				
+				if (accept)
+				{
 
-		if (!objectGood)
-		{
+					return true;
 
-			return true;
-
+				}
+			}
 		}
 	}
 
-	return false;
+	return accept;
 
 }
 
@@ -1019,7 +1039,7 @@ Vector3 GameBoardHandler::handleTracked(unsigned int time)
 		if (!hookOccupied)
 		{
 
-			hookOccupied = filterObjects(trackedCollided, trackedObjCollidedAmounts, trackedObject->GetCollisionFilter());
+			hookOccupied = !(filterObjects(trackedCollided, trackedObjCollidedAmounts, trackedObject->GetCollisionFilter()));
 
 		}
 

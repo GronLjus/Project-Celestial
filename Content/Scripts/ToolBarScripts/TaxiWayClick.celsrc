@@ -5,7 +5,7 @@ $
 	tile = import 'baseTile'
 
 	roadGhost = load object tile 2 'taxiway'
-	set collisionfilter roadGhost 'apron,runway,taxiway'
+	set collisionfilter roadGhost 'apron,runway,taxiway,none'
 
 	scope sve roadGhost 0
 	size roadGhost 0.8 0.2 0.8

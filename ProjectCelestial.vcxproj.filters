@@ -1259,6 +1259,15 @@
     <None Include="Content\Scripts\ToolBarScripts\GhostClicks\TerminalGhostClick.celsrc">
       <Filter>Resource Files\Content\Scripts\ToolBarScripts\GhostClicks</Filter>
     </None>
+    <None Include="Content\Airbridge.clmsh">
+      <Filter>Resource Files\Content</Filter>
+    </None>
+    <None Include="Content\Scripts\ToolBarScripts\GhostClicks\AirBridgeGhostClick.celsrc">
+      <Filter>Resource Files\Content\Scripts\ToolBarScripts\GhostClicks</Filter>
+    </None>
+    <None Include="Content\Scripts\ToolBarScripts\AirBridgeClick.celsrc">
+      <Filter>Resource Files\Content\Scripts\ToolBarScripts</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Project Celestial.rc">

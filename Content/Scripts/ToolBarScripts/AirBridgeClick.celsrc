@@ -1,0 +1,20 @@
+$
+{
+	
+	objClick = load script 'Content\Scripts\ToolBarScripts\GhostClicks\AirBridgeGhostClick'
+	midClick = load script 'Content\Scripts\ToolBarScripts\GhostClicks\TerminalGhostMiddleClick'
+
+	aBRidge = import 'airBridge'
+
+	bridgeGhost = load object aBRidge 16 'airbridge'
+	set collisionfilter bridgeGhost 'apron & terminal'
+
+	scope sve bridgeGhost 0
+	size bridgeGhost 1.0 0.2 1.0
+	set leftclick bridgeGhost objClick
+	set middleclick bridgeGhost midClick
+
+}
+
+size bridgeGhost 0.5 0.1 0.25
+track bridgeGhost

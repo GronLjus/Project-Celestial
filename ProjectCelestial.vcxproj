@@ -434,6 +434,7 @@
       <FileType>Document</FileType>
     </None>
     <None Include="ClassDiagram.cd" />
+    <None Include="Content\Airbridge.clmsh" />
     <None Include="Content\EndTile.clmsh" />
     <None Include="Content\Plane1.clmsh" />
     <None Include="Content\Scripts\CameraScripts\CameraPanning.celsrc" />
@@ -452,7 +453,9 @@
     <None Include="Content\Scripts\TaskScripts\ClockTest.celsrc" />
     <None Include="Content\Scripts\TaskScripts\ClockUpdater.celsrc" />
     <None Include="Content\Scripts\TaskScripts\DebugUpdater.celsrc" />
+    <None Include="Content\Scripts\ToolBarScripts\AirBridgeClick.celsrc" />
     <None Include="Content\Scripts\ToolBarScripts\ApronButtonClick.celsrc" />
+    <None Include="Content\Scripts\ToolBarScripts\GhostClicks\AirBridgeGhostClick.celsrc" />
     <None Include="Content\Scripts\ToolBarScripts\GhostClicks\ApronGhostClick.celsrc" />
     <None Include="Content\Scripts\ToolBarScripts\GhostClicks\RunWayGhostClick.celsrc" />
     <None Include="Content\Scripts\ToolBarScripts\GhostClicks\TaxiWayGhostClick.celsrc" />
