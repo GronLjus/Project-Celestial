@@ -182,6 +182,41 @@ void  GameBoardHandler::handleInput(CrossHandlers::Message* currentMessage, unsi
 	}
 }
 
+void GameBoardHandler::lockObjectNodes(unsigned int object)
+{
+
+	GameObject* obj = (GameObject*)gameObjects->GetValue(object);
+
+	unsigned int amount;
+	unsigned int* collidedObjects = localGameBoard->GetCollidedObject(obj, GameObjectType_GRIDROUTE, amount);
+
+	for (unsigned int i = 0; i < amount; i++)
+	{
+
+		GameGridObject* grid = (GameGridObject*)gameObjects->GetValue(collidedObjects[i]);
+
+		for (unsigned int x = 0; x < grid->GetNodeWidth(); x++)
+		{
+
+			for (unsigned int y = 0; y < grid->GetNodeHeigth(); y++)
+			{
+
+				RouteNodeObject* node = localGameBoard->GetRoutingManager()->GetNode(grid->GetNode(x, y));
+				float rad = (float)node->GetWidth() / 2.0f;
+
+				BoundingSphere bs = BoundingSphere(node->GetPosition().x, node->GetPosition().y, node->GetPosition().z, rad);
+
+				if (obj->GetBox()->IntersectsBounding(&bs, Shape_SPHERE) != Intersection_BACK)
+				{
+
+					node->Lock(object);
+
+				}
+			}
+		}
+	}
+}
+
 void GameBoardHandler::UpdateMessages(unsigned int time, unsigned int clock)
 {
 
@@ -246,6 +281,13 @@ void GameBoardHandler::UpdateMessages(unsigned int time, unsigned int clock)
 			handleInput(currentMessage, time);
 
 		}
+		else if (currentMessage->mess == GameBoardMess_LOCKONGRID && localGameBoard != nullptr)
+		{
+
+			lockObjectNodes(param1);
+
+		}
+
 		else if (currentMessage->mess == GameBoardMess_ORBITOBJECT &&
 			localGameBoard != nullptr && localGameBoard->GetCam() != nullptr)
 		{
@@ -684,6 +726,7 @@ Vector3 GameBoardHandler::getClosestPositionOnObj(GameGridObject* grid, Vector3 
 
 	}
 
+	unsigned int closestObj = 0;
 	unsigned int closestNode = 0;
 	float closest = -1.0f;
 	Vector3 closestPos;
@@ -697,11 +740,12 @@ Vector3 GameBoardHandler::getClosestPositionOnObj(GameGridObject* grid, Vector3 
 		for (unsigned int y = 0; y < grid->GetNodeHeigth(); y++)
 		{
 
-			if ((x == 0 || x == grid->GetNodeWidth() - 1) ||
-				(y == 0 || y == grid->GetNodeHeigth() - 1))//Filter out all nodes not on the edge of the grid
-			{
+			RouteNodeObject* node = localGameBoard->GetRoutingManager()->GetNode(grid->GetNode(x, y));
 
-				RouteNodeObject* node = localGameBoard->GetRoutingManager()->GetNode(grid->GetNode(x, y));
+			if (node->GetLock() > 0 ||
+				(x == 0 || x == grid->GetNodeWidth() - 1) ||
+				(y == 0 || y == grid->GetNodeHeigth() - 1))//Filter out all nodes not on the edge of the grid or are locked to an object
+			{
 
 				//Check the distance from the mouseposition to the node
 				float dist = VectorDot(node->GetPosition() - mouse);
@@ -719,6 +763,8 @@ Vector3 GameBoardHandler::getClosestPositionOnObj(GameGridObject* grid, Vector3 
 					trackedCorner = (x == 0 || x == grid->GetNodeWidth() - 1) &&
 						(y == 0 || y == grid->GetNodeHeigth() - 1);
 
+					closestObj = node->GetLock();
+
 				}
 			}
 		}
@@ -726,12 +772,11 @@ Vector3 GameBoardHandler::getClosestPositionOnObj(GameGridObject* grid, Vector3 
 
 	if (closest >= 0)//We found a node
 	{
-		
+
 		trackedRotation = grid->GetOrthogonalNormalOfNode(selectedNode.x, selectedNode.y);
 
 		if (trackedCorner)
 		{
-
 
 			Vector3 up = Vector3(0.0f, 1.0f, 0.0f);
 			//Since up and tracedRotation are orthogonal and normalized vectors the cross products is also normalized
@@ -743,6 +788,26 @@ Vector3 GameBoardHandler::getClosestPositionOnObj(GameGridObject* grid, Vector3 
 
 				trackedSideRotation = -trackedSideRotation;
 
+			}
+
+			if (closestObj != 0)
+			{
+
+				PositionableObject* obj = (PositionableObject*)gameObjects->GetValue(closestObj);
+				Vector3 objDir = obj->GetDirection();
+
+				if (abs(VectorDot(objDir, trackedRotation)) <= CELESTIAL_EPSILON)//The rotation is orthogonal to the object
+				{
+
+					trackedRotation = trackedSideRotation;
+
+				}
+				else
+				{
+
+					trackedSideRotation = trackedRotation;
+
+				}
 			}
 		}
 	}
@@ -1025,7 +1090,7 @@ Vector3 GameBoardHandler::handleTracked(unsigned int time)
 		}
 
 		unsigned int trackedObjCollidedAmounts = 0;
-		unsigned int* trackedCollided = localGameBoard->GetCollidedObject(trackedObject, trackedObjCollidedAmounts);
+		unsigned int* trackedCollided = localGameBoard->GetCollidedObject(trackedObject, GameObjectType_ROUTE | GameObjectType_GRIDROUTE | GameObjectType_SCENERY, trackedObjCollidedAmounts);
 		hookOccupied = false;
 
 		if (hookStatus > 0)

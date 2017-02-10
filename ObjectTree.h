@@ -15,7 +15,7 @@ namespace CrossHandlers
 			void ClearObjects();
 			unsigned int AddInstance(Entities::ViewObject* view, Entities::DrawingBoard* board);
 			unsigned int GetClosestObject(CelestialMath::Vector3 origin, CelestialMath::Vector3 unitDirection, float &smallestDistance) const;
-			unsigned int* GetCollidedObject(Resources::GameObject* obj, unsigned int &objects) const; 
+			unsigned int* GetCollidedObject(Resources::GameObject* obj, Resources::GameObjectType filter, unsigned int &objects) const;
 			unsigned int* GetCollidedObject(BoundingSphere* sphere, Resources::GameObjectType filter, unsigned int &objects) const;
 
 			bool RemoveObject(unsigned int id);

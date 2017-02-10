@@ -2167,35 +2167,41 @@ KubLingCompiler::KubLingCompiler()
 	};
 
 	operators[OperatorTypes_LOCK].keyword = "lock";
-	operators[OperatorTypes_LOCK].enumAmount = 1;
-	operators[OperatorTypes_LOCK].enums = new std::string[operators[OperatorTypes_LOCK].enumAmount]; operators[OperatorTypes_LOCK].enums[0] = "tracking";
-	operators[OperatorTypes_LOCK].byteCodes = new unsigned char[operators[OperatorTypes_LOCK].enumAmount]{ bytecode_LCKTRCK };
-	operators[OperatorTypes_LOCK].params = new unsigned char[operators[OperatorTypes_LOCK].enumAmount]{ 0 };
-	operators[OperatorTypes_LOCK].minParams = new unsigned char[operators[OperatorTypes_LOCK].enumAmount]{ 0};
+	operators[OperatorTypes_LOCK].enumAmount = 2;
+	operators[OperatorTypes_LOCK].enums = new std::string[operators[OperatorTypes_LOCK].enumAmount]; operators[OperatorTypes_LOCK].enums[0] = "tracking"; operators[OperatorTypes_LOCK].enums[1] = "ongrid";
+	operators[OperatorTypes_LOCK].byteCodes = new unsigned char[operators[OperatorTypes_LOCK].enumAmount]{ bytecode_LCKTRCK,bytecode_LCKTOGRD };
+	operators[OperatorTypes_LOCK].params = new unsigned char[operators[OperatorTypes_LOCK].enumAmount]{ 0,1 };
+	operators[OperatorTypes_LOCK].minParams = new unsigned char[operators[OperatorTypes_LOCK].enumAmount]{ 0, 1};
 	operators[OperatorTypes_LOCK].paramsyntax = new VarType*[operators[OperatorTypes_LOCK].enumAmount]{
-		nullptr
+		nullptr,
+		new VarType[operators[OperatorTypes_LOCK].params[1]]{ VarType_NUMBER }
 	};
 	operators[OperatorTypes_LOCK].paramTypes = new ParamType*[operators[OperatorTypes_LOCK].enumAmount]{
-		nullptr
+		nullptr,
+		new ParamType[operators[OperatorTypes_LOCK].params[1]]{ ParamType_NA }
 	};
 	operators[OperatorTypes_LOCK].optionalPar = new bool*[operators[OperatorTypes_LOCK].enumAmount]{
-		nullptr
+		nullptr,
+		new bool[operators[OperatorTypes_LOCK].params[1]]{ false }
 	};
-	operators[OperatorTypes_LOCK].readParam = new unsigned char[operators[OperatorTypes_LOCK].enumAmount]{ 0 };
-	operators[OperatorTypes_LOCK].returns = new VarType[operators[OperatorTypes_LOCK].enumAmount]{ VarType_NA };
-	operators[OperatorTypes_LOCK].returnType = new ParamType[operators[OperatorTypes_LOCK].enumAmount]{ ParamType_NA };
-	operators[OperatorTypes_LOCK].writeParam = new unsigned char[operators[OperatorTypes_LOCK].enumAmount]{ 0 };
+	operators[OperatorTypes_LOCK].readParam = new unsigned char[operators[OperatorTypes_LOCK].enumAmount]{ 0,0 };
+	operators[OperatorTypes_LOCK].returns = new VarType[operators[OperatorTypes_LOCK].enumAmount]{ VarType_NA,VarType_NA };
+	operators[OperatorTypes_LOCK].returnType = new ParamType[operators[OperatorTypes_LOCK].enumAmount]{ ParamType_NA,ParamType_NA };
+	operators[OperatorTypes_LOCK].writeParam = new unsigned char[operators[OperatorTypes_LOCK].enumAmount]{ 0,0 };
 	operators[OperatorTypes_LOCK].priority = 0;
 	operators[OperatorTypes_LOCK].shortHandsAmounts = 0;
-	operators[OperatorTypes_LOCK].amountParOperators = new unsigned char[operators[OperatorTypes_LOCK].enumAmount]{ 0 };
+	operators[OperatorTypes_LOCK].amountParOperators = new unsigned char[operators[OperatorTypes_LOCK].enumAmount]{ 0,0 };
 	operators[OperatorTypes_LOCK].parRepeatsMin = new unsigned char*[operators[OperatorTypes_LOCK].enumAmount]{
-		nullptr
+		nullptr,
+		new unsigned char[operators[OperatorTypes_LOCK].params[1]]{ 0 }
 	};
 	operators[OperatorTypes_LOCK].parRepeatsMax = new unsigned char*[operators[OperatorTypes_LOCK].enumAmount]{
-		nullptr
+		nullptr,
+		new unsigned char[operators[OperatorTypes_LOCK].params[1]]{ 0 }
 	};
 	operators[OperatorTypes_LOCK].parOperatorAppend = new bool*[operators[OperatorTypes_LOCK].enumAmount]{
-		nullptr
+		nullptr,
+		new bool[operators[OperatorTypes_LOCK].params[1]]{ false }
 	};
 
 	flowOps = new FlowController[FlowOperator_NA];

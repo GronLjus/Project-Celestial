@@ -23,7 +23,7 @@ namespace Entities
 		Route* GetRoute(unsigned int localId, Route::Direction &dir);
 		unsigned int GetMaxRoutes() const;
 		unsigned int GetRoutes() const;
-		unsigned int GetWidth() const;
+		float GetWidth() const;
 
 		unsigned int GetParent() const;
 		unsigned char GetOpenSet() const;
@@ -32,11 +32,14 @@ namespace Entities
 		unsigned int GetStep() const;
 
 		unsigned int GetLocalId(unsigned int globalId) const;
+		unsigned int GetLock() const;
 
 		float GetHeuristic() const;
 		bool ContainsRoute(unsigned int gId) const;
 
 		void SetHeuristic(float heuristic);
+
+		void Lock(unsigned int obj);
 
 		void SetObjId(unsigned int id);
 		void LinkObj(unsigned int objId);
@@ -76,6 +79,7 @@ namespace Entities
 
 		float heurustic;
 
+		unsigned int lock;
 		unsigned int id;
 		unsigned int objId;
 		

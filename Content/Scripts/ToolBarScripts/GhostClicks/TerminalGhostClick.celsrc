@@ -26,6 +26,7 @@ if ?3 : 0
 		show cursor
 
 		add obj
+		lock obj
 
 		clear tracking
 		hcktrck = 0

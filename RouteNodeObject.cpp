@@ -13,6 +13,8 @@ RouteNodeObject::RouteNodeObject() : RouteNodeObject(Vector3(0,0,0),0)
 RouteNodeObject::RouteNodeObject(Vector3 position, float width)
 {
 
+	lock = 0;
+
 	this->position = position;
 	this->width = width;
 	routes = new CelestialSlicedList<route>(32);
@@ -136,7 +138,7 @@ unsigned int RouteNodeObject::GetRoutes() const
 
 }
 
-unsigned int RouteNodeObject::GetWidth() const
+float RouteNodeObject::GetWidth() const
 {
 
 	return width;
@@ -196,6 +198,13 @@ unsigned int RouteNodeObject::GetLocalId(unsigned int id) const
 
 }
 
+unsigned int RouteNodeObject::GetLock() const
+{
+
+	return lock;
+
+}
+
 bool  RouteNodeObject::ContainsRoute(unsigned int gId) const
 {
 
@@ -223,6 +232,13 @@ void RouteNodeObject::LinkObj(unsigned int objId)
 {
 
 	this->objId = objId;
+
+}
+
+void RouteNodeObject::Lock(unsigned int obj)
+{
+
+	this->lock = obj;
 
 }
 

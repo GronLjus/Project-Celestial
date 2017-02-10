@@ -44,7 +44,7 @@ namespace CrossHandlers
 		GameBoardMess_LOCKTRACK,
 		GameBoardMess_HOOKTRACK, GameBoardMess_UNHOOKTRACK,
 		GameBoardMess_ORBITOBJECT, 
-		GameBoardMess_POPULATEGRID,
+		GameBoardMess_POPULATEGRID, GameBoardMess_LOCKONGRID,
 		GameBoardMess_ADDROUTE, GameBoardMess_SPAWN, GameBoardMess_TRAVEL,
 		GameBoardMess_SPLITOBJECT, GameBoardMess_GLUEOBJECT,
 		GameBoardMess_GETPARENT,

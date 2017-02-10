@@ -2899,6 +2899,27 @@ RunTimeError LoadTextBoxOperator(rawCode* raw, unsigned int returnVar, unsigned 
 
 }
 
+RunTimeError LockToGridOperator(rawCode* raw, unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int offset, unsigned int byteLine, runTimeVal &rtv)
+{
+
+	raw->maxLines = sendLines;
+	raw->code = new rawCode::line[raw->maxLines];
+
+	Message mess;
+	mess.destination = MessageSource_ENTITIES;
+	mess.type = MessageType_ENTITIES;
+	mess.mess = GameBoardMess_LOCKONGRID;
+	mess.returnParam = 0;
+
+	unsigned int var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
+
+	addMessStackParamO(var - 1, 0, 4, rtv, raw);
+	sendMessageOut(mess, rtv, raw);
+
+	return RunTimeError_OK;
+
+}
+
 RunTimeError LockTrackingOperator(rawCode* raw, unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int offset, unsigned int byteLine, runTimeVal &rtv)
 {
 
@@ -5443,6 +5464,8 @@ KubLingRawTranslator::KubLingRawTranslator()
 	translator[bytecode_STBRDR] = SetBorderOperator;
 
 	translator[bytecode_SPLTRTE] = SplitRouteOperator;
+
+	translator[bytecode_LCKTOGRD] = LockToGridOperator;
 
 	translator[bytecode_LCKTRCK] = LockTrackingOperator;
 	translator[bytecode_TRCK] = TrackObjectOperator;

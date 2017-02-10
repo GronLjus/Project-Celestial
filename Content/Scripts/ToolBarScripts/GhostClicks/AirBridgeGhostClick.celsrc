@@ -1,1 +1,19 @@
-post ?3
+$
+{
+
+	post 'test'
+
+}
+
+if ?3 : 0
+{
+
+	airBridge = load copyobject ?0
+
+	show cursor
+
+	add airBridge
+
+	clear tracking
+
+}

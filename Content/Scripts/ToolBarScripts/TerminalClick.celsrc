@@ -9,7 +9,7 @@ $
 	set collisionfilter terminalGhost 'apron'
 
 	scope sve terminalGhost 0
-	size terminalGhost 0.5 0.6 1.0
+	size terminalGhost 0.5 0.6 0.95
 	set leftclick terminalGhost objClick
 	set middleclick terminalGhost midClick
 

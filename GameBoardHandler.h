@@ -69,6 +69,7 @@ namespace Entities
 			void handleInput(CrossHandlers::Message* currentMessage, unsigned int time);
 
 			bool filterObjects(unsigned int* objects, unsigned int amounts, std::string filters);
+			void lockObjectNodes(unsigned int object);
 
 			MouseHandler* mH;
 

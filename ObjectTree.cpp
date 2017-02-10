@@ -118,7 +118,7 @@ void ObjectTree::expandCollidedArray()
 
 }
 
-unsigned int* ObjectTree::GetCollidedObject(GameObject* obj, unsigned int &objectsAmount) const
+unsigned int* ObjectTree::GetCollidedObject(GameObject* obj, GameObjectType filter, unsigned int &objectsAmount) const
 {
 
 	unsigned int objcts = 0;
@@ -139,7 +139,7 @@ unsigned int* ObjectTree::GetCollidedObject(GameObject* obj, unsigned int &objec
 
 			}
 
-			if (localObj->GetTargetId() != obj->GetTargetId() && !dbl)
+			if ((filter == GameObjectType_NA || (localObj->GetType() & filter) > 0) && localObj->GetTargetId() != obj->GetTargetId() && !dbl)
 			{
 
 				Intersection inter = localObj->GetBox()->IntersectsBounding(obj->GetBox(), Shape_BOX);
@@ -169,7 +169,7 @@ unsigned int* ObjectTree::GetCollidedObject(GameObject* obj, unsigned int &objec
 				{
 
 					unsigned int objectAmounts = 0;
-					unsigned int* closestObjects = subTrees[i]->GetCollidedObject(obj, objectAmounts);
+					unsigned int* closestObjects = subTrees[i]->GetCollidedObject(obj, filter, objectAmounts);
 
 					for (unsigned int k = 0; k < objectAmounts; k++)
 					{
