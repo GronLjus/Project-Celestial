@@ -13,7 +13,7 @@ GUILayout::GUILayout(GUISnap h, GUISnap v) : GUIObject()
 
 }
 
-void GUILayout::Update(Message* mess)
+unsigned char* GUILayout::Update(Message* mess)
 {
 
 	if (mess->type == MessageType_OBJECT)
@@ -44,10 +44,13 @@ void GUILayout::Update(Message* mess)
 
 			break;
 		default:
-			GUIObject::Update(mess);
+			return GUIObject::Update(mess);
 
 		}
 	}
+
+	return nullptr;
+
 }
 
 void GUILayout::Enable()

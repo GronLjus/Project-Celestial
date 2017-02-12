@@ -71,8 +71,9 @@ namespace Entities
 			Route::Direction dir;
 			
 
-			route operator= (const route* rt) {return route(); }
-			route() :deleted(true) {}
+			route operator= (const route* &rt) {return route(); }
+			bool operator!= (const route* &rt) { return true; }
+			route() :deleted(true), rte(nullptr), dir(Route::Direction_NA){}
 			~route() { deleted = true; }
 
 		};

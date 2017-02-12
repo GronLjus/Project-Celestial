@@ -45,7 +45,7 @@ namespace CrossHandlers
 		GameBoardMess_HOOKTRACK, GameBoardMess_UNHOOKTRACK,
 		GameBoardMess_ORBITOBJECT, 
 		GameBoardMess_POPULATEGRID, GameBoardMess_LOCKONGRID,
-		GameBoardMess_ADDROUTE, GameBoardMess_SPAWN, GameBoardMess_TRAVEL,
+		GameBoardMess_GETROUTE,GameBoardMess_ADDROUTE, GameBoardMess_SPAWN, GameBoardMess_TRAVEL,
 		GameBoardMess_SPLITOBJECT, GameBoardMess_GLUEOBJECT,
 		GameBoardMess_GETPARENT,
 		GameBoardMess_ROUTEOBJECT,
@@ -74,6 +74,7 @@ namespace CrossHandlers
 		ObjectMess_INCREMENTLAYER, ObjectMess_DECREMENTLAYER, ObjectMess_SETLAYER,
 		ObjectMess_SAVESCOPE,
 		ObjectMess_SETCOLLFILTER,
+		ObjectMess_TRANSLATE,
 		ObjectMess_NA
 	};
 

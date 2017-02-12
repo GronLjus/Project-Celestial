@@ -9,7 +9,7 @@ namespace Resources
 	{
 		public:
 			ScreenTarget(CelestialMath::Vector4 target);
-			virtual void Update(CrossHandlers::Message* mess);
+			virtual unsigned char* Update(CrossHandlers::Message* mess);
 			unsigned int GetEnterScript() const;
 			unsigned int GetExitScript() const;
 			unsigned int GetHoverScript() const;

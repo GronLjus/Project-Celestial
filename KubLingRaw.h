@@ -16,7 +16,7 @@ namespace Resources
 				unsigned int heapVars, unsigned int stackSpace);
 			KubLingRaw(KubLingRawObj* raw);
 
-			virtual void Update(CrossHandlers::Message* mess) {}
+			virtual unsigned char* Update(CrossHandlers::Message* mess) { return nullptr; }
 			virtual ~KubLingRaw();
 
 	};

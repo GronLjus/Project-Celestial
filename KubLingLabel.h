@@ -13,7 +13,7 @@ namespace Resources
 			KubLingLabel(std::string script, unsigned int start, unsigned int* params[4], unsigned int paramMax[4]);
 			KubLingLabel(KubLingLabelObj &copy);
 
-			virtual void Update(CrossHandlers::Message* mess) {}
+			virtual unsigned char* Update(CrossHandlers::Message* mess) { return nullptr; }
 
 			virtual ~KubLingLabel() {}
 	};

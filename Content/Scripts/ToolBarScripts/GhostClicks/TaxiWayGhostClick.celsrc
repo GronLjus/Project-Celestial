@@ -43,8 +43,6 @@ else ?3 : 0
 	add endObj
 	add endObj2
 
-	route obj
-
 	clear tracking
 	hcktrck = 0
 	

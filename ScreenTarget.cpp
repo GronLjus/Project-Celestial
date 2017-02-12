@@ -30,7 +30,7 @@ ScreenTarget::ScreenTarget(Vector4 target) : PositionableObject(Vector3(target.x
 
 }
 
-void ScreenTarget::Update(Message* mess)
+unsigned char* ScreenTarget::Update(Message* mess)
 {
 
 	if (mess->type == MessageType_OBJECT)
@@ -51,9 +51,12 @@ void ScreenTarget::Update(Message* mess)
 			targetId = mess->params[0] | ((int)mess->params[1] << 8) | ((int)mess->params[2] << 16) | ((int)mess->params[3] << 24);
 			break;
 		default:
-			PositionableObject::Update(mess);
+			return PositionableObject::Update(mess);
 		}
 	}
+
+	return nullptr;
+
 }
 
 void ScreenTarget::SetLayer(unsigned char layer)

@@ -19,6 +19,9 @@ namespace Entities
 			void Init(CrossHandlers::CelestialSlicedList<Resources::BaseObject*>* gameObjects);
 			void AddNode(CelestialMath::Vector3 position, float width, unsigned int id);
 			unsigned int AddNode(CelestialMath::Vector3 position, unsigned int* objects, unsigned int amounts);
+			unsigned int FindNode(CelestialMath::Vector3 position, unsigned int* objects, unsigned int amounts);
+
+			void AddRoad(unsigned int node1, unsigned int node2);
 
 			void PopulateGrid(Resources::GameGridObject* grid, float nodeWidth);
 
@@ -29,6 +32,8 @@ namespace Entities
 			void Spawn(Resources::GameTravelObject* object, unsigned int cell);
 			void UpdateObject(Resources::GameTravelObject* obj, unsigned int time);
 			void ClearNodes();
+
+			void ClearRoads(RouteNodeObject* node);
 
 			//Serializable Interface
 			virtual char* Serialize(unsigned int &size);

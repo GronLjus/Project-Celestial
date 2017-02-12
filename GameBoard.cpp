@@ -263,7 +263,7 @@ bool GameBoard::GetBoardPosition(Vector3 origin, Vector3 unitDirection, Vector3 
 
 }
 
-void GameBoard::Update(CrossHandlers::Message* mess)
+unsigned char* GameBoard::Update(CrossHandlers::Message* mess)
 {
 
 	if (mess->type == MessageType_OBJECT)
@@ -302,10 +302,13 @@ void GameBoard::Update(CrossHandlers::Message* mess)
 
 			break;
 		default:
-			ScriptableObject::Update(mess);
+			return ScriptableObject::Update(mess);
 
 		}
 	}
+
+	return nullptr;
+
 }
 
 void GameBoard::FillInstanceBuffer(GameObject* trackingObject)

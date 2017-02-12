@@ -70,8 +70,14 @@ void KubLingMachine::sendMessage(unsigned int mess, unsigned int retVar, Message
 		memcpy(&objId, getMem(returnAdr), 4);
 
 		Resources::BaseObject* obj = objectContainer->GetValue(objId);
-		obj->Update(lastMess);
+		unsigned char* retValue = obj->Update(lastMess);
 
+		if (retValue != nullptr)
+		{
+
+			memcpy(heapMem->GetMemory(heapMem->GetAddress(SystemMem_TRANSLATED)), retValue, 16);
+
+		}
 	}
 }
 

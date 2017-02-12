@@ -12,7 +12,7 @@ namespace Resources
 			///<param val='h'>[in]The horizontal snapping</param>
 			///<param val='v'>[in]The vertical stapping</param>
 			GUITextBox(GUISnap h, GUISnap v);
-			virtual void Update(CrossHandlers::Message* mess);
+			virtual unsigned char* Update(CrossHandlers::Message* mess);
 			virtual float GetAngle();
 			CrossHandlers::TextContainer* GetText() const;
 			void SetText(CrossHandlers::TextContainer* textCont);

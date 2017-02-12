@@ -12,7 +12,7 @@ namespace Resources
 
 		public:
 			ScriptableObject();
-			virtual void Update(CrossHandlers::Message* mess);
+			virtual unsigned char* Update(CrossHandlers::Message* mess);
 			unsigned int GetRightClickScript() const;
 			unsigned int GetLeftClickScript() const;
 			unsigned int GetMiddleClickScript() const;

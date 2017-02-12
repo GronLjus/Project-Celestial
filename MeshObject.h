@@ -957,7 +957,7 @@ namespace Resources
 			///<param name='id'>[in]The unique id of the mesh</param>
 			MeshObject(MeshObject*& copy,int id);
 
-			virtual void Update(CrossHandlers::Message* mess){}
+			virtual unsigned char* Update(CrossHandlers::Message* mess) { return nullptr; }
 			///<summary>Gets all groups in use by this mesh</summary>
 			///<returns>An array of pointers to groups</returns>
 			Group** getGroups();

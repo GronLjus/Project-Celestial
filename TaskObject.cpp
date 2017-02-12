@@ -222,7 +222,7 @@ bool TaskObject::ShouldKill() const
 
 }
 
-void TaskObject::Update(CrossHandlers::Message* mess) {}
+unsigned char* TaskObject::Update(CrossHandlers::Message* mess) { return nullptr; }
 
 TaskObject::~TaskObject()
 {

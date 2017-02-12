@@ -36,7 +36,7 @@ namespace Resources
 
 		public:
 			CrossScriptMemoryObject();
-			virtual void Update(CrossHandlers::Message* mess){};
+			virtual unsigned char* Update(CrossHandlers::Message* mess) { return nullptr; };
 			void SetMem(std::string name, unsigned char* value, unsigned int valLength);
 			unsigned char* GetMem(std::string name, unsigned int &length);
 			~CrossScriptMemoryObject();

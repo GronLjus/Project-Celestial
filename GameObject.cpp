@@ -110,7 +110,7 @@ std::string GameObject::GetObjectName() const
 
 }
 
-void GameObject::Update(Message* mess)
+unsigned char* GameObject::Update(Message* mess)
 {
 
 	if (mess->type == MessageType_OBJECT)
@@ -141,11 +141,14 @@ void GameObject::Update(Message* mess)
 			if (!UpdateSaveObject(mess))
 			{
 
-				PositionableObject::Update(mess);
+				return PositionableObject::Update(mess);
 
 			}
 		}
 	}
+
+	return nullptr;
+
 }
 
 bool GameObject::IsFlipBuffered(unsigned char flip)

@@ -9,7 +9,7 @@ namespace Resources
 	{
 		public:
 			CameraObject(unsigned int width, unsigned int height, float depth,unsigned int flips);
-			virtual void Update(CrossHandlers::Message* mess);
+			virtual unsigned char* Update(CrossHandlers::Message* mess);
 			void IncrementFlipBuff();
 			unsigned int PeekNextFlip() const;
 			unsigned int GetFlip() const;

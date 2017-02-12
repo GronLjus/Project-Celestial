@@ -13,7 +13,13 @@ if ?3 : 0
 	show cursor
 
 	add airBridge
+	r1 = load routegoal ?f0 ?f1 ?f2
+	translate airBridge -1.5 0.0 0.0
 
+	translated = import adrf '£translated'
+	r2 = load routegoal translated[0] translated[1] translated[2]
+
+	route r1 r2
 	clear tracking
 
 }

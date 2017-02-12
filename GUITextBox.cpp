@@ -35,7 +35,7 @@ bool GUITextBox::HasCaret() const
 
 }
 
-void GUITextBox::Update(Message* mess)
+unsigned char* GUITextBox::Update(Message* mess)
 {
 
 	if (mess->type == MessageType_OBJECT)
@@ -122,10 +122,13 @@ void GUITextBox::Update(Message* mess)
 				}
 			}
 		default:
-			GUIObject::Update(mess);
+			return GUIObject::Update(mess);
 
 		}
 	}
+
+	return nullptr;
+
 }
 
 TextContainer* GUITextBox::GetText() const

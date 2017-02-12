@@ -272,6 +272,7 @@ void RouteNodeObject::SetStep(unsigned int step)
 
 void RouteNodeObject::AddRoute(Route* node)
 {
+
 	route rte;
 	rte.deleted = false;
 	rte.rte = node;
@@ -317,7 +318,7 @@ void RouteNodeObject::RemoveRoute(unsigned int id)
 
 	bool found = false;
 	unsigned int x = GetLocalId(id);
-	routes->Remove(x);
+	routes->Destroy(x);
 
 	routesAmount--;
 

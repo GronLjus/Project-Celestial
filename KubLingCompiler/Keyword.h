@@ -58,6 +58,7 @@ namespace Logic
 		OperatorTypes_FOCUS, OperatorTypes_HIDE, OperatorTypes_SHOW,
 		OperatorTypes_INCREMENT, OperatorTypes_DECREMENT, 
 		OperatorTypes_IGNORE, OperatorTypes_ACCEPT,
+		OperatorTypes_TRANSLATE,
 		OperatorTypes_TRACK, OperatorTypes_CLEAR,
 		OperatorTypes_HOOK, OperatorTypes_GLUE,
 		OperatorTypes_ROUTE,

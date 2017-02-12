@@ -46,6 +46,8 @@ namespace CrossHandlers
 			///<summary>Deletes an element from the list</summary>
 			///<param val='id'>[in]The global id of the element to delete</param>
 			void Kill(unsigned int id);
+			//!!!CAUTION!!!, this is meant as a very dirty workaround and can easily result in undefined behavior, DO NOT USE unless as a last resort!
+			void Destroy(unsigned int id);
 			///<summary>Resets the list without deleting the elements and makes it empty</summary>
 			void Reset();
 			///<summary>Resets the list and deletes all the elements</summary>
@@ -334,6 +336,12 @@ void CelestialSlicedList<T>::Remove(unsigned int id)
 	}
 }
 
+template<typename T>
+struct isPointer { static const bool value = false; };
+
+template<typename T>
+struct isPointer<T*> { static const bool value = true; };
+
 template <class T>
 void CelestialSlicedList<T>::Kill(unsigned int id)
 {
@@ -359,6 +367,36 @@ void CelestialSlicedList<T>::Kill(unsigned int id)
 			holes->PushElement(id);
 
 		}
+
+	}
+}
+
+template <class T>
+void CelestialSlicedList<T>::Destroy(unsigned int id)
+{
+
+	if (isPointer<T>::value)
+	{
+		
+		return;
+
+	}
+
+	unsigned int slice = id / maxSliceSize;
+	unsigned int localId = TransformId(id);
+
+	list[slice][localId] = T();
+
+	if (id == GetFirstEmpty())
+	{
+
+		sliceSize[slice]--;
+
+	}
+	else
+	{
+
+		holes->PushElement(id);
 
 	}
 }

@@ -21,7 +21,7 @@ namespace Resources
 			};
 			
 			CelMesh(unsigned int indices, unsigned int* indexBuffer, unsigned int vertices, Vertex* vertexBuffer, bool wireframe, CelestialMath::Vector3 size);
-			virtual void Update(CrossHandlers::Message* mess);
+			virtual unsigned char* Update(CrossHandlers::Message* mess);
 			unsigned int* GetIndexBuffer(unsigned int &indices) const;
 			Vertex* GetVertexBuffer(unsigned int &vertices) const;
 			CrossHandlers::IBounding* GetBoundingObjectCopy(CrossHandlers::Shape shape) const;

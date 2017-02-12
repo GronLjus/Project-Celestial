@@ -143,7 +143,8 @@ void KubLingHandler::Update(unsigned int time)
 			for (unsigned int i = 0; i < SystemMem_NA; i++)
 			{
 
-				heap->GetHeap()->SetAddress(SystemVars[i].var, heap->GetHeap()->Allocate(4));
+				unsigned int size = i == SystemMem_TRANSLATED ? 12 : 4;
+				heap->GetHeap()->SetAddress(SystemVars[i].var, heap->GetHeap()->Allocate(size));
 
 			}
 		}

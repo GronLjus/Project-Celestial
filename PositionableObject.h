@@ -12,7 +12,7 @@ namespace Resources
 		public:
 			PositionableObject();
 			PositionableObject(CelestialMath::Vector3 position, CelestialMath::Vector3 scale);
-			virtual void Update(CrossHandlers::Message* mess);
+			virtual unsigned char* Update(CrossHandlers::Message* mess);
 			
 			void SetPosition(CelestialMath::Vector3 pos);
 			void SetScale(CelestialMath::Vector3 scsal);
@@ -99,5 +99,8 @@ namespace Resources
 			PositionableObject* parent;
 			unsigned int childId;
 			bool matrixChanged;
+
+			unsigned char* returnBlock;
+
 	};
 }

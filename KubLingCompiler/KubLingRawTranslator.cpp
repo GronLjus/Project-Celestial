@@ -2236,6 +2236,26 @@ RunTimeError IgnoreMouseOperator(rawCode* raw, unsigned int returnVar, unsigned 
 
 }
 
+RunTimeError ImportAdrOperator(rawCode* raw, unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int offset, unsigned int byteLine, runTimeVal &rtv)
+{
+
+	if (paramSize < 5)
+	{
+
+		return RunTimeError_BADPARAMS;
+
+	}
+
+	unsigned int size = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
+	std::string name = getString((char*)params);
+	bool init;
+	unsigned int heapVar = getHeapVal(rtv, name, init);
+	rtv.memory->AddVariable(returnVar - 1, rtv.memory->GetMaxStack() + heapVar, 4);
+
+	return RunTimeError_OK;
+
+}
+
 RunTimeError ImportNumOperator(rawCode* raw, unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int offset, unsigned int byteLine, runTimeVal &rtv)
 {
 
@@ -2781,6 +2801,45 @@ RunTimeError LoadPanelOperator(rawCode* raw, unsigned int returnVar, unsigned ch
 	sendMessageOut(mess, rtv, raw);
 	startWaiting(returnVar - 1, raw);
 
+	return RunTimeError_OK;
+
+
+}
+
+RunTimeError LoadRouteOperator(rawCode* raw, unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int offset, unsigned int byteLine, runTimeVal &rtv)
+{
+
+	if (paramSize < 12)
+	{
+
+		return RunTimeError_BADPARAMS;
+
+	}
+
+	raw->maxLines = addMessParLinesO * 3 + sendLines + (returnVar > 0 ? waitingLines : 0);
+	raw->code = new rawCode::line[raw->maxLines];
+
+	Message mess;
+	mess.returnParam = returnVar;
+	mess.destination = MessageSource_ENTITIES;
+	mess.type = MessageType_ENTITIES;
+	mess.mess = GameBoardMess_GETROUTE;
+
+	unsigned int var1 = (params[8] | ((int)params[9] << 8) | ((int)params[10] << 16) | ((int)params[11] << 24));
+	addMessStackParamO(var1 - 1, 8, 4, rtv, raw);
+	var1 = (params[4] | ((int)params[5] << 8) | ((int)params[6] << 16) | ((int)params[7] << 24));
+	addMessStackParamO(var1 - 1, 4, 4, rtv, raw);
+	var1 = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
+	addMessStackParamO(var1 - 1, 0, 4, rtv, raw);
+
+	if (returnVar > 0)
+	{
+
+		startWaiting(returnVar - 1, raw);
+
+	}
+
+	sendMessageOut(mess, rtv, raw);
 	return RunTimeError_OK;
 
 
@@ -3769,23 +3828,25 @@ RunTimeError RotateOperator(rawCode* raw, unsigned int returnVar, unsigned char*
 RunTimeError RouteOperator(rawCode* raw, unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int offset, unsigned int byteLine, runTimeVal &rtv)
 {
 
-	if (paramSize < 4)
+	if (paramSize < 8)
 	{
 
 		return RunTimeError_BADPARAMS;
 
 	}
 
-	raw->maxLines = addMessParLinesO * 3 + sendLines;
+	raw->maxLines = addMessParLinesO * 2 + sendLines;
 	raw->code = new rawCode::line[raw->maxLines];
 
-	unsigned int var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
 	Message mess;
 	mess.destination = MessageSource_ENTITIES;
 	mess.type = MessageType_ENTITIES;
 	mess.mess = GameBoardMess_ROUTEOBJECT;
 	mess.returnParam = 0;
 
+	unsigned int var = (params[4] | ((int)params[5] << 8) | ((int)params[6] << 16) | ((int)params[7] << 24));
+	addMessStackParamO(var - 1, 4, 4, rtv, raw);
+	var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
 	addMessStackParamO(var - 1, 0, 4, rtv, raw);
 	sendMessageOut(mess, rtv, raw);
 
@@ -5108,6 +5169,37 @@ RunTimeError TrackObjectOperator(rawCode* raw, unsigned int returnVar, unsigned 
 
 }
 
+RunTimeError TranslateOperator(rawCode* raw, unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int offset, unsigned int byteLine, runTimeVal &rtv)
+{
+
+	if (paramSize < 16)
+	{
+
+		return RunTimeError_BADPARAMS;
+
+	}
+
+	raw->maxLines = addMessParLinesO * 3 + sendLines;
+	raw->code = new rawCode::line[raw->maxLines];
+
+	Message mess;
+	mess.destination = MessageSource_OBJECT;
+	mess.type = MessageType_OBJECT;
+	mess.mess = ObjectMess_TRANSLATE;
+
+	unsigned int var = (params[12] | ((int)params[13] << 8) | ((int)params[14] << 16) | ((int)params[15] << 24));
+	addMessStackParamO(var - 1, 8, 4, rtv, raw);
+	var = (params[8] | ((int)params[9] << 8) | ((int)params[10] << 16) | ((int)params[11] << 24));
+	addMessStackParamO(var - 1, 4, 4, rtv, raw);
+	var = (params[4] | ((int)params[5] << 8) | ((int)params[6] << 16) | ((int)params[7] << 24));
+	addMessStackParamO(var - 1, 0, 4, rtv, raw);
+
+	var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
+	mess.returnParam = var;
+	sendMessageOut(mess, rtv, raw);
+
+}
+
 RunTimeError TravelObjectOperator(rawCode* raw, unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int offset, unsigned int byteLine, runTimeVal &rtv)
 {
 
@@ -5341,6 +5433,7 @@ KubLingRawTranslator::KubLingRawTranslator()
 	translator[bytecode_LOADOBJCT] = LoadObjectOperator;
 	translator[bytecode_LOADCPY] = LoadObjectCopyOperator;
 	translator[bytecode_LOADTSK] = LoadTaskOperator;
+	translator[bytecode_LOADNDE] = LoadRouteOperator;
 
 	translator[bytecode_UNLOAD] = UnLoadOperator;
 
@@ -5376,6 +5469,7 @@ KubLingRawTranslator::KubLingRawTranslator()
 	translator[bytecode_PRNT] = ParentOperator;
 
 	translator[bytecode_RESNAP] = ReSnapOperator;
+	translator[bytecode_TRNSLT] = TranslateOperator;
 	translator[bytecode_POS] = PosOperator;
 	translator[bytecode_MVE] = MoveOperator;
 	translator[bytecode_PRPL] = PropelOperator;
@@ -5447,6 +5541,7 @@ KubLingRawTranslator::KubLingRawTranslator()
 	translator[bytecode_EXPRTNUM] = ExportNumOperator;
 	translator[bytecode_IMPRTSTR] = ImportStrOperator;
 	translator[bytecode_IMPRTNUM] = ImportNumOperator;
+	translator[bytecode_IMPRTADR] = ImportAdrOperator;
 
 	translator[bytecode_HDE] = HideOperator;
 	translator[bytecode_SHW] = ShowOperator;

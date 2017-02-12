@@ -9,7 +9,7 @@ namespace Resources
 		public:
 			GUILayout(GUISnap h, GUISnap v);
 			void AddChild(GUIObject* gui);
-			virtual void Update(CrossHandlers::Message* mess);
+			virtual unsigned char* Update(CrossHandlers::Message* mess);
 			GUIObject* GetChild(unsigned int child) const;
 			unsigned int GetChildren() const;
 

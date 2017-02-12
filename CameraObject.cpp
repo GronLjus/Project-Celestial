@@ -67,13 +67,16 @@ unsigned int CameraObject::GetFlip() const
 
 }
 
-void CameraObject::Update(Message* mess)
+unsigned char* CameraObject::Update(Message* mess)
 {
+
+	unsigned char* returnVal = nullptr;
+
 	if (mess->type == MessageType_OBJECT)
 	{
 
 		Vector3 newVec;
-		PositionableObject::Update(mess);
+		returnVal = PositionableObject::Update(mess);
 
 		switch (mess->mess)
 		{
@@ -92,6 +95,9 @@ void CameraObject::Update(Message* mess)
 
 		}
 	}
+
+	return returnVal;
+
 }
 
 ViewObject* CameraObject::GetView() const

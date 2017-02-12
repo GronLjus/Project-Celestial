@@ -287,7 +287,7 @@ char* ScriptableObject::Serialize(unsigned int &size)
 
 }
 
-void ScriptableObject::Update(Message* mess)
+unsigned char* ScriptableObject::Update(Message* mess)
 {
 
 	if (mess->type == MessageType_OBJECT)
@@ -338,6 +338,9 @@ void ScriptableObject::Update(Message* mess)
 			break;
 		}
 	}
+
+	return nullptr;
+
 }
 
 void ScriptableObject::addTrigger(trigger trigg)

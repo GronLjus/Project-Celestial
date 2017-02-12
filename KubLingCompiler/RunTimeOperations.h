@@ -10,7 +10,7 @@ namespace Logic
 		bytecode_LOADLIGHT, bytecode_LOADMESH, bytecode_LOADSCRIPT,
 		bytecode_LOADTXTBX, bytecode_LOADPANEL, bytecode_LOADIMAGE,
 		bytecode_LOADGMBRD, bytecode_LOADCAM, bytecode_LOADOBJCT,
-		bytecode_LOADCPY, bytecode_LOADTSK,
+		bytecode_LOADCPY, bytecode_LOADTSK, bytecode_LOADNDE,
 
 		bytecode_UNLOAD,
 
@@ -34,6 +34,7 @@ namespace Logic
 		bytecode_PRNT,
 
 		bytecode_RESNAP,
+		bytecode_TRNSLT,
 		bytecode_POS, bytecode_MVE, bytecode_PRPL,
 		bytecode_RTE, bytecode_ORB,
 		bytecode_SIZE, bytecode_SCL,
@@ -61,7 +62,7 @@ namespace Logic
 
 		bytecode_RNSCRPT, bytecode_STSCRPTPRMNMBR, bytecode_STSCRPTPRMSTR, bytecode_STSCRPTPRMFLT,
 
-		bytecode_EXPRTSTR, bytecode_EXPRTNUM, bytecode_IMPRTSTR, bytecode_IMPRTNUM,
+		bytecode_EXPRTSTR, bytecode_EXPRTNUM, bytecode_IMPRTSTR, bytecode_IMPRTNUM, bytecode_IMPRTADR,
 		bytecode_HDE, bytecode_SHW,
 		bytecode_HDECRS, bytecode_SHWCRS,
 
@@ -156,9 +157,9 @@ namespace Logic
 
 	};
 
-	const SystemVar SystemVars[]{ SystemVar("£null", 0),SystemVar("£clock", 1), SystemVar("£time", 2), SystemVar("£fps1", 3), SystemVar("£fps2", 4) };
+	const SystemVar SystemVars[]{ SystemVar("£null", 0),SystemVar("£clock", 1), SystemVar("£time", 2), SystemVar("£fps1", 3), SystemVar("£fps2", 4) , SystemVar("£translated", 5) };
 
-	enum SystemMem{ SystemMem_CLOCK = 1, SystemMem_TIME, SystemMem_FPS1, SystemMem_FPS2, SystemMem_NA
+	enum SystemMem{ SystemMem_CLOCK = 1, SystemMem_TIME, SystemMem_FPS1, SystemMem_FPS2, SystemMem_TRANSLATED, SystemMem_NA
 	};
 
 	enum RunTimeParams

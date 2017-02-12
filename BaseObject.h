@@ -14,7 +14,7 @@ namespace Resources
 			unsigned int GetActiveId() const;
 			void SetActiveId(unsigned int id);
 			unsigned int GetId() const;
-			virtual void Update(CrossHandlers::Message* mess) = 0;
+			virtual unsigned char* Update(CrossHandlers::Message* mess) = 0;
 			unsigned int LastUpdated() const;
 			virtual unsigned int GetTargetId() const;
 			virtual unsigned int GetParentId() const;

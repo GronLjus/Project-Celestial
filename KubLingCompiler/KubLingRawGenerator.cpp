@@ -82,18 +82,23 @@ rawCode KubLingRawGenerator::translateBlock(KubLingCompiled* byteCode,
 		unsigned char* line = byteCode->GetCode(size, i);
 		rawCode code = translator->Translate(line, size, totalCode, i);
 
-		if (code.codeSize > block.maxLines - block.codeSize)//Expand the block
+		if (code.maxLines > 0)
 		{
 
-			block = expandBlock(block, block.maxLines + code.codeSize + 100);
+
+			if (code.codeSize > block.maxLines - block.codeSize)//Expand the block
+			{
+
+				block = expandBlock(block, block.maxLines + code.codeSize + 100);
+
+			}
+
+			memcpy(&block.code[block.codeSize], code.code, code.codeSize * sizeof(rawCode::line));
+			block.codeSize += code.codeSize;
+			delete[] code.code;
+			totalCode += code.codeSize;
 
 		}
-
-		memcpy(&block.code[block.codeSize], code.code, code.codeSize * sizeof(rawCode::line));
-		block.codeSize += code.codeSize;
-		delete[] code.code;
-		totalCode += code.codeSize;
-
 	}
 
 	translations[stop] = totalCode;

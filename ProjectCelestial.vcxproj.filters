@@ -97,9 +97,6 @@
     <Filter Include="Source Files\CrossHandler-Tools\Texture">
       <UniqueIdentifier>{ae8a27ad-5ecc-41b8-ade4-d19a94c6b9b7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Shaders">
-      <UniqueIdentifier>{9fc0012d-7d15-46bb-aa94-a66156686b95}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\CelestialMath">
       <UniqueIdentifier>{706e7ce1-c7cc-49ec-ae3e-2ac900a6de60}</UniqueIdentifier>
     </Filter>
@@ -309,6 +306,9 @@
     </Filter>
     <Filter Include="Resource Files\Content\Scripts\ToolBarScripts\GhostClicks">
       <UniqueIdentifier>{c65b3225-b07d-433d-a38f-9016009de96d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Resources\Shaders">
+      <UniqueIdentifier>{9fc0012d-7d15-46bb-aa94-a66156686b95}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1103,31 +1103,31 @@
     </None>
     <None Include="Frust.obj" />
     <None Include="shaders.hlsl">
-      <Filter>Source Files\Shaders</Filter>
+      <Filter>Source Files\Resources\Shaders</Filter>
     </None>
     <None Include="Shaders_Debug.hlsl">
-      <Filter>Source Files\Shaders</Filter>
+      <Filter>Source Files\Resources\Shaders</Filter>
     </None>
     <None Include="Shaders_Geometry.hlsl">
-      <Filter>Source Files\Shaders</Filter>
+      <Filter>Source Files\Resources\Shaders</Filter>
     </None>
     <None Include="Shaders_Light.hlsl">
-      <Filter>Source Files\Shaders</Filter>
+      <Filter>Source Files\Resources\Shaders</Filter>
     </None>
     <None Include="Shaders_Shadows.hlsl">
-      <Filter>Source Files\Shaders</Filter>
+      <Filter>Source Files\Resources\Shaders</Filter>
     </None>
     <None Include="Shaders_Screen.hlsl">
-      <Filter>Source Files\Shaders</Filter>
+      <Filter>Source Files\Resources\Shaders</Filter>
     </None>
     <None Include="Shaders_Particle.hlsl">
-      <Filter>Source Files\Shaders</Filter>
+      <Filter>Source Files\Resources\Shaders</Filter>
     </None>
     <None Include="Shaders_PreDraw.hlsl">
-      <Filter>Source Files\Shaders</Filter>
+      <Filter>Source Files\Resources\Shaders</Filter>
     </None>
     <None Include="Shaders_Registers.hlsli">
-      <Filter>Source Files\Shaders</Filter>
+      <Filter>Source Files\Resources\Shaders</Filter>
     </None>
     <None Include="plane.obj">
       <Filter>Source Files</Filter>

@@ -33,7 +33,7 @@ namespace Resources
 			void Kill();
 			bool ShouldKill() const;
 
-			virtual void Update(CrossHandlers::Message* mess);
+			virtual unsigned char* Update(CrossHandlers::Message* mess);
 
 			virtual ~TaskObject();
 

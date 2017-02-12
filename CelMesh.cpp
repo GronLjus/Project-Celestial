@@ -38,8 +38,10 @@ IBounding* CelMesh::GetBoundingObjectCopy(Shape shape) const
 	}
 }
 
-void CelMesh::Update(CrossHandlers::Message* mess)
+unsigned char* CelMesh::Update(CrossHandlers::Message* mess)
 {
+
+	return nullptr;
 
 }
 

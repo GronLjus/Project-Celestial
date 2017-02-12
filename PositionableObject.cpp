@@ -28,6 +28,8 @@ PositionableObject::PositionableObject(Vector3 position, Vector3 scale) : Script
 	childId = 0;
 	serial = 40;
 
+	returnBlock = new unsigned char[16];
+
 	absOffset = Vector3(0, 0, 0);
 	absScale = Vector3(abs(scale.x), abs(scale.y), abs(scale.z));;
 
@@ -786,8 +788,10 @@ void PositionableObject::dealWithRotation(CelestialMath::Vector3 newRot)
 
 }
 
-void PositionableObject::Update(Message* mess)
+unsigned char* PositionableObject::Update(Message* mess)
 {
+	
+	unsigned char* returnVal = nullptr;
 
 	if (mess->type == MessageType_OBJECT)
 	{
@@ -862,6 +866,17 @@ void PositionableObject::Update(Message* mess)
 			memcpy(&newVec.z, &mess->params[8], 4);
 			dealWithRotation(newVec);
 			break;
+		case ObjectMess_TRANSLATE:
+			memcpy(&newVec.x, mess->params, 4);
+			memcpy(&newVec.y, &mess->params[4], 4);
+			memcpy(&newVec.z, &mess->params[8], 4);
+			newVec = VectorTransform(newVec,GetMatrix());
+
+			memcpy(&(returnBlock[0]), &(newVec.x), sizeof(float));
+			memcpy(&(returnBlock[sizeof(float)]), &(newVec.y), sizeof(float));
+			memcpy(&(returnBlock[sizeof(float)*2]), &(newVec.z), sizeof(float));
+			returnVal = returnBlock;
+			break;
 		case ObjectMess_INCREMENTLAYER:
 			if (layer < 255)
 			{
@@ -901,10 +916,13 @@ void PositionableObject::Update(Message* mess)
 			}
 			break;
 		default:
-			ScriptableObject::Update(mess);
+			return ScriptableObject::Update(mess);
 
 		}
 	}
+
+	return returnVal;
+
 }
 
 void PositionableObject::UpdateMatrix()
@@ -973,6 +991,7 @@ Matrix PositionableObject::GetInvTrnMatrix() const
 PositionableObject::~PositionableObject()
 {
 
+	delete[] returnBlock;
 	delete subObjects;
 
 }

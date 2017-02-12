@@ -9,7 +9,7 @@ namespace Resources
 	class KeyTrigger : public BaseObject
 	{
 	public:
-		virtual void Update(CrossHandlers::Message* mess){}
+		virtual unsigned char* Update(CrossHandlers::Message* mess) { return nullptr; }
 			unsigned int scriptToRun;
 			unsigned int keyCode;
 			bool charTrigg;

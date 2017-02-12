@@ -10,7 +10,7 @@ namespace Resources
 		public:
 
 			PointLight(BaseLightDesc);
-			virtual void Update(CrossHandlers::Message* mess){}
+			virtual unsigned char* Update(CrossHandlers::Message* mess) { return nullptr; }
 			virtual CelestialMath::Vector4 GetSpec() const;
 			virtual CelestialMath::Vector4 GetDiff() const;
 			

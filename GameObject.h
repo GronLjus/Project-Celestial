@@ -22,7 +22,7 @@ namespace Resources
 			GameObject();
 
 			void SetMesh(CrossHandlers::BoundingBox* baseBox, CrossHandlers::BoundingSphere* baseSphere, unsigned int meshId);
-			virtual void Update(CrossHandlers::Message* mess);
+			virtual unsigned char* Update(CrossHandlers::Message* mess);
 
 			unsigned int GetMeshId() const;
 			unsigned int GetScriptId() const;

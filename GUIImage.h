@@ -17,7 +17,7 @@ namespace Resources
 		public:
 			GUIImage(GUISnap h, GUISnap v);
 			GUIImage(ImageResourceObject** frames, unsigned int totalFrames, GUISnap h, GUISnap v);
-			virtual void Update(CrossHandlers::Message* mess);
+			virtual unsigned char* Update(CrossHandlers::Message* mess);
 			ImageResourceObject* GetCurrentFrame() const;
 			ImageResourceObject* GetDrawFrame();
 			void SetDrawFrame(ImageResourceObject* frame);

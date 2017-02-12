@@ -210,6 +210,7 @@ void GameBoardHandler::lockObjectNodes(unsigned int object)
 				{
 
 					node->Lock(object);
+					localGameBoard->GetRoutingManager()->ClearRoads(node);
 
 				}
 			}
@@ -477,6 +478,23 @@ void GameBoardHandler::UpdateMessages(unsigned int time, unsigned int clock)
 				}
 			}
 		}
+		else if (currentMessage->mess == GameBoardMess_GETROUTE && localGameBoard != nullptr)
+		{
+
+			Vector3 pos;
+			memcpy(&(pos.x), &(currentMessage->params[0]), 4);
+			memcpy(&(pos.y), &(currentMessage->params[4]), 4);
+			memcpy(&(pos.z), &(currentMessage->params[8]), 4);
+
+			float width = 0.98f;
+
+			BoundingSphere sphere = BoundingSphere(pos.x, pos.y, pos.z, width / 2.0f);
+			unsigned int amount = 0;
+
+			unsigned int* collided = localGameBoard->GetCollidedObject(&sphere, GameObjectType_ROUTE | GameObjectType_GRIDROUTE, amount);
+			outId = localGameBoard->GetRoutingManager()->FindNode(pos, collided, amount) + 1;
+
+		}
 		else if (currentMessage->mess == GameBoardMess_TRAVEL)
 		{
 
@@ -524,17 +542,6 @@ void GameBoardHandler::UpdateMessages(unsigned int time, unsigned int clock)
 
 
 		}
-		else if (currentMessage->mess == GameBoardMess_ROUTEOBJECT)
-		{
-
-			GameRouteObject* routeObj = (GameRouteObject*)gameObjects->GetValue(param1);
-
-			Vector3 size = routeObj->GetDirection() * (routeObj->GetScale().z / 2);
-			Vector3 startPoint = routeObj->GetPosition() + size;
-			Vector3 endPoint = routeObj->GetPosition() - size;
-
-
-		}
 		else if (currentMessage->mess == GameBoardMess_GETPARENT)
 		{
 
@@ -560,6 +567,20 @@ void GameBoardHandler::UpdateMessages(unsigned int time, unsigned int clock)
 		{
 
 			trackLock = !trackLock;
+
+		}
+		else if (currentMessage->mess == GameBoardMess_ROUTEOBJECT && localGameBoard != nullptr)
+		{
+
+			unsigned int param2;
+			memcpy(&param2, &currentMessage->params[4], sizeof(unsigned int));
+			localGameBoard->GetRoutingManager()->AddRoad(param1 - 1, param2 - 1);
+
+		}
+		else
+		{
+
+			int dbg = 0;
 
 		}
 

@@ -50,7 +50,7 @@ GUIImage::GUIImage(ImageResourceObject** frames, unsigned int totalFrames, GUISn
 	}
 }
 
-void GUIImage::Update(CrossHandlers::Message* mess)
+unsigned char* GUIImage::Update(CrossHandlers::Message* mess)
 {
 
 	if (mess->type == MessageType_OBJECT)
@@ -70,10 +70,13 @@ void GUIImage::Update(CrossHandlers::Message* mess)
 			}
 			break;
 		default:
-			GUIObject::Update(mess);
+			return GUIObject::Update(mess);
 
 		}
 	}
+
+	return nullptr;
+
 }
 
 ImageResourceObject* GUIImage::GetCurrentFrame() const

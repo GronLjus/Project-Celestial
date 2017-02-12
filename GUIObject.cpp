@@ -161,8 +161,10 @@ void GUIObject::Disable()
 
 }
 
-void GUIObject::Update(Message* mess)
+unsigned char* GUIObject::Update(Message* mess)
 {
+
+	unsigned char* retData = nullptr;
 
 	if (mess->type == MessageType_OBJECT)
 	{
@@ -209,7 +211,7 @@ void GUIObject::Update(Message* mess)
 
 				mess->mess = ObjectMess_REMOVECHILD;
 				mess->SetParams(tempBuff, 0, 4);
-				parentGUI->Update(mess);
+				retData = parentGUI->Update(mess);
 				target->SetVisible(false);
 
 			}
@@ -235,7 +237,7 @@ void GUIObject::Update(Message* mess)
 		case ObjectMess_SCALE:
 		case ObjectMess_POS:
 		case ObjectMess_SIZE:
-			PositionableObject::Update(mess);
+			retData = PositionableObject::Update(mess);
 			pos = GetTopLeft();
 			scale = GetScale();
 			target->Refresh(Vector4(pos.x ,pos.y,scale.x,scale.y));
@@ -252,12 +254,12 @@ void GUIObject::Update(Message* mess)
 		case ObjectMess_SETWHLSCRPT:
 		case ObjectMess_SETUPDWNSCRPT:
 		case ObjectMess_SETSCRPTTRGT:
-			target->Update(mess);
+			retData = target->Update(mess);
 			break;
 		case ObjectMess_INCREMENTLAYER:
 		case ObjectMess_DECREMENTLAYER:
 		case ObjectMess_SETLAYER:
-			PositionableObject::Update(mess);
+			retData = PositionableObject::Update(mess);
 			target->SetLayer(GetLayer());
 			break;
 		default:
@@ -265,13 +267,16 @@ void GUIObject::Update(Message* mess)
 			if (!UpdateSaveObject(mess))
 			{
 
-				PositionableObject::Update(mess);
+				retData = PositionableObject::Update(mess);
 
 			}
 			break;
 
 		}
 	}
+
+	return retData;
+
 }
 
 Vector2 GUIObject::GetTopLeft() const

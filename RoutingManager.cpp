@@ -879,6 +879,27 @@ unsigned int RoutingManager::AddNode(Vector3 position, unsigned int* objects, un
 
 }
 
+unsigned int RoutingManager::FindNode(Vector3 position, unsigned int* objects, unsigned int amounts)
+{
+
+	if (amounts != 0)
+	{
+
+		RouteNodeObject* preExist = getPreExistantNode(position, objects, amounts);
+
+		if (preExist != nullptr)
+		{
+
+			GameRouteObject* obj = ((GameRouteObject*)this->gameObjects->GetValue(objects[0]));
+			return preExist->GetId() + 1;
+
+		}
+	}
+
+	return 0;
+
+}
+
 void RoutingManager::addNewRoad(RouteNodeObject* node1, RouteNodeObject* node2)
 {
 
@@ -890,6 +911,20 @@ void RoutingManager::addNewRoad(RouteNodeObject* node1, RouteNodeObject* node2)
 	node2->AddRoute(route);
 	node1->AddRoute(route);
 
+}
+
+void RoutingManager::AddRoad(unsigned int node1, unsigned int node2)
+{
+
+	RouteNodeObject* node1Obj = routeNodes->GetValue(node1);
+	RouteNodeObject* node2Obj = routeNodes->GetValue(node2);
+
+	if (node1Obj != nullptr && node2Obj != nullptr)
+	{
+
+		addNewRoad(node1Obj, node2Obj);
+
+	}
 }
 
 void RoutingManager::PopulateGrid(GameGridObject* grid, float width)
@@ -1141,6 +1176,28 @@ void RoutingManager::ClearNodes()
 	roads->Reset();
 	routeNodes->Reset();
 
+}
+
+void RoutingManager::ClearRoads(RouteNodeObject* node)
+{
+
+	for (unsigned int i = 0; i < node->GetMaxRoutes(); i++)
+	{
+
+		Route::Direction dir;
+		Route* rt = node->GetRoute(i, dir);
+
+		if (rt != nullptr)
+		{
+
+			RouteNodeObject* neigh = routeNodes->GetValue(rt->GetNode(dir) - 1);
+			node->RemoveRoute(neigh->GetId());
+			neigh->RemoveRoute(node->GetId());
+
+			roads->Kill(rt->GetId());
+
+		}
+	}
 }
 
 RouteNodeObject* RoutingManager::GetNode(unsigned int id) const

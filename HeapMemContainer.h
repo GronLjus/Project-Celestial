@@ -14,7 +14,7 @@ namespace Resources
 		public:
 			HeapMemContainer(Logic::HeapMemory* heap);
 			Logic::HeapMemory* GetHeap() const;
-			virtual void Update(CrossHandlers::Message* mess) {}
+			virtual unsigned char* Update(CrossHandlers::Message* mess) { return nullptr; }
 			virtual ~HeapMemContainer();
 
 	};
