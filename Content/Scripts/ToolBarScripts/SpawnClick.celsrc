@@ -6,9 +6,16 @@ $
 
 }
 
-plane = load object plane1Mesh 16 'smallplane'
-size plane 1.0 0.195 0.932
-add plane
-spawn plane 1
-travel plane 3
-set nodearrival plane plane1Arr
+rS = import 'runway'
+
+if 1 : 1
+{
+
+	plane = load object plane1Mesh 16 'smallplane'
+	size plane 1.0 0.195 0.932
+	add plane
+	spawn plane import 'rwyPos'
+	travel plane import 'gate'
+	set nodearrival plane plane1Arr
+
+}
