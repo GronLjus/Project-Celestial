@@ -17,6 +17,7 @@ RoutingManager::RoutingManager(unsigned int maxClock)
 	roads = new CelestialSlicedList<Route*>(32, nullptr);
 	routeNodes = new CelestialSlicedList<RouteNodeObject*>(32, nullptr);
 	travelObjects = new CelestialList<GameTravelObject*>();
+	nodeGroups = new CelestialSlicedList<NodeGroup*>(32, nullptr);
 	pathFindVal = 1;
 
 	totalPaths = 128;
@@ -222,6 +223,18 @@ void RoutingManager::AddNode(Vector3 position, float width, unsigned int id)
 
 }
 
+unsigned int RoutingManager::AddGroup(GameObject* object)
+{
+
+	unsigned int newGroup = nodeGroups->Add(nullptr) + 1;
+	NodeGroup* group = new NodeGroup();
+	nodeGroups->Add(group, newGroup-1);
+
+	object->SetNodeGroup(newGroup);
+	return newGroup;
+
+}
+
 unsigned int RoutingManager::addToOutScripts(unsigned int script, unsigned int place)
 {
 
@@ -243,8 +256,17 @@ void RoutingManager::handleNearNode(GameTravelObject* obj, RouteNodeObject* curr
 {
 
 	bool travelOn = false;
+	bool groupLocked = false;
 
-	if (goalNode->GetObjId() == 0)//The node is open
+	if (goalNode->GetGroup() > 0)
+	{
+
+		NodeGroup* group = nodeGroups->GetValue(goalNode->GetGroup() - 1);
+		groupLocked = group->GetLocked() > 0 && obj->GetId() != group->GetLocked();
+
+	}
+
+	if (goalNode->GetObjId() == 0 && !groupLocked)//The node is open
 	{
 
 		if (goalNode->GetRoutes() > 2 &&
@@ -472,7 +494,31 @@ bool RoutingManager::handleNodeArrival(GameTravelObject* obj, RouteNodeObject* c
 		if (obj->GetStatus() != TravelStatus_QUEUEING)
 		{
 
+			if (nextStop->GetGroup() != currentNode->GetGroup() 
+				&& nextStop->GetGroup() > 0)
+			{
+
+				NodeGroup* nodeGroup = nodeGroups->GetValue(nextStop->GetGroup() - 1);
+
+				if (nodeGroup->GetLocked() == 0)
+				{
+
+					nodeGroup->Lock(obj->GetId());
+
+				}
+			}
+
 			obj->SetStatus(TravelStatus_TRAVELING);
+
+		}
+
+
+		if (nextStop->GetGroup() != currentNode->GetGroup() && currentNode->GetGroup() > 0)
+		{
+
+			//Unlock the group of the old node
+			NodeGroup* nodeGroup = nodeGroups->GetValue(currentNode->GetGroup() - 1);
+			nodeGroup->Lock(0);
 
 		}
 	}
@@ -836,6 +882,12 @@ void RoutingManager::handleObjectNode(RouteNodeObject* preExist, unsigned int* o
 
 			}
 
+			if (preExist->GetGroup() == 0)
+			{
+
+				preExist->SetGroup(obj->GetNodeGroup());
+
+			}
 		}
 	}
 }
@@ -964,6 +1016,7 @@ void RoutingManager::PopulateGrid(GameGridObject* grid, float width)
 			nodePos.y = grid->GetPosition().y + grid->GetScale().y / 2;
 
 			RouteNodeObject* nodeObj = new RouteNodeObject(nodePos, width);
+			nodeObj->SetGroup(grid->GetNodeGroup());
 			nodeObj->SetId(routeNodes->Add(nodeObj));
 			grid->PopulateGrid(nodeObj->GetId(), x, z);
 
@@ -1530,9 +1583,13 @@ RoutingManager::~RoutingManager()
 
 	routeNodes->KillList();
 	roads->KillList();
+	nodeGroups->KillList();
+	
 	delete roads;
 	delete routeNodes;
 	delete travelObjects;
+	delete nodeGroups;
+
 	delete[] path;
 	delete[] scriptOuts;
 

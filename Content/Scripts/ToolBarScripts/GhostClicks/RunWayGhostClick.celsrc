@@ -28,6 +28,7 @@ if ?3 : 0
 	{
 
 		obj = load copyobject ?0
+		add routegroup obj
 
 		show cursor
 

@@ -33,6 +33,7 @@ namespace Entities
 
 		unsigned int GetLocalId(unsigned int globalId) const;
 		unsigned int GetLock() const;
+		unsigned int GetGroup() const;
 
 		float GetHeuristic() const;
 		bool ContainsRoute(unsigned int gId) const;
@@ -53,6 +54,8 @@ namespace Entities
 		void SetOpenset(unsigned char open);
 		void SetClosedset(unsigned char closed);
 		
+		void SetGroup(unsigned int group);
+
 		void SetStep(unsigned int step);
 
 		//Serializable Interface
@@ -83,6 +86,7 @@ namespace Entities
 		unsigned int lock;
 		unsigned int id;
 		unsigned int objId;
+		unsigned int group;
 		
 		CelestialMath::Vector3 position;
 

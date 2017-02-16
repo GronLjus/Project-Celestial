@@ -36,6 +36,7 @@ namespace CrossHandlers
 	enum GameBoardMess{ GameBoardMess_SETBOARDOBJECT, GameBoardMess_SETCAM, 
 		GameBoardMess_SETGAMEBOARD,GameBoardMess_SETTRACKING, GameBoardMess_SETUI,
 		GameBoardMess_ADDOBJECT, GameBoardMess_ADDMESH,  
+		GameBoardMess_ADDROUTEGROUP,
 		GameBoardMess_CLICKOBJECT, GameBoardMess_WHEELOBJECT, 
 		GameBoardMess_STARTDRAGGING, GameBoardMess_DRAGOBJECT, GameBoardMess_STOPDRAGGING,
 		GameBoardMess_MOUSEMOVE, GameBoardMess_MOUSEUD,

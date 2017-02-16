@@ -25,6 +25,8 @@ RouteNodeObject::RouteNodeObject(Vector3 position, float width)
 	parent = 0;
 	heurustic = 0.0f;
 
+	group = 0;
+
 }
 
 char* RouteNodeObject::Serialize(unsigned int &size)
@@ -205,6 +207,13 @@ unsigned int RouteNodeObject::GetLock() const
 
 }
 
+unsigned int RouteNodeObject::GetGroup() const
+{
+
+	return group;
+
+}
+
 bool  RouteNodeObject::ContainsRoute(unsigned int gId) const
 {
 
@@ -267,6 +276,13 @@ void RouteNodeObject::SetStep(unsigned int step)
 {
 
 	this->step = step;
+
+}
+
+void RouteNodeObject::SetGroup(unsigned int group)
+{
+
+	this->group = group;
 
 }
 

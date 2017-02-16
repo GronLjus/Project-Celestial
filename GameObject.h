@@ -23,9 +23,11 @@ namespace Resources
 
 			void SetMesh(CrossHandlers::BoundingBox* baseBox, CrossHandlers::BoundingSphere* baseSphere, unsigned int meshId);
 			virtual unsigned char* Update(CrossHandlers::Message* mess);
+			void SetNodeGroup(unsigned int nodeGroup);
 
 			unsigned int GetMeshId() const;
 			unsigned int GetScriptId() const;
+			unsigned int GetNodeGroup() const;
 
 			std::string GetCollisionFilter() const;
 			std::string GetObjectName() const;
@@ -62,6 +64,8 @@ namespace Resources
 
 			std::string objectName;
 			std::string collisionFilter;
+
+			unsigned int nodeGroup;
 
 	};
 }

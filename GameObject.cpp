@@ -19,6 +19,8 @@ GameObject::GameObject(BoundingBox* box, BoundingSphere* baseSphere, unsigned in
 	this->objectName = name;
 	collisionFilter = " ";
 
+	nodeGroup = 0;
+
 }
 
 GameObject::GameObject() : PositionableObject(), SaveObject()
@@ -33,6 +35,8 @@ GameObject::GameObject() : PositionableObject(), SaveObject()
 
 	this->objectName = "nameless";
 	collisionFilter = " ";
+
+	nodeGroup = 0;
 
 }
 
@@ -151,6 +155,13 @@ unsigned char* GameObject::Update(Message* mess)
 
 }
 
+void GameObject::SetNodeGroup(unsigned int nodeGroup)
+{
+
+	this->nodeGroup = nodeGroup;
+
+}
+
 bool GameObject::IsFlipBuffered(unsigned char flip)
 {
 
@@ -193,6 +204,13 @@ unsigned int GameObject::GetScriptId() const
 {
 
 	return script;
+
+}
+
+unsigned int GameObject::GetNodeGroup() const
+{
+
+	return nodeGroup;
 
 }
 

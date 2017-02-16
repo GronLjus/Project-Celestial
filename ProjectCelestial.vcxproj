@@ -262,6 +262,7 @@
     <ClInclude Include="MessageBuffer.h" />
     <ClInclude Include="MessageQueue.h" />
     <ClInclude Include="MouseHandler.h" />
+    <ClInclude Include="NodeGroup.h" />
     <ClInclude Include="ObjectTree.h" />
     <ClInclude Include="PositionableObject.h" />
     <ClInclude Include="ResourceDictionary.h" />
@@ -373,6 +374,7 @@
     <ClCompile Include="MessageBuffer.cpp" />
     <ClCompile Include="MessageQueue.cpp" />
     <ClCompile Include="MouseHandler.cpp" />
+    <ClCompile Include="NodeGroup.cpp" />
     <ClCompile Include="ObjectTree.cpp" />
     <ClCompile Include="PositionableObject.cpp" />
     <ClCompile Include="ResourceDictionary.cpp" />

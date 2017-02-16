@@ -197,6 +197,8 @@ void ResourceHandler::handleMess(Message* currentMessage, unsigned int time)
 		GameObject* oldObj = (GameObject*)gameObjects->GetValue(currentMessage->params[0] | ((int)currentMessage->params[1] << 8) | ((int)currentMessage->params[2] << 16) | ((int)currentMessage->params[3] << 24));
 
 		GameObject* obj = loadGameObject(oldObj->GetMeshId(), oldObj->GetType(), oldObj->GetObjectName());
+		obj->SetNodeGroup(oldObj->GetNodeGroup());
+
 		outId = obj->GetId();
 
 		Vector3 oldScale = oldObj->GetScale();
@@ -592,7 +594,7 @@ unsigned int ResourceHandler::copyObject(GameObject* objectToCopy, unsigned int 
 {
 
 	GameObject* obj = loadGameObject(objectToCopy->GetMeshId(), objectToCopy->GetType(), objectToCopy->GetObjectName());
-
+	obj->SetNodeGroup(objectToCopy->GetNodeGroup());
 	unsigned int retVal = obj->GetId();
 
 	Vector3 oldPos = objectToCopy->GetPosition();

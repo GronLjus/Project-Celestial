@@ -756,6 +756,9 @@
     <ClInclude Include="GameGridObject.h">
       <Filter>Header Files\Resources\Objects\GameObjects</Filter>
     </ClInclude>
+    <ClInclude Include="NodeGroup.h">
+      <Filter>Header Files\Entities\Routing</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Camera.cpp">
@@ -1060,6 +1063,9 @@
     </ClCompile>
     <ClCompile Include="GameGridObject.cpp">
       <Filter>Source Files\Resources\Objects\GameObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="NodeGroup.cpp">
+      <Filter>Source Files\Entities\Routing</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

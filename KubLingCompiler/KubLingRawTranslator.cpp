@@ -1275,6 +1275,41 @@ RunTimeError AddMeshOperator(rawCode* raw, unsigned int returnVar, unsigned char
 
 }
 
+RunTimeError AddNodeGroupOperator(rawCode* raw, unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int offset, unsigned int byteLine, runTimeVal &rtv)
+{
+
+	if (paramSize < 4)
+	{
+
+		return RunTimeError_BADPARAMS;
+
+	}
+
+	raw->maxLines = addMessParLinesO + sendLines + waitingLines;
+	raw->code = new rawCode::line[raw->maxLines];
+
+	unsigned int var1 = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
+
+	Message mess;
+	mess.destination = MessageSource_ENTITIES;
+	mess.type = MessageType_ENTITIES;
+	mess.mess = GameBoardMess_ADDROUTEGROUP;
+	mess.returnParam = returnVar;
+	addMessStackParamO(var1 - 1, 0, 4, rtv, raw);
+
+	sendMessageOut(mess, rtv, raw);
+
+	if (returnVar > 0)
+	{
+
+		startWaiting(returnVar - 1, raw);
+
+	}
+
+	return RunTimeError_OK;
+
+}
+
 RunTimeError AddObjectOperator(rawCode* raw, unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int offset, unsigned int byteLine, runTimeVal &rtv)
 {
 
@@ -5441,6 +5476,7 @@ KubLingRawTranslator::KubLingRawTranslator()
 	translator[bytecode_ADDMESH] = AddMeshOperator;
 	translator[bytecode_ADDRTOBJ] = AddRouteObjectOperator;
 	translator[bytecode_ADDTRGGR] = AddTriggerOperator;
+	translator[bytecode_ADDNDGRP] = AddNodeGroupOperator;
 
 	translator[bytecode_RMVE] = RemoveOperator;
 

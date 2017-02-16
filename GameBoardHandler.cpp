@@ -525,6 +525,12 @@ void GameBoardHandler::UpdateMessages(unsigned int time, unsigned int clock)
 
 			}
 		}
+		else if (currentMessage->mess == GameBoardMess_ADDROUTEGROUP)
+		{
+
+			outId = routing->AddGroup((GameObject*)gameObjects->GetValue(param1)) + 1;
+
+		}
 		else if (currentMessage->mess == GameBoardMess_SPLITOBJECT)
 		{
 
