@@ -144,6 +144,7 @@
     <ClInclude Include="CelestialTreeNode.h" />
     <ClInclude Include="GUIEnums.h" />
     <ClInclude Include="Message.h" />
+    <ClInclude Include="PrioQueue.h" />
     <ClInclude Include="TaskEnums.h" />
     <ClInclude Include="TextContainer.h" />
   </ItemGroup>

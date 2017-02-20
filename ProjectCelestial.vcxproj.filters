@@ -310,6 +310,12 @@
     <Filter Include="Source Files\Resources\Shaders">
       <UniqueIdentifier>{9fc0012d-7d15-46bb-aa94-a66156686b95}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Entities\Routing\Managers">
+      <UniqueIdentifier>{efdcaffc-e1f0-4c15-bd32-9c6b161319e1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Entities\Routing\Manager">
+      <UniqueIdentifier>{465ede0e-3253-4d45-b162-be8c3ee79ace}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MeshObject.h">
@@ -660,9 +666,6 @@
     <ClInclude Include="CursorCodes.h">
       <Filter>Header Files\Logic</Filter>
     </ClInclude>
-    <ClInclude Include="RoutingManager.h">
-      <Filter>Header Files\Entities\Routing</Filter>
-    </ClInclude>
     <ClInclude Include="GameObject.h">
       <Filter>Header Files\Resources\Objects\GameObjects</Filter>
     </ClInclude>
@@ -758,6 +761,21 @@
     </ClInclude>
     <ClInclude Include="NodeGroup.h">
       <Filter>Header Files\Entities\Routing</Filter>
+    </ClInclude>
+    <ClInclude Include="PathFinder.h">
+      <Filter>Header Files\Entities\Routing</Filter>
+    </ClInclude>
+    <ClInclude Include="RoutingManager.h">
+      <Filter>Header Files\Entities\Routing\Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="TravelManager.h">
+      <Filter>Header Files\Entities\Routing\Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="SplitManager.h">
+      <Filter>Header Files\Entities\Routing\Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="RoutingBase.h">
+      <Filter>Header Files\Entities\Routing\Managers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -974,9 +992,6 @@
     <ClCompile Include="GameRouteObject.cpp">
       <Filter>Source Files\Resources\Objects\GameObjects</Filter>
     </ClCompile>
-    <ClCompile Include="RoutingManager.cpp">
-      <Filter>Source Files\Entities\Routing</Filter>
-    </ClCompile>
     <ClCompile Include="GameObject.cpp">
       <Filter>Source Files\Resources\Objects\GameObjects</Filter>
     </ClCompile>
@@ -1066,6 +1081,18 @@
     </ClCompile>
     <ClCompile Include="NodeGroup.cpp">
       <Filter>Source Files\Entities\Routing</Filter>
+    </ClCompile>
+    <ClCompile Include="PathFinder.cpp">
+      <Filter>Source Files\Entities\Routing</Filter>
+    </ClCompile>
+    <ClCompile Include="RoutingManager.cpp">
+      <Filter>Source Files\Entities\Routing\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="TravelManager.cpp">
+      <Filter>Source Files\Entities\Routing\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="SplitManager.cpp">
+      <Filter>Source Files\Entities\Routing\Manager</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

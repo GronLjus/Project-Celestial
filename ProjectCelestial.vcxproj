@@ -264,12 +264,14 @@
     <ClInclude Include="MouseHandler.h" />
     <ClInclude Include="NodeGroup.h" />
     <ClInclude Include="ObjectTree.h" />
+    <ClInclude Include="PathFinder.h" />
     <ClInclude Include="PositionableObject.h" />
     <ClInclude Include="ResourceDictionary.h" />
     <ClInclude Include="ResourceHandler.h" />
     <ClInclude Include="ResourceHeader.h" />
     <ClInclude Include="Route.h" />
     <ClInclude Include="RouteNodeObject.h" />
+    <ClInclude Include="RoutingBase.h" />
     <ClInclude Include="RoutingManager.h" />
     <ClInclude Include="SaveObject.h" />
     <ClInclude Include="ScreenTarget.h" />
@@ -295,6 +297,7 @@
     <ClInclude Include="ResourceObject.h" />
     <ClInclude Include="ShaderContainer.h" />
     <ClInclude Include="SkyboxParticle.h" />
+    <ClInclude Include="SplitManager.h" />
     <ClInclude Include="SystemTaskHandler.h" />
     <ClInclude Include="TaskHandler.h" />
     <ClInclude Include="TaskObject.h" />
@@ -304,6 +307,7 @@
     <ClInclude Include="targetver.h" />
     <ClInclude Include="TerrainMesh.h" />
     <ClInclude Include="TerrainObject.h" />
+    <ClInclude Include="TravelManager.h" />
     <ClInclude Include="Triggers.h" />
     <ClInclude Include="TRNFileLoader.h" />
     <ClInclude Include="UnderCamera.h" />
@@ -376,6 +380,7 @@
     <ClCompile Include="MouseHandler.cpp" />
     <ClCompile Include="NodeGroup.cpp" />
     <ClCompile Include="ObjectTree.cpp" />
+    <ClCompile Include="PathFinder.cpp" />
     <ClCompile Include="PositionableObject.cpp" />
     <ClCompile Include="ResourceDictionary.cpp" />
     <ClCompile Include="ResourceHandler.cpp" />
@@ -403,6 +408,7 @@
     <ClCompile Include="ResourceObject.cpp" />
     <ClCompile Include="ShaderContainer.cpp" />
     <ClCompile Include="SkyboxParticle.cpp" />
+    <ClCompile Include="SplitManager.cpp" />
     <ClCompile Include="SystemTaskHandler.cpp" />
     <ClCompile Include="TaskHandler.cpp" />
     <ClCompile Include="TaskObject.cpp" />
@@ -411,6 +417,7 @@
     <ClCompile Include="stdafx.cpp" />
     <ClCompile Include="TerrainMesh.cpp" />
     <ClCompile Include="TerrainObject.cpp" />
+    <ClCompile Include="TravelManager.cpp" />
     <ClCompile Include="TRNFileLoader.cpp" />
     <ClCompile Include="UnderCamera.cpp" />
     <ClCompile Include="ViewObject.cpp" />

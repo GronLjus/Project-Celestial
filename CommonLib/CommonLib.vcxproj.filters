@@ -66,6 +66,9 @@
     <ClInclude Include="TextContainer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="PrioQueue.h">
+      <Filter>Header Files\Containers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="WORKAROUND.cpp">

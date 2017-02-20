@@ -65,7 +65,7 @@ void GameGridObject::SizeGrid(float nodeWidth)
 void GameGridObject::PopulateGrid(unsigned int node, unsigned int x, unsigned int y)
 {
 
-	nodes[x*gridWidth + y] = node;
+	nodes[x + gridWidth * y] = node;
 
 }
 
@@ -85,7 +85,7 @@ unsigned int GameGridObject::GetNodeHeigth() const
 unsigned int GameGridObject::GetNode(unsigned int x, unsigned int y)
 {
 
-	return nodes[x*gridWidth + y];
+	return nodes[x + gridWidth * y];
 
 }
 

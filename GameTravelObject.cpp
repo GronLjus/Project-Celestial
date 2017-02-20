@@ -265,6 +265,13 @@ void GameTravelObject::QueueTime(unsigned int time)
 unsigned int GameTravelObject::PeekNextGoal(bool &reCalc) const
 {
 
+	if (goals[goal] == finalGoal)
+	{
+
+		return goals[goal];
+
+	}
+
 	reCalc = (goal + 1) % goalAmounts == 0;
 	return  !reCalc ? goals[goal + 1] : 0;
 
