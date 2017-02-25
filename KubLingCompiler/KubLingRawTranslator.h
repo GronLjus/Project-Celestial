@@ -30,6 +30,7 @@ namespace Logic
 		unsigned int start;
 
 		unsigned int maxLines;
+		unsigned int initSize;
 
 	};
 

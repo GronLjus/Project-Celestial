@@ -18,6 +18,8 @@ namespace Resources
 
 			unsigned int translation;
 
+			unsigned int initSize;
+
 		public:
 			KubLingLabelObj();
 			KubLingLabelObj(std::string script, unsigned int start, unsigned int* params[4], unsigned int paramMax[4]);
@@ -25,6 +27,7 @@ namespace Resources
 
 			void SetTranslation(unsigned int translation);
 			void SetMemOffset(unsigned int memOffset);
+			void SetInitSize(unsigned int initSize);
 
 			unsigned int GetTranslation() const;
 			bool hasParam(char val) const;
@@ -32,6 +35,7 @@ namespace Resources
 			std::string GetName() const;
 			unsigned int GetStart() const;
 			unsigned int GetMemoffset() const;
+			unsigned int GetInitSize() const;
 
 			void Reset();
 
