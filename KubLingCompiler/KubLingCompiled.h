@@ -39,17 +39,26 @@ namespace Resources
 
 		void AddStackPlaceHolder(unsigned int line);
 		void AddMemOffsetPlaceHolder(unsigned int line);
+		void AddInitSizePlaceHolder(unsigned int line);
+		void AddMemSizePlaceHolder(unsigned int line);
+
 		void SetMaxVar(unsigned int var);
 		void SetMemOffset(unsigned int offset);
+		void SetMemSize(unsigned int size);
+
 		unsigned int GetStackPHLine() const;
 		unsigned int GetMemOffsetPHLine() const;
+		unsigned int GetInitSizePHLine() const;
+		unsigned int GetMemSizePHLine() const;
 
 		unsigned char GetCurrentParam(char type) const;
 		unsigned int GetMaxParams(char type) const;
 		unsigned int GetAdr(unsigned int param, char type) const;
 		unsigned int GetAdr(Logic::RunTimeParams rtp) const;
+
 		unsigned int GetMaxVar() const;
 		unsigned int GetMemOffset() const;
+		unsigned int GetMemSize() const;
 
 		///<summary>Sets the offset of the script</summary>
 		///<param val='off'>[in]The offset</param>
@@ -86,15 +95,21 @@ namespace Resources
 			unsigned int* paramAdrDic;
 			unsigned int* stringParamAdrDic;
 			unsigned int* floatParamAdrDic;
+
 			unsigned int maxParams;
 			unsigned int maxStringParams;
 			unsigned int maxFloatParams;
 			unsigned int scriptId;
+
 			CrossHandlers::CelestialStack<Param>* paramList;
 			CrossHandlers::CelestialStack<unsigned int>* params;
 
 			CrossHandlers::CelestialStack<unsigned int>* placeHolders;
 			CrossHandlers::CelestialStack<unsigned int>* memOffsetplaceHolders;
+			CrossHandlers::CelestialStack<unsigned int>* initSizePlaceHolders;
+			CrossHandlers::CelestialStack<unsigned int>* memSizePlaceHolders;
+
+			unsigned int memSize;
 			unsigned int currentParams;
 			unsigned int maxVar;
 			unsigned int memOffset;

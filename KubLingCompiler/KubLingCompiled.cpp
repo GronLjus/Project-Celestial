@@ -27,10 +27,15 @@ KubLingCompiled::KubLingCompiled(unsigned int maxParams, unsigned int maxStringP
 	codeSize = 0;
 	offset = 0;
 	scriptId = 0;
+	memSize = 0;
+
 	paramList = new CelestialStack<Param>(false);
 	params = new CelestialStack<unsigned int>(false);
 	placeHolders = new CelestialStack<unsigned int>(false);
 	memOffsetplaceHolders = new CelestialStack<unsigned int>(false);
+	initSizePlaceHolders = new CelestialStack<unsigned int>(false);
+	memSizePlaceHolders = new CelestialStack<unsigned int>(false);
+
 	currentParams = 0;
 
 	cIP = 0;
@@ -53,6 +58,13 @@ unsigned int KubLingCompiled::GetMemOffset() const
 
 }
 
+unsigned int KubLingCompiled::GetMemSize() const
+{
+
+	return memSize;
+
+}
+
 void KubLingCompiled::SetMaxVar(unsigned int var)
 {
 
@@ -64,6 +76,13 @@ void KubLingCompiled::SetMemOffset(unsigned int offset)
 {
 
 	memOffset = offset;
+
+}
+
+void KubLingCompiled::SetMemSize(unsigned int size)
+{
+
+	this->memSize = size;
 
 }
 
@@ -88,6 +107,20 @@ void KubLingCompiled::AddMemOffsetPlaceHolder(unsigned int line)
 
 }
 
+void KubLingCompiled::AddInitSizePlaceHolder(unsigned int line)
+{
+
+	initSizePlaceHolders->PushElement(line);
+
+}
+
+void KubLingCompiled::AddMemSizePlaceHolder(unsigned int line)
+{
+
+	memSizePlaceHolders->PushElement(line);
+
+}
+
 unsigned int KubLingCompiled::GetStackPHLine() const
 {
 
@@ -109,6 +142,34 @@ unsigned int KubLingCompiled::GetMemOffsetPHLine() const
 	{
 
 		return memOffsetplaceHolders->PopElement();
+
+	}
+
+	return 0;
+
+}
+
+unsigned int KubLingCompiled::GetInitSizePHLine() const
+{
+
+	if (initSizePlaceHolders->GetCount() > 0)
+	{
+
+		return initSizePlaceHolders->PopElement();
+
+	}
+
+	return 0;
+
+}
+
+unsigned int KubLingCompiled::GetMemSizePHLine() const
+{
+
+	if (memSizePlaceHolders->GetCount() > 0)
+	{
+
+		return memSizePlaceHolders->PopElement();
 
 	}
 
@@ -424,5 +485,7 @@ KubLingCompiled::~KubLingCompiled()
 	delete params;
 	delete placeHolders;
 	delete memOffsetplaceHolders;
+	delete initSizePlaceHolders;
+	delete memSizePlaceHolders;
 
 }

@@ -138,6 +138,7 @@
     <ClInclude Include="CelestialDoubleListNode.h" />
     <ClInclude Include="CelestialList.h" />
     <ClInclude Include="CelestialListNode.h" />
+    <ClInclude Include="CelestialPrioQueue.h" />
     <ClInclude Include="CelestialSlicedList.h" />
     <ClInclude Include="CelestialStack.h" />
     <ClInclude Include="CelestialTree.h" />

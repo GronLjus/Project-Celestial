@@ -14,7 +14,8 @@ namespace Logic
 			unsigned int maxLabels;
 
 			unsigned int totalCode;
-			unsigned int totalOffset; 
+			unsigned int totalInitMemory;
+			unsigned int totalMemory; 
 			unsigned int maxStack;
 
 			void expandLabels();
@@ -40,10 +41,12 @@ namespace Logic
 
 			rawCode createFooterBlock();
 
-			void addLabel(Resources::KubLingCompiled* byteCode);
+			void addLabel(Resources::KubLingCompiled* byteCode, unsigned int start);
 			rawCode assemble(Resources::KubLingCompiled* byteCode,
 				unsigned int current,
 				CrossHandlers::CelestialSlicedList<heapVar>* heap);
+
+			unsigned int figureOutMaxSize(rawCode* codes, unsigned int code, unsigned int codeSize);
 
 		public:
 			KubLingRawGenerator(unsigned int maxStack);

@@ -25,6 +25,8 @@ KubLingMachineHandler::KubLingMachineHandler(MessageBuffer* mBuffer,
 
 	waitingLabels->Add(waitingLabel());
 
+	baseStack = 0;
+
 	for (unsigned int i = 0; i < totalMachines; i++)
 	{
 
@@ -41,8 +43,15 @@ bool KubLingMachineHandler::Stopped() const
 
 }
 
-void KubLingMachineHandler::SetCode(unsigned long long* code, unsigned int size, HeapMemory* heap)
+void KubLingMachineHandler::SetCode(unsigned long long* code, unsigned int size, unsigned int memOffset, HeapMemory* heap)
 {
+
+	baseStack = memOffset;
+	unsigned int remainder = KubLingMachineHandler::MAXSTACK - baseStack;
+	block blck;
+	blck.size = remainder;
+	blck.adr = 0;
+	stackHoles.Push(blck);
 
 	this->heap = heap;
 
@@ -58,18 +67,136 @@ void KubLingMachineHandler::SetCode(unsigned long long* code, unsigned int size,
 
 }
 
-unsigned int KubLingMachineHandler::PrimeLabel(unsigned int start, unsigned int memOffset)
+KubLingMachineHandler::block KubLingMachineHandler::handleNeighbour(block block1, block block2, block::neighbour neigh)
 {
+
+	if (neigh == block::neighbour_RIGHT)//Block 1 is to the right of block 2, move the starting adr
+	{
+
+		block1.adr = block2.adr;
+
+	}
+	
+	if (neigh != block::neighbour_NA)
+	{
+
+		block1.size += block2.size;
+
+	}
+
+	return block1;
+
+}
+
+KubLingMachineHandler::block::neighbour KubLingMachineHandler::isNeighbour(block block1, block block2)
+{
+
+	if (block1.adr == block2.adr + block2.size)//block1 is to the right of block2
+	{
+
+		return block::neighbour_RIGHT;
+		block2.size += block1.size;
+
+	}
+	else if (block1.adr + block1.size == block2.adr)//block1 is to the left of block2
+	{
+
+		return block::neighbour_LEFT;
+
+	}
+
+	return block::neighbour_NA;
+
+}
+
+void KubLingMachineHandler::deFragHoles()
+{
+
+	std::vector<block> blocks = stackHoles.oVect;
+	stackHoles.Clear();
+
+	while(!blocks.empty())
+	{
+
+		block lastBlock = blocks.back();
+		blocks.pop_back();
+		bool keepTesting = false;
+
+		do
+		{
+
+			keepTesting = false;
+
+			for (unsigned int i = 0; i < blocks.size(); i++)
+			{
+
+				block thisBlock = blocks[i];
+				block::neighbour neigh = isNeighbour(lastBlock, thisBlock);
+
+				if (neigh != block::neighbour_NA)
+				{
+
+					lastBlock = handleNeighbour(lastBlock, thisBlock, neigh);
+					blocks.erase(blocks.begin() + i);
+					keepTesting = true;
+
+				}
+			}
+
+		} while (keepTesting);
+
+		stackHoles.Push(lastBlock);
+
+	}
+}
+
+unsigned int KubLingMachineHandler::PrimeLabel(unsigned int start, unsigned int memOffset, unsigned int initSize, unsigned int memSize)
+{
+
+
+	block blck = stackHoles.Top();
+
+	if (blck.size < memSize)//The hole is too small to fit the script
+	{
+
+		deFragHoles();//Try welding the small holes together and make large holes
+		blck = stackHoles.Top();
+
+		if (blck.size < memSize)//Still too small, stack overflow!!!
+		{
+
+			return 0;
+
+		}
+	}
+
+	stackHoles.Pop();
 
 	KubLingMachineHandler::waitingLabel waiting;
 	waiting.start = start;
 	waiting.memOffst = memOffset;
+	waiting.dynMemOffset = blck.adr + baseStack;
+	waiting.initSize = initSize;
+	waiting.memSize = memSize;
+	waiting.adr = blck.adr;
+
+	blck.adr += memSize;
+	blck.size -= memSize;
+	stackHoles.Push(blck);
 
 	return waitingLabels->Add(waiting);
 
 }
 
 void KubLingMachineHandler::SetStackVar(unsigned int translatedId, unsigned int var, unsigned char* data, unsigned char size)
+{
+
+	waitingLabel wL = waitingLabels->GetValue(translatedId);
+	SetStackVar(var + wL.dynMemOffset, data, size);
+
+}
+
+void KubLingMachineHandler::SetStackVar(unsigned int var, unsigned char* data, unsigned char size)
 {
 
 	if (var < MAXSTACK)
@@ -139,11 +266,14 @@ void KubLingMachineHandler::Update(unsigned int time)
 			waitingLabel wL = waitingLabels->GetValue(container.localLabel);
 			KubLingMachine* machine = container.machine;
 
+			machine->SetMemOffset(wL.dynMemOffset);
+
 			if (container.status == machineStatus_PRIMED)
 			{
 
 				machine->SetRegister(3, 0);
 				machine->SetRegister(4, wL.memOffst);
+				machine->SetRegister(5, wL.initSize);
 
 			}
 
@@ -165,16 +295,35 @@ void KubLingMachineHandler::Update(unsigned int time)
 			}
 
 			container.lastTime = time;
+			wL.dynMemOffset = container.machine->GetMemOffset();
 
 			if (rte == RunTimeError_WAITINGFORWAR || rte == RunTimeError_MSGFULL || rte == RunTimeError_HALT)
 			{
 
+				waitingLabels->Add(wL, container.localLabel);
 				container.status = machineStatus_RUNNING;
 				runningMachinesSecondary->PushElement(container);
 
 			}
 			else
 			{
+
+				block blck;
+				blck.size = wL.memSize;
+				blck.adr = wL.adr;
+
+				block lastBlck = stackHoles.Top();
+				block::neighbour neigh = isNeighbour(blck, lastBlck);
+
+				if (neigh != block::neighbour_NA)//The two blocks are neighbours and should be merged
+				{
+
+					blck = handleNeighbour(blck, lastBlck, neigh);
+					stackHoles.Pop();
+
+				}
+
+				stackHoles.Push(blck);
 
 				readyMachines->PushElement(container.machine);
 

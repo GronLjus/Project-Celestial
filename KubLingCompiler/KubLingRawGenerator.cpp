@@ -52,6 +52,7 @@ rawCode KubLingRawGenerator::expandBlock(rawCode code, unsigned int newMax)
 	newBlock.maxLines = code.maxLines = newMax;
 	newBlock.code = new rawCode::line[newBlock.maxLines];
 	newBlock.initSize = code.initSize;
+	newBlock.memSize = code.memSize;
 
 	memcpy(newBlock.code, code.code, code.codeSize * sizeof(rawCode::line));
 
@@ -85,7 +86,6 @@ rawCode KubLingRawGenerator::translateBlock(KubLingCompiled* byteCode,
 
 		if (code.maxLines > 0)
 		{
-
 
 			if (code.codeSize > block.maxLines - block.codeSize)//Expand the block
 			{
@@ -249,7 +249,7 @@ rawCode KubLingRawGenerator::createFooterBlock()
 
 }
 
-void KubLingRawGenerator::addLabel(KubLingCompiled* byteCode)
+void KubLingRawGenerator::addLabel(KubLingCompiled* byteCode, unsigned int start)
 {
 
 	if (totalLabels >= maxLabels)
@@ -299,7 +299,7 @@ void KubLingRawGenerator::addLabel(KubLingCompiled* byteCode)
 
 	}
 
-	labels[totalLabels] = KubLingLabelObj(byteCode->GetName(), totalCode, tempParams, tempMax);
+	labels[totalLabels] = KubLingLabelObj(byteCode->GetName(), start, tempParams, tempMax);
 	totalLabels++;
 
 }
@@ -309,6 +309,8 @@ rawCode KubLingRawGenerator::assemble(KubLingCompiled* byteCode, unsigned int cu
 
 	unsigned int* jmpPlaceHolders = new unsigned int[byteCode->GetCodeSize()];
 	unsigned int* lineTranslation = new unsigned int[byteCode->GetCodeSize() + 1];
+
+	CelestialStack<unsigned int>* subScripts = new CelestialStack<unsigned int>(false);
 
 	for (unsigned int i = 0; i < byteCode->GetCodeSize(); i++)
 	{
@@ -324,9 +326,6 @@ rawCode KubLingRawGenerator::assemble(KubLingCompiled* byteCode, unsigned int cu
 	assembled.code = new rawCode::line[assembled.maxLines];
 
 	MemoryPool* stackMem = new MemoryPool(maxStack);
-	stackMem->AddSystemMem(byteCode);
-
-	addLabel(byteCode);
 
 	assembled.initSize = 0;
 
@@ -335,11 +334,12 @@ rawCode KubLingRawGenerator::assemble(KubLingCompiled* byteCode, unsigned int cu
 	unsigned int scriptStart;
 	memcpy(&scriptStart, line, size);
 
-	translator->SetRTV(heap, jmpPlaceHolders, lineTranslation, byteCodes, compiled, current, stackMem, nullptr);
+	translator->SetRTV(heap, jmpPlaceHolders, lineTranslation, byteCodes, compiled, current, stackMem, true, subScripts);
 
 	if (scriptStart != 1)
 	{
 
+		stackMem->AddSystemMem(byteCode, true);
 		rawCode initBlock = createInitBlock(byteCode, heap, scriptStart, lineTranslation);
 
 		if (initBlock.codeSize > assembled.maxLines - assembled.codeSize)//Expand the block
@@ -357,6 +357,11 @@ rawCode KubLingRawGenerator::assemble(KubLingCompiled* byteCode, unsigned int cu
 		
 	}
 
+	stackMem->AddSystemMem(byteCode, false);
+	addLabel(byteCode, assembled.start);
+
+	translator->SetRTV(heap, jmpPlaceHolders, lineTranslation, byteCodes, compiled, current, stackMem, false, subScripts);
+
 	rawCode code = translateBlock(byteCode, heap, scriptStart, byteCode->GetCodeSize(), lineTranslation);
 	rawCode footer = createFooterBlock();
 
@@ -372,8 +377,13 @@ rawCode KubLingRawGenerator::assemble(KubLingCompiled* byteCode, unsigned int cu
 	memcpy(&assembled.code[assembled.codeSize], footer.code, footer.codeSize * sizeof(rawCode::line));
 	assembled.codeSize += footer.codeSize;
 
-	byteCode->SetMemOffset(totalOffset);
-	totalOffset += stackMem->GetMemorySize();
+	assembled.memSize = stackMem->GetMemorySize() - assembled.initSize;
+	assembled.subs = subScripts;
+	assembled.totalMemSize = 0;
+
+	byteCode->SetMemOffset(totalInitMemory);
+	totalInitMemory += assembled.initSize;
+	totalMemory += stackMem->GetMemorySize();
 
 	delete[] code.code;
 	delete[] footer.code;
@@ -399,10 +409,48 @@ rawCode KubLingRawGenerator::assemble(KubLingCompiled* byteCode, unsigned int cu
 
 }
 
+unsigned int KubLingRawGenerator::figureOutMaxSize(rawCode* codes, unsigned int code, unsigned int codeSize)
+{
+
+	rawCode raw = codes[code];
+
+	if (raw.totalMemSize > 0)
+	{
+
+		return raw.totalMemSize;
+
+	}
+
+	if (raw.subs == nullptr ||
+		raw.subs->GetCount() == 0)
+	{
+
+		codes[code].totalMemSize = raw.memSize;
+		return raw.memSize;
+
+	}
+
+	unsigned int maxVal = 0;
+
+	while (raw.subs->GetCount() > 0)
+	{
+
+		unsigned int subScript = raw.subs->PopElement();
+		unsigned int subSize = figureOutMaxSize(codes, subScript - 1, codeSize);
+		maxVal = maxVal > subSize ? maxVal : subSize;
+
+	}
+
+	codes[code].totalMemSize = raw.memSize + maxVal;
+	return codes[code].totalMemSize;
+
+}
+
 KubLingRawObj* KubLingRawGenerator::Assemble(KubLingCompiled** byteCodes, unsigned int compiled)
 {
 
-	totalOffset = 0;
+	totalInitMemory = 0;
+	totalMemory = 0;
 	totalCode = 0;
 	totalLabels = 0;
 
@@ -434,6 +482,14 @@ KubLingRawObj* KubLingRawGenerator::Assemble(KubLingCompiled** byteCodes, unsign
 
 	}
 
+	for (unsigned int i = 0; i < compiled; i++)
+	{
+
+		figureOutMaxSize(raws, i, compiled);
+		byteCodes[i]->SetMemSize(raws[i].memSize);
+
+	}
+
 	rawCode::line* lines = new rawCode::line[totalCode];
 	unsigned int line = 0;
 
@@ -443,6 +499,14 @@ KubLingRawObj* KubLingRawGenerator::Assemble(KubLingCompiled** byteCodes, unsign
 
 		memcpy(&lines[line], raws[i].code, raws[i].codeSize * sizeof(rawCode::line));
 		delete[] raws[i].code;
+
+		if (raws[i].subs != nullptr)
+		{
+
+			delete raws[i].subs;
+
+		}
+
 		line += raws[i].codeSize;
 
 	}
@@ -465,8 +529,11 @@ KubLingRawObj* KubLingRawGenerator::Assemble(KubLingCompiled** byteCodes, unsign
 			if (stop)
 			{
 
+				unsigned int mSize = byteCodes[k]->GetMemSize();
+
 				mOffset = byteCodes[k]->GetMemOffset();
 				rawLabels[i].SetMemOffset(mOffset);
+				rawLabels[i].SetMemSize(raws[i].totalMemSize);
 				unsigned int ph = byteCodes[k]->GetStackPHLine();
 
 				//Replace Placeholders
@@ -489,6 +556,28 @@ KubLingRawObj* KubLingRawGenerator::Assemble(KubLingCompiled** byteCodes, unsign
 					ph = byteCodes[k]->GetMemOffsetPHLine();
 
 				}
+
+				ph = byteCodes[k]->GetInitSizePHLine();
+
+				while (ph != 0)
+				{
+
+					ph--;
+					lines[ph].scale = labels[i].GetInitSize();
+					ph = byteCodes[k]->GetInitSizePHLine();
+
+				}
+
+				ph = byteCodes[k]->GetMemSizePHLine();
+
+				while (ph != 0)
+				{
+
+					ph--;
+					lines[ph].scale = mSize;
+					ph = byteCodes[k]->GetMemSizePHLine();
+
+				}
 			}
 		}
 	}
@@ -509,12 +598,13 @@ KubLingRawObj* KubLingRawGenerator::Assemble(KubLingCompiled** byteCodes, unsign
 
 	}
 
-	KubLingRawObj* retVal = new KubLingRawObj(code, totalCode, rawLabels, totalLabels, heap->GetHighest(), totalOffset);
+	KubLingRawObj* retVal = new KubLingRawObj(code, totalCode, rawLabels, totalLabels, heap->GetHighest(), totalMemory);
 
 	delete[] lines;
 	delete[] raws;
 	delete heap;
-	totalOffset = 0;
+	totalInitMemory = 0;
+	totalMemory = 0;
 	totalCode = 0;
 	totalLabels = 0;
 

@@ -31,6 +31,10 @@ namespace Logic
 
 		unsigned int maxLines;
 		unsigned int initSize;
+		unsigned int memSize;
+
+		CelestialStack<unsigned int>* subs = nullptr;
+		unsigned int totalMemSize = 0;
 
 	};
 
@@ -51,7 +55,9 @@ namespace Logic
 		unsigned int current;
 		unsigned int compiled;
 		MemoryPool* memory;
-		CrossHandlers::CelestialStack<unsigned int>* memoffsetPH;
+		bool initBlock;
+		CrossHandlers::CelestialStack<unsigned int>* subScripts;
+		unsigned int offset;
 
 	};
 
@@ -75,7 +81,8 @@ namespace Logic
 				unsigned int compiled,
 				unsigned int current,
 				MemoryPool* memPool,
-				CrossHandlers::CelestialStack<unsigned int>* memoffsetPH);
+				bool initBlock,
+				CrossHandlers::CelestialStack<unsigned int>* subScripts);
 
 			rawCode Translate(unsigned char* bytes,
 				unsigned int byteSize,

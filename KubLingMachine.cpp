@@ -20,6 +20,23 @@ KubLingMachine::KubLingMachine(MessageBuffer* mBuffer,
 	this->maxStack = maxStack;
 	kill = false;
 
+	memOffset = 0;
+	memStart = 0;
+
+}
+
+void KubLingMachine::SetMemStart(unsigned int offset)
+{
+
+	this->memStart = offset;
+
+}
+
+void KubLingMachine::SetMemOffset(unsigned int offset)
+{
+
+	this->memOffset = offset;
+
 }
 
 void KubLingMachine::SetHeap(HeapMemory* heap)
@@ -29,8 +46,35 @@ void KubLingMachine::SetHeap(HeapMemory* heap)
 
 }
 
+unsigned int KubLingMachine::GetMemOffset() const
+{
+
+	return memOffset;
+
+}
+
 void KubLingMachine::sendMessage(unsigned int mess, unsigned int retVar, MessageSource dest, unsigned int returnAdr, unsigned int sender)
 {
+
+	if (cReg[1] == 0)//The retVar is in the initblock
+	{
+
+		retVar += iReg[4];
+
+	}
+	else
+	{
+
+		retVar += memOffset + iReg[5];
+
+	}
+
+	if (returnAdr - iReg[4] > maxStack)
+	{
+
+		returnAdr -= iReg[4];
+
+	}
 
 	lastMess->timeSent = time;
 	lastMess->destination = dest;
@@ -49,15 +93,10 @@ void KubLingMachine::sendMessage(unsigned int mess, unsigned int retVar, Message
 		dest == MessageSource_TASKS ? MessageType_TASKING :
 		MessageType_SYSTEM;
 
+
 	if (dest != MessageSource_OBJECT)
 	{
 
-		if (returnAdr- iReg[4] > maxStack)
-		{
-
-			lastMess->returnParam -= iReg[4];
-
-		}
 
 		mBuffer->PushMessageOut();
 		lastMess = mBuffer->GetCurrentMess();
@@ -67,7 +106,7 @@ void KubLingMachine::sendMessage(unsigned int mess, unsigned int retVar, Message
 	{
 
 		unsigned int objId;
-		memcpy(&objId, getMem(returnAdr), 4);
+		memcpy(&objId, getAbsMem(returnAdr), 4);
 
 		Resources::BaseObject* obj = objectContainer->GetValue(objId);
 		unsigned char* retValue = obj->Update(lastMess);
@@ -95,13 +134,13 @@ void KubLingMachine::SetRegister(unsigned char reg, unsigned int value)
 
 }
 
-char* KubLingMachine::getMem(unsigned int adr) const
+char* KubLingMachine::getAbsMem(unsigned int adr) const
 {
 
-	if (adr - iReg[4] >= maxStack)
+	if (adr >= maxStack)
 	{
 
-		adr -= maxStack + iReg[4];
+		adr -= maxStack;
 		return heapMem->GetMemory(adr);
 
 	}
@@ -109,6 +148,24 @@ char* KubLingMachine::getMem(unsigned int adr) const
 	{
 
 		return &stackMem[adr];
+
+	}
+}
+
+char* KubLingMachine::getMem(unsigned int adr) const
+{
+
+	if (adr >= maxStack)
+	{
+
+		adr -= maxStack;
+		return heapMem->GetMemory(adr);
+
+	}
+	else
+	{
+
+		return &stackMem[resolveAdr(adr)];
 
 	}
 }
@@ -125,6 +182,20 @@ unsigned int KubLingMachine::adr(unsigned int adr, unsigned int offset)
 	}
 
 	return adr+offset;
+
+}
+
+unsigned int KubLingMachine::resolveAdr(unsigned int adr) const
+{
+
+	if (adr >= iReg[5] && adr < maxStack)
+	{
+
+		return adr + memOffset;
+
+	}
+
+	return adr + iReg[4];
 
 }
 
@@ -162,19 +233,19 @@ RunTimeError KubLingMachine::RunScript(unsigned long long* code, unsigned int &c
 			if (type == 0)
 			{
 
-				memcpy(&iReg[reg1], getMem(aReg[reg2] + iReg[4]), sizeof(unsigned int));
+				memcpy(&iReg[reg1], getMem(aReg[reg2]), sizeof(unsigned int));
 
 			}
 			else if (type == 1)
 			{
 
-				memcpy(&fReg[reg1], getMem(aReg[reg2] + iReg[4]), sizeof(float));
+				memcpy(&fReg[reg1], getMem(aReg[reg2]), sizeof(float));
 
 			}
 			else
 			{
 
-				memcpy(&cReg[reg1], getMem(aReg[reg2] + iReg[4]), sizeof(char));
+				memcpy(&cReg[reg1], getMem(aReg[reg2]), sizeof(char));
 
 			}
 			break;
@@ -231,19 +302,19 @@ RunTimeError KubLingMachine::RunScript(unsigned long long* code, unsigned int &c
 			if (type == 0)
 			{
 
-				memcpy(getMem(aReg[reg2] + iReg[4]), &iReg[reg1], sizeof(unsigned int));
+				memcpy(getMem(aReg[reg2]), &iReg[reg1], sizeof(unsigned int));
 
 			}
 			else if (type == 1)
 			{
 
-				memcpy(getMem(aReg[reg2] + iReg[4]), &fReg[reg1], sizeof(float));
+				memcpy(getMem(aReg[reg2]), &fReg[reg1], sizeof(float));
 
 			}
 			else
 			{
 
-				memcpy(getMem(aReg[reg2] + iReg[4]), &cReg[reg1], sizeof(char));
+				memcpy(getMem(aReg[reg2]), &cReg[reg1], sizeof(char));
 
 			}
 			break;
@@ -273,10 +344,16 @@ RunTimeError KubLingMachine::RunScript(unsigned long long* code, unsigned int &c
 				memcpy(&aReg[reg1], &scal, sizeof(unsigned int));
 
 			}
-			else
+			else if(type == 4)
 			{
 
 				iReg[4] = scal;
+
+			}
+			else
+			{
+
+				iReg[5] = scal;
 
 			}
 			break;
@@ -291,23 +368,23 @@ RunTimeError KubLingMachine::RunScript(unsigned long long* code, unsigned int &c
 			else
 			{
 
-				iReg[reg3] = adr(iReg[reg1] + iReg[4], iReg[reg2]);
+				iReg[reg3] = adr(iReg[reg1], iReg[reg2]);
 
 			}
 			break;
 		case Logic::opcode_SAVE:
-			memcpy(getMem(aReg[reg1] + iReg[4]), &scal, iReg[reg2]);
+			memcpy(getMem(aReg[reg1]), &scal, iReg[reg2]);
 			break;
 		case Logic::opcode_COPY:
-			dst = getMem(aReg[reg1] + iReg[4]);
-			src = getMem(aReg[reg2] + iReg[4]);
+			dst = getMem(aReg[reg1]);
+			src = getMem(aReg[reg2]);
 			memcpy(dst, src, iReg[reg3]);
 			break;
 		case Logic::opcode_SEND:
-			sendMessage(iReg[reg1], cReg[0] + iReg[4], MessageSource(iReg[reg2]), aReg[reg3] + iReg[4],sender);
+			sendMessage(iReg[reg1], cReg[0], MessageSource(iReg[reg2]), resolveAdr(aReg[reg3]),sender);
 			break;
 		case Logic::opcode_STPRM:
-			lastMess->SetParams((unsigned char*)getMem(aReg[reg1] + iReg[4]), iReg[reg2], iReg[reg3]);
+			lastMess->SetParams((unsigned char*)getMem(aReg[reg1]), iReg[reg2], iReg[reg3]);
 			break;
 		case Logic::opcode_PRM:
 			lastMess->SetParam(scal, iReg[reg1]);
@@ -332,10 +409,16 @@ RunTimeError KubLingMachine::RunScript(unsigned long long* code, unsigned int &c
 				cReg[reg3] = cReg[reg1] + cReg[reg2];
 
 			}
-			else
+			else if(type == 3)
 			{
 
 				aReg[reg3] = aReg[reg1] + iReg[reg2];
+
+			}
+			else if (type == 4)
+			{
+
+				memOffset += scal;
 
 			}
 			break;
@@ -363,6 +446,12 @@ RunTimeError KubLingMachine::RunScript(unsigned long long* code, unsigned int &c
 			{
 
 				aReg[reg3] = aReg[reg1] - iReg[reg2];
+
+			}
+			else if (type == 4)
+			{
+
+				memOffset -= scal;
 
 			}
 			break;
@@ -534,8 +623,8 @@ RunTimeError KubLingMachine::RunScript(unsigned long long* code, unsigned int &c
 			s = std::to_string(fReg[reg1]);
 			st = s.c_str();
 			size = s.size();
-			memcpy(getMem(aReg[reg2] + iReg[4]), &size,4);
-			memcpy(getMem(aReg[reg2] + iReg[4] + 4), st, s.size());
+			memcpy(getMem(aReg[reg2]), &size,4);
+			memcpy(getMem(aReg[reg2] + 4), st, s.size());
 			break;
 		case Logic::opcode_ADR:
 			iReg[reg2] = heapMem->GetAddress(aReg[reg1]);

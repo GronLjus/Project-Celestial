@@ -52,11 +52,20 @@ void MemoryPool::resortHoles(unsigned char pivot)
 	}
 }
 
-unsigned int MemoryPool::findAddress(unsigned int var, unsigned int valSize)
+unsigned int MemoryPool::findAddress(unsigned int var, unsigned int valSize, bool inInit)
 {
 
 	memBlock varMem = variables->GetValue(var);
 	unsigned int adress = varMem.length > 0 ? varMem.place : adrLast;
+
+	/*if (!inInit && varMem.initBlock)
+	{
+
+		adress = adrLast;
+		varMem.length = 0;
+
+	}*/
+
 	unsigned char rightHole = 0;
 	unsigned char leftHole = 0;
 	unsigned char suitableHole = 0;
@@ -160,10 +169,10 @@ unsigned int MemoryPool::findAddress(unsigned int var, unsigned int valSize)
 
 }
 
-unsigned int MemoryPool::AddVariable(unsigned int var, unsigned int valSize)
+unsigned int MemoryPool::AddVariable(unsigned int var, unsigned int valSize, bool initBlock)
 {
 
-	unsigned int adress = findAddress(var, valSize);
+	unsigned int adress = findAddress(var, valSize, initBlock);
 
 	if (adress == adrLast)
 	{
@@ -173,6 +182,7 @@ unsigned int MemoryPool::AddVariable(unsigned int var, unsigned int valSize)
 	}
 
 	memBlock varMem = variables->GetValue(var);
+	varMem.initBlock = initBlock;
 	varMem.place = adress;
 	varMem.length = valSize;
 	variables->Add(varMem, var);
@@ -180,10 +190,11 @@ unsigned int MemoryPool::AddVariable(unsigned int var, unsigned int valSize)
 
 }
 
-unsigned int MemoryPool::AddVariable(unsigned int var, unsigned int adr, unsigned int valSize)
+unsigned int MemoryPool::AddVariable(unsigned int var, unsigned int adr, unsigned int valSize, bool initBlock)
 {
 
 	memBlock varMem = variables->GetValue(var);
+	varMem.initBlock = initBlock;
 	varMem.place = adr;
 	varMem.length = valSize;
 	variables->Add(varMem, var);
@@ -233,80 +244,84 @@ unsigned int MemoryPool::GetMemorySize() const
 
 }
 
-void MemoryPool::AddSystemMem(Resources::KubLingCompiled* compiled)
+void MemoryPool::AddSystemMem(Resources::KubLingCompiled* compiled, bool initBlock)
 {
 
 	maxVar = compiled->GetMaxVar();
-	AddVariable(maxVar, maxVar);
+	AddVariable(maxVar, adrLast, maxVar, initBlock);
+	adrLast += maxVar;
 	maxVar++;
 
-	for (unsigned int i = 0; i < compiled->GetMaxParams('n'); i++)
+	if (!initBlock)
 	{
 
-		unsigned int adr = compiled->GetAdr(i, 'n');
-
-		if (adr != 0)
+		for (unsigned int i = 0; i < compiled->GetMaxParams('n'); i++)
 		{
 
-			adr--;
-			AddVariable(adr, sizeof(unsigned int));
-			memBlock varMem = variables->GetValue(adr);
-			compiled->AddParamAdr(i, varMem.place, 'n');
+			unsigned int adr = compiled->GetAdr(i, 'n');
 
+			if (adr != 0)
+			{
+
+				adr--;
+				AddVariable(adr, sizeof(unsigned int), false);
+				memBlock varMem = variables->GetValue(adr);
+				compiled->AddParamAdr(i, varMem.place, 'n');
+
+			}
+		}
+
+		for (unsigned int i = 0; i < compiled->GetMaxParams('f'); i++)
+		{
+
+			unsigned int adr = compiled->GetAdr(i, 'f');
+
+			if (adr != 0)
+			{
+
+				adr--;
+				AddVariable(adr, sizeof(float), false);
+				memBlock varMem = variables->GetValue(adr);
+				compiled->AddParamAdr(i, varMem.place, 'f');
+
+			}
+		}
+
+		for (unsigned int i = 0; i < compiled->GetMaxParams('s'); i++)
+		{
+
+			unsigned int adr = compiled->GetAdr(i, 's');
+
+			if (adr != 0)
+			{
+
+				adr--;
+				AddVariable(adr, 64, false);
+				memBlock varMem = variables->GetValue(adr);
+				compiled->AddParamAdr(i, varMem.place, 's');
+
+			}
+		}
+
+		for (unsigned int i = 0; i < RunTimeParams_NA; i++)
+		{
+
+			unsigned int adr = compiled->GetAdr(RunTimeParams(i));
+
+			if (adr != 0)
+			{
+
+				adr--;
+				AddVariable(adr, sizeof(unsigned int), true);
+				memBlock varMem = variables->GetValue(adr);
+				compiled->AddSystemParamAdr(RunTimeParams(i), varMem.place);
+
+			}
 		}
 	}
 
-	for (unsigned int i = 0; i < compiled->GetMaxParams('f'); i++)
-	{
-
-		unsigned int adr = compiled->GetAdr(i, 'f');
-
-		if (adr != 0)
-		{
-
-			adr--;
-			AddVariable(adr, sizeof(float));
-			memBlock varMem = variables->GetValue(adr);
-			compiled->AddParamAdr(i, varMem.place, 'f');
-
-		}
-	}
-
-	for (unsigned int i = 0; i < RunTimeParams_NA; i++)
-	{
-
-		unsigned int adr = compiled->GetAdr(RunTimeParams(i));
-
-		if (adr != 0)
-		{
-
-			adr--;
-			AddVariable(adr, sizeof(unsigned int));
-			memBlock varMem = variables->GetValue(adr);
-			compiled->AddSystemParamAdr(RunTimeParams(i), varMem.place);
-
-		}
-	}
-
-	for (unsigned int i = 0; i < compiled->GetMaxParams('s'); i++)
-	{
-
-		unsigned int adr = compiled->GetAdr(i, 's');
-
-		if (adr != 0)
-		{
-
-			adr--;
-			AddVariable(adr, 64);
-			memBlock varMem = variables->GetValue(adr);
-			compiled->AddParamAdr(i, varMem.place, 's');
-
-		}
-	}
-
-
-	maxVar = compiled->GetMaxVar();
-	AddVariable(maxVar, 64);
+	AddVariable(maxVar, adrLast, 64, initBlock);
+	adrLast += 64;
 
 	sysAdr = adrLast;
 
@@ -367,6 +382,14 @@ unsigned int MemoryPool::GetVarAdr(unsigned int var) const
 
 	memBlock varMem = variables->GetValue(var);
 	return varMem.place;
+
+}
+
+bool MemoryPool::GetVarInitBlock(unsigned int var) const
+{
+
+	memBlock varMem = variables->GetValue(var);
+	return varMem.initBlock;
 
 }
 

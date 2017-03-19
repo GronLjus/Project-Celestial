@@ -22,6 +22,7 @@ KubLingLabelObj::KubLingLabelObj()
 	initSize = 0;
 
 	translation = 0;
+	memSize = 0;
 
 	Reset();
 
@@ -45,6 +46,7 @@ KubLingLabelObj::KubLingLabelObj(std::string script, unsigned int start, unsigne
 	this->paramMax[3] = paramMax[3];
 
 	this->initSize = 0;
+	this->memSize = 0;
 
 }
 
@@ -66,6 +68,7 @@ KubLingLabelObj::KubLingLabelObj(KubLingLabelObj &copy) : KubLingLabelObj()
 	this->paramMax[3] = copy.paramMax[3];
 
 	this->initSize = copy.initSize;
+	this->memSize = copy.memSize;
 
 }
 
@@ -73,6 +76,20 @@ unsigned int KubLingLabelObj::GetMemoffset() const
 {
 
 	return memOffset;
+
+}
+
+unsigned int KubLingLabelObj::GetMemSize() const
+{
+
+	return memSize;
+
+}
+
+void KubLingLabelObj::SetMemSize(unsigned int memSize)
+{
+
+	this->memSize = memSize;
 
 }
 

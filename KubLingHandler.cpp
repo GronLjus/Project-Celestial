@@ -47,7 +47,10 @@ unsigned int KubLingHandler::getLatestTranslation(unsigned int label)
 	if (lab->GetTranslation() == 0)
 	{
 
-		lab->SetTranslation(runTime->PrimeLabel(lab->GetStart(), lab->GetMemoffset()));
+
+		lab->SetTranslation(
+			runTime->PrimeLabel(lab->GetStart(), lab->GetMemoffset(), lab->GetInitSize(), lab->GetMemSize()));
+
 
 	}
 
@@ -85,8 +88,8 @@ void KubLingHandler::Update(unsigned int time)
 
 			unsigned char val = 255;
 
-			runTime->SetStackVar(param1, param2, &currentMessage->params[8], 4);
-			runTime->SetStackVar(param1, param4, &val, 1);
+			runTime->SetStackVar(param2, &currentMessage->params[8], 4);
+			runTime->SetStackVar(param4, &val, 1);
 			//runTime->RunCode(param1);
 
 		}
@@ -122,9 +125,9 @@ void KubLingHandler::Update(unsigned int time)
 			if (lab->hasParam(val))
 			{
 
-				unsigned int varAdr = lab->GetParam(val) + lab->GetMemoffset();
+				unsigned int varAdr = lab->GetParam(val);
 
-				if (varAdr - lab->GetMemoffset() != 0)
+				if (varAdr != 0)
 				{
 
 					runTime->SetStackVar(transl, varAdr, &(currentMessage->params[4]), 4);
@@ -138,8 +141,8 @@ void KubLingHandler::Update(unsigned int time)
 			unsigned int param2 = currentMessage->params[4] | ((int)currentMessage->params[5] << 8) | ((int)currentMessage->params[6] << 16) | ((int)currentMessage->params[7] << 24);
 			KubLingRaw* code = (KubLingRaw*)objectContainer->GetValue(param1);
 			HeapMemContainer* heap = (HeapMemContainer*)objectContainer->GetValue(param2);
-			runTime->SetCode(code->GetCode(), code->GetLength(), heap->GetHeap());
-			
+			runTime->SetCode(code->GetCode(), code->GetLength(),code->GetMemOffset(), heap->GetHeap());
+
 			for (unsigned int i = 0; i < SystemMem_NA; i++)
 			{
 
