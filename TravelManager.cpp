@@ -57,18 +57,6 @@ void TravelManager::Travel(GameTravelObject* object, unsigned int goal, unsigned
 	object->SetFinalGoalNode(goal);
 	object->SetStatus(TravelStatus_PRIMED);
 
-	bool dbl = false;
-
-	CelestialListNode<GameTravelObject*>* node = travelObjects->GetFirstNode();
-
-	while (node != nullptr && !dbl)
-	{
-
-		dbl = node->GetNodeObject()->GetId() == object->GetId();
-		node = node->GetNext();
-
-	}
-
 	travelObjects->PushElement(object);
 	object->Time(time);
 
@@ -185,7 +173,7 @@ void TravelManager::handleNearNode(GameTravelObject* obj, RouteNodeObject* curre
 				unsigned int routeId = goalNode->GetLocalId(nextGoal->GetId());
 				Route* route = goalNode->GetRoute(routeId, dir);
 
-				if (route->CanTravel(dir))//The route can be traveled
+				if (!groupLocked && route->CanTravel(dir))//The route can be traveled
 				{
 
 					travelOn = true;
