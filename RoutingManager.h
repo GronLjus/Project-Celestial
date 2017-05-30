@@ -15,7 +15,7 @@
 namespace Entities
 {
 
-	class RoutingManager : public Resources::SerializableObject, public SplitManager
+	class RoutingManager : public SplitManager
 	{
 
 		public:
@@ -27,6 +27,10 @@ namespace Entities
 
 			void AddRoad(unsigned int node1, unsigned int node2);
 			unsigned int AddGroup(Resources::GameObject* object);
+
+			bool DeleteObject(Resources::GameObject* obj);
+			bool DeleteObject(Resources::GameRouteObject* obj);
+			bool DeleteObject(Resources::GameGridObject* obj);
 
 			void PopulateGrid(Resources::GameGridObject* grid, float nodeWidth);
 			void ClearNodes();
@@ -43,12 +47,17 @@ namespace Entities
 			virtual ~RoutingManager();
 
 		private:
+			
+			bool checkRoute(unsigned int x, unsigned int z, RouteNodeObject* first, Resources::GameGridObject* obj, unsigned int &routeId);
+			void deleteRoad(Route* rte);
 
 			void addNewRoad(RouteNodeObject* node1, RouteNodeObject* node2);
 
 			RouteNodeObject* getPreExistantNode(CelestialMath::Vector3 position, unsigned int* objects, unsigned int amounts) const;
 
 			void handleObjectNode(RouteNodeObject* preExist, unsigned int* objects, unsigned int amounts);
+
+			bool deleteNodeGroup(Resources::GameRouteObject* obj);
 
 	};
 }

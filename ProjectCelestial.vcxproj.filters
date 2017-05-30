@@ -1301,6 +1301,12 @@
     <None Include="Content\Scripts\ToolBarScripts\AirBridgeClick.celsrc">
       <Filter>Resource Files\Content\Scripts\ToolBarScripts</Filter>
     </None>
+    <None Include="Content\Scripts\ObjectScripts\DeleteScript.celsrc">
+      <Filter>Resource Files\Content\Scripts\ObjectScripts</Filter>
+    </None>
+    <None Include="Content\Scripts\ToolBarScripts\DeleteButtonClick.celsrc">
+      <Filter>Resource Files\Content\Scripts\ToolBarScripts</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Project Celestial.rc">

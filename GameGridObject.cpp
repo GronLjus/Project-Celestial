@@ -85,7 +85,14 @@ unsigned int GameGridObject::GetNodeHeigth() const
 unsigned int GameGridObject::GetNode(unsigned int x, unsigned int y)
 {
 
-	return nodes[x + gridWidth * y];
+	if (nodes != nullptr)
+	{
+
+		return nodes[x + gridWidth * y];
+
+	}
+
+	return 0;
 
 }
 

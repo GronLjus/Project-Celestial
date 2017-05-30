@@ -24,7 +24,3 @@ snap fps2 0 3
 
 add ui debugLayout fps2
 add ui debugLayout fps
-
-debugTask = load task debugUpdate fps fps2
-
-add systemtask debugTask 1000

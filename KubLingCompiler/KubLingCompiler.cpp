@@ -1416,6 +1416,37 @@ KubLingCompiler::KubLingCompiler()
 		new bool[operators[OperatorTypes_REMOVE].params[1]]{ false }
 	};
 
+	operators[OperatorTypes_DELETE].keyword = "delete";
+	operators[OperatorTypes_DELETE].enumAmount = 1;
+	operators[OperatorTypes_DELETE].enums = new std::string[operators[OperatorTypes_DELETE].enumAmount]; operators[OperatorTypes_DELETE].enums[0] = "object";
+	operators[OperatorTypes_DELETE].byteCodes = new unsigned char[operators[OperatorTypes_DELETE].enumAmount]{ bytecode_DLT };
+	operators[OperatorTypes_DELETE].params = new unsigned char[operators[OperatorTypes_DELETE].enumAmount]{ 1 };
+	operators[OperatorTypes_DELETE].minParams = new unsigned char[operators[OperatorTypes_DELETE].enumAmount]{ 1 };
+	operators[OperatorTypes_DELETE].paramsyntax = new VarType*[operators[OperatorTypes_DELETE].enumAmount]{
+		new VarType[operators[OperatorTypes_DELETE].params[0]]{ VarType_NUMBER }
+	};
+	operators[OperatorTypes_DELETE].paramTypes = new ParamType*[operators[OperatorTypes_DELETE].enumAmount]{
+		new ParamType[operators[OperatorTypes_DELETE].params[0]]{ ParamType_NA }
+	};
+	operators[OperatorTypes_DELETE].optionalPar = new bool*[operators[OperatorTypes_DELETE].enumAmount]{
+		new bool[operators[OperatorTypes_DELETE].params[0]]{ false }
+	};
+	operators[OperatorTypes_DELETE].readParam = new unsigned char[operators[OperatorTypes_DELETE].enumAmount]{ 0 };
+	operators[OperatorTypes_DELETE].returns = new VarType[operators[OperatorTypes_DELETE].enumAmount]{ VarType_NUMBER };
+	operators[OperatorTypes_DELETE].returnType = new ParamType[operators[OperatorTypes_DELETE].enumAmount]{ ParamType_VAR };
+	operators[OperatorTypes_DELETE].writeParam = new unsigned char[operators[OperatorTypes_DELETE].enumAmount]{ 0 };
+	operators[OperatorTypes_DELETE].priority = 0;
+	operators[OperatorTypes_DELETE].shortHandsAmounts = 0;
+	operators[OperatorTypes_DELETE].amountParOperators = new unsigned char[operators[OperatorTypes_DELETE].enumAmount]{ 0 };
+	operators[OperatorTypes_DELETE].parRepeatsMin = new unsigned char*[operators[OperatorTypes_DELETE].enumAmount]{
+		new unsigned char[operators[OperatorTypes_DELETE].params[0]]{ 0 }
+	};
+	operators[OperatorTypes_DELETE].parRepeatsMax = new unsigned char*[operators[OperatorTypes_DELETE].enumAmount]{
+		new unsigned char[operators[OperatorTypes_DELETE].params[0]]{ 0 }
+	};
+	operators[OperatorTypes_DELETE].parOperatorAppend = new bool*[operators[OperatorTypes_DELETE].enumAmount]{
+		new bool[operators[OperatorTypes_DELETE].params[0]]{ false }
+	};
 
 	operators[OperatorTypes_HIDE].keyword = "hide";
 	operators[OperatorTypes_HIDE].enumAmount = 2;
@@ -2875,6 +2906,7 @@ KubLingCompiled* KubLingCompiler::CompileSource(KubLingSource* source, CompileEr
 					for (int i = 0; i < abstractSyntaxTree.symbolTable->GetHighest(); i++)
 					{
 
+						Logic::symbol symb = abstractSyntaxTree.symbolTable->GetValue(i);
 						std::string symbol = abstractSyntaxTree.symbolTable->GetValue(i).name;
 
 						if (symbol[0] == '?')

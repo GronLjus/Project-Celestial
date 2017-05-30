@@ -165,7 +165,8 @@ char* KubLingMachine::getMem(unsigned int adr) const
 	else
 	{
 
-		return &stackMem[resolveAdr(adr)];
+		unsigned int memAdr = resolveAdr(adr);
+		return &stackMem[memAdr];
 
 	}
 }

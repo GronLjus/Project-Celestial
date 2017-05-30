@@ -2,6 +2,7 @@ $
 {
 
 	hcktrck = 0
+	delScript = load script 'Content\Scripts\ObjectScripts\DeleteScript'
 
 }
 
@@ -24,7 +25,8 @@ if ?3 : 0
 		obj = load copyobject ?0
 
 		show cursor
-
+		
+		set rightclick obj delScript
 		add obj
 		lock obj
 

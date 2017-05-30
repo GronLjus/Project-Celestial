@@ -583,6 +583,60 @@ void GameBoardHandler::UpdateMessages(unsigned int time, unsigned int clock)
 			localGameBoard->GetRoutingManager()->AddRoad(param1 - 1, param2 - 1);
 
 		}
+		else if (currentMessage->mess == GameBoardMess_DELETEOBJECT && localGameBoard != nullptr)
+		{
+
+			GameObject* obj = (GameObject*)gameObjects->GetValue(param1);
+
+			if (obj->GetType() == GameObjectType_GRIDROUTE)
+			{
+
+				bool nodeLock = false;
+				GameGridObject* gridRoute = (GameGridObject*)obj;
+
+				for (unsigned int x = 0; x < gridRoute->GetNodeWidth() && !nodeLock; x++)
+				{
+
+					for (unsigned int y = 0; y < gridRoute->GetNodeHeigth() && !nodeLock; y++)
+					{
+
+						RouteNodeObject* node = localGameBoard->GetRoutingManager()->GetNode(gridRoute->GetNode(x, y));
+						nodeLock = node->GetLock() > 0;
+
+					}
+				}
+
+				if (!nodeLock)
+				{
+
+					outId = routing->DeleteObject(gridRoute) ? 2 : 1;
+
+				}
+			}
+			else
+			{
+
+				outId = routing->DeleteObject(obj) ? 2 : 1;
+			
+			}
+
+			localGameBoard->RemoveObject(obj);
+
+			if (outId == 2)
+			{
+
+				Message* msg = mBuffer->GetCurrentMess();
+
+				msg->timeSent = time;
+				msg->destination = MessageSource_RESOURCES;
+				msg->type = MessageType_RESOURCES;
+				msg->mess = ResourceMess_UNLOADOBJECT;
+				msg->SetParams(currentMessage->params, 0, 4);
+				msg->read = false;
+
+				mBuffer->PushMessageOut();
+			}
+		}
 		else
 		{
 

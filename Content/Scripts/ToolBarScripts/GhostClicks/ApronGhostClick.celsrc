@@ -2,6 +2,7 @@ $
 {
 
 	hcktrck = 0
+	delScript = load script 'Content\Scripts\ObjectScripts\DeleteScript'
 
 }
 
@@ -19,6 +20,7 @@ else ?3 : 0
 
 	show cursor
 
+	set rightclick apronObject delScript
 	add apronObject
 	fill apronObject 0.98
 

@@ -33,13 +33,17 @@ namespace Resources
 
 		protected:
 			void setLastUpdated(unsigned int time);
-			CrossHandlers::Message** killMessages;
-			unsigned int kills;
+			void addKillMessage(CrossHandlers::Message* mess);
 
 		private:
 			unsigned int activeId;
 			unsigned int id;
 			unsigned int lastUpdated;
+
+			CrossHandlers::Message** killMessages;
+			unsigned int kills;
+			unsigned int maxKills;
+
 			bool save;
 
 	};

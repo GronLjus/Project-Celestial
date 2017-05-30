@@ -108,7 +108,9 @@ void GUIImage::SetDrawFrame(ImageResourceObject* frame)
 	if (frame->GetRenderImage() != nullptr)
 	{
 
-		killMessages[1] = new Message();
+		unsigned int msgs = 0;
+		Message** killMessages = GetKillMessage(msgs);
+
 		unsigned char tempBuff[]{ drawFrame->GetImageId() >> 0, drawFrame->GetImageId() >> 8, 
 			drawFrame->GetImageId() >> 16, drawFrame->GetImageId() >> 24 };
 		killMessages[1]->SetParams(tempBuff, 0, 4);

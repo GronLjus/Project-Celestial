@@ -2,6 +2,7 @@ $
 {
 
 	post 'test'
+	delScript = load script 'Content\Scripts\ObjectScripts\DeleteScript'
 
 }
 
@@ -12,6 +13,7 @@ if ?3 : 0
 
 	show cursor
 
+	set rightclick airBridge delScript
 	add airBridge
 	r1 = load routegoal ?f0 ?f1 ?f2
 	translate airBridge -1.5 0.0 0.0

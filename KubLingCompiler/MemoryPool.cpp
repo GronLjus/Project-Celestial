@@ -95,7 +95,7 @@ unsigned int MemoryPool::findAddress(unsigned int var, unsigned int valSize, boo
 
 
 		}
-		else//Create new Hole
+		else if(!inInit)//Create new Hole
 		{
 
 			memBlock newHole;
@@ -160,8 +160,13 @@ unsigned int MemoryPool::findAddress(unsigned int var, unsigned int valSize, boo
 
 			adress = adrLast;
 			holeVal += holeVal == 254 ? 0 : 1;
-			holes[holeVal] = varMem;
 
+			if (!inInit)
+			{
+
+				holes[holeVal] = varMem;
+
+			}
 		}
 	}
 

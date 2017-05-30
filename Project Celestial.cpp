@@ -9,6 +9,7 @@
 #include <windowsx.h>
 #include <thread>
 #include <time.h>
+#include <vld.h>
 
 using namespace Logic;
 using namespace CrossHandlers;
@@ -233,7 +234,7 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
                     _In_ int       nCmdShow)
 {
 	_CrtSetDbgFlag ( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
-	//_CrtSetBreakAlloc(252019);
+	_CrtSetBreakAlloc(562115);
 	UNREFERENCED_PARAMETER(hPrevInstance);
 	UNREFERENCED_PARAMETER(lpCmdLine);
 

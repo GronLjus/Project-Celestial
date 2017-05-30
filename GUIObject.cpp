@@ -17,10 +17,9 @@ GUIObject::GUIObject() : PositionableObject(), SaveObject()
 	isVisible = true;
 	focused = false;
 	target = new ScreenTarget(Vector4(0, 0, 0, 0));
-	kills = 2;
-	killMessages = new Message*[kills];
-	killMessages[0] = nullptr;
-	killMessages[1] = nullptr;
+
+	addKillMessage(new Message());
+	addKillMessage(new Message());
 
 }
 
@@ -83,11 +82,12 @@ char* GUIObject::Unserialize(char* data)
 void GUIObject::UpdateScreenTarget()
 {
 
+	unsigned int msgs = 0;
+	Message** killMessages = GetKillMessage(msgs);
 
-	if (killMessages[0] == nullptr)
+	if (killMessages[0]->destination == MessageSource_NA)
 	{
 
-		killMessages[0] = new Message();
 		unsigned char tempBuff[]{ target->GetId() >> 0, target->GetId() >> 8, target->GetId() >> 16, target->GetId() >> 24 };
 		killMessages[0]->SetParams(tempBuff, 0, 4);
 		killMessages[0]->destination = MessageSource_RESOURCES;

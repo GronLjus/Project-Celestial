@@ -33,12 +33,14 @@ GraphicHandler::GraphicHandler(unsigned int flips) : IHandleMessages(200,Message
 	filter = MessageType_GRAPHICS;
 	stoppedDrawing = false;
 	stopDrawing = false;
+	wantsLock = false;
 
 }
 
 void GraphicHandler::pauseRendering()
 {
 
+	wantsLock = true;
 	renderLock.lock();
 	stopDrawing = true;
 
@@ -47,6 +49,7 @@ void GraphicHandler::pauseRendering()
 void GraphicHandler::resumeRendering()
 {
 
+	wantsLock = false;
 	renderLock.unlock();
 	stopDrawing = false;
 
@@ -279,6 +282,13 @@ unsigned int GraphicHandler::GetRenderFlip() const
 
 void GraphicHandler::Draw(unsigned int time)
 {
+
+	while (wantsLock)
+	{
+
+		this_thread::yield();
+
+	}
 
 	renderLock.lock();
 

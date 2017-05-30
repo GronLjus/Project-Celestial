@@ -1,0 +1,10 @@
+
+shouldDel = import 'deleteMod'
+post shouldDel
+
+if shouldDel : 1
+{
+
+	delete ?0
+
+}

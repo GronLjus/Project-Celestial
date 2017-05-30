@@ -353,6 +353,44 @@ void GameBoard::FillInstanceBuffer(GameObject* trackingObject)
 	}
 }
 
+void GameBoard::RemoveObject(GameObject* object)
+{
+
+	if (object->GetActiveId() == 0)//The object Isn't on board
+	{
+
+		return;
+
+	}
+
+	if (object->GetType() != GameObjectType_TRAVELING)
+	{
+
+		objectRoot->RemoveObject(object->GetId());
+
+	}
+	else
+	{
+
+		bool stop = false;
+
+		for (unsigned int i = 0; i < travelObjectsAmounts && !stop; i++)
+		{
+
+			if (travelObjects->GetValue(i) != nullptr && travelObjects->GetValue(i)->GetId() == object->GetId())
+			{
+
+				stop = true;
+				travelObjects->Remove(i);
+
+			}
+		}
+	}
+
+	activeObjects->Remove(object->GetActiveId() - 1);
+
+}
+
 void GameBoard::AddObject(GameObject* object)
 {
 

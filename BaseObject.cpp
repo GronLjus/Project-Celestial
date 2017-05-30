@@ -8,6 +8,8 @@ BaseObject::BaseObject()
 
 	killMessages = nullptr;
 	activeId = 0;
+	kills = 0;
+	maxKills = 0;
 
 }
 
@@ -30,6 +32,38 @@ void BaseObject::SetId(unsigned int id)
 
 	this->id = id;
 	lastUpdated = 0;
+
+}
+
+void BaseObject::addKillMessage(CrossHandlers::Message* mess)
+{
+
+	if (kills >= maxKills || killMessages == nullptr)
+	{
+
+		maxKills += 20;
+		CrossHandlers::Message** temp = new CrossHandlers::Message*[maxKills];
+
+		if (killMessages != nullptr)
+		{
+
+			for (unsigned int i = 0; i < kills; i++)
+			{
+
+				temp[i] = killMessages[i];
+
+			}
+
+			delete[] killMessages;
+
+		}
+
+		killMessages = temp;
+
+	}
+
+	killMessages[kills] = mess;
+	kills++;
 
 }
 

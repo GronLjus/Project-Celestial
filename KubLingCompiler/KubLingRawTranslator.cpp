@@ -1790,6 +1790,33 @@ RunTimeError DecrementLayerOperator(rawCode* raw, unsigned int returnVar, unsign
 
 }
 
+RunTimeError DeleteObjOperator(rawCode* raw, unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int offset, unsigned int byteLine, runTimeVal &rtv)
+{
+
+	if (paramSize < 4)
+	{
+
+		return RunTimeError_BADPARAMS;
+
+	}
+
+	raw->maxLines = sendLines;
+	raw->code = new rawCode::line[raw->maxLines];
+
+	Message mess;
+	mess.destination = MessageSource_ENTITIES;
+	mess.type = MessageType_ENTITIES;
+	mess.mess = GameBoardMess_DELETEOBJECT;
+
+	unsigned int var = (params[0] | ((int)params[1] << 8) | ((int)params[2] << 16) | ((int)params[3] << 24));
+	mess.returnParam = 0;
+	addMessStackParamO(var - 1, 0, 4, rtv, raw);
+
+	sendMessageOut(mess, rtv, raw);
+	return RunTimeError_OK;
+
+}
+
 RunTimeError DivFloatOperator(rawCode* raw, unsigned int returnVar, unsigned char* params, unsigned int paramSize, unsigned int offset, unsigned int byteLine, runTimeVal &rtv)
 {
 
@@ -5546,6 +5573,7 @@ KubLingRawTranslator::KubLingRawTranslator()
 	translator[bytecode_ADDNDGRP] = AddNodeGroupOperator;
 
 	translator[bytecode_RMVE] = RemoveOperator;
+	translator[bytecode_DLT] = DeleteObjOperator;
 
 	translator[bytecode_SETGMEBRD] = SetGameBoardOperator;
 	translator[bytecode_SETCMRA] = SetCameraOperator;

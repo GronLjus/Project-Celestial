@@ -8,8 +8,11 @@ $
 	hckZ = 0.0
 
 	taxiSplit = load script 'Content\Scripts\ObjectScripts\TaxiwaySplit'
+	delScript = load script 'Content\Scripts\ObjectScripts\DeleteScript'
 
 }
+
+post ?3
 
 if hcktrck : 0 & ?3 : 0
 {
@@ -32,7 +35,8 @@ else ?3 : 0
 	obj = load copyobject ?0
 
 	show cursor
-
+	
+	set rightclick obj delScript
 	set splitscript obj taxiSplit
 
 	scale obj 0.0 0.0 -1.8

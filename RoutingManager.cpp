@@ -225,6 +225,215 @@ unsigned int RoutingManager::AddGroup(GameObject* object)
 
 }
 
+bool RoutingManager::DeleteObject(Resources::GameObject* obj)
+{
+
+	if (obj->GetType() == GameObjectType_GRIDROUTE)
+	{
+
+		return DeleteObject((GameGridObject*)obj);
+
+	}
+	else if (obj->GetType() == GameObjectType_ROUTE)
+	{
+
+		return DeleteObject((GameRouteObject*)obj);
+
+	}
+
+	return false;
+
+}
+
+bool RoutingManager::deleteNodeGroup(GameRouteObject* obj)
+{
+
+	RouteNodeObject* upperNode = routeNodes->GetValue(obj->GetUpperNode() - 1);
+	NodeGroup* groupToKill = nodeGroups->GetValue(upperNode->GetGroup());
+
+	if (groupToKill == nullptr || groupToKill->GetLocked() > 0)
+	{
+
+		return false;
+
+	}
+
+	unsigned int groupId = upperNode->GetGroup();
+
+	for (unsigned int i = 0; i < routeNodes->GetHighest(); i++)
+	{
+
+		RouteNodeObject* node = routeNodes->GetValue(i);
+
+		if (node != nullptr
+			&& node->GetGroup() == groupId)
+		{
+
+			unsigned int routes = node->GetRoutes();
+
+			for (unsigned int k = 0; k < routes; k++)
+			{
+
+				Route::Direction dir;
+				Route* rte = node->GetRoute(k, dir);
+
+				if (rte != nullptr)
+				{
+
+					unsigned int oppositeNode = rte->GetNode(dir);
+					node->RemoveRoute(oppositeNode);
+
+					if (node->GetRoutes() == 0)//The node is empty
+					{
+
+						routeNodes->Kill(i);
+
+					}
+				}
+			}
+		}
+	}
+
+	return true;
+
+}
+
+bool RoutingManager::DeleteObject(GameRouteObject * obj)
+{
+
+	RouteNodeObject* upperNode = routeNodes->GetValue(obj->GetUpperNode() - 1);
+	RouteNodeObject* lowerNode = routeNodes->GetValue(obj->GetLowerNode() - 1);
+
+	if (upperNode->GetGroup() == lowerNode->GetGroup())
+	{
+
+		//return deleteNodeGroup(obj);
+
+	}
+
+	unsigned int lowerLocal = upperNode->GetLocalId(lowerNode->GetId());
+	Route* rte = upperNode->GetRoute(lowerLocal);
+	
+	if (rte->GetDirection() != Route::Direction_NA)//The road is occupied
+	{
+
+		return false;
+
+	}
+
+	//Kill the road
+	deleteRoad(rte);
+
+	return true;
+
+}
+
+void RoutingManager::deleteRoad(Route* rte)
+{
+
+	RouteNodeObject* upperNode = routeNodes->GetValue( rte->GetNode(Route::Direction_UP) - 1);
+	RouteNodeObject* lowerNode = routeNodes->GetValue(rte->GetNode(Route::Direction_DOWN) - 1);
+
+	lowerNode->RemoveRoute(upperNode->GetId());
+	upperNode->RemoveRoute(lowerNode->GetId());
+	roads->Kill(rte->GetId());
+
+	if (upperNode->GetRoutes() == 0)//The upper node is empty
+	{
+
+		routeNodes->Kill(upperNode->GetId());
+
+	}
+
+	if (lowerNode->GetRoutes() == 0)
+	{
+
+		routeNodes->Kill(lowerNode->GetId());
+
+	}
+
+}
+
+bool RoutingManager::checkRoute(unsigned int x, unsigned int z, RouteNodeObject* first, GameGridObject* obj, unsigned int &routeId)
+{
+
+	unsigned int xNeigh = obj->GetNode(x, z);
+	RouteNodeObject* neighObj = routeNodes->GetValue(xNeigh);
+
+	unsigned int localId = first->GetLocalId(xNeigh);
+	Route* rte = first->GetRoute(localId);
+	routeId = rte->GetId();
+
+	return rte->GetDirection() != Route::Direction_NA;
+
+}
+
+bool RoutingManager::DeleteObject(GameGridObject* obj)
+{
+
+	bool occupied = false;
+
+	unsigned int* roadsToKill = new unsigned int[obj->GetNodeHeigth() * obj->GetNodeWidth() * 2];
+	unsigned int runningTotal = 0;
+
+	for (unsigned int x = 0; x < max(obj->GetNodeWidth()-1, 2) && !occupied; x++)
+	{
+
+		for (unsigned int z = 0; z < obj->GetNodeHeigth()-1 && !occupied; z++)
+		{
+
+			unsigned int nodeId = obj->GetNode(x, z);
+			obj->PopulateGrid(0, x, z);
+			RouteNodeObject* nodeObjct = routeNodes->GetValue(nodeId);
+
+			unsigned int xNext = x + 1;
+
+			if (xNext < obj->GetNodeWidth())
+			{
+
+				occupied = checkRoute(xNext, z, nodeObjct, obj, roadsToKill[runningTotal]);
+
+			}
+
+			unsigned int zNext = z + 1;
+
+			if (xNext < obj->GetNodeWidth())
+			{
+
+				occupied = checkRoute(x, zNext, nodeObjct, obj, roadsToKill[runningTotal]);
+
+			}
+		}
+	}
+
+	if (!occupied)//The grid has no objects on it
+	{
+
+		for (unsigned int i = 0; i < runningTotal; i++)
+		{
+
+			deleteRoad(roads->GetValue(roadsToKill[i]));
+
+		}
+
+		for (unsigned int x = 0; x < obj->GetNodeWidth() && !occupied; x++)
+		{
+
+			for (unsigned int z = 0; z < obj->GetNodeHeigth() && !occupied; z++)
+			{
+
+				obj->PopulateGrid(0, x, z);
+
+			}
+		}
+
+
+	}
+
+	return occupied;
+
+}
+
 RouteNodeObject* RoutingManager::getPreExistantNode(Vector3 position, unsigned int* objects, unsigned int amounts) const
 {
 

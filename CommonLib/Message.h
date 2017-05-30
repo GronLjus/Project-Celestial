@@ -50,6 +50,7 @@ namespace CrossHandlers
 		GameBoardMess_SPLITOBJECT, GameBoardMess_GLUEOBJECT,
 		GameBoardMess_GETPARENT,
 		GameBoardMess_ROUTEOBJECT,
+		GameBoardMess_DELETEOBJECT,
 		GameBoardMess_NA };
 	enum SystemMess{SystemMess_GETSCREENRES, 
 		SystemMess_SETCURSOR, SystemMess_HIDECURSOR, SystemMess_SHOWCURSOR, SystemMess_MOVECURSOR,
@@ -88,6 +89,7 @@ namespace CrossHandlers
 
 			Message() :params(nullptr)
 			{ 
+				destination = MessageSource_NA;
 				numParams = 128; 
 				params = new unsigned char[numParams];
 				for (unsigned char i = 0; i < numParams; i++)

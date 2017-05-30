@@ -18,7 +18,8 @@ namespace Logic
 		bytecode_ADDRTOBJ, bytecode_ADDTRGGR,
 		bytecode_ADDNDGRP,
 
-		bytecode_RMVE,
+		bytecode_RMVE, bytecode_DLT,
+
 		bytecode_SETGMEBRD, bytecode_SETCMRA,
 		bytecode_SETLCLK, bytecode_SETMCLK, bytecode_SETRCLK,
 		bytecode_SETLDRG, bytecode_SETMDRG, bytecode_SETRDRG,

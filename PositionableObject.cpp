@@ -373,6 +373,17 @@ void PositionableObject::AddSubObject(PositionableObject* object, Vector3 relati
 
 	object->UpdateMatrix();
 	figureOutAbsoluteSize();
+	unsigned char params[]{ 0,0,0,0 };
+	int childId = object->GetId();
+	memcpy(params, &childId, sizeof(unsigned int));
+	Message* killMessage = new Message();
+	killMessage->destination = MessageSource_RESOURCES;
+	killMessage->mess = ResourceMess_UNLOADOBJECT;
+	killMessage->read = false;
+	killMessage->type = MessageType_RESOURCES;
+	killMessage->SetParams(params, 0, sizeof(unsigned int));
+
+	addKillMessage(killMessage);
 
 }
 

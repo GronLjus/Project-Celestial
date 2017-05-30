@@ -27,6 +27,7 @@ export 'endTile' endTile
 export 'planeMesh' load mesh 'Content\Plane1.clmsh'
 export 'terminal' load mesh 'Content\Terminal.clmsh'
 export 'airBridge' load mesh 'Content\Airbridge.clmsh'
+export 'deleteMod' 0
 
 set camera cam
 

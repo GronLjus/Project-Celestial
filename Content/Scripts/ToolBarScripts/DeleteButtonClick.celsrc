@@ -1,0 +1,21 @@
+$
+{
+
+	deleteStatus = 0
+
+}
+
+if deleteStatus : 0
+{
+
+	deleteStatus = 1
+
+}
+else
+{
+	
+	deleteStatus = 0
+
+}
+
+export 'deleteMod' deleteStatus

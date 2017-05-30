@@ -34,7 +34,7 @@ ObjectTree::ObjectTree(unsigned int cells, unsigned int minCells, Vector2 positi
 	else
 	{
 
-		objects = new CelestialSlicedList<GameObject*>(minCells*minCells);
+		objects = new CelestialSlicedList<GameObject*>(minCells*minCells, nullptr);
 
 	}
 
@@ -80,26 +80,27 @@ bool ObjectTree::RemoveObject(unsigned int id)
 	if (objects != nullptr)
 	{
 
-		for (unsigned int i = 0; i < objects->GetFirstEmpty() && !found; i++)
+		for (unsigned int i = 0; i < objectAmountMax; i++)
 		{
 
 			GameObject* object = objects->GetValue(i);
-			found = object->GetId() == id;
 
-			if (found)
+			if (object != nullptr && object->GetTargetId() == id)
 			{
 
 				objects->Remove(i);
+				found = true;
 
 			}
 		}
 	}
 	else
 	{
-		for (unsigned int i = 0; i < 4 && !found; i++)
+		for (unsigned int i = 0; i < 4; i++)
 		{
 
-			found = subTrees[i]->RemoveObject(id);
+			 bool subRemove = subTrees[i]->RemoveObject(id);
+			 found = subRemove || found;
 
 		}
 	}

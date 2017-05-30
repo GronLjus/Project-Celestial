@@ -40,7 +40,7 @@ namespace Logic
 	enum FlowOperator{ FlowOperator_IF, FlowOperator_ELSE, FlowOperator_LOOP, FlowOperator_INIT, FlowOperator_NA };
 	///<summary>The different types of operators in the script</summary>
 	enum OperatorTypes{
-		OperatorTypes_ADD, OperatorTypes_REMOVE, 
+		OperatorTypes_ADD, OperatorTypes_REMOVE, OperatorTypes_DELETE,
 		OperatorTypes_LOAD, OperatorTypes_UNLOAD, OperatorTypes_SAVE,
 		OperatorTypes_ADDTASKPARAM,
 		OperatorTypes_SET, OperatorTypes_POST,

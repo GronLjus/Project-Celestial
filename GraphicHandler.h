@@ -73,6 +73,7 @@ namespace Graphics
 
 			bool stoppedDrawing;
 			bool stopDrawing;
+			bool wantsLock;
 
 			std::mutex renderLock;
 
